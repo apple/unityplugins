@@ -1,0 +1,15 @@
+{
+    "name": "Apple.GameController",
+    "references": [
+        "GUID:63e8524e4a4684596b3143ae6829b702"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

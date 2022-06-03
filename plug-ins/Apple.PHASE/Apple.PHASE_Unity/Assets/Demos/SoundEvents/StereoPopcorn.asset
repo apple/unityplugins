@@ -1,0 +1,104 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-8223883031477251077
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08b165ad3013c4bbf9b78d4f1de03db4, type: 3}
+  m_Name: PHASE Sound Event Sampler
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: -360, y: -264}
+  ports:
+    keys:
+    - ParentNode
+    - Mixer
+    values:
+    - _fieldName: ParentNode
+      _node: {fileID: -8223883031477251077}
+      _typeQualifiedName: Apple.PHASE.PHASESoundEventNode, Apple.PHASE, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: Mixer
+      _node: {fileID: -8223883031477251077}
+      _typeQualifiedName: Apple.PHASE.PHASEMixer, Apple.PHASE, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+      connections:
+      - fieldName: ParentNode
+        node: {fileID: 7549568703002314580}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+  ParentNode: {fileID: 0}
+  _isStreamingAsset: 1
+  _audioClip: {fileID: 0}
+  _looping: 0
+  _calibrationMode: 1
+  _levelNone: 1
+  _levelRelativeSpl: 0
+  _levelAbsoluteSpl: 85
+  _mixer: {fileID: 7549568703002314580}
+  Mixer: {fileID: 0}
+  _streamingAssetAudioClip: {fileID: 102900000, guid: edfd5abe2015547cfb569523d74063ba,
+    type: 3}
+  _assetName: Popcorn_Panned.wav
+  _streamingAssetSubDirectory: Music
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b79afdf8682714aa5b484522364a10e2, type: 3}
+  m_Name: StereoPopcorn
+  m_EditorClassIdentifier: 
+  nodes:
+  - {fileID: -8223883031477251077}
+  - {fileID: 7549568703002314580}
+  m_rootNode: {fileID: -8223883031477251077}
+--- !u!114 &7549568703002314580
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5376249baaf840ad87cdc6e61811691, type: 3}
+  m_Name: PHASE Channel Mixer
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: -58.5, y: -131.5}
+  ports:
+    keys:
+    - ParentNode
+    values:
+    - _fieldName: ParentNode
+      _node: {fileID: 7549568703002314580}
+      _typeQualifiedName: Apple.PHASE.PHASEMixer, Apple.PHASE, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+      connections:
+      - fieldName: Mixer
+        node: {fileID: -8223883031477251077}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 2
+      _dynamic: 0
+  ParentNode: {fileID: 0}
+  _channelLayout: 1

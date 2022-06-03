@@ -1,0 +1,52 @@
+{
+    "Version": 1.0,
+    "Metadata":
+        {
+            "Project" : "HapticRicochet",
+            "Created" : "1 June 2021",
+            "Description" : "Effect for growing the size of the ball."
+        },
+    "Pattern":
+    [
+        {
+            "Event":
+            {
+                "Time": 0.0,
+                "EventType": "HapticContinuous",
+                "EventDuration": 0.60,
+                "EventParameters":
+                [
+                    { "ParameterID": "HapticIntensity", "ParameterValue": 1.0 },
+                    { "ParameterID": "HapticSharpness", "ParameterValue": 0.5 }
+                ]
+            }
+        },
+        {
+            "ParameterCurve":
+            {
+                "ParameterID": "HapticIntensityControl",
+                "Time": 0.0,
+                "ParameterCurveControlPoints":
+                [
+                    { "Time": 0.0, "ParameterValue": 0.0 },
+                    { "Time": 0.15, "ParameterValue": 1.0 },
+                    { "Time": 0.25, "ParameterValue": 1.0 },
+                    { "Time": 0.3, "ParameterValue": 0.3 },
+                    { "Time": 0.6, "ParameterValue": 0.0 }
+                ]
+            }
+        },
+        {
+            "Event":
+            {
+                "Time":0.1,
+                "EventType": "AudioCustom",
+                "EventWaveformPath": "CoreHaptics/Ricochet/Grow.wav",
+                "EventParameters":
+                [
+                    {"ParameterID":"AudioVolume","ParameterValue":1.0}
+                ]
+            }
+        }
+    ]
+}

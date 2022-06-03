@@ -1,0 +1,29 @@
+{
+    "name": "com.apple.gamekit",
+    "displayName": "Apple.GameKit",
+    "description": "Exposes Apple's GameKit.framework to Unity developers via C# script API",
+    "version": "1.0.0",
+    "unity": "2019.4",
+    "dependencies": {
+        "com.apple.core": "1.0.0"
+    },
+    "keywords": [
+        "gamekit",
+        "game center",
+        "achievements",
+        "matchmaking",
+        "apple"
+    ],
+    "author": {
+        "name": "Apple, Inc",
+        "email": "developer@apple.com",
+        "url": "https://developer.apple.com"
+    },
+    "samples": [
+        {
+            "displayName": "GameKit Demo",
+            "description": "Demo for GameKit integration",
+            "path": "Demos~/Apple.GameKit.Sample"
+        }
+    ]
+}

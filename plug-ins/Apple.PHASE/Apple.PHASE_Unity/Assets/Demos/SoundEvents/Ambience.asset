@@ -1,0 +1,106 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-2803377398467805188
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08b165ad3013c4bbf9b78d4f1de03db4, type: 3}
+  m_Name: PHASE Sound Event Sampler
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: -549, y: -184}
+  ports:
+    keys:
+    - ParentNode
+    - Mixer
+    values:
+    - _fieldName: ParentNode
+      _node: {fileID: -2803377398467805188}
+      _typeQualifiedName: Apple.PHASE.PHASESoundEventNode, Apple.PHASE, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: Mixer
+      _node: {fileID: -2803377398467805188}
+      _typeQualifiedName: Apple.PHASE.PHASEMixer, Apple.PHASE, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+      connections:
+      - fieldName: ParentNode
+        node: {fileID: -1907436904205752834}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+  ParentNode: {fileID: 0}
+  _isStreamingAsset: 0
+  _audioClip: {fileID: 8300000, guid: 317f0800a578b4ae298099001f5ac64b, type: 3}
+  _looping: 1
+  _calibrationMode: 1
+  _levelNone: 1
+  _levelRelativeSpl: 0
+  _levelAbsoluteSpl: 85
+  _mixer: {fileID: -1907436904205752834}
+  Mixer: {fileID: 0}
+  _streamingAssetAudioClip: {fileID: 0}
+  _assetName: quiet-kitchen-ambience-51surround
+  _streamingAssetSubDirectory: 
+--- !u!114 &-1907436904205752834
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fde41757782e64ab3b6da4dfb2352154, type: 3}
+  m_Name: PHASE Ambient Mixer
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: -264, y: -88}
+  ports:
+    keys:
+    - ParentNode
+    values:
+    - _fieldName: ParentNode
+      _node: {fileID: -1907436904205752834}
+      _typeQualifiedName: Apple.PHASE.PHASEMixer, Apple.PHASE, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+      connections:
+      - fieldName: Mixer
+        node: {fileID: -2803377398467805188}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 2
+      _dynamic: 0
+  ParentNode: {fileID: 0}
+  _pitch: 0
+  _yaw: 0
+  _roll: 0
+  _channelLayout: 2
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b79afdf8682714aa5b484522364a10e2, type: 3}
+  m_Name: Ambience
+  m_EditorClassIdentifier: 
+  nodes:
+  - {fileID: -2803377398467805188}
+  - {fileID: -1907436904205752834}
+  m_rootNode: {fileID: -2803377398467805188}

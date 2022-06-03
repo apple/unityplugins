@@ -1,0 +1,3 @@
+<linker>
+    <assembly fullname="Apple.GameKit" preserve="all"/>
+</linker>

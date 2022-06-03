@@ -1,0 +1,17 @@
+{
+    "name": "Apple.Core.Tests.Editor",
+    "references": [
+        "GUID:c988b41879b9647288c55d1c0de6f551"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

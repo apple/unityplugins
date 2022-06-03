@@ -1,0 +1,267 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-6876774159977999810
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7fe992e284804018a27d8b53801eb38, type: 3}
+  m_Name: PHASE Sound Event Container
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: -504, y: -200}
+  ports:
+    keys:
+    - ParentNode
+    - m_entries 0
+    - m_entries 1
+    - dynamicInput_0
+    - dynamicInput_1
+    values:
+    - _fieldName: ParentNode
+      _node: {fileID: -6876774159977999810}
+      _typeQualifiedName: Apple.PHASE.PHASESoundEventNode, Apple.PHASE, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: m_entries 0
+      _node: {fileID: -6876774159977999810}
+      _typeQualifiedName: Apple.PHASE.PHASESoundEventNode, Apple.PHASE, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: ParentNode
+        node: {fileID: 6788560565339609205}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 1
+      _typeConstraint: 2
+      _dynamic: 1
+    - _fieldName: m_entries 1
+      _node: {fileID: -6876774159977999810}
+      _typeQualifiedName: Apple.PHASE.PHASESoundEventNode, Apple.PHASE, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: ParentNode
+        node: {fileID: 1459178149691277280}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 1
+      _typeConstraint: 2
+      _dynamic: 1
+    - _fieldName: dynamicInput_0
+      _node: {fileID: -6876774159977999810}
+      _typeQualifiedName: Apple.PHASE.PHASESoundEventNode, Apple.PHASE, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: ParentNode
+        node: {fileID: 6788560565339609205}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 1
+      _typeConstraint: 2
+      _dynamic: 1
+    - _fieldName: dynamicInput_1
+      _node: {fileID: -6876774159977999810}
+      _typeQualifiedName: Apple.PHASE.PHASESoundEventNode, Apple.PHASE, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: ParentNode
+        node: {fileID: 1459178149691277280}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 1
+      _typeConstraint: 2
+      _dynamic: 1
+  ParentNode: {fileID: 0}
+  Nodes:
+  - dynamicInput_0
+  - dynamicInput_1
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b79afdf8682714aa5b484522364a10e2, type: 3}
+  m_Name: Bells
+  m_EditorClassIdentifier: 
+  nodes:
+  - {fileID: -6876774159977999810}
+  - {fileID: 6788560565339609205}
+  - {fileID: 1459178149691277280}
+  - {fileID: 2254627897349549986}
+  m_rootNode: {fileID: -6876774159977999810}
+--- !u!114 &1459178149691277280
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08b165ad3013c4bbf9b78d4f1de03db4, type: 3}
+  m_Name: PHASE Sound Event Sampler
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: -176, y: 75}
+  ports:
+    keys:
+    - ParentNode
+    - Mixer
+    values:
+    - _fieldName: ParentNode
+      _node: {fileID: 1459178149691277280}
+      _typeQualifiedName: Apple.PHASE.PHASESoundEventNode, Apple.PHASE, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: m_entries 1
+        node: {fileID: -6876774159977999810}
+        reroutePoints: []
+      - fieldName: dynamicInput_1
+        node: {fileID: -6876774159977999810}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: Mixer
+      _node: {fileID: 1459178149691277280}
+      _typeQualifiedName: Apple.PHASE.PHASEMixer, Apple.PHASE, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+      connections:
+      - fieldName: ParentNode
+        node: {fileID: 2254627897349549986}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+  ParentNode: {fileID: 0}
+  _isStreamingAsset: 0
+  _audioClip: {fileID: 8300000, guid: 777eb864ef94e4bba940615cb82a59ed, type: 3}
+  _looping: 0
+  _calibrationMode: 1
+  _levelNone: 1
+  _levelRelativeSpl: 0
+  _levelAbsoluteSpl: 85
+  _mixer: {fileID: 2254627897349549986}
+  Mixer: {fileID: 0}
+  _streamingAssetAudioClip: {fileID: 0}
+  _assetName: Bell_G3
+  _streamingAssetSubDirectory: 
+--- !u!114 &2254627897349549986
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff04eea8ccd1d4b0990f36e5ec837891, type: 3}
+  m_Name: PHASE Spatial Mixer
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: 200.5, y: -65.5}
+  ports:
+    keys:
+    - ParentNode
+    values:
+    - _fieldName: ParentNode
+      _node: {fileID: 2254627897349549986}
+      _typeQualifiedName: Apple.PHASE.PHASEMixer, Apple.PHASE, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+      connections:
+      - fieldName: Mixer
+        node: {fileID: 1459178149691277280}
+        reroutePoints: []
+      - fieldName: Mixer
+        node: {fileID: 6788560565339609205}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 2
+      _dynamic: 0
+  ParentNode: {fileID: 0}
+  _directPathModeler: 1
+  _earlyReflectionModeler: 1
+  _lateReverbModeler: 1
+  _cullDistance: 0
+  _listenerDirectivityPreset: 0
+  _listenerDirectivitySharpness: 1
+  _listenerDirectivityInnerAngle: 90
+  _listenerDirectivityOuterAngle: 215
+  _sourceDirectivityPreset: 0
+  _sourceDirectivitySharpness: 1
+  _sourceDirectivityInnerAngle: 90
+  _sourceDirectivityOuterAngle: 215
+--- !u!114 &6788560565339609205
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08b165ad3013c4bbf9b78d4f1de03db4, type: 3}
+  m_Name: PHASE Sound Event Sampler
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: -171, y: -150}
+  ports:
+    keys:
+    - ParentNode
+    - Mixer
+    values:
+    - _fieldName: ParentNode
+      _node: {fileID: 6788560565339609205}
+      _typeQualifiedName: Apple.PHASE.PHASESoundEventNode, Apple.PHASE, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: m_entries 0
+        node: {fileID: -6876774159977999810}
+        reroutePoints: []
+      - fieldName: dynamicInput_0
+        node: {fileID: -6876774159977999810}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: Mixer
+      _node: {fileID: 6788560565339609205}
+      _typeQualifiedName: Apple.PHASE.PHASEMixer, Apple.PHASE, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+      connections:
+      - fieldName: ParentNode
+        node: {fileID: 2254627897349549986}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+  ParentNode: {fileID: 0}
+  _isStreamingAsset: 0
+  _audioClip: {fileID: 8300000, guid: 0b76d563ad56a4e02a8a0f47484ccf6a, type: 3}
+  _looping: 0
+  _calibrationMode: 1
+  _levelNone: 1
+  _levelRelativeSpl: 0
+  _levelAbsoluteSpl: 85
+  _mixer: {fileID: 2254627897349549986}
+  Mixer: {fileID: 0}
+  _streamingAssetAudioClip: {fileID: 0}
+  _assetName: Bell_C3
+  _streamingAssetSubDirectory: 

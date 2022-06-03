@@ -1,0 +1,36 @@
+{
+    "Version": 1.0,
+    "Metadata":
+        {
+            "Project" : "HapticRicochet",
+            "Created" : "1 June 2021",
+            "Description" : "Effect for the small ball colliding with a wall."
+        },
+    "Pattern":
+    [
+        {
+            "Event":
+            {
+                "Time": 0.0,
+                "EventType": "HapticTransient",
+                "EventParameters":
+                [
+                    { "ParameterID": "HapticIntensity", "ParameterValue": 1.0 },
+                    { "ParameterID": "HapticSharpness", "ParameterValue": 0.5 }
+                ]
+            }
+        },
+        {
+            "Event":
+            {
+                "Time":0.0,
+                "EventType": "AudioCustom",
+                "EventWaveformPath": "CoreHaptics/Ricochet/CollisionSmall.wav",
+                "EventParameters":
+                [
+                    {"ParameterID":"AudioVolume","ParameterValue":1.0}
+                ]
+            }
+        }
+    ]
+}

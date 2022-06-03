@@ -1,0 +1,19 @@
+{
+    "name": "Apple.PHASE",
+    "references": [
+        "GUID:b8e24fd1eb19b4226afebb2810e3c19b"
+    ],
+    "includePlatforms": [
+        "Editor",
+        "iOS",
+        "macOSStandalone"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

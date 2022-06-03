@@ -1,0 +1,15 @@
+{
+    "name": "com.apple.core",
+    "displayName": "Apple.Core",
+    "description": "Provides project settings, post-build automation tools, and other shared functionality for Apple Unity Plug-ins.",
+    "version": "1.0.0",
+    "unity": "2019.4",
+    "keywords": [
+        "apple"
+    ],
+    "author": {
+        "name": "Apple, Inc",
+        "email": "developer@apple.com",
+        "url": "https://developer.apple.com"
+    }
+}

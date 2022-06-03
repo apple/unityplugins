@@ -1,0 +1,84 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-8225581656086954259
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88a319fb99484804b632ce9bbec4cf6d, type: 3}
+  m_Name: AppleSecurityBuildStep
+  m_EditorClassIdentifier: 
+  IsEnabled: 1
+  AppSandboxEntitlement: 1
+  AllowNetworkServer: 0
+  AllowNetworkClient: 0
+  AllowCamera: 0
+  AllowMicrophone: 0
+  AllowUsb: 0
+  AllowPrint: 0
+  AllowBluetooth: 0
+  AllowAddressBook: 0
+  AllowLocation: 0
+  AllowCalendars: 0
+  AllowUserSelectedReadOnly: 0
+  AllowUserSelectedReadWrite: 0
+  AllowDownloadsReadOnly: 0
+  AllowDownloadsReadWrite: 0
+  AllowPicturesReadOnly: 0
+  AllowPicturesReadWrite: 0
+  AllowMusicReadOnly: 0
+  AllowMusicReadWrite: 0
+  AllowMoviesReadOnly: 0
+  AllowMoviesReadWrite: 0
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b2797781d18e4c5987f2acb206f9e7b, type: 3}
+  m_Name: DefaultAppleBuildProfile
+  m_EditorClassIdentifier: 
+  AutomateInfoPlist: 1
+  DefaultInfoPlist: {fileID: 0}
+  MinimumOSVersion_iOS: 
+  MinimumOSVersion_tvOS: 
+  MinimumOSVersion_macOS: 
+  AppUsesNonExemptEncryption: 0
+  AutomateEntitlements: 1
+  DefaultEntitlements: {fileID: 0}
+--- !u!114 &4510647502316241114
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6b8a8fe473224decaaecc9264d56e95, type: 3}
+  m_Name: AppleCoreBuildStep
+  m_EditorClassIdentifier: 
+  IsEnabled: 1
+--- !u!114 &6495564271120083115
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe2e2f0820ab4779ac857f0e06bac5fb, type: 3}
+  m_Name: AppleUserManagementBuildStep
+  m_EditorClassIdentifier: 
+  IsEnabled: 0
+  AllowGetCurrentUser: 0
+  AllowRunsAsCurrentUser: 0

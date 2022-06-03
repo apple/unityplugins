@@ -1,0 +1,22 @@
+{
+    "Version": 1.0,
+    "Metadata": {
+        "Project": "Apple.CoreHaptics Unity Plug-in",
+        "Created": "6 June 2022",
+        "Description": "A single hit at full intensity"
+    },
+    "Pattern": [
+        {
+            "Event": {
+                "EventType": "HapticTransient",
+                "EventParameters": [
+                    {
+                        "ParameterID": "HapticIntensity",
+                        "ParameterValue": 1.0
+                    }
+                ],
+                "Time": 0
+            }
+        }
+    ]
+}

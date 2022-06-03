@@ -1,0 +1,431 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-3062298093650270598
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff04eea8ccd1d4b0990f36e5ec837891, type: 3}
+  m_Name: PHASE Spatial Mixer
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: 369.5, y: -70.5}
+  ports:
+    keys:
+    - ParentNode
+    values:
+    - _fieldName: ParentNode
+      _node: {fileID: -3062298093650270598}
+      _typeQualifiedName: Apple.PHASE.PHASEMixer, Apple.PHASE, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+      connections:
+      - fieldName: Mixer
+        node: {fileID: 1710106095148933217}
+        reroutePoints: []
+      - fieldName: Mixer
+        node: {fileID: 232513298861510643}
+        reroutePoints: []
+      - fieldName: Mixer
+        node: {fileID: 4992695195135992020}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 2
+      _dynamic: 0
+  ParentNode: {fileID: 0}
+  _directPathModeler: 1
+  _earlyReflectionModeler: 1
+  _lateReverbModeler: 1
+  _cullDistance: 0
+  _listenerDirectivityPreset: 0
+  _listenerDirectivitySharpness: 1
+  _listenerDirectivityInnerAngle: 90
+  _listenerDirectivityOuterAngle: 215
+  _sourceDirectivityPreset: 0
+  _sourceDirectivitySharpness: 1
+  _sourceDirectivityInnerAngle: 90
+  _sourceDirectivityOuterAngle: 215
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b79afdf8682714aa5b484522364a10e2, type: 3}
+  m_Name: Crowd
+  m_EditorClassIdentifier: 
+  nodes:
+  - {fileID: 1147085412667432994}
+  - {fileID: 1710106095148933217}
+  - {fileID: 232513298861510643}
+  - {fileID: 4992695195135992020}
+  - {fileID: -3062298093650270598}
+  - {fileID: 8055601530897667023}
+  m_rootNode: {fileID: 1147085412667432994}
+--- !u!114 &232513298861510643
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08b165ad3013c4bbf9b78d4f1de03db4, type: 3}
+  m_Name: PHASE Sound Event Sampler
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: -72, y: -40}
+  ports:
+    keys:
+    - ParentNode
+    - Mixer
+    values:
+    - _fieldName: ParentNode
+      _node: {fileID: 232513298861510643}
+      _typeQualifiedName: Apple.PHASE.PHASESoundEventNode, Apple.PHASE, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: m_entries 1
+        node: {fileID: 1147085412667432994}
+        reroutePoints: []
+      - fieldName: dynamicInput_1
+        node: {fileID: 1147085412667432994}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: Mixer
+      _node: {fileID: 232513298861510643}
+      _typeQualifiedName: Apple.PHASE.PHASEMixer, Apple.PHASE, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+      connections:
+      - fieldName: ParentNode
+        node: {fileID: -3062298093650270598}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+  ParentNode: {fileID: 0}
+  _isStreamingAsset: 0
+  _audioClip: {fileID: 8300000, guid: 86305257f51f444fbb98f74b96971e18, type: 3}
+  _looping: 0
+  _calibrationMode: 1
+  _levelNone: 1
+  _levelRelativeSpl: 0
+  _levelAbsoluteSpl: 85
+  _mixer: {fileID: -3062298093650270598}
+  Mixer: {fileID: 0}
+  _streamingAssetAudioClip: {fileID: 0}
+  _assetName: crowd2
+  _streamingAssetSubDirectory: 
+--- !u!114 &1147085412667432994
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7ce829888639485185b6a9993168f96, type: 3}
+  m_Name: PHASE Sound Event Blend
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: -504, y: -200}
+  ports:
+    keys:
+    - ParentNode
+    - m_entries 0
+    - m_entries 1
+    - m_entries 2
+    - Mixer
+    - Parameter
+    - dynamicInput_0
+    - dynamicInput_1
+    - dynamicInput_2
+    values:
+    - _fieldName: ParentNode
+      _node: {fileID: 1147085412667432994}
+      _typeQualifiedName: Apple.PHASE.PHASESoundEventNode, Apple.PHASE, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: m_entries 0
+      _node: {fileID: 1147085412667432994}
+      _typeQualifiedName: Apple.PHASE.PHASESoundEventNode, Apple.PHASE, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: ParentNode
+        node: {fileID: 1710106095148933217}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 1
+      _typeConstraint: 2
+      _dynamic: 1
+    - _fieldName: m_entries 1
+      _node: {fileID: 1147085412667432994}
+      _typeQualifiedName: Apple.PHASE.PHASESoundEventNode, Apple.PHASE, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: ParentNode
+        node: {fileID: 232513298861510643}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 1
+      _typeConstraint: 2
+      _dynamic: 1
+    - _fieldName: m_entries 2
+      _node: {fileID: 1147085412667432994}
+      _typeQualifiedName: Apple.PHASE.PHASESoundEventNode, Apple.PHASE, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: ParentNode
+        node: {fileID: 4992695195135992020}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 1
+      _typeConstraint: 2
+      _dynamic: 1
+    - _fieldName: Mixer
+      _node: {fileID: 1147085412667432994}
+      _typeQualifiedName: Apple.PHASE.PHASEMixer, Apple.PHASE, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+      connections: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: Parameter
+      _node: {fileID: 1147085412667432994}
+      _typeQualifiedName: Apple.PHASE.PHASESoundEventParameterDouble, Apple.PHASE,
+        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: ParentNode
+        node: {fileID: 8055601530897667023}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: dynamicInput_0
+      _node: {fileID: 1147085412667432994}
+      _typeQualifiedName: Apple.PHASE.PHASESoundEventNode, Apple.PHASE, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: ParentNode
+        node: {fileID: 1710106095148933217}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 1
+      _typeConstraint: 2
+      _dynamic: 1
+    - _fieldName: dynamicInput_1
+      _node: {fileID: 1147085412667432994}
+      _typeQualifiedName: Apple.PHASE.PHASESoundEventNode, Apple.PHASE, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: ParentNode
+        node: {fileID: 232513298861510643}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 1
+      _typeConstraint: 2
+      _dynamic: 1
+    - _fieldName: dynamicInput_2
+      _node: {fileID: 1147085412667432994}
+      _typeQualifiedName: Apple.PHASE.PHASESoundEventNode, Apple.PHASE, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: ParentNode
+        node: {fileID: 4992695195135992020}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 1
+      _typeConstraint: 2
+      _dynamic: 1
+  ParentNode: {fileID: 0}
+  Entries:
+  - PortName: dynamicInput_0
+    LowValue: 0
+    FullGainAtLow: 0
+    FullGainAtHigh: 10
+    HighValue: 15
+  - PortName: dynamicInput_1
+    LowValue: 10
+    FullGainAtLow: 15
+    FullGainAtHigh: 30
+    HighValue: 35
+  - PortName: dynamicInput_2
+    LowValue: 30
+    FullGainAtLow: 35
+    FullGainAtHigh: 0
+    HighValue: 0
+  UseDistanceBlend: 0
+  BlendParameter: {fileID: 8055601530897667023}
+  Parameter: {fileID: 0}
+  _distanceBlendSpatialMixer: {fileID: 0}
+  Mixer: {fileID: 0}
+--- !u!114 &1710106095148933217
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08b165ad3013c4bbf9b78d4f1de03db4, type: 3}
+  m_Name: PHASE Sound Event Sampler
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: -72, y: -216}
+  ports:
+    keys:
+    - ParentNode
+    - Mixer
+    values:
+    - _fieldName: ParentNode
+      _node: {fileID: 1710106095148933217}
+      _typeQualifiedName: Apple.PHASE.PHASESoundEventNode, Apple.PHASE, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: m_entries 0
+        node: {fileID: 1147085412667432994}
+        reroutePoints: []
+      - fieldName: dynamicInput_0
+        node: {fileID: 1147085412667432994}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: Mixer
+      _node: {fileID: 1710106095148933217}
+      _typeQualifiedName: Apple.PHASE.PHASEMixer, Apple.PHASE, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+      connections:
+      - fieldName: ParentNode
+        node: {fileID: -3062298093650270598}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+  ParentNode: {fileID: 0}
+  _isStreamingAsset: 0
+  _audioClip: {fileID: 8300000, guid: a084531e9584b4cf69e3b2452a7a43ff, type: 3}
+  _looping: 0
+  _calibrationMode: 1
+  _levelNone: 1
+  _levelRelativeSpl: 0
+  _levelAbsoluteSpl: 85
+  _mixer: {fileID: -3062298093650270598}
+  Mixer: {fileID: 0}
+  _streamingAssetAudioClip: {fileID: 0}
+  _assetName: crowd1
+  _streamingAssetSubDirectory: 
+--- !u!114 &4992695195135992020
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08b165ad3013c4bbf9b78d4f1de03db4, type: 3}
+  m_Name: PHASE Sound Event Sampler
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: -72, y: 136}
+  ports:
+    keys:
+    - ParentNode
+    - Mixer
+    values:
+    - _fieldName: ParentNode
+      _node: {fileID: 4992695195135992020}
+      _typeQualifiedName: Apple.PHASE.PHASESoundEventNode, Apple.PHASE, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: m_entries 2
+        node: {fileID: 1147085412667432994}
+        reroutePoints: []
+      - fieldName: dynamicInput_2
+        node: {fileID: 1147085412667432994}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+    - _fieldName: Mixer
+      _node: {fileID: 4992695195135992020}
+      _typeQualifiedName: Apple.PHASE.PHASEMixer, Apple.PHASE, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+      connections:
+      - fieldName: ParentNode
+        node: {fileID: -3062298093650270598}
+        reroutePoints: []
+      _direction: 1
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+  ParentNode: {fileID: 0}
+  _isStreamingAsset: 0
+  _audioClip: {fileID: 8300000, guid: 6968a5e3e78ad4f7c8db4c094aa69a66, type: 3}
+  _looping: 0
+  _calibrationMode: 1
+  _levelNone: 1
+  _levelRelativeSpl: 0
+  _levelAbsoluteSpl: 85
+  _mixer: {fileID: -3062298093650270598}
+  Mixer: {fileID: 0}
+  _streamingAssetAudioClip: {fileID: 0}
+  _assetName: crowd3
+  _streamingAssetSubDirectory: 
+--- !u!114 &8055601530897667023
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bf5de0edac63435ead28683e24041ce, type: 3}
+  m_Name: PHASE Sound Event Parameter Double
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000}
+  position: {x: -488, y: 184}
+  ports:
+    keys:
+    - ParentNode
+    values:
+    - _fieldName: ParentNode
+      _node: {fileID: 8055601530897667023}
+      _typeQualifiedName: Apple.PHASE.PHASESoundEventParameterDouble, Apple.PHASE,
+        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      connections:
+      - fieldName: Parameter
+        node: {fileID: 1147085412667432994}
+        reroutePoints: []
+      _direction: 0
+      _connectionType: 0
+      _typeConstraint: 0
+      _dynamic: 0
+  _parameterName: CrowdCheer
+  ParentNode: {fileID: 0}
+  _defaultValue: 0

@@ -1,0 +1,29 @@
+{
+    "name": "com.apple.phase",
+    "displayName": "Apple.PHASE",
+    "description": "A Unity plugin for Apple's PHASE.framework.",
+    "version": "1.0.0",
+    "unity": "2020.1",
+    "unityRelease": "2f1",
+    "dependencies": {
+        "com.apple.core": "1.0.0"
+    },
+    "keywords": [
+        "audio",
+        "spatial audio",
+        "phase",
+        "apple"
+    ],
+    "author": {
+        "name": "Apple, Inc",
+        "email": "developer@apple.com",
+        "url": "https://developer.apple.com"
+    },
+    "samples": [
+        {
+            "displayName": "PHASE Demo",
+            "description": "Demo scene for PHASE",
+            "path": "Demos~"
+       }
+    ]
+}

@@ -1,0 +1,622 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXAggregateTarget section */
+		242473AB276D443B009747F6 /* All */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 242473AC276D443B009747F6 /* Build configuration list for PBXAggregateTarget "All" */;
+			buildPhases = (
+			);
+			dependencies = (
+				242473B0276D4443009747F6 /* PBXTargetDependency */,
+				242473B2276D4443009747F6 /* PBXTargetDependency */,
+			);
+			name = All;
+			productName = All;
+		};
+/* End PBXAggregateTarget section */
+
+/* Begin PBXBuildFile section */
+		C9729D3D274324FC009BB169 /* AppleAccessibility.h in Headers */ = {isa = PBXBuildFile; fileRef = C9729D3C274324FC009BB169 /* AppleAccessibility.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C9729D4D27432564009BB169 /* AppleAccessibilityElement.h in Headers */ = {isa = PBXBuildFile; fileRef = C9729D4127432564009BB169 /* AppleAccessibilityElement.h */; };
+		C9729D5027432564009BB169 /* AppleAccessibilitySafeOverride.h in Headers */ = {isa = PBXBuildFile; fileRef = C9729D4427432564009BB169 /* AppleAccessibilitySafeOverride.h */; };
+		C9729D5127432564009BB169 /* UnityViewAccessibility.m in Sources */ = {isa = PBXBuildFile; fileRef = C9729D4527432564009BB169 /* UnityViewAccessibility.m */; };
+		C9729D5227432564009BB169 /* AppleAccessibilityElementOrdering.h in Headers */ = {isa = PBXBuildFile; fileRef = C9729D4627432564009BB169 /* AppleAccessibilityElementOrdering.h */; };
+		C9729D5327432564009BB169 /* AppleAccessibilityBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = C9729D4727432564009BB169 /* AppleAccessibilityBridge.m */; };
+		C9729D5427432564009BB169 /* AppleAccessibilityElementOrdering.m in Sources */ = {isa = PBXBuildFile; fileRef = C9729D4827432564009BB169 /* AppleAccessibilityElementOrdering.m */; };
+		C9729D5527432564009BB169 /* AppleAccessibilityElement.m in Sources */ = {isa = PBXBuildFile; fileRef = C9729D4927432564009BB169 /* AppleAccessibilityElement.m */; };
+		C9729D5627432564009BB169 /* AppleAccessibilityRuntime.m in Sources */ = {isa = PBXBuildFile; fileRef = C9729D4A27432564009BB169 /* AppleAccessibilityRuntime.m */; };
+		C9729D5727432564009BB169 /* AppleAccessibilitySafeOverride.m in Sources */ = {isa = PBXBuildFile; fileRef = C9729D4B27432564009BB169 /* AppleAccessibilitySafeOverride.m */; };
+		C9729D5827432564009BB169 /* AppleAccessibilityRuntime.h in Headers */ = {isa = PBXBuildFile; fileRef = C9729D4C27432564009BB169 /* AppleAccessibilityRuntime.h */; };
+		C9729D5A27432724009BB169 /* AppleAccessibilityBase.h in Headers */ = {isa = PBXBuildFile; fileRef = C9729D592743270D009BB169 /* AppleAccessibilityBase.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C9729E1327434953009BB169 /* AppleAccessibilityElementOrdering.h in Headers */ = {isa = PBXBuildFile; fileRef = C9729D4627432564009BB169 /* AppleAccessibilityElementOrdering.h */; };
+		C9729E1427434953009BB169 /* AppleAccessibilitySafeOverride.h in Headers */ = {isa = PBXBuildFile; fileRef = C9729D4427432564009BB169 /* AppleAccessibilitySafeOverride.h */; };
+		C9729E1527434953009BB169 /* AppleAccessibilityBase.h in Headers */ = {isa = PBXBuildFile; fileRef = C9729D592743270D009BB169 /* AppleAccessibilityBase.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C9729E1627434953009BB169 /* AppleAccessibilityElement.h in Headers */ = {isa = PBXBuildFile; fileRef = C9729D4127432564009BB169 /* AppleAccessibilityElement.h */; };
+		C9729E1827434953009BB169 /* AppleAccessibilityRuntime.h in Headers */ = {isa = PBXBuildFile; fileRef = C9729D4C27432564009BB169 /* AppleAccessibilityRuntime.h */; };
+		C9729E1927434953009BB169 /* AppleAccessibility.h in Headers */ = {isa = PBXBuildFile; fileRef = C9729D3C274324FC009BB169 /* AppleAccessibility.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C9729E1B27434953009BB169 /* AppleAccessibilitySafeOverride.m in Sources */ = {isa = PBXBuildFile; fileRef = C9729D4B27432564009BB169 /* AppleAccessibilitySafeOverride.m */; };
+		C9729E1C27434953009BB169 /* AppleAccessibilityElementOrdering.m in Sources */ = {isa = PBXBuildFile; fileRef = C9729D4827432564009BB169 /* AppleAccessibilityElementOrdering.m */; };
+		C9729E1D27434953009BB169 /* AppleAccessibilityElement.m in Sources */ = {isa = PBXBuildFile; fileRef = C9729D4927432564009BB169 /* AppleAccessibilityElement.m */; };
+		C9729E1E27434953009BB169 /* UnityViewAccessibility.m in Sources */ = {isa = PBXBuildFile; fileRef = C9729D4527432564009BB169 /* UnityViewAccessibility.m */; };
+		C9729E1F27434953009BB169 /* AppleAccessibilityBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = C9729D4727432564009BB169 /* AppleAccessibilityBridge.m */; };
+		C9729E2027434953009BB169 /* AppleAccessibilityRuntime.m in Sources */ = {isa = PBXBuildFile; fileRef = C9729D4A27432564009BB169 /* AppleAccessibilityRuntime.m */; };
+		C9729E29274349EB009BB169 /* AppleAccessibility.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C9729E2827434953009BB169 /* AppleAccessibility.framework */; };
+		C9729E2A274349F3009BB169 /* AppleAccessibility.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C9729D3A274324FC009BB169 /* AppleAccessibility.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		242473AF276D4443009747F6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 93BB76AE25CB3A4600CF60ED /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C9729D39274324FC009BB169;
+			remoteInfo = AppleAccessibility_iOS;
+		};
+		242473B1276D4443009747F6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 93BB76AE25CB3A4600CF60ED /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C9729E1127434953009BB169;
+			remoteInfo = AppleAccessibility_tvOS;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		C9729E0F27434910009BB169 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(PROJECT_DIR)/../Apple.Accessibility_Unity/Assets/Apple.Accessibility/Plugins/iOS";
+			dstSubfolderSpec = 0;
+			files = (
+				C9729E2A274349F3009BB169 /* AppleAccessibility.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C9729E2327434953009BB169 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(PROJECT_DIR)/../Apple.Accessibility_Unity/Assets/Apple.Accessibility/Plugins/tvOS";
+			dstSubfolderSpec = 0;
+			files = (
+				C9729E29274349EB009BB169 /* AppleAccessibility.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		C9155832273CDDB5007DF564 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.0.sdk/System/iOSSupport/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		C9155834273CDDBC007DF564 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS16.0.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		C9729D3A274324FC009BB169 /* AppleAccessibility.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AppleAccessibility.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		C9729D3C274324FC009BB169 /* AppleAccessibility.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleAccessibility.h; sourceTree = "<group>"; };
+		C9729D4127432564009BB169 /* AppleAccessibilityElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppleAccessibilityElement.h; sourceTree = "<group>"; };
+		C9729D4427432564009BB169 /* AppleAccessibilitySafeOverride.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppleAccessibilitySafeOverride.h; sourceTree = "<group>"; };
+		C9729D4527432564009BB169 /* UnityViewAccessibility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UnityViewAccessibility.m; sourceTree = "<group>"; };
+		C9729D4627432564009BB169 /* AppleAccessibilityElementOrdering.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppleAccessibilityElementOrdering.h; sourceTree = "<group>"; };
+		C9729D4727432564009BB169 /* AppleAccessibilityBridge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppleAccessibilityBridge.m; sourceTree = "<group>"; };
+		C9729D4827432564009BB169 /* AppleAccessibilityElementOrdering.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppleAccessibilityElementOrdering.m; sourceTree = "<group>"; };
+		C9729D4927432564009BB169 /* AppleAccessibilityElement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppleAccessibilityElement.m; sourceTree = "<group>"; };
+		C9729D4A27432564009BB169 /* AppleAccessibilityRuntime.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppleAccessibilityRuntime.m; sourceTree = "<group>"; };
+		C9729D4B27432564009BB169 /* AppleAccessibilitySafeOverride.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppleAccessibilitySafeOverride.m; sourceTree = "<group>"; };
+		C9729D4C27432564009BB169 /* AppleAccessibilityRuntime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppleAccessibilityRuntime.h; sourceTree = "<group>"; };
+		C9729D592743270D009BB169 /* AppleAccessibilityBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleAccessibilityBase.h; sourceTree = "<group>"; };
+		C9729E2827434953009BB169 /* AppleAccessibility.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AppleAccessibility.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		C9729D37274324FC009BB169 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C9729E2127434953009BB169 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		93BB76AD25CB3A4600CF60ED = {
+			isa = PBXGroup;
+			children = (
+				C9729D3B274324FC009BB169 /* AppleAccessibility */,
+				93BB76B725CB3A4600CF60ED /* Products */,
+				C9155831273CDDB5007DF564 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		93BB76B725CB3A4600CF60ED /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C9729D3A274324FC009BB169 /* AppleAccessibility.framework */,
+				C9729E2827434953009BB169 /* AppleAccessibility.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		C9155831273CDDB5007DF564 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				C9155834273CDDBC007DF564 /* UIKit.framework */,
+				C9155832273CDDB5007DF564 /* UIKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		C9729D3B274324FC009BB169 /* AppleAccessibility */ = {
+			isa = PBXGroup;
+			children = (
+				C9729D3C274324FC009BB169 /* AppleAccessibility.h */,
+				C9729D592743270D009BB169 /* AppleAccessibilityBase.h */,
+				C9729D4727432564009BB169 /* AppleAccessibilityBridge.m */,
+				C9729D4127432564009BB169 /* AppleAccessibilityElement.h */,
+				C9729D4927432564009BB169 /* AppleAccessibilityElement.m */,
+				C9729D4627432564009BB169 /* AppleAccessibilityElementOrdering.h */,
+				C9729D4827432564009BB169 /* AppleAccessibilityElementOrdering.m */,
+				C9729D4C27432564009BB169 /* AppleAccessibilityRuntime.h */,
+				C9729D4A27432564009BB169 /* AppleAccessibilityRuntime.m */,
+				C9729D4427432564009BB169 /* AppleAccessibilitySafeOverride.h */,
+				C9729D4B27432564009BB169 /* AppleAccessibilitySafeOverride.m */,
+				C9729D5B27433B5C009BB169 /* Safe Overrides */,
+			);
+			path = AppleAccessibility;
+			sourceTree = "<group>";
+		};
+		C9729D5B27433B5C009BB169 /* Safe Overrides */ = {
+			isa = PBXGroup;
+			children = (
+				C9729D4527432564009BB169 /* UnityViewAccessibility.m */,
+			);
+			name = "Safe Overrides";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		C9729D35274324FC009BB169 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C9729D5227432564009BB169 /* AppleAccessibilityElementOrdering.h in Headers */,
+				C9729D5027432564009BB169 /* AppleAccessibilitySafeOverride.h in Headers */,
+				C9729D5A27432724009BB169 /* AppleAccessibilityBase.h in Headers */,
+				C9729D4D27432564009BB169 /* AppleAccessibilityElement.h in Headers */,
+				C9729D5827432564009BB169 /* AppleAccessibilityRuntime.h in Headers */,
+				C9729D3D274324FC009BB169 /* AppleAccessibility.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C9729E1227434953009BB169 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C9729E1327434953009BB169 /* AppleAccessibilityElementOrdering.h in Headers */,
+				C9729E1427434953009BB169 /* AppleAccessibilitySafeOverride.h in Headers */,
+				C9729E1527434953009BB169 /* AppleAccessibilityBase.h in Headers */,
+				C9729E1627434953009BB169 /* AppleAccessibilityElement.h in Headers */,
+				C9729E1827434953009BB169 /* AppleAccessibilityRuntime.h in Headers */,
+				C9729E1927434953009BB169 /* AppleAccessibility.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		C9729D39274324FC009BB169 /* AppleAccessibility_iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C9729D40274324FC009BB169 /* Build configuration list for PBXNativeTarget "AppleAccessibility_iOS" */;
+			buildPhases = (
+				C9729D35274324FC009BB169 /* Headers */,
+				C9729D36274324FC009BB169 /* Sources */,
+				C9729D37274324FC009BB169 /* Frameworks */,
+				C9729D38274324FC009BB169 /* Resources */,
+				C9729E0F27434910009BB169 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = AppleAccessibility_iOS;
+			productName = AppleAccessibility;
+			productReference = C9729D3A274324FC009BB169 /* AppleAccessibility.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		C9729E1127434953009BB169 /* AppleAccessibility_tvOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C9729E2527434953009BB169 /* Build configuration list for PBXNativeTarget "AppleAccessibility_tvOS" */;
+			buildPhases = (
+				C9729E1227434953009BB169 /* Headers */,
+				C9729E1A27434953009BB169 /* Sources */,
+				C9729E2127434953009BB169 /* Frameworks */,
+				C9729E2227434953009BB169 /* Resources */,
+				C9729E2327434953009BB169 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = AppleAccessibility_tvOS;
+			productName = AppleAccessibility;
+			productReference = C9729E2827434953009BB169 /* AppleAccessibility.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		93BB76AE25CB3A4600CF60ED /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 1250;
+				TargetAttributes = {
+					242473AB276D443B009747F6 = {
+						CreatedOnToolsVersion = 13.2;
+					};
+					C9729D39274324FC009BB169 = {
+						CreatedOnToolsVersion = 13.3;
+					};
+				};
+			};
+			buildConfigurationList = 93BB76B125CB3A4600CF60ED /* Build configuration list for PBXProject "Accessibility" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 93BB76AD25CB3A4600CF60ED;
+			productRefGroup = 93BB76B725CB3A4600CF60ED /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				C9729D39274324FC009BB169 /* AppleAccessibility_iOS */,
+				C9729E1127434953009BB169 /* AppleAccessibility_tvOS */,
+				242473AB276D443B009747F6 /* All */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		C9729D38274324FC009BB169 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C9729E2227434953009BB169 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		C9729D36274324FC009BB169 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C9729D5727432564009BB169 /* AppleAccessibilitySafeOverride.m in Sources */,
+				C9729D5427432564009BB169 /* AppleAccessibilityElementOrdering.m in Sources */,
+				C9729D5527432564009BB169 /* AppleAccessibilityElement.m in Sources */,
+				C9729D5127432564009BB169 /* UnityViewAccessibility.m in Sources */,
+				C9729D5327432564009BB169 /* AppleAccessibilityBridge.m in Sources */,
+				C9729D5627432564009BB169 /* AppleAccessibilityRuntime.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C9729E1A27434953009BB169 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C9729E1B27434953009BB169 /* AppleAccessibilitySafeOverride.m in Sources */,
+				C9729E1C27434953009BB169 /* AppleAccessibilityElementOrdering.m in Sources */,
+				C9729E1D27434953009BB169 /* AppleAccessibilityElement.m in Sources */,
+				C9729E1E27434953009BB169 /* UnityViewAccessibility.m in Sources */,
+				C9729E1F27434953009BB169 /* AppleAccessibilityBridge.m in Sources */,
+				C9729E2027434953009BB169 /* AppleAccessibilityRuntime.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		242473B0276D4443009747F6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C9729D39274324FC009BB169 /* AppleAccessibility_iOS */;
+			targetProxy = 242473AF276D4443009747F6 /* PBXContainerItemProxy */;
+		};
+		242473B2276D4443009747F6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C9729E1127434953009BB169 /* AppleAccessibility_tvOS */;
+			targetProxy = 242473B1276D4443009747F6 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		242473AD276D443B009747F6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ADDITIONAL_SDKS = "appletvos appletvsimulator iphoneos iphonesimulator";
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = XPSUQMMH5W;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
+			};
+			name = Debug;
+		};
+		242473AE276D443B009747F6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ADDITIONAL_SDKS = "appletvos appletvsimulator iphoneos iphonesimulator";
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = XPSUQMMH5W;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
+			};
+			name = Release;
+		};
+		93BB76BD25CB3A4600CF60ED /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_BITCODE = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		93BB76BE25CB3A4600CF60ED /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_BITCODE = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		C9729D3E274324FC009BB169 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = NO;
+				DEFINES_MODULE = YES;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_OUTPUT_FORMAT = XML;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.apple-plugins.AppleAccessibility-iOS";
+				PRODUCT_NAME = AppleAccessibility;
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		C9729D3F274324FC009BB169 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = NO;
+				DEFINES_MODULE = YES;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_OUTPUT_FORMAT = XML;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.apple-plugins.AppleAccessibility-iOS";
+				PRODUCT_NAME = AppleAccessibility;
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		C9729E2627434953009BB169 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = NO;
+				DEFINES_MODULE = YES;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_OUTPUT_FORMAT = XML;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.apple-plugins.AppleAccessibility-tvOS";
+				PRODUCT_NAME = AppleAccessibility;
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TVOS_DEPLOYMENT_TARGET = 13.0;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		C9729E2727434953009BB169 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = NO;
+				DEFINES_MODULE = YES;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_OUTPUT_FORMAT = XML;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.apple-plugins.AppleAccessibility-tvOS";
+				PRODUCT_NAME = AppleAccessibility;
+				SDKROOT = appletvos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TVOS_DEPLOYMENT_TARGET = 13.0;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		242473AC276D443B009747F6 /* Build configuration list for PBXAggregateTarget "All" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				242473AD276D443B009747F6 /* Debug */,
+				242473AE276D443B009747F6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		93BB76B125CB3A4600CF60ED /* Build configuration list for PBXProject "Accessibility" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				93BB76BD25CB3A4600CF60ED /* Debug */,
+				93BB76BE25CB3A4600CF60ED /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C9729D40274324FC009BB169 /* Build configuration list for PBXNativeTarget "AppleAccessibility_iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C9729D3E274324FC009BB169 /* Debug */,
+				C9729D3F274324FC009BB169 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C9729E2527434953009BB169 /* Build configuration list for PBXNativeTarget "AppleAccessibility_tvOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C9729E2627434953009BB169 /* Debug */,
+				C9729E2727434953009BB169 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 93BB76AE25CB3A4600CF60ED /* Project object */;
+}

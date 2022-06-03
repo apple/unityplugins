@@ -1,0 +1,21 @@
+{
+    "name": "Apple.PHASE.Editor",
+    "references": [
+        "Apple.PHASE",
+        "XNodeEditor",
+        "XNode",
+        "Apple.Core.Editor",
+        "Apple.Core"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

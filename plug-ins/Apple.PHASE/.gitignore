@@ -1,0 +1,75 @@
+# Git ignore file
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
+**/[Ll]ibrary/
+**/[Tt]emp/
+**/[Oo]bj/
+**/[Bb]uild/
+**/[Bb]uilds/
+**/[Ll]ogs/
+**/[Uu]ser[Ss]ettings/
+
+# Mac OS X Finder
+.DS_Store
+
+# Xcode (and ancestors) per-user config (very noisy, and not relevant)
+*.mode1
+*.mode1v3
+*.mode2v3
+*.perspective
+*.perspectivev3
+*.pbxuser
+
+# Xcode 4 and later
+xcuserdata/
+*.xcscmblueprint
+
+# Generated files
+*.o
+*.pyc
+*.hi
+
+# Build products
+build/
+*.[oa]
+
+# Other source repository archive directories (protects when importing)
+.hg
+.svn
+CVS
+.cvs
+.cvswrappers
+.cvs*
+
+# Automatic backup files
+*~.nib
+*.swp
+*~
+*(Autosaved).rtfd/
+Backup[ ]of[ ]*.pages/
+Backup[ ]of[ ]*.key/
+Backup[ ]of[ ]*.numbers/
+
+# Python modules
+MANIFEST
+dist/
+build/
+
+# Unity
+Apple.PHASE_Unity/Library/*
+Apple.PHASE_Unity/Temp/*
+Apple.PHASE_Unity/Builds/*
+.vs
+*.sln
+*.csproj
+*.cache
+!Apple.PHASE_Unity/Assets/Runtime/Plugins/iOS/AudioPluginPHASE.a.meta
+Apple.PHASE_Unity/.vscode/launch.json
+Apple.PHASE_Unity/.vscode/settings.json
+Apple.PHASE_Unity/Builds.meta
+Apple.PHASE_Unity/TestPlayers/*

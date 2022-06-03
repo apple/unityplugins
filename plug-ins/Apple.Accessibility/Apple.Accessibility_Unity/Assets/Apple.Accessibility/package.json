@@ -1,0 +1,28 @@
+{
+    "name": "com.apple.accessibility",
+    "version": "1.0.0",
+    "displayName": "Apple.Accessibility",
+    "description": "A Unity-port of Apple's UIAccessibility protocol from UIKit.framework",
+    "unity": "2019.4",
+    "dependencies": {
+        "com.apple.core": "1.0.0"
+    },
+    "keywords": [
+        "accessibility",
+        "uiaccessibility",
+        "voiceover",
+        "apple"
+    ],
+    "author": {
+        "name": "Apple, Inc",
+        "email": "developer@apple.com",
+        "url": "https://developer.apple.com"
+    },
+    "samples": [
+        {
+            "displayName": "UIAccessibility Demo",
+            "description": "Demos for UIAccessibility",
+            "path": "Demos~"
+        }
+    ]
+}

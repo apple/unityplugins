@@ -1,0 +1,19 @@
+{
+    "name": "Apple.CoreHaptics.Editor",
+    "references": [
+        "Apple.CoreHaptics",
+        "Apple.Core.Editor",
+        "Apple.Core"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

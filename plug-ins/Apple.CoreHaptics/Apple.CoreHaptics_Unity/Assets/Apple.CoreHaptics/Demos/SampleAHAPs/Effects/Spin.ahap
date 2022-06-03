@@ -1,0 +1,96 @@
+{
+    "Version" : 1.0,
+    "Metadata" : {
+        "Project" : "Apple.CoreHaptics Unity Plug-in",
+        "Created" : "6 June 2022",
+        "Description" : "A mixture of two continuous events, shifting the sharpness of one to create a crescendo oscillating feel."
+    },
+    "Pattern" : [
+        {
+            "Event" : {
+                "EventParameters" : [
+                    {
+                        "ParameterID" : "HapticIntensity",
+                        "ParameterValue" : 0.44
+                    },
+                    {
+                        "ParameterID" : "HapticSharpness",
+                        "ParameterValue" : 0.39
+                    }
+                ],
+                "Time" : 0.0,
+                "EventType" : "HapticContinuous",
+                "EventDuration" : 1.10
+            }
+        },
+        {
+            "Event" : {
+                "EventParameters" : [
+                    {
+                        "ParameterID" : "HapticIntensity",
+                        "ParameterValue" : 0.5
+                    },
+                    {
+                        "ParameterID" : "HapticSharpness",
+                        "ParameterValue" : 0.09
+                    }
+                ],
+                "Time" : 0.01,
+                "EventType" : "HapticContinuous",
+                "EventDuration" : 1.10
+            }
+        },
+        {
+            "ParameterCurve" : {
+                "ParameterID" : "HapticIntensityControl",
+                "ParameterCurveControlPoints" : [
+                    {
+                        "ParameterValue" : 0.185,
+                        "Time" : 0.033
+                    },
+                    {
+                        "ParameterValue" : 0.422,
+                        "Time" : 0.140
+                    },
+                    {
+                        "ParameterValue" : 0.656,
+                        "Time" : 0.275
+                    },
+                    {
+                        "ParameterValue" : 0.914,
+                        "Time" : 0.483
+                    },
+                    {
+                        "ParameterValue" : 1.000,
+                        "Time" : 0.706
+                    },
+                    {
+                        "ParameterValue" : 1.000,
+                        "Time" : 0.91
+                    },
+                    {
+                        "ParameterValue" : 0.000,
+                        "Time" : 1.15
+                    },
+                ],
+                "Time" : 0.0
+            }
+        },
+        {
+            "ParameterCurve" : {
+                "ParameterID" : "HapticSharpnessControl",
+                "ParameterCurveControlPoints" : [
+                    {
+                        "ParameterValue" : 0.0,
+                        "Time" : 0.100  
+                    },
+                    {
+                        "ParameterValue" : 0.8,
+                        "Time" : 1.100
+                    },
+                ],
+                "Time" : 0.0
+            }
+        }
+    ]
+}

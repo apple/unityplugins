@@ -1,0 +1,1 @@
+Placeholder license file.

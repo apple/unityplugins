@@ -1,0 +1,92 @@
+{
+    "Version": 1.0,
+    "Metadata": {
+        "Project": "Apple.CoreHaptics Unity Plug-in",
+        "Created": "6 June 2022",
+        "Description": "A two part action-reaction effect"
+    },
+    "Pattern": [
+        {
+            "Event": {
+                "Time": 0.0,
+                "EventType": "HapticContinuous",
+                "EventDuration": 0.1,
+                "EventParameters": [
+                    {
+                        "ParameterID": "HapticIntensity",
+                        "ParameterValue": 1.0
+                    },
+                    {
+                        "ParameterID": "HapticSharpness",
+                        "ParameterValue": -1.0
+                    }
+                ]
+            }
+        },
+        {
+            "Event": {
+                "Time": 0.2,
+                "EventType": "HapticContinuous",
+                "EventDuration": 0.2,
+                "EventParameters": [
+                    {
+                        "ParameterID": "HapticIntensity",
+                        "ParameterValue": 1.0
+                    },
+                    {
+                        "ParameterID": "HapticSharpness",
+                        "ParameterValue": 0.0
+                    }
+                ]
+            }
+        },
+        {
+            "ParameterCurve": {
+                "ParameterID": "HapticIntensityControl",
+                "Time": 0.0,
+                "ParameterCurveControlPoints": [
+                    {
+                        "Time": 0.0,
+                        "ParameterValue": 0.0
+                    },
+                    {
+                        "Time": 0.1,
+                        "ParameterValue": 1.0
+                    },
+                    {
+                        "Time": 0.1001,
+                        "ParameterValue": 0.0
+                    },
+                    {
+                        "Time": 0.1999,
+                        "ParameterValue": 0.0
+                    },
+                    {
+                        "Time": 0.2,
+                        "ParameterValue": 1.0
+                    },
+                    {
+                        "Time": 0.4,
+                        "ParameterValue": 0.0
+                    }
+                ]
+            }
+        },
+        {
+            "ParameterCurve": {
+                "ParameterID": "HapticSharpnessControl",
+                "Time": 0.0,
+                "ParameterCurveControlPoints": [
+                    {
+                        "Time": 0,
+                        "ParameterValue": 0.0
+                    },
+                    {
+                        "Time": 0.4,
+                        "ParameterValue": 0.4
+                    }
+                ]
+            }
+        }
+    ]
+}

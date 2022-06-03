@@ -1,0 +1,25 @@
+root = false
+
+[*.cs]
+# pascal_case_style - Define the PascalCase style
+dotnet_naming_style.pascal_case_style.capitalization = pascal_case
+
+# prefix_class_with_ui_style - Classes etc should be PascalCase, but can have a 'UI' prefix
+dotnet_naming_style.prefix_class_with_ui_style.capitalization = pascal_case
+dotnet_naming_style.prefix_class_with_ui_style.required_prefix = UI
+
+# Classes and structs start with 'UI'
+dotnet_naming_symbols.ui_class_group.applicable_kinds = class, struct, enum
+dotnet_naming_symbols.ui_class_group.applicable_accessibilities = public, protected, protected_internal, internal 
+dotnet_naming_rule.ui_class_rule.symbols              = ui_class_group
+dotnet_naming_rule.ui_class_rule.style                = prefix_class_with_ui_style
+dotnet_naming_rule.ui_class_rule.severity             = warning
+
+# Static Classes also start with 'UI'
+dotnet_naming_symbols.ui_static_group.applicable_kinds = class, struct, enum
+dotnet_naming_symbols.ui_static_group.applicable_accessibilities = public, protected, protected_internal, internal 
+dotnet_naming_symbols.ui_static_group.required_modifiers = static
+dotnet_naming_rule.ui_static_class_rule.symbols              = ui_static_group
+dotnet_naming_rule.ui_static_class_rule.style                = prefix_class_with_ui_style
+dotnet_naming_rule.ui_static_class_rule.severity             = warning
+

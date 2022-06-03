@@ -1,0 +1,19 @@
+{
+    "name": "Apple.Accessibility.Editor",
+    "rootNamespace": "",
+    "references": [
+        "Apple.Accessibility",
+        "Apple.Core.Editor"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

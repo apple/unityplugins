@@ -1,0 +1,51 @@
+{
+    "Version": 1.0,
+    "Metadata":
+    {
+        "Project" : "Apple.CoreHaptics Unity Plug-in",
+        "Created" : "6 June 2022",
+        "Description" : "Three cycles of replenishing continous effect using control points"
+    },
+    "Pattern":
+    [
+        {
+            "Event":
+            {
+                "Time": 0.0,
+                "EventType": "HapticContinuous",
+                "EventDuration": 1.5,
+                "EventParameters":
+                [
+                    { "ParameterID": "HapticIntensity", "ParameterValue": 1.0 },
+                    { "ParameterID": "HapticSharpness", "ParameterValue": 0.6 }
+                ]
+            }
+        },
+        {
+            "ParameterCurve":
+            {
+                "ParameterID": "HapticIntensityControl",
+                "Time": 0.0,
+                "ParameterCurveControlPoints":
+                [
+                    { "Time": 0.0001, "ParameterValue": 0.0 },
+                    { "Time": 0.2, "ParameterValue": 0.09 },
+                    { "Time": 0.3, "ParameterValue": 0.2 },
+                    { "Time": 0.4, "ParameterValue": 0.4 },
+                    { "Time": 0.5, "ParameterValue": 0.75 },
+                    { "Time": 0.50001, "ParameterValue": 0.0 },
+                    { "Time": 0.7, "ParameterValue": 0.09 },
+                    { "Time": 0.8, "ParameterValue": 0.2 },
+                    { "Time": 0.9, "ParameterValue": 0.4 },
+                    { "Time": 1.0, "ParameterValue": 0.75 },
+                    { "Time": 1.00001, "ParameterValue": 0.0 },
+                    { "Time": 1.2, "ParameterValue": 0.09 },
+                    { "Time": 1.3, "ParameterValue": 0.2 },
+                    { "Time": 1.4 ,"ParameterValue" :0.4 }, 
+                    { "Time": 1.5 ,"ParameterValue" :0.75 }, 
+                    { "Time": 1.50001, "ParameterValue": 0.0 },
+                ]
+            }
+        }
+    ]
+}

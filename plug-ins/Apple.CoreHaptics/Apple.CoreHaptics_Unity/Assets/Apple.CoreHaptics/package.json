@@ -1,0 +1,34 @@
+{
+    "name": "com.apple.corehaptics",
+    "version": "1.0.0",
+    "displayName": "Apple.CoreHaptics",
+    "description": "Apple's CoreHaptics.framework ported to Unity",
+    "unity": "2019.4",
+    "dependencies": {
+        "com.apple.core": "1.0.0"
+    },
+    "keywords": [
+        "haptics",
+        "corehaptics",
+        "uifeedbackgenerator",
+        "uifbg",
+        "apple"
+    ],
+    "author": {
+        "name": "Apple, Inc",
+        "email": "developer@apple.com",
+        "url": "https://developer.apple.com"
+    },
+    "samples": [
+        {
+            "displayName": "Apple.CoreHaptics HapticRicochet",
+            "description": "Sample game for the Apple.CoreHaptics Unity Plug-in",
+            "path": "Demos~/Ricochet"
+        },
+        {
+            "displayName": "Apple.CoreHaptics Sample AHAPs",
+            "description": "A collection of AHAPs to be used in games and inspire great haptic experiences",
+            "path": "Demos~/SampleAHAPs"
+        }
+    ]
+}

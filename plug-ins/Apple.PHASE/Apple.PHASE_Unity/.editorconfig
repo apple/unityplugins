@@ -1,0 +1,11 @@
+﻿root = false
+
+[*.cs]
+# prefix_class_with_phase_style - Classes etc should be PascalCase, but can have a 'PHASE' prefix
+dotnet_naming_style.prefix_class_with_phase_style.capitalization = pascal_case
+dotnet_naming_style.prefix_class_with_phase_style.required_prefix = PHASE
+
+# Classes and structs start with 'PHASE'
+dotnet_naming_symbols.phase_class_group.applicable_kinds = class, struct
+dotnet_naming_rule.phase_class_rule.symbols              = phase_class_group
+dotnet_naming_rule.phase_class_rule.style                = prefix_class_with_phase_style

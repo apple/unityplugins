@@ -1,0 +1,91 @@
+{
+    "Version" : 1.0,
+    "Metadata" : {
+        "Project" : "Apple.CoreHaptics Unity Plug-in",
+        "Created" : "6 June 2022",
+        "Description" : "A two step launch followed with a decaying continuous getting sharper",
+    },
+    "Pattern" : [
+        {
+            "Event" : {
+                "EventParameters" : [
+                    {
+                        "ParameterID" : "HapticIntensity",
+                        "ParameterValue" : 1
+                    },
+                    {
+                        "ParameterID" : "HapticSharpness",
+                        "ParameterValue" : 0.7
+                    }
+                ],
+                "EventType" : "HapticTransient",
+                "Time" : 0.0
+            }
+        },
+        {
+            "Event" : {
+                "EventParameters" : [
+                    {
+                        "ParameterID" : "HapticIntensity",
+                        "ParameterValue" : 1
+                    },
+                    {
+                        "ParameterID" : "HapticSharpness",
+                        "ParameterValue" : 0.3
+                    }
+                ],
+                "EventType" : "HapticTransient",
+                "Time" : 0.04
+            }
+        },
+        {
+            "Event" : {
+                "EventParameters" : [
+                    {
+                        "ParameterID" : "HapticIntensity",
+                        "ParameterValue" : 1.0
+                    },
+                    {
+                        "ParameterID" : "HapticSharpness",
+                        "ParameterValue" : 0.4
+                    }
+                ],
+                "Time" : 0.07,
+                "EventType" : "HapticContinuous",
+                "EventDuration" : 0.37
+            }
+        },
+        {
+            "ParameterCurve" : {
+                "ParameterID" : "HapticSharpnessControl",
+                "ParameterCurveControlPoints" : [
+                    {
+                        "ParameterValue" : -0.2,
+                        "Time" : 0.0
+                    },
+                    {
+                        "ParameterValue" : 0.6,
+                        "Time" : 0.37
+                    }
+                ],
+                "Time" : 0.07
+            }
+        },
+        {
+            "ParameterCurve" : {
+                "ParameterID" : "HapticIntensityControl",
+                "ParameterCurveControlPoints" : [
+                    {
+                        "ParameterValue" : 1.0,
+                        "Time" : 0.07
+                    },
+                    {
+                        "ParameterValue" : 0.0,
+                        "Time" : 0.37
+                    },
+                ],
+                "Time" : 0.07
+            }
+        }
+    ]
+}

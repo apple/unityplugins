@@ -1,0 +1,19 @@
+{
+    "name": "Apple.GameKit.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:1e90ac084be3f8d469f923da4b9f7c81",
+        "GUID:dd3feff86eff74ba4b6dccaa643eff23"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
