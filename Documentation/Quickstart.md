@@ -9,7 +9,7 @@ If you're new to working with Unity plug-ins, this guide should get you up and r
 * [3. Install](#3-Install) &mdash; Adding the plug-ins to your project
 
 ## 1. Download
-The first step is to download or clone the [Apple-Unity Plug-ins repository](https://github.pie.apple.com/jared-marsau/unity-plugins-oss-demo/tree/issue_114/build_script_docs), which contains all of the Apple Unity Plug-ins. Note that you can mix and match which plug-ins you use in your project in any cominbation with one exception: the Apple.Core plug-in must be installed for any of the other plug-ins to function properly.
+The first step is to download or clone the [Apple-Unity Plug-ins repository](https://github.com/apple/unityplugins), which contains all of the Apple Unity Plug-ins. Note that you can mix and match which plug-ins you use in your project in any cominbation with one exception: the Apple.Core plug-in must be installed for any of the other plug-ins to function properly.
 
 | Plug-In | Readme |
 |:--------|:------|
