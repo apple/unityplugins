@@ -1,11 +1,11 @@
-﻿using SimpleJSON;
+﻿using Apple.SimpleJSON;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 
-namespace UnityJSON
+namespace Apple.UnityJSON
 {
 	/// <summary>
 	/// An exception during the deserialization process.

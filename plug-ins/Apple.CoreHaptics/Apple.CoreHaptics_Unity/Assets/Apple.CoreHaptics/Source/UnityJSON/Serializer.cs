@@ -6,7 +6,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
-namespace UnityJSON
+namespace Apple.UnityJSON
 {
 	/// <summary>
 	/// Serializes an object into JSON string. Subclasses should override

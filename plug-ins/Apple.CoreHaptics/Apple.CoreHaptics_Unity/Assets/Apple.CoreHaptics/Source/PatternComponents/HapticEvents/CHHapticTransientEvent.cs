@@ -1,5 +1,5 @@
 using System;
-using UnityJSON;
+using Apple.UnityJSON;
 
 namespace Apple.CoreHaptics
 {

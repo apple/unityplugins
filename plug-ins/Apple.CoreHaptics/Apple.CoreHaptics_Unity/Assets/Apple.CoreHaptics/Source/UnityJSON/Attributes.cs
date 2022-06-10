@@ -1,8 +1,8 @@
-﻿using SimpleJSON;
+﻿using Apple.SimpleJSON;
 using System;
 using System.Collections.Generic;
 
-namespace UnityJSON
+namespace Apple.UnityJSON
 {
 	/// <summary>
 	/// Defines the JSON serialization and deserialization options for a 

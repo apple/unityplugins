@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using UnityJSON;
+using Apple.UnityJSON;
 
 namespace Apple.CoreHaptics
 {
