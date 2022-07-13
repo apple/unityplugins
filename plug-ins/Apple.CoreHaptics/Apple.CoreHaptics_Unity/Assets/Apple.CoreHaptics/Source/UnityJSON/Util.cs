@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace UnityJSON
+namespace Apple.UnityJSON
 {
 	internal static class Util
 	{

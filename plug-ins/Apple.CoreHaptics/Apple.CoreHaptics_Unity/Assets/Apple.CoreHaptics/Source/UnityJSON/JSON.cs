@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections;
 
-namespace UnityJSON
+namespace Apple.UnityJSON
 {
 	/// <summary>
 	/// Provides high-level public API for the serialization and deserialization.

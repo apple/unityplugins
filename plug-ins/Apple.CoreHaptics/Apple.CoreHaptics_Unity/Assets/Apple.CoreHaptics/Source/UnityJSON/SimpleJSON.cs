@@ -83,7 +83,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace SimpleJSON
+namespace Apple.SimpleJSON
 {
 	public enum JSONNodeType
 	{

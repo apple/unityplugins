@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-using UnityJSON;
+using Apple.UnityJSON;
 using UnityEngine;
 
 #if UNITY_EDITOR

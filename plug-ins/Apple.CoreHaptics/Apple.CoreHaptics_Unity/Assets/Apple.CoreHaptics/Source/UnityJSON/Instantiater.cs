@@ -1,9 +1,9 @@
-﻿using SimpleJSON;
+﻿using Apple.SimpleJSON;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace UnityJSON
+namespace Apple.UnityJSON
 {
 	/// <summary>
 	/// An exception during the instantiation process.

@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 
 using UnityEngine;
-using UnityJSON;
+using Apple.UnityJSON;
 
 #if UNITY_EDITOR
 using UnityEditor;

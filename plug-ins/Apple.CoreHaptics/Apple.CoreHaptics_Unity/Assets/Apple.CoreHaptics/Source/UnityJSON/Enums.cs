@@ -1,4 +1,4 @@
-﻿namespace UnityJSON
+﻿namespace Apple.UnityJSON
 {
 	/// <summary>
 	/// Serialization/deserialization options for a single
