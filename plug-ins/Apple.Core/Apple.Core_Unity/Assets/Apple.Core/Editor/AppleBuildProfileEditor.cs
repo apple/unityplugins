@@ -69,8 +69,8 @@ namespace Apple.Core
             _serializedNonExemptEncryption = serializedObject.FindProperty("AppUsesNonExemptEncryption");
 
             _serializedMinimumOSVersion_iOS = serializedObject.FindProperty("MinimumOSVersion_iOS");
-            _serializedMinimumOSVersion_macOS = serializedObject.FindProperty("MinimumOSVersion_tvOS");
-            _serializedMinimumOSVersion_tvOS = serializedObject.FindProperty("MinimumOSVersion_macOS");
+            _serializedMinimumOSVersion_macOS = serializedObject.FindProperty("MinimumOSVersion_macOS");
+            _serializedMinimumOSVersion_tvOS = serializedObject.FindProperty("MinimumOSVersion_tvOS");
 
             _serializedAutomateEntitlements = serializedObject.FindProperty("AutomateEntitlements");
             _serializedDefaultEntitlements = serializedObject.FindProperty("DefaultEntitlements");
