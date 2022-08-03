@@ -23,20 +23,23 @@ namespace Apple.Core
 #if UNITY_EDITOR_OSX
         public override void OnFinalizePostProcess(AppleBuildProfile appleBuildProfile, BuildTarget buildTarget, string pathToBuiltProject)
         {
-            Debug.Log($"AppleBuild: disabling Bitcode for framework and app targets.");
-            var pbxProject = AppleBuild.GetPbxProject(buildTarget, pathToBuiltProject);
-            var pbxProjectPath = AppleBuild.GetPbxProjectPath(buildTarget, pathToBuiltProject);
-
-            if (pbxProject != null)
+            if (buildTarget != BuildTarget.tvOS)
             {
-                var targetGuid = (buildTarget == BuildTarget.StandaloneOSX) ? pbxProject.TargetGuidByName(Application.productName) : pbxProject.GetUnityMainTargetGuid();
-                var frameworkGuid = pbxProject.GetUnityFrameworkTargetGuid();
+                Debug.Log($"AppleBuild: disabling Bitcode for framework and app targets.");
+                var pbxProject = AppleBuild.GetPbxProject(buildTarget, pathToBuiltProject);
+                var pbxProjectPath = AppleBuild.GetPbxProjectPath(buildTarget, pathToBuiltProject);
 
-                pbxProject.AddBuildProperty(frameworkGuid, "ENABLE_BITCODE", "false");
-                pbxProject.AddBuildProperty(targetGuid, "ENABLE_BITCODE", "false");
+                if (pbxProject != null)
+                {
+                    var targetGuid = (buildTarget == BuildTarget.StandaloneOSX) ? pbxProject.TargetGuidByName(Application.productName) : pbxProject.GetUnityMainTargetGuid();
+                    var frameworkGuid = pbxProject.GetUnityFrameworkTargetGuid();
 
-                Debug.Log($"AppleBuild: Writing bitcode changes to PBXProject {pbxProjectPath}...");
-                pbxProject.WriteToFile(pbxProjectPath);
+                    pbxProject.AddBuildProperty(frameworkGuid, "ENABLE_BITCODE", "false");
+                    pbxProject.AddBuildProperty(targetGuid, "ENABLE_BITCODE", "false");
+
+                    Debug.Log($"AppleBuild: Writing bitcode changes to PBXProject {pbxProjectPath}...");
+                    pbxProject.WriteToFile(pbxProjectPath);
+                }
             }
         }
 
