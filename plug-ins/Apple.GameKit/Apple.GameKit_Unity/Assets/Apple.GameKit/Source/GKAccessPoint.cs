@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using Apple.Core.Runtime;
 using UnityEngine;
+using UnityEngine.Scripting;
 
 namespace Apple.GameKit
 {
@@ -11,6 +12,7 @@ namespace Apple.GameKit
     public class GKAccessPoint : InteropReference
     {
         #region Init & Dispose
+        [Preserve]
         public GKAccessPoint(IntPtr pointer) : base(pointer)
         {
         }
