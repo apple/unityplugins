@@ -1,12 +1,12 @@
 {
-    "name": "com.apple.phase",
+    "name": "com.apple.unityplugin.phase",
     "displayName": "Apple.PHASE",
     "description": "A Unity plugin for Apple's PHASE.framework.",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "unity": "2020.1",
     "unityRelease": "2f1",
     "dependencies": {
-        "com.apple.core": "1.0.0"
+        "com.apple.unityplugin.core": "1.0.1"
     },
     "keywords": [
         "audio",

@@ -24,14 +24,14 @@ namespace Apple.CoreHaptics.UnitTests
 
         public override BuildPlayerOptions ModifyOptions(BuildPlayerOptions playerOptions)
         {
-            Debug.Log("com.apple.corehaptics: Modifying test build player options.");
+            Debug.Log("com.apple.unityplugin.corehaptics: Modifying test build player options.");
             if (!playerOptions.scenes.ToArray().Contains(_testScene))
             {
                 Debug.Log($"Adding test scene {_testScene} to test build.");
                 playerOptions.scenes = playerOptions.scenes.Append(_testScene).ToArray();
             }
 
-            Debug.Log("com.apple.corehaptics: Calling base ModifyOptions.");
+            Debug.Log("com.apple.unityplugin.corehaptics: Calling base ModifyOptions.");
             playerOptions = base.ModifyOptions(playerOptions);
 
             return playerOptions;
@@ -39,7 +39,7 @@ namespace Apple.CoreHaptics.UnitTests
 
         public override void Cleanup()
         {
-            Debug.Log("com.apple.corehaptics: Calling base cleanup.");
+            Debug.Log("com.apple.unityplugin.corehaptics: Calling base cleanup.");
             base.Cleanup();
         }
     }

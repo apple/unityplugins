@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "com.apple.core": {
+    "com.apple.unityplugin.core": {
       "version": "file:../../../Apple.Core/Apple.Core_Unity/Assets/Apple.Core",
       "depth": 0,
       "source": "local",
