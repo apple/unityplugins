@@ -1,3 +1,4 @@
+#if UNITY_EDITOR_OSX
 using System;
 using System.IO;
 using System.Collections;
@@ -174,3 +175,4 @@ public class AppleNativePluginProcessor : AssetPostprocessor
         }
     }
 }
+#endif

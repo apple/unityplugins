@@ -1,5 +1,7 @@
 using UnityEditor;
+#if UNITY_EDITOR_OSX
 using UnityEditor.iOS.Xcode;
+#endif
 using UnityEngine;
 
 namespace Apple.Core
