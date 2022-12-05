@@ -30,6 +30,7 @@ namespace Apple.Core
             return appleBuildStepTypes;
         }
 
+#if UNITY_EDITOR_OSX
         /// <summary>
         /// Called at the beginning of performing build post process. This is invoked first for all steps.
         /// </summary>
@@ -80,5 +81,6 @@ namespace Apple.Core
         /// <param name="buildTarget"></param>
         /// <param name="pathToBuiltProject"></param>
         public virtual void OnFinalizePostProcess(AppleBuildProfile appleBuildProfile, BuildTarget buildTarget, string pathToBuiltProject) { }
+#endif
     }
 }
