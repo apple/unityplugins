@@ -187,27 +187,30 @@
 
 - (NSArray<UIAccessibilityCustomAction *> *)accessibilityCustomActions
 {
-    if ( [AppleAccessibilityRuntime sharedInstance].unityAccessibilityCustomActionsCount != nil )
+    if ( @available(iOS 13.0, tvOS 13.0, *) )
     {
-        NSMutableArray<UIAccessibilityCustomAction *> *actions = [NSMutableArray array];
-        uint64_t actionsCount = [AppleAccessibilityRuntime sharedInstance].unityAccessibilityCustomActionsCount(self.identifier);
-        for ( uint64_t i = 0; i < actionsCount; i++ )
+        if ( [AppleAccessibilityRuntime sharedInstance].unityAccessibilityCustomActionsCount != nil )
         {
-            NSString *name = [NSString stringWithFormat:@"%@", @(i)];
-            if ( [AppleAccessibilityRuntime sharedInstance].unityCustomActionName != nil )
+            NSMutableArray<UIAccessibilityCustomAction *> *actions = [NSMutableArray array];
+            uint64_t actionsCount = [AppleAccessibilityRuntime sharedInstance].unityAccessibilityCustomActionsCount(self.identifier);
+            for ( uint64_t i = 0; i < actionsCount; i++ )
             {
-                name = [AppleAccessibilityRuntime sharedInstance].unityCustomActionName(self.identifier, @(i));
-            }
-            UIAccessibilityCustomAction *action = [[UIAccessibilityCustomAction alloc] initWithName:name actionHandler:^BOOL(UIAccessibilityCustomAction * _Nonnull customAction) {
-                if ( [AppleAccessibilityRuntime sharedInstance].unityPerformCustomAction != nil )
+                NSString *name = [NSString stringWithFormat:@"%@", @(i)];
+                if ( [AppleAccessibilityRuntime sharedInstance].unityCustomActionName != nil )
                 {
-                    return [AppleAccessibilityRuntime sharedInstance].unityPerformCustomAction(self.identifier, @(i));
+                    name = [AppleAccessibilityRuntime sharedInstance].unityCustomActionName(self.identifier, @(i));
                 }
-                return NO;
-            }];
-            [actions addObject:action];
+                UIAccessibilityCustomAction *action = [[UIAccessibilityCustomAction alloc] initWithName:name actionHandler:^BOOL(UIAccessibilityCustomAction * _Nonnull customAction) {
+                    if ( [AppleAccessibilityRuntime sharedInstance].unityPerformCustomAction != nil )
+                    {
+                        return [AppleAccessibilityRuntime sharedInstance].unityPerformCustomAction(self.identifier, @(i));
+                    }
+                    return NO;
+                }];
+                [actions addObject:action];
+            }
+            return actions;
         }
-        return actions;
     }
     return [super accessibilityCustomActions];
 }
@@ -218,7 +221,7 @@
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"%@: identifier: %ld, parentIdentifier: %ld, element: %@", super.description, self.identifier.integerValue, self.parentIdentifier.integerValue, self.element];
+    return [NSString stringWithFormat:@"%@: identifier: %d, parentIdentifier: %d, element: %@", super.description, self.identifier.intValue, self.parentIdentifier.intValue, self.element];
 }
 
 @end

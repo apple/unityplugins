@@ -785,7 +785,6 @@
 		7A55184F24E2FC09004CDB45 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BITCODE_GENERATION_MODE = bitcode;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
@@ -804,7 +803,6 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				OTHER_CFLAGS = "-fembed-bitcode";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.apple-plugins.CoreHapticsWrapper-iOS";
 				PRODUCT_NAME = CoreHapticsWrapper;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -820,7 +818,6 @@
 		7A55185024E2FC09004CDB45 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BITCODE_GENERATION_MODE = bitcode;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
@@ -839,7 +836,6 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				OTHER_CFLAGS = "-fembed-bitcode";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.apple-plugins.CoreHapticsWrapper-iOS";
 				PRODUCT_NAME = CoreHapticsWrapper;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -913,7 +909,6 @@
 		7AE5BB7F2502C06C00BDBEDA /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BITCODE_GENERATION_MODE = bitcode;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
@@ -922,7 +917,6 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_BITCODE = YES;
 				INFOPLIST_FILE = CoreHapticsWrapper/Info.plist;
 				INFOPLIST_OUTPUT_FORMAT = XML;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -933,8 +927,6 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				OTHER_CFLAGS = "-fembed-bitcode";
-				OTHER_CODE_SIGN_FLAGS = "-fembed-bitcode";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.apple-plugins.CoreHapticsWrapper-tvOS";
 				PRODUCT_NAME = CoreHapticsWrapper;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -951,7 +943,6 @@
 		7AE5BB802502C06C00BDBEDA /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BITCODE_GENERATION_MODE = bitcode;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
@@ -960,7 +951,6 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_BITCODE = YES;
 				INFOPLIST_FILE = CoreHapticsWrapper/Info.plist;
 				INFOPLIST_OUTPUT_FORMAT = XML;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -971,8 +961,6 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				OTHER_CFLAGS = "-fembed-bitcode";
-				OTHER_CODE_SIGN_FLAGS = "-fembed-bitcode";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.apple-plugins.CoreHapticsWrapper-tvOS";
 				PRODUCT_NAME = CoreHapticsWrapper;
 				PROVISIONING_PROFILE_SPECIFIER = "";

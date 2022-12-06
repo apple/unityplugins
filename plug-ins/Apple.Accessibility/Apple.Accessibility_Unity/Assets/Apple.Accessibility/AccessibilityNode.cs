@@ -542,7 +542,7 @@ namespace Apple.Accessibility
         [SerializeField] private bool m_userIsAccessibilityElement = true;
         internal bool _isAccessibilityElement()
         {
-            static bool defaultProvider(Component c)
+            bool defaultProvider(Component c)
             {
                 return false;
             }
@@ -554,7 +554,7 @@ namespace Apple.Accessibility
         [SerializeField] private AccessibilityTrait m_userAccessibilityTraits = AccessibilityTrait.None;
         internal AccessibilityTrait _accessibilityTraits()
         {
-            static AccessibilityTrait defaultProvider(Component c)
+            AccessibilityTrait defaultProvider(Component c)
             {
                 if (c is Behaviour)
                 {
@@ -570,7 +570,7 @@ namespace Apple.Accessibility
         private Rect m_userAccessibilityFrame;
         internal Rect _accessibilityFrame()
         {
-            static Rect defaultProvider(Component c)
+            Rect defaultProvider(Component c)
             {
                 Rect defaultFrame = Rect.zero;
                 foreach (Renderer r in c.GetComponents<Renderer>())
@@ -608,7 +608,7 @@ namespace Apple.Accessibility
         [SerializeField] private string m_userAccessibilityLabel;
         internal string _accessibilityLabel()
         {
-            static string defaultProvider(Component c)
+            string defaultProvider(Component c)
             {
                 return null;
             }
@@ -620,7 +620,7 @@ namespace Apple.Accessibility
         [SerializeField] private string m_userAccessibilityValue;
         internal string _accessibilityValue()
         {
-            static string defaultProvider(Component c)
+            string defaultProvider(Component c)
             {
                 return null;
             }
@@ -632,7 +632,7 @@ namespace Apple.Accessibility
         [SerializeField] private string m_userAccessibilityHint;
         internal string _accessibilityHint()
         {
-            static string defaultProvider(Component c)
+            string defaultProvider(Component c)
             {
                 return null;
             }
@@ -644,7 +644,7 @@ namespace Apple.Accessibility
         [SerializeField] private string m_userAccessibilityIdentifier;
         internal string _accessibilityIdentifier()
         {
-            static string defaultProvider(Component c)
+            string defaultProvider(Component c)
             {
                 return null;
             }
@@ -656,7 +656,7 @@ namespace Apple.Accessibility
         private Vector2 m_userAccessibilityActivationPoint;
         internal Vector2 _accessibilityActivationPoint()
         {
-            static Vector2 defaultProvider(Component c)
+            Vector2 defaultProvider(Component c)
             {
                 // use positiveInfinity to indicate no-value.
                 return Vector2.positiveInfinity;
@@ -669,7 +669,7 @@ namespace Apple.Accessibility
         private AccessibilityCustomAction[] m_userAccessibilityCustomActions;
         internal AccessibilityCustomAction[] _accessibilityCustomActions()
         {
-            static AccessibilityCustomAction[] defaultProvider(Component c)
+            AccessibilityCustomAction[] defaultProvider(Component c)
             {
                 return null;
             }
@@ -681,7 +681,7 @@ namespace Apple.Accessibility
         [SerializeField] private bool m_userAccessibilityViewIsModal;
         internal bool _accessibilityViewIsModal()
         {
-            static bool defaultProvider(Component c)
+            bool defaultProvider(Component c)
             {
                 return false;
             }
@@ -691,7 +691,7 @@ namespace Apple.Accessibility
 
         internal bool _accessibilityIncrement()
         {
-            static bool defaultProvider(Component c)
+            bool defaultProvider(Component c)
             {
                 return false;
             }
@@ -700,7 +700,7 @@ namespace Apple.Accessibility
 
         internal bool _accessibilityDecrement()
         {
-            static bool defaultProvider(Component c)
+            bool defaultProvider(Component c)
             {
                 return false;
             }
@@ -709,7 +709,7 @@ namespace Apple.Accessibility
 
         internal bool _accessibilityScroll(AccessibilityScrollDirection direction)
         {
-            static bool defaultProvider(Component c)
+            bool defaultProvider(Component c)
             {
                 return false;
             }
@@ -728,7 +728,7 @@ namespace Apple.Accessibility
 
         internal bool _accessibilityPerformEscape()
         {
-            static bool defaultProvider(Component c)
+            bool defaultProvider(Component c)
             {
                 return false;
             }
@@ -747,7 +747,7 @@ namespace Apple.Accessibility
 
         internal bool _accessibilityPerformMagicTap()
         {
-            static bool defaultProvider(Component c)
+            bool defaultProvider(Component c)
             {
                 return false;
             }
@@ -766,7 +766,7 @@ namespace Apple.Accessibility
 
         internal bool _accessibilityActivate()
         {
-            static bool defaultProvider(Component c)
+            bool defaultProvider(Component c)
             {
                 return false;
             }
