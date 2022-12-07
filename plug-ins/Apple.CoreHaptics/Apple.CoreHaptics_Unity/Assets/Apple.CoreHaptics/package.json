@@ -1,11 +1,11 @@
 {
     "name": "com.apple.unityplugin.corehaptics",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "displayName": "Apple.CoreHaptics",
     "description": "Apple's CoreHaptics.framework ported to Unity",
     "unity": "2019.4",
     "dependencies": {
-        "com.apple.unityplugin.core": "1.0.1"
+        "com.apple.unityplugin.core": "1.0.2"
     },
     "keywords": [
         "haptics",

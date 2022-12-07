@@ -176,21 +176,25 @@ APPLE_ACCESSIBILITY_EXTERN int _UnityAX_UIAccessibilityPreferredContentSizeCateg
 
 APPLE_ACCESSIBILITY_EXTERN float _UnityAX_UIAccessibilityPreferredContentSizeMultiplier(void)
 {
-    UITraitCollection *defaultTraitCollection = [UITraitCollection traitCollectionWithPreferredContentSizeCategory:UIContentSizeCategoryLarge];
-    UITraitCollection *newTraitCollection = [UITraitCollection traitCollectionWithPreferredContentSizeCategory:UIApplication.sharedApplication.preferredContentSizeCategory];
-
-    UIFont *defaultFont = [UIFont preferredFontForTextStyle:UIFontTextStyleBody compatibleWithTraitCollection:defaultTraitCollection];
-    UIFont *newFont = [UIFont preferredFontForTextStyle:UIFontTextStyleBody compatibleWithTraitCollection:newTraitCollection];
-
-    CGFloat percentage = ((newFont.pointSize / defaultFont.pointSize) * 100);
-
-    int roundedPercentage = (int)percentage;
-    roundedPercentage = roundedPercentage - (roundedPercentage % 5); // bucketize by 5s
-    if ( roundedPercentage == 100 ) // avoid rounding error
+    if ( @available(iOS 10.0, tvOS 10.0, *) )
     {
-        return 1;
+        UITraitCollection *defaultTraitCollection = [UITraitCollection traitCollectionWithPreferredContentSizeCategory:UIContentSizeCategoryLarge];
+        UITraitCollection *newTraitCollection = [UITraitCollection traitCollectionWithPreferredContentSizeCategory:UIApplication.sharedApplication.preferredContentSizeCategory];
+
+        UIFont *defaultFont = [UIFont preferredFontForTextStyle:UIFontTextStyleBody compatibleWithTraitCollection:defaultTraitCollection];
+        UIFont *newFont = [UIFont preferredFontForTextStyle:UIFontTextStyleBody compatibleWithTraitCollection:newTraitCollection];
+
+        CGFloat percentage = ((newFont.pointSize / defaultFont.pointSize) * 100);
+
+        int roundedPercentage = (int)percentage;
+        roundedPercentage = roundedPercentage - (roundedPercentage % 5); // bucketize by 5s
+        if ( roundedPercentage == 100 ) // avoid rounding error
+        {
+            return 1;
+        }
+        return (float)roundedPercentage / (float)100;
     }
-    return (float)roundedPercentage / (float)100;
+    return 1;
 }
 
 static AccessibilityNotificationDelegate __axIsVoiceOverRunningDidChangeNotificationDelegate = NULL;
@@ -295,7 +299,14 @@ static AccessibilityNotificationDelegate __axIsVideoAutoplayEnabledDidChangeNoti
 APPLE_ACCESSIBILITY_EXTERN void _UnityAX_registerAccessibilityIsVideoAutoplayEnabledDidChangeNotification(AccessibilityNotificationDelegate delegate) { __axIsVideoAutoplayEnabledDidChangeNotificationDelegate = delegate; }
 APPLE_ACCESSIBILITY_EXTERN bool _UnityAX_UIAccessibilityIsVideoAutoplayEnabled(void)
 {
-    return UIAccessibilityIsVideoAutoplayEnabled();
+    if ( @available(iOS 13.0, tvOS 13.0, *) )
+    {
+        return UIAccessibilityIsVideoAutoplayEnabled();
+    }
+    else
+    {
+        return false;
+    }
 }
 
 static AccessibilityNotificationDelegate __axDarkerSystemColorsEnabledDidChangeNotificationDelegate = NULL;
@@ -330,14 +341,28 @@ static AccessibilityNotificationDelegate __axShouldDifferentiateWithoutColorDidC
 APPLE_ACCESSIBILITY_EXTERN void _UnityAX_registerAccessibilityShouldDifferentiateWithoutColorDidChangeNotification(AccessibilityNotificationDelegate delegate) { __axShouldDifferentiateWithoutColorDidChangeNotificationDelegate = delegate; }
 APPLE_ACCESSIBILITY_EXTERN bool _UnityAX_UIAccessibilityShouldDifferentiateWithoutColor(void)
 {
-    return UIAccessibilityShouldDifferentiateWithoutColor();
+    if ( @available(iOS 13.0, tvOS 13.0, *) )
+    {
+        return UIAccessibilityShouldDifferentiateWithoutColor();
+    }
+    else
+    {
+        return false;
+    }
 }
 
 static AccessibilityNotificationDelegate __axIsOnOffSwitchLabelsEnabledDidChangeNotificationDelegate = NULL;
 APPLE_ACCESSIBILITY_EXTERN void _UnityAX_registerAccessibilityIsOnOffSwitchLabelsEnabledDidChangeNotification(AccessibilityNotificationDelegate delegate) { __axIsOnOffSwitchLabelsEnabledDidChangeNotificationDelegate = delegate; }
 APPLE_ACCESSIBILITY_EXTERN bool _UnityAX_UIAccessibilityIsOnOffSwitchLabelsEnabled(void)
 {
-    return UIAccessibilityIsOnOffSwitchLabelsEnabled();
+    if ( @available(iOS 13.0, tvOS 13.0, *) )
+    {
+        return UIAccessibilityIsOnOffSwitchLabelsEnabled();
+    }
+    else
+    {
+        return false;
+    }
 }
 
 
@@ -349,130 +374,179 @@ APPLE_ACCESSIBILITY_HIDDEN
 @implementation _AppleAccessibilityNotificationObserver
 - (void)_accessibilityStatusChangedCallback:(NSNotification *)notification {
 #if TARGET_OS_IOS
-    if ( [notification.name isEqualToString:UIContentSizeCategoryDidChangeNotification] ) {
-        if ( __axPreferredContentSizeCategoryDidChangeNotificationDelegate != NULL ) {
+    if ( [notification.name isEqualToString:UIContentSizeCategoryDidChangeNotification] )
+    {
+        if ( __axPreferredContentSizeCategoryDidChangeNotificationDelegate != NULL )
+        {
             __axPreferredContentSizeCategoryDidChangeNotificationDelegate();
         }
         return;
     }
 #endif
-    if ( [notification.name isEqualToString:UIAccessibilityVoiceOverStatusDidChangeNotification] ) {
-        if ( __axIsVoiceOverRunningDidChangeNotificationDelegate != NULL ) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    if ( [notification.name isEqualToString:UIAccessibilityVoiceOverStatusChanged] )
+#pragma clang diagnostic pop
+    {
+        if ( __axIsVoiceOverRunningDidChangeNotificationDelegate != NULL )
+        {
             __axIsVoiceOverRunningDidChangeNotificationDelegate();
         }
         return;
     }
-    if ( [notification.name isEqualToString:UIAccessibilitySwitchControlStatusDidChangeNotification] ) {
-        if ( __axIsSwitchControlRunningDidChangeNotificationDelegate != NULL ) {
+    if ( [notification.name isEqualToString:UIAccessibilitySwitchControlStatusDidChangeNotification] )
+    {
+        if ( __axIsSwitchControlRunningDidChangeNotificationDelegate != NULL )
+        {
             __axIsSwitchControlRunningDidChangeNotificationDelegate();
         }
         return;
     }
-    if ( [notification.name isEqualToString:UIAccessibilityMonoAudioStatusDidChangeNotification] ) {
-        if ( __axIsMonoAudioEnabledDidChangeNotificationDelegate != NULL ) {
+    if ( [notification.name isEqualToString:UIAccessibilityMonoAudioStatusDidChangeNotification] )
+    {
+        if ( __axIsMonoAudioEnabledDidChangeNotificationDelegate != NULL )
+        {
             __axIsMonoAudioEnabledDidChangeNotificationDelegate();
         }
         return;
     }
-    if ( [notification.name isEqualToString:UIAccessibilityClosedCaptioningStatusDidChangeNotification] ) {
-        if ( __axIsClosedCaptioningEnabledDidChangeNotificationDelegate != NULL ) {
+    if ( [notification.name isEqualToString:UIAccessibilityClosedCaptioningStatusDidChangeNotification] )
+    {
+        if ( __axIsClosedCaptioningEnabledDidChangeNotificationDelegate != NULL )
+        {
             __axIsClosedCaptioningEnabledDidChangeNotificationDelegate();
         }
         return;
     }
-    if ( [notification.name isEqualToString:UIAccessibilityInvertColorsStatusDidChangeNotification] ) {
-        if ( __axIsInvertColorsEnabledDidChangeNotificationDelegate != NULL ) {
+    if ( [notification.name isEqualToString:UIAccessibilityInvertColorsStatusDidChangeNotification] )
+    {
+        if ( __axIsInvertColorsEnabledDidChangeNotificationDelegate != NULL )
+        {
             __axIsInvertColorsEnabledDidChangeNotificationDelegate();
         }
         return;
     }
-    if ( [notification.name isEqualToString:UIAccessibilityGuidedAccessStatusDidChangeNotification] ) {
-        if ( __axIsGuidedAccessEnabledDidChangeNotificationDelegate != NULL ) {
+    if ( [notification.name isEqualToString:UIAccessibilityGuidedAccessStatusDidChangeNotification] )
+    {
+        if ( __axIsGuidedAccessEnabledDidChangeNotificationDelegate != NULL )
+        {
             __axIsGuidedAccessEnabledDidChangeNotificationDelegate();
         }
         return;
     }
-    if ( [notification.name isEqualToString:UIAccessibilityBoldTextStatusDidChangeNotification] ) {
-        if ( __axIsBoldTextEnabledDidChangeNotificationDelegate != NULL ) {
+    if ( [notification.name isEqualToString:UIAccessibilityBoldTextStatusDidChangeNotification] )
+    {
+        if ( __axIsBoldTextEnabledDidChangeNotificationDelegate != NULL )
+        {
             __axIsBoldTextEnabledDidChangeNotificationDelegate();
         }
         return;
     }
     if ( @available(iOS 14.0, tvOS 14.0, *) ) {
-        if ( [notification.name isEqualToString:UIAccessibilityButtonShapesEnabledStatusDidChangeNotification] ) {
-            if ( __axButtonShapesEnabledDidChangeNotificationDelegate != NULL ) {
+        if ( [notification.name isEqualToString:UIAccessibilityButtonShapesEnabledStatusDidChangeNotification] )
+        {
+            if ( __axButtonShapesEnabledDidChangeNotificationDelegate != NULL )
+            {
                 __axButtonShapesEnabledDidChangeNotificationDelegate();
             }
             return;
         }
     }
-    if ( [notification.name isEqualToString:UIAccessibilityGrayscaleStatusDidChangeNotification] ) {
-        if ( __axIsGrayscaleEnabledDidChangeNotificationDelegate != NULL ) {
+    if ( [notification.name isEqualToString:UIAccessibilityGrayscaleStatusDidChangeNotification] )
+    {
+        if ( __axIsGrayscaleEnabledDidChangeNotificationDelegate != NULL )
+        {
             __axIsGrayscaleEnabledDidChangeNotificationDelegate();
         }
         return;
     }
-    if ( [notification.name isEqualToString:UIAccessibilityReduceTransparencyStatusDidChangeNotification] ) {
-        if ( __axIsReduceTransparencyEnabledDidChangeNotificationDelegate != NULL ) {
+    if ( [notification.name isEqualToString:UIAccessibilityReduceTransparencyStatusDidChangeNotification] )
+    {
+        if ( __axIsReduceTransparencyEnabledDidChangeNotificationDelegate != NULL )
+        {
             __axIsReduceTransparencyEnabledDidChangeNotificationDelegate();
         }
         return;
     }
-    if ( [notification.name isEqualToString:UIAccessibilityReduceMotionStatusDidChangeNotification] ) {
-        if ( __axIsReduceMotionEnabledDidChangeNotificationDelegate != NULL ) {
+    if ( [notification.name isEqualToString:UIAccessibilityReduceMotionStatusDidChangeNotification] )
+    {
+        if ( __axIsReduceMotionEnabledDidChangeNotificationDelegate != NULL )
+        {
             __axIsReduceMotionEnabledDidChangeNotificationDelegate();
         }
         return;
     }
     if ( @available(iOS 14.0, tvOS 14.0, *) ) {
-        if ( [notification.name isEqualToString:UIAccessibilityPrefersCrossFadeTransitionsStatusDidChangeNotification] ) {
-            if ( __axPrefersCrossFadeTransitionsDidChangeNotificationDelegate != NULL ) {
+        if ( [notification.name isEqualToString:UIAccessibilityPrefersCrossFadeTransitionsStatusDidChangeNotification] )
+        {
+            if ( __axPrefersCrossFadeTransitionsDidChangeNotificationDelegate != NULL )
+            {
                 __axPrefersCrossFadeTransitionsDidChangeNotificationDelegate();
             }
             return;
         }
     }
-    if ( [notification.name isEqualToString:UIAccessibilityVideoAutoplayStatusDidChangeNotification] ) {
-        if ( __axIsVideoAutoplayEnabledDidChangeNotificationDelegate != NULL ) {
-            __axIsVideoAutoplayEnabledDidChangeNotificationDelegate();
+    if ( @available(iOS 13.0, tvOS 13.0, *) ) {
+        if ( [notification.name isEqualToString:UIAccessibilityVideoAutoplayStatusDidChangeNotification] )
+        {
+            if ( __axIsVideoAutoplayEnabledDidChangeNotificationDelegate != NULL )
+            {
+                __axIsVideoAutoplayEnabledDidChangeNotificationDelegate();
+            }
+            return;
         }
-        return;
     }
-    if ( [notification.name isEqualToString:UIAccessibilityDarkerSystemColorsStatusDidChangeNotification] ) {
-        if ( __axDarkerSystemColorsEnabledDidChangeNotificationDelegate != NULL ) {
+    if ( [notification.name isEqualToString:UIAccessibilityDarkerSystemColorsStatusDidChangeNotification] )
+    {
+        if ( __axDarkerSystemColorsEnabledDidChangeNotificationDelegate != NULL )
+        {
             __axDarkerSystemColorsEnabledDidChangeNotificationDelegate();
         }
         return;
     }
-    if ( [notification.name isEqualToString:UIAccessibilitySpeakSelectionStatusDidChangeNotification] ) {
-        if ( __axIsSpeakSelectionEnabledDidChangeNotificationDelegate != NULL ) {
+    if ( [notification.name isEqualToString:UIAccessibilitySpeakSelectionStatusDidChangeNotification] )
+    {
+        if ( __axIsSpeakSelectionEnabledDidChangeNotificationDelegate != NULL )
+        {
             __axIsSpeakSelectionEnabledDidChangeNotificationDelegate();
         }
         return;
     }
-    if ( [notification.name isEqualToString:UIAccessibilitySpeakScreenStatusDidChangeNotification] ) {
-        if ( __axIsSpeakScreenEnabledDidChangeNotificationDelegate != NULL ) {
+    if ( [notification.name isEqualToString:UIAccessibilitySpeakScreenStatusDidChangeNotification] )
+    {
+        if ( __axIsSpeakScreenEnabledDidChangeNotificationDelegate != NULL )
+        {
             __axIsSpeakScreenEnabledDidChangeNotificationDelegate();
         }
         return;
     }
-    if ( [notification.name isEqualToString:UIAccessibilityShakeToUndoDidChangeNotification] ) {
-        if ( __axIsShakeToUndoEnabledDidChangeNotificationDelegate != NULL ) {
+    if ( [notification.name isEqualToString:UIAccessibilityShakeToUndoDidChangeNotification] )
+    {
+        if ( __axIsShakeToUndoEnabledDidChangeNotificationDelegate != NULL )
+        {
             __axIsShakeToUndoEnabledDidChangeNotificationDelegate();
         }
         return;
     }
-    if ( [notification.name isEqualToString:UIAccessibilityShouldDifferentiateWithoutColorDidChangeNotification] ) {
-        if ( __axShouldDifferentiateWithoutColorDidChangeNotificationDelegate != NULL ) {
-            __axShouldDifferentiateWithoutColorDidChangeNotificationDelegate();
+    if ( @available(iOS 13.0, tvOS 13.0, *) )
+    {
+        if ( [notification.name isEqualToString:UIAccessibilityShouldDifferentiateWithoutColorDidChangeNotification] )
+        {
+            if ( __axShouldDifferentiateWithoutColorDidChangeNotificationDelegate != NULL ) {
+                __axShouldDifferentiateWithoutColorDidChangeNotificationDelegate();
+            }
+            return;
         }
-        return;
     }
-    if ( [notification.name isEqualToString:UIAccessibilityOnOffSwitchLabelsDidChangeNotification] ) {
-        if ( __axIsOnOffSwitchLabelsEnabledDidChangeNotificationDelegate != NULL ) {
-            __axIsOnOffSwitchLabelsEnabledDidChangeNotificationDelegate();
+    if ( @available(iOS 13.0, tvOS 13.0, *) )
+    {
+        if ( [notification.name isEqualToString:UIAccessibilityOnOffSwitchLabelsDidChangeNotification] )
+        {
+            if ( __axIsOnOffSwitchLabelsEnabledDidChangeNotificationDelegate != NULL ) {
+                __axIsOnOffSwitchLabelsEnabledDidChangeNotificationDelegate();
+            }
+            return;
         }
-        return;
     }
 }
 @end
@@ -490,7 +564,10 @@ APPLE_ACCESSIBILITY_EXTERN void _UnityAX_InitializeAXRuntime(void)
 #if TARGET_OS_IOS
         [center addObserver:_observer selector:@selector(_accessibilityStatusChangedCallback:) name:UIContentSizeCategoryDidChangeNotification object:nil];
 #endif
-        [center addObserver:_observer selector:@selector(_accessibilityStatusChangedCallback:) name:UIAccessibilityVoiceOverStatusDidChangeNotification object:nil];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+        [center addObserver:_observer selector:@selector(_accessibilityStatusChangedCallback:) name:UIAccessibilityVoiceOverStatusChanged object:nil];
+#pragma clang diagnostic pop
         [center addObserver:_observer selector:@selector(_accessibilityStatusChangedCallback:) name:UIAccessibilitySwitchControlStatusDidChangeNotification object:nil];
         [center addObserver:_observer selector:@selector(_accessibilityStatusChangedCallback:) name:UIAccessibilityMonoAudioStatusDidChangeNotification object:nil];
         [center addObserver:_observer selector:@selector(_accessibilityStatusChangedCallback:) name:UIAccessibilityClosedCaptioningStatusDidChangeNotification object:nil];
@@ -508,13 +585,22 @@ APPLE_ACCESSIBILITY_EXTERN void _UnityAX_InitializeAXRuntime(void)
         [center addObserver:_observer selector:@selector(_accessibilityStatusChangedCallback:) name:UIAccessibilityGrayscaleStatusDidChangeNotification object:nil];
         [center addObserver:_observer selector:@selector(_accessibilityStatusChangedCallback:) name:UIAccessibilityReduceTransparencyStatusDidChangeNotification object:nil];
         [center addObserver:_observer selector:@selector(_accessibilityStatusChangedCallback:) name:UIAccessibilityReduceMotionStatusDidChangeNotification object:nil];
-        [center addObserver:_observer selector:@selector(_accessibilityStatusChangedCallback:) name:UIAccessibilityVideoAutoplayStatusDidChangeNotification object:nil];
+        if ( @available(iOS 13.0, tvOS 13.0, *) )
+        {
+            [center addObserver:_observer selector:@selector(_accessibilityStatusChangedCallback:) name:UIAccessibilityVideoAutoplayStatusDidChangeNotification object:nil];
+        }
         [center addObserver:_observer selector:@selector(_accessibilityStatusChangedCallback:) name:UIAccessibilityDarkerSystemColorsStatusDidChangeNotification object:nil];
         [center addObserver:_observer selector:@selector(_accessibilityStatusChangedCallback:) name:UIAccessibilitySpeakSelectionStatusDidChangeNotification object:nil];
         [center addObserver:_observer selector:@selector(_accessibilityStatusChangedCallback:) name:UIAccessibilitySpeakScreenStatusDidChangeNotification object:nil];
         [center addObserver:_observer selector:@selector(_accessibilityStatusChangedCallback:) name:UIAccessibilityShakeToUndoDidChangeNotification object:nil];
-        [center addObserver:_observer selector:@selector(_accessibilityStatusChangedCallback:) name:UIAccessibilityShouldDifferentiateWithoutColorDidChangeNotification object:nil];
-        [center addObserver:_observer selector:@selector(_accessibilityStatusChangedCallback:) name:UIAccessibilityOnOffSwitchLabelsDidChangeNotification object:nil];
+        if ( @available(iOS 13.0, tvOS 13.0, *) )
+        {
+            [center addObserver:_observer selector:@selector(_accessibilityStatusChangedCallback:) name:UIAccessibilityShouldDifferentiateWithoutColorDidChangeNotification object:nil];
+        }
+        if ( @available(iOS 13.0, tvOS 13.0, *) )
+        {
+            [center addObserver:_observer selector:@selector(_accessibilityStatusChangedCallback:) name:UIAccessibilityOnOffSwitchLabelsDidChangeNotification object:nil];
+        }
 
         [AppleAccessibilityRuntime.sharedInstance setUnityAccessibilityFrame:^CGRect(NSNumber *identifier) {
             if ( __axFrameDelegate == NULL )
