@@ -6,3 +6,4 @@ scripts/__pycache__/
 **/Temp/*
 plug-ins/**/TestPlayers
 **/xcuserdata
+*.vsconfig

@@ -11,6 +11,8 @@ See the [Quick-Start Guide](../../../../../../Documentation/Quickstart.md) for g
 ## Usage
 Please find an introduction to using Apple's Accessibility Plug-in below. For a comprehensive guide to Accessibility on Apple devices, please see [Accessibility Developer Documentation](https://developer.apple.com/documentation/accessibility/)
 
+The plugin supports Unity 2020.3 and above, but should work with older versions of Unity.
+
 ### Table of Contents
 [Accessibility Elements](#Accessibility-Elements)
 

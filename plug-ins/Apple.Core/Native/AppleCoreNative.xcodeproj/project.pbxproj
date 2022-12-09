@@ -515,7 +515,6 @@
 		CFE53395263B6CCC00078448 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BITCODE_GENERATION_MODE = bitcode;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -533,7 +532,6 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				OTHER_CFLAGS = "-fembed-bitcode";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.apple-plugins.AppleCoreNative-iOS";
 				PRODUCT_NAME = AppleCoreNative;
 				SDKROOT = iphoneos;
@@ -550,7 +548,6 @@
 		CFE53396263B6CCC00078448 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BITCODE_GENERATION_MODE = bitcode;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -568,7 +565,6 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				OTHER_CFLAGS = "-fembed-bitcode";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.apple-plugins.AppleCoreNative-iOS";
 				PRODUCT_NAME = AppleCoreNative;
 				SDKROOT = iphoneos;
@@ -601,7 +597,6 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				OTHER_CFLAGS = "-fembed-bitcode";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.apple-plugins.AppleCoreNative-tvOS";
 				PRODUCT_NAME = AppleCoreNative;
 				SDKROOT = appletvos;
@@ -634,7 +629,6 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				OTHER_CFLAGS = "-fembed-bitcode";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.apple-plugins.AppleCoreNative-tvOS";
 				PRODUCT_NAME = AppleCoreNative;
 				SDKROOT = appletvos;
@@ -656,7 +650,6 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				OTHER_CFLAGS = "-fembed-bitcode";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.apple-plugins.AppleCoreNative-macOS";
 				PRODUCT_NAME = AppleCoreNativeMac;
 				SKIP_INSTALL = YES;
@@ -677,7 +670,6 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				OTHER_CFLAGS = "-fembed-bitcode";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.apple-plugins.AppleCoreNative-macOS";
 				PRODUCT_NAME = AppleCoreNativeMac;
 				SKIP_INSTALL = YES;

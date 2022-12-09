@@ -873,7 +873,6 @@
 		7A9B816824A4FC3800FB2FE8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BITCODE_GENERATION_MODE = bitcode;
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CLANG_ENABLE_MODULES = YES;
@@ -893,8 +892,6 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				OTHER_CFLAGS = "-fembed-bitcode";
-				OTHER_LDFLAGS = "-fembed-bitcode";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.apple-plugins.GameKitWrapper-iOS";
 				PRODUCT_NAME = GameKitWrapper;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -911,7 +908,6 @@
 		7A9B816924A4FC3800FB2FE8 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BITCODE_GENERATION_MODE = bitcode;
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CLANG_ENABLE_MODULES = YES;
@@ -931,8 +927,6 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				OTHER_CFLAGS = "-fembed-bitcode";
-				OTHER_LDFLAGS = "-fembed-bitcode";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.apple-plugins.GameKitWrapper-iOS";
 				PRODUCT_NAME = GameKitWrapper;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -948,7 +942,6 @@
 		7AE5BBA02502C0DD00BDBEDA /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BITCODE_GENERATION_MODE = bitcode;
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CLANG_ENABLE_MODULES = YES;
@@ -969,8 +962,6 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				OTHER_CFLAGS = "-fembed-bitcode";
-				OTHER_LDFLAGS = "-fembed-bitcode";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.apple-plugins.GameKitWrapper-tvOS";
 				PRODUCT_NAME = GameKitWrapper;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -988,7 +979,6 @@
 		7AE5BBA12502C0DD00BDBEDA /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BITCODE_GENERATION_MODE = bitcode;
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CLANG_ENABLE_MODULES = YES;
@@ -1008,8 +998,6 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				OTHER_CFLAGS = "-fembed-bitcode";
-				OTHER_LDFLAGS = "-fembed-bitcode";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.apple-plugins.GameKitWrapper-tvOS";
 				PRODUCT_NAME = GameKitWrapper;
 				PROVISIONING_PROFILE_SPECIFIER = "";
