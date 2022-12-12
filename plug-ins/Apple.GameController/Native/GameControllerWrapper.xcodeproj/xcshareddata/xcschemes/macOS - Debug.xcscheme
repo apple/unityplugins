@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1300"
+   LastUpgradeVersion = "1250"
    version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,16 +14,16 @@
             buildForAnalyzing = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "CFF6B9F02628C9630002CEEB"
-               BuildableName = "all"
-               BlueprintName = "all"
-               ReferencedContainer = "container:CoreHapticsWrapper.xcodeproj">
+               BlueprintIdentifier = "7A55185424E2FF56004CDB45"
+               BuildableName = "GameControllerWrapper.bundle"
+               BlueprintName = "GameControllerWrapper_macOS"
+               ReferencedContainer = "container:GameControllerWrapper.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
-      buildConfiguration = "Release"
+      buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
@@ -31,7 +31,7 @@
       </Testables>
    </TestAction>
    <LaunchAction
-      buildConfiguration = "Release"
+      buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
@@ -42,7 +42,7 @@
       allowLocationSimulation = "YES">
    </LaunchAction>
    <ProfileAction
-      buildConfiguration = "Release"
+      buildConfiguration = "Debug"
       shouldUseLaunchSchemeArgsEnv = "YES"
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
@@ -50,18 +50,18 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "CFF6B9F02628C9630002CEEB"
-            BuildableName = "all"
-            BlueprintName = "all"
-            ReferencedContainer = "container:CoreHapticsWrapper.xcodeproj">
+            BlueprintIdentifier = "7A55185424E2FF56004CDB45"
+            BuildableName = "GameControllerWrapper.bundle"
+            BlueprintName = "GameControllerWrapper_macOS"
+            ReferencedContainer = "container:GameControllerWrapper.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
-      buildConfiguration = "Release">
+      buildConfiguration = "Debug">
    </AnalyzeAction>
    <ArchiveAction
-      buildConfiguration = "Release"
+      buildConfiguration = "Debug"
       revealArchiveInOrganizer = "YES">
    </ArchiveAction>
    <InstallAction

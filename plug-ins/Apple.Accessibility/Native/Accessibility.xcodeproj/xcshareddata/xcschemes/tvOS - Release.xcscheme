@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1300"
+   LastUpgradeVersion = "1330"
    version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,10 +14,10 @@
             buildForAnalyzing = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "CFF6B9F02628C9630002CEEB"
-               BuildableName = "all"
-               BlueprintName = "all"
-               ReferencedContainer = "container:CoreHapticsWrapper.xcodeproj">
+               BlueprintIdentifier = "C9729E1127434953009BB169"
+               BuildableName = "AppleAccessibility.framework"
+               BlueprintName = "AppleAccessibility_tvOS"
+               ReferencedContainer = "container:Accessibility.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -50,10 +50,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "CFF6B9F02628C9630002CEEB"
-            BuildableName = "all"
-            BlueprintName = "all"
-            ReferencedContainer = "container:CoreHapticsWrapper.xcodeproj">
+            BlueprintIdentifier = "C9729E1127434953009BB169"
+            BuildableName = "AppleAccessibility.framework"
+            BlueprintName = "AppleAccessibility_tvOS"
+            ReferencedContainer = "container:Accessibility.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>
