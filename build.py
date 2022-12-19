@@ -5,22 +5,6 @@ from datetime import datetime
 import scripts.upi_utility as utility
 import scripts.upi_unity as unity
 
-#----------------
-# Configure paths
-
-build_script_path = pathlib.Path().resolve(__file__)
-default_build_path = build_script_path.joinpath("Build")
-top_level_plugin_path = build_script_path.joinpath("plug-ins")
-default_test_build_path = build_script_path.joinpath("TestBuilds")
-apple_core_library_paths = [
-    top_level_plugin_path.joinpath("Apple.Core/Apple.Core_Unity/Assets/Apple.Core/Plugins/iOS/AppleCoreNative.framework"),
-    top_level_plugin_path.joinpath("Apple.Core/Apple.Core_Unity/Assets/Apple.Core/Plugins/macOS/AppleCoreNativeMac.bundle"),
-    top_level_plugin_path.joinpath("Apple.Core/Apple.Core_Unity/Assets/Apple.Core/Plugins/tvOS/AppleCoreNative.framework"),
-]
-
-# Script will search this path for instances of Unity.app to track their versions and executable paths
-default_unity_install_root_path = pathlib.Path("/Applications/Unity")
-
 # ---------------------------------------
 # Plug-in Identifiers (-p, --plugin-list)
 
@@ -33,7 +17,26 @@ plugin_id_game_kit = "GameKit"
 plugin_id_phase = "PHASE"
 
 # (Default)
-plugin_id_all = "all" 
+plugin_id_all = "all"
+
+# --------------------------------------
+# Platform Identifiers (-m, --platforms)
+
+# Selection identifiers for which platforms target when building.
+platform_id_ios = "iOS"
+platform_id_macos = "macOS"
+platform_id_tvos = "tvOS"
+
+# (Default)
+platform_id_all = "all"
+
+# -----------------------------------------
+# Platform config identifiers (-d, --debug)
+
+platform_config_id_debug = "Debug"
+
+# (Default) Set implicitly when the debug argument is not passed to the build script.
+platform_config_id_release = "Release"
 
 # ----------------------------------
 # Build Actions (-b, --build-action)
@@ -68,17 +71,28 @@ clean_action_none = "none"
 # Performs all clean actions for the selected plug-ins
 clean_action_all = "all"
 
-# -----------------------------------------
-# Build Config Options (-d, --debug)
+#----------------
+# Configure paths
 
-debug_xcode_scheme = "All - Debug"
-release_xcode_scheme = "All - Release"
+build_script_path = pathlib.Path().resolve(__file__)
+default_build_path = build_script_path.joinpath("Build")
+top_level_plugin_path = build_script_path.joinpath("plug-ins")
+default_test_build_path = build_script_path.joinpath("TestBuilds")
+apple_core_library_path_table = {
+    platform_id_ios : top_level_plugin_path.joinpath("Apple.Core/Apple.Core_Unity/Assets/Apple.Core/Plugins/iOS/AppleCoreNative.framework"),
+    platform_id_macos : top_level_plugin_path.joinpath("Apple.Core/Apple.Core_Unity/Assets/Apple.Core/Plugins/macOS/AppleCoreNativeMac.bundle"),
+    platform_id_tvos : top_level_plugin_path.joinpath("Apple.Core/Apple.Core_Unity/Assets/Apple.Core/Plugins/tvOS/AppleCoreNative.framework"),
+}
+
+# Script will search this path for instances of Unity.app to track their versions and executable paths
+default_unity_install_root_path = pathlib.Path("/Applications/Unity")
 
 # ------------------------
 # Handle command line args
 
 argument_parser = argparse.ArgumentParser(description="Builds all native libraries, packages plug-ins, and moves packages to build folder.")
 argument_parser.add_argument("-p", "--plugin-list", dest="plugin_list", nargs='*', default=[plugin_id_all], help=f"Selects the plug-ins to process. Possible values are: {plugin_id_accessibility}, {plugin_id_apple_core}, {plugin_id_core_haptics}, {plugin_id_game_controller}, {plugin_id_game_kit}, {plugin_id_phase}, or {plugin_id_all}. Default is: {plugin_id_all}")
+argument_parser.add_argument("-m", "--platforms", dest="platform_list", nargs='*', default=[platform_id_all], help=f"Selects the desired platforms to target when building native libraries. Possible values are: {platform_id_ios}, {platform_id_macos}, {platform_id_tvos}, or {platform_id_all}. Default is: {platform_id_all}")
 argument_parser.add_argument("-b", "--build-action", dest="build_actions", nargs='*', default=[build_action_native_build, build_action_pack], help=f"Sets the build actions for the selected plug-ins. Possible values are: {build_action_native_build}, {build_action_pack}, {build_action_none} or {build_action_all}. Defaults are: {build_action_native_build}, {build_action_pack}")
 argument_parser.add_argument("-u", "--unity-installation-root", dest="unity_installation_root", default=default_unity_install_root_path, help="Root path to search for Unity installations. Note: performs a full recursive search of the given directory.")
 argument_parser.add_argument("-d", "--debug", dest="debug", action="store_true", help=f"Compiles debug native libraries for the selected plug-ins.")
@@ -103,6 +117,7 @@ if __name__ == '__main__':
                           "\n\nCommand Line Option Summary"
                           "\n---------------------------"
                          f"\n              Build Actions: {' '.join(build_args.build_actions)}"
+                         f"\n         Selected Platforms: {' '.join(build_args.platform_list)}"
                          f"\n               Build Config: {'Debug' if build_args.debug else 'Release'}"
                          f"\n        Package Output Path: {build_args.output_path}"
                          f"\n          Selected Plug-Ins: {' '.join(build_args.plugin_list)}"
@@ -118,20 +133,53 @@ if __name__ == '__main__':
         build_action_pack: False,
     }
 
+    valid_build_action_found = False
     for action in build_args.build_actions:
         if action in build_actions:
             build_actions[action] = True
+            valid_build_action_found = True
         elif action == build_action_all:
             for build_action_key in build_actions.keys():
                 build_actions[build_action_key] = True
+            valid_build_action_found = True
             break
         elif action == build_action_none:
             for build_action_key in build_actions.keys():
                 build_actions[build_action_key] = False
+            valid_build_action_found = True
             break
         else:
-            utility.WarningMessage(f"Ignoring unknown build action '{action}'. Valid options are {build_action_native_build} (Default), {build_action_pack} (Default), {build_action_all}, or {build_action_none}")
+            utility.WarningMessage(f"Ignoring unknown build action '{action}'. Valid options are {build_action_native_build}, {build_action_pack}, {build_action_all} (Default), or {build_action_none}")
+    
+    if not valid_build_action_found:
+        utility.WarningMessage(f"No valid build action passed to build script. Using default argument: {build_action_all}")
+        for build_action_key in build_actions.keys():
+            build_actions[build_action_key] = True
+        
+    selected_platforms = {
+        platform_id_ios: False,
+        platform_id_macos: False,
+        platform_id_tvos: False,
+    }
 
+    valid_platform_found = False
+    for platform_id in build_args.platform_list:
+        if platform_id == platform_id_all:
+            valid_platform_found = True
+            for selected_platform_key in selected_platforms.keys():
+                selected_platforms[selected_platform_key] = True
+            break
+        elif platform_id in selected_platforms:
+            valid_platform_found = True  
+            selected_platforms[platform_id] = True
+        else:
+            utility.WarningMessage(f"Ignoring unknown platform '{platform_id}'. Valid options are {platform_id_ios}, {platform_id_macos}, {platform_id_tvos}, or {platform_id_all} (Default)")
+
+    if not valid_platform_found:
+        utility.WarningMessage(f"No valid platform passed to build script. Using default argument: {platform_id_all}")
+        for selected_platform_key in selected_platforms.keys():
+            selected_platforms[selected_platform_key] = True
+    
     selected_plugins = {
         plugin_id_accessibility: False,
         plugin_id_apple_core: False,
@@ -141,15 +189,23 @@ if __name__ == '__main__':
         plugin_id_phase: False
     }
 
+    valid_plugin_found = False
     for plugin_id in build_args.plugin_list:
         if plugin_id in selected_plugins:
             selected_plugins[plugin_id] = True
+            valid_plugin_found = True
         elif plugin_id == plugin_id_all:
             for selected_plugin_key in selected_plugins.keys():
                 selected_plugins[selected_plugin_key] = True
+            valid_plugin_found = True
             break
         else:
             utility.WarningMessage(f"Ignoring unknown plug-in '{plugin_id}'. Valid options are {plugin_id_accessibility}, {plugin_id_apple_core}, {plugin_id_core_haptics}, {plugin_id_game_controller}, {plugin_id_game_kit}, {plugin_id_phase}, or {plugin_id_all} (Default)")
+
+    if not valid_plugin_found:
+        utility.WarningMessage(f"No valid plug-in passed to build script. Using default argument: {plugin_id_all}")
+        for selected_plugin_key in selected_plugins.keys():
+            selected_plugins[selected_plugin_key] = True
 
     clean_actions = {
         clean_action_native: False,
@@ -157,19 +213,29 @@ if __name__ == '__main__':
         clean_action_tests: False
     }
 
+    valid_clean_action_found = False
     for action in build_args.clean_actions:
         if action in clean_actions:
             clean_actions[action] = True
+            valid_clean_action_found = True
         elif action == clean_action_all:
             for clean_action_key in clean_actions.keys():
                 clean_actions[clean_action_key] = True
+            valid_clean_action_found = True
             break
         elif action == clean_action_none:
             for clean_action_key in clean_actions.keys():
                 clean_actions[clean_action_key] = False
+            valid_clean_action_found = True
             break
         else:
             utility.WarningMessage(f"Ignoring unknown clean action '{action}'. Valid options are {clean_action_native}, {clean_action_packages}, {clean_action_tests}, {clean_action_all}, or {clean_action_none} (Default)")
+
+    if not valid_clean_action_found:
+        utility.WarningMessage(f"No valid clean action passed to build script. Using default argument: {clean_action_none}")
+        for clean_action_key in clean_actions.keys():
+            clean_actions[clean_action_key] = False
+        
 
     build_tests = build_args.build_tests
 #endregion
@@ -264,23 +330,39 @@ if __name__ == '__main__':
         if curr_unity_project is None:
             continue
 
-        if clean_actions[clean_action_native] and curr_unity_project.has_native_libraries:
-            utility.StatusMessage("\nCleaning native libraries.")
-            for platform, path in curr_unity_project.supported_platforms.items():
-                utility.StatusMessage(f"Removing libraries for platform {platform} in folder {path}")
-                utility.RemoveFolder(path, contents_only=True, prompt= not build_args.force_clean)
+        if clean_actions[clean_action_native]:
+            if curr_unity_project.native_lib_plugin_path is not None and curr_unity_project.native_lib_plugin_path.exists():
+                utility.StatusMessage("\nCleaning native libraries.")
+                utility.RemoveFolder(curr_unity_project.native_lib_plugin_path, contents_only=True, prompt= not build_args.force_clean)
+            else:
+                utility.StatusMessage("\nNo native libraries found.")
             
 #region Build Native Libraries
-        if build_actions[build_action_native_build] and curr_unity_project.has_native_libraries:
-            os.chdir(curr_plugin_path.joinpath("Native"))
+        if build_actions[build_action_native_build]:
+            # As a standard, all plug-in native library Xcode projects are kept in /Native within the current plug-in folder.
+            native_project_path = curr_plugin_path.joinpath("Native")
 
-            build_scheme = debug_xcode_scheme if build_args.debug else release_xcode_scheme
-            build_command = f"xcodebuild -scheme \"{build_scheme}\" build -quiet"
-            utility.StatusMessage(f"\nBuilding native libraries.\nBuild command: {build_command}")
+            if not native_project_path.exists():
+                utility.StatusMessage(f"\n No native library project path exists at: {native_project_path}\nSkipping native library build step.")
+                continue
+                
+            os.chdir(native_project_path)
 
-            build_command_output = subprocess.run(build_command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True, universal_newlines=True)
-            if build_command_output.returncode != 0:
-                utility.WarningMessage(f"Native library build command completed with non-zero return code.\n\nSTDOUT:\n{build_command_output.stdout}")
+            for curr_platform_key in selected_platforms.keys():
+                if selected_platforms[curr_platform_key] is False:
+                    continue
+
+                build_scheme = f"{curr_platform_key} - {platform_config_id_debug if build_args.debug else platform_config_id_release}"
+                build_command = f"xcodebuild -scheme \"{build_scheme}\" -destination \"generic/platform={curr_platform_key}\" build -quiet"
+                utility.StatusMessage(f"\nBuilding native libraries.\nBuild command: {build_command}")
+
+                build_command_output = subprocess.run(build_command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True, universal_newlines=True)
+                if build_command_output.returncode != 0:
+                    utility.WarningMessage(f"Native library build command completed with non-zero return code.\n\nSTDOUT:\n{build_command_output.stdout}")
+
+        
+            # After native libraries have been built, the Unity project should be updated to track supported platforms
+            unity_manager.UpdateSupportedPlatformsForProject(curr_unity_project)
 
             # The native plug-in projects are configured to copy their build results to the appropriate locations in each Unity plug-in folder
             # Changing Unity project hierarchy requires Unity to touch the project and update associated .meta files
@@ -290,6 +372,8 @@ if __name__ == '__main__':
             unity_installation = unity_manager.GetUnityInstallationForVersion(curr_unity_project.version)
             if unity_installation:
                 unity_installation.TouchProject(curr_unity_project)
+            else:
+                utility.WarningMessage(f"No matching Unity installation with version [{curr_unity_project.version}] found for {curr_unity_project.name}. Unity meta files will not be updated for plug-in!")
 #endregion
 
 #region Pack
@@ -326,6 +410,8 @@ if __name__ == '__main__':
             pack_command_output = subprocess.run(pack_command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True, universal_newlines=True)
             if pack_command_output.returncode != 0:
                 utility.WarningMessage(f"Pack command completed with non-zero return code.\n\nSTDOUT:\n{pack_command_output.stdout}")
+            else:
+                utility.StatusMessage(f"Pack command completed.")
 
             if dest_demo_path.exists():
                 subprocess.run(["mv", dest_demo_path, curr_demo_path])
@@ -334,14 +420,15 @@ if __name__ == '__main__':
 
 #region Build Tests
         if build_tests:
+            utility.StatusMessage(f"\nBuilding Unity tests for plug-in: {curr_unity_project.name}")
+
             # All plug-ins are dependent upon Apple.Core, so emit an error if Apple.Core libraries are missing
             if curr_plugin_id != plugin_id_apple_core:
-                for curr_apple_core_lib_path in apple_core_library_paths:
-                    if not curr_apple_core_lib_path.exists():
-                        os.chdir(working_dir)
-                        utility.ErrorMessage(f"Missing Apple.Core library at path: {curr_apple_core_lib_path}\nApple.Core plug-in must be built (-p Core ...)", True)
-
-            utility.StatusMessage(f"\nBuilding Unity tests for plug-in: {curr_unity_project.name}")
+                for selected_platform_id in selected_platforms.keys():
+                    curr_apple_core_lib_path = apple_core_library_path_table[selected_platform_id]
+                    if selected_platforms[selected_platform_id] is True and not curr_apple_core_lib_path.exists():
+                            os.chdir(working_dir)
+                            utility.ErrorMessage(f"Missing Apple.Core library for platform {selected_platform_id} at path: {curr_apple_core_lib_path}\nApple.Core plug-in must be built (-p Core ...)", True)
 
             unity_installation = unity_manager.GetUnityInstallationForVersion(curr_unity_project.version)
             if unity_installation is None:
@@ -364,7 +451,7 @@ if __name__ == '__main__':
             # Unity command line args consume the test assembly list as a single semicolon-delimited string
             curr_test_assembly_string = ';'.join(curr_unity_project.test_assemblies)
 
-            for curr_platform in  curr_unity_project.supported_platforms.keys(): # ['iOS', 'tvOS']:
+            for curr_platform in  curr_unity_project.supported_platforms.keys():
                 curr_test_build_identifier = f"{curr_unity_project.name}_{curr_unity_project.version}_{curr_platform}"
                 curr_test_build_path = test_build_path.joinpath(curr_test_build_identifier)
                 if not curr_test_build_path.is_dir():

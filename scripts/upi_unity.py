@@ -38,11 +38,11 @@ class UnityManager:
         def __init__(self):
             self.name = ""
             self.path = ""
+            self.native_lib_plugin_path = None
             self.version = self.unknown_unity_project_version_string
             self.supported_platforms = dict() # {PlatformString:LibraryPath, ...}
             self.test_assemblies = list()
             self.editor_test_assemblies = list()
-            self.has_native_libraries = False
 
     # Keyed by path
     unity_project_list = list()
@@ -127,6 +127,17 @@ class UnityManager:
             utility.ErrorMessage(f"Couldn't find file at path: {project_version_file_path}\nFolder must contain 'ProjectSettings/ProjectVersion.txt' to be considered a Unity project.")
             return None
 
+        # Determine path to /Plugins, Unity's native library root
+        unity_plugins_paths = list(unity_project.path.joinpath("Assets").glob('**/Plugins'))
+        if len(unity_plugins_paths) < 1:
+            utility.StatusMessage(f"{unity_project.name} contains no native libraries.\nTreating project as a non-native plug-in project.")
+        else:
+            if len(unity_plugins_paths) > 1:
+                utility.WarningMessage(f"{unity_project.name} has multiple 'Plugins' folders under /Assets. Using first found at {unity_plugins_paths[0]}")
+
+            unity_project.native_lib_plugin_path = unity_plugins_paths[0]
+
+        
         # Find project test assemblies
         utility.StatusMessage("\n\tScanning for Unity tests.")
         unity_tests_paths = list(project_path.joinpath("Assets").glob('**/Tests'))
@@ -143,8 +154,14 @@ class UnityManager:
                     utility.StatusMessage(f"\tFound test assembly: {test_assembly_path.stem}")
                     unity_project.test_assemblies.append(test_assembly_path.stem)
 
-        # Determine supported platforms
-        utility.StatusMessage("\n\tScanning for supported platforms.")
+        self.unity_project_list.append(unity_project)
+        utility.StatusMessage("\nUnity project scan complete.")
+        return unity_project
+
+    # Helper updates a project's dictionary of supported platforms by re-scanning the Unity project's /Plugins path for known platforms
+    # Note: Platform support is dependent upon which native libraries have been built.
+    def UpdateSupportedPlatformsForProject(self, unity_project):
+        utility.StatusMessage(f"\nScanning for supported platforms with project at: {unity_project.path}")
 
         path_name_to_platform_table = {
             'iOS': 'iOS',
@@ -152,30 +169,19 @@ class UnityManager:
             'macOS': 'StandaloneOSX'
         }
 
-        unity_plugins_paths = list(project_path.joinpath("Assets").glob('**/Plugins'))
-        if len(unity_plugins_paths) < 1:
-            utility.StatusMessage(f"\t{unity_project.name} contains no native libraries.\n\tTreating project as a non-native plug-in project.")
-            unity_project.has_native_libraries = False
-        else:
-            if len(unity_plugins_paths) > 1:
-                utility.WarningMessage(f"{unity_project.name} has multiple 'Plugins' folders under /Assets. Using first found at {unity_plugins_paths[0]}")
+        unity_project.supported_platforms.clear()
 
-            for platform_path in unity_plugins_paths[0].iterdir():
-                if platform_path.is_dir():
-                    if platform_path.name in path_name_to_platform_table:
-                        platform_name = path_name_to_platform_table[platform_path.name]
-                        unity_project.supported_platforms[platform_name] = platform_path
-                        unity_project.has_native_libraries = True
-                        utility.StatusMessage(f"\n\tFound supported platform: {platform_name}\n\tPlatform Path: {platform_path}")
-                    else:
-                        utility.WarningMessage(f"Unknown platform {platform_path.name} found in Plugins folder at {platform_path.parent}")
+        for platform_path in unity_project.native_lib_plugin_path.iterdir():
+            if platform_path.is_dir():
+                if platform_path.name in path_name_to_platform_table:
+                    platform_name = path_name_to_platform_table[platform_path.name]
+                    unity_project.supported_platforms[platform_name] = platform_path
+                    utility.StatusMessage(f"\nFound supported platform: {platform_name}\n\tPlatform Path: {platform_path}")
+                else:
+                    utility.WarningMessage(f"Unknown platform {platform_path.name} found in Plugins folder at {platform_path.parent}")
 
-            if len(unity_project.supported_platforms) < 1:
-                utility.WarningMessage(f"No supported platforms found in {unity_plugins_paths[0]}")
-
-        self.unity_project_list.append(unity_project)
-        utility.StatusMessage("\nUnity project scan complete.")
-        return unity_project
+        if len(unity_project.supported_platforms) < 1:
+            utility.WarningMessage(f"No supported platforms found in {unity_project.native_lib_plugin_path}")
 
     # Helper to look for a tracked Unity project with a given path
     # Returns a UnityProject instance if found, None otherwise.

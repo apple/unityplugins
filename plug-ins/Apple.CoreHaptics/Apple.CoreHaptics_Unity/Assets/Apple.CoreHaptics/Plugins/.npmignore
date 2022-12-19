@@ -1,0 +1,1 @@
+# Need this empty .npmignore file to prevent 'npm pack' from using .gitignore rules to skip folders

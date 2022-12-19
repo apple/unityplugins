@@ -14,10 +14,10 @@
             buildForAnalyzing = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "CFF6B9F02628C9630002CEEB"
-               BuildableName = "all"
-               BlueprintName = "all"
-               ReferencedContainer = "container:CoreHapticsWrapper.xcodeproj">
+               BlueprintIdentifier = "FF98C0041F220DA10043047A"
+               BuildableName = "AudioPluginPHASE.a"
+               BlueprintName = "AudioPluginPHASE-iOS"
+               ReferencedContainer = "container:AudioPluginPHASE.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -50,10 +50,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "CFF6B9F02628C9630002CEEB"
-            BuildableName = "all"
-            BlueprintName = "all"
-            ReferencedContainer = "container:CoreHapticsWrapper.xcodeproj">
+            BlueprintIdentifier = "FF98C0041F220DA10043047A"
+            BuildableName = "AudioPluginPHASE.a"
+            BlueprintName = "AudioPluginPHASE-iOS"
+            ReferencedContainer = "container:AudioPluginPHASE.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>
