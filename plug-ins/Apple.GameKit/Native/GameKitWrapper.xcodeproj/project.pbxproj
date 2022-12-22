@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 50;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -23,6 +23,9 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		249884252953BCD6003E9DB7 /* GameKitWrapper.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7A9B815324A4FC3800FB2FE8 /* GameKitWrapper.framework */; };
+		249884272953C081003E9DB7 /* GameKitWrapper.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7AE5BBA22502C0DD00BDBEDA /* GameKitWrapper.framework */; };
+		249884292953C09D003E9DB7 /* GameKitWrapper.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7A7E439624B508D40086FB7A /* GameKitWrapper.bundle */; };
 		7A3E81F726F27BD800B102BB /* GKNotificationBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A3E81F626F27BD800B102BB /* GKNotificationBanner.swift */; };
 		7A3E81F826F27BD800B102BB /* GKNotificationBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A3E81F626F27BD800B102BB /* GKNotificationBanner.swift */; };
 		7A3E81F926F27BD800B102BB /* GKNotificationBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A3E81F626F27BD800B102BB /* GKNotificationBanner.swift */; };
@@ -162,6 +165,39 @@
 			remoteInfo = GameKitWrapperMac;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		249884242953BCA5003E9DB7 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(PROJECT_DIR)/../Apple.GameKit_Unity/Assets/Apple.GameKit/Plugins/iOS";
+			dstSubfolderSpec = 0;
+			files = (
+				249884252953BCD6003E9DB7 /* GameKitWrapper.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		249884262953C066003E9DB7 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(PROJECT_DIR)/../Apple.GameKit_Unity/Assets/Apple.GameKit/Plugins/tvOS";
+			dstSubfolderSpec = 0;
+			files = (
+				249884272953C081003E9DB7 /* GameKitWrapper.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		249884282953C08D003E9DB7 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(PROJECT_DIR)/../Apple.GameKit_Unity/Assets/Apple.GameKit/Plugins/macOS";
+			dstSubfolderSpec = 0;
+			files = (
+				249884292953C09D003E9DB7 /* GameKitWrapper.bundle in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		46531AD89A1A23DEFB9D6429 /* libPods-GameKitWrapperUnitTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-GameKitWrapperUnitTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -353,7 +389,7 @@
 				7A7E439224B508D40086FB7A /* Sources */,
 				7A7E439324B508D40086FB7A /* Frameworks */,
 				7A7E439424B508D40086FB7A /* Resources */,
-				7AB16546256D803900582D43 /* ShellScript */,
+				249884282953C08D003E9DB7 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -372,7 +408,7 @@
 				7A9B814F24A4FC3800FB2FE8 /* Sources */,
 				7A9B815024A4FC3800FB2FE8 /* Frameworks */,
 				7A9B815124A4FC3800FB2FE8 /* Resources */,
-				7AB1653B256D7FB500582D43 /* ShellScript */,
+				249884242953BCA5003E9DB7 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -391,7 +427,7 @@
 				7AE5BB8C2502C0DD00BDBEDA /* Sources */,
 				7AE5BB9D2502C0DD00BDBEDA /* Frameworks */,
 				7AE5BB9E2502C0DD00BDBEDA /* Resources */,
-				7AB16542256D802200582D43 /* ShellScript */,
+				249884262953C066003E9DB7 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -468,63 +504,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		7AB1653B256D7FB500582D43 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Remove and copy fresh build...\nrm -rf \"${PROJECT_DIR}/../Apple.GameKit_Unity/Assets/Apple.GameKit/Plugins/iOS/GameKitWrapper.framework\"\ncp -f -R \"${BUILT_PRODUCTS_DIR}/${APPLICATION_NAME}/GameKitWrapper.framework\" \"${PROJECT_DIR}/../Apple.GameKit_Unity/Assets/Apple.GameKit/Plugins/iOS/\"\n";
-		};
-		7AB16542256D802200582D43 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Remove and copy fresh build...\nrm -rf \"${PROJECT_DIR}/../Apple.GameKit_Unity/Assets/Apple.GameKit/Plugins/tvOS/GameKitWrapper.framework\"\ncp -f -R \"${BUILT_PRODUCTS_DIR}/${APPLICATION_NAME}/GameKitWrapper.framework\" \"${PROJECT_DIR}/../Apple.GameKit_Unity/Assets/Apple.GameKit/Plugins/tvOS/\"\n";
-		};
-		7AB16546256D803900582D43 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Remove and copy fresh build...\nrm -rf \"${PROJECT_DIR}/../Apple.GameKit_Unity/Assets/Apple.GameKit/Plugins/macOS/GameKitWrapper.bundle\"\ncp -f -R \"${BUILT_PRODUCTS_DIR}/${APPLICATION_NAME}/GameKitWrapper.bundle\" \"${PROJECT_DIR}/../Apple.GameKit_Unity/Assets/Apple.GameKit/Plugins/macOS/\"\n";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		7A7E439224B508D40086FB7A /* Sources */ = {
