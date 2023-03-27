@@ -375,7 +375,6 @@
 				7A55184224E2FC09004CDB45 /* Sources */,
 				7A55184324E2FC09004CDB45 /* Frameworks */,
 				7A55184424E2FC09004CDB45 /* Resources */,
-				7AEB21F52575A0C50011098A /* ShellScript */,
 				CF6841BD261C0A3A007B3BA2 /* CopyFiles */,
 			);
 			buildRules = (
@@ -395,7 +394,6 @@
 				7A55185124E2FF56004CDB45 /* Sources */,
 				7A55185224E2FF56004CDB45 /* Frameworks */,
 				7A55185324E2FF56004CDB45 /* Resources */,
-				7AEB21F72575A1400011098A /* ShellScript */,
 				CFF6BA002628C9950002CEEB /* CopyFiles */,
 			);
 			buildRules = (
@@ -415,7 +413,6 @@
 				7AE5BB772502C06C00BDBEDA /* Sources */,
 				7AE5BB7C2502C06C00BDBEDA /* Frameworks */,
 				7AE5BB7D2502C06C00BDBEDA /* Resources */,
-				7AEB21F62575A1260011098A /* ShellScript */,
 				CFF6B9FE2628C9800002CEEB /* CopyFiles */,
 			);
 			buildRules = (
@@ -493,60 +490,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		7AEB21F52575A0C50011098A /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Remove and copy fresh build...\nrm -rf \"${PROJECT_DIR}/../Apple.CoreHaptics_Unity/Assets/Apple.CoreHaptics/Plugins/iOS/CoreHapticsWrapper.framework\"\ncp -f -R \"${BUILT_PRODUCTS_DIR}/${APPLICATION_NAME}/CoreHapticsWrapper.framework\" \"${PROJECT_DIR}/../Apple.CoreHaptics_Unity/Assets/Apple.CoreHaptics/Plugins/iOS/\"\n";
-		};
-		7AEB21F62575A1260011098A /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Remove and copy fresh build...\nrm -rf \"${PROJECT_DIR}/../Apple.CoreHaptics_Unity/Assets/Apple.CoreHaptics/Plugins/tvOS/CoreHapticsWrapper.framework\"\ncp -f -R \"${BUILT_PRODUCTS_DIR}/${APPLICATION_NAME}/CoreHapticsWrapper.framework\" \"${PROJECT_DIR}/../Apple.CoreHaptics_Unity/Assets/Apple.CoreHaptics/Plugins/tvOS/\"\n";
-		};
-		7AEB21F72575A1400011098A /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Remove and copy fresh build...\nrm -rf \"${PROJECT_DIR}/../Apple.CoreHaptics_Unity/Assets/Apple.CoreHaptics/Plugins/macOS/CoreHapticsWrapper.bundle\"\ncp -f -R \"${BUILT_PRODUCTS_DIR}/${APPLICATION_NAME}/CoreHapticsWrapper.bundle\" \"${PROJECT_DIR}/../Apple.CoreHaptics_Unity/Assets/Apple.CoreHaptics/Plugins/macOS/\"\n";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		7A55184224E2FC09004CDB45 /* Sources */ = {
