@@ -48,7 +48,7 @@ var player = await GKLocalPlayer.Authenticate();
 Debug.Log($"GameKit Authentication: isAuthenticated => {player.IsAuthenticated}");
 ```
 
-#### 1.1 Fetch Local Player
+#### 1.2 Fetch Local Player
 **Note:** This call is not asynchronous.
 ```csharp
 var localPlayer = GKLocalPlayer.Local;
