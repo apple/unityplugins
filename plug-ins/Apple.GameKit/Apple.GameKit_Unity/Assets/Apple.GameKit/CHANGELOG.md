@@ -1,6 +1,12 @@
 # CHANGELOG
 All notable changes to this project will be documented in this file.
 
+## [1.0.4] - 2022-12-21
+### Changed
+- Post build script phase of native library project was failing to correctly copy libraries; updated to use Xcode's built in 'copy files' phase.
+### Fixed
+- Fixed an issue in which app would freeze/become unresponsible after viewing and closing leaderboards.
+
 ## [1.0.3] - 2022-11-29
 ### Changed
 - Disabled bitcode generation in all native library project build targets.

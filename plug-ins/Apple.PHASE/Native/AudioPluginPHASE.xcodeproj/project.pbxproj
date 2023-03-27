@@ -3,10 +3,21 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
+		241B6AAD2947E2F000EC7B7A /* tvOS_sentinel */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 241B6AB02947E2F000EC7B7A /* Build configuration list for PBXAggregateTarget "tvOS_sentinel" */;
+			buildPhases = (
+				241B6AB12947E30A00EC7B7A /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = tvOS_sentinel;
+			productName = tvOS_sentinel;
+		};
 		6400218C25FC27DE00ED6DA1 /* All - Release */ = {
 			isa = PBXAggregateTarget;
 			buildConfigurationList = 6400218F25FC27DE00ED6DA1 /* Build configuration list for PBXAggregateTarget "All - Release" */;
@@ -34,6 +45,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		24577AFE294BCE0800A9D6D8 /* AudioPluginPHASE.a in Copy plugin to Unity project */ = {isa = PBXBuildFile; fileRef = FF98C0671F23DCD70043047A /* AudioPluginPHASE.a */; platformFilter = ios; };
 		302D376323621CA40030DA9A /* AudioPluginPHASE.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FF98C0671F23DCD70043047A /* AudioPluginPHASE.a */; platformFilter = ios; };
 		302D377623621F2E0030DA9A /* AudioPluginPHASE_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 302D377523621F2E0030DA9A /* AudioPluginPHASE_Tests.mm */; platformFilter = ios; };
 		302D377723621F2E0030DA9A /* AudioPluginPHASE_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 302D377523621F2E0030DA9A /* AudioPluginPHASE_Tests.mm */; };
@@ -58,7 +70,6 @@
 		30E4658A237741830050BC49 /* anechoic-vox-mono.wav in Resources */ = {isa = PBXBuildFile; fileRef = 30E46589237741830050BC49 /* anechoic-vox-mono.wav */; };
 		30E4658B237741830050BC49 /* anechoic-vox-mono.wav in Resources */ = {isa = PBXBuildFile; fileRef = 30E46589237741830050BC49 /* anechoic-vox-mono.wav */; };
 		4A6D65EE2397FF3A00E93D89 /* AudioPluginPHASE.a in CopyFiles */ = {isa = PBXBuildFile; fileRef = FF98C0671F23DCD70043047A /* AudioPluginPHASE.a */; platformFilter = ios; };
-		648E95A0273DC5DD00D5A1B4 /* AudioPluginPHASE.a in Copy plugin to Unity project */ = {isa = PBXBuildFile; fileRef = FF98C0671F23DCD70043047A /* AudioPluginPHASE.a */; platformFilter = ios; };
 		64B68A67267A9EAD00DB5DA7 /* PHASE.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64FADC8E267A8EDF004FC962 /* PHASE.framework */; };
 		64B68A68267A9EB400DB5DA7 /* PHASE.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64FADC92267A8F06004FC962 /* PHASE.framework */; };
 		64B68A69267A9ECC00DB5DA7 /* PHASE.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64FADC8E267A8EDF004FC962 /* PHASE.framework */; };
@@ -124,7 +135,7 @@
 			dstPath = "$(PROJECT_DIR)/../Apple.PHASE_Unity/Assets/Runtime/Plugins/iOS";
 			dstSubfolderSpec = 0;
 			files = (
-				648E95A0273DC5DD00D5A1B4 /* AudioPluginPHASE.a in Copy plugin to Unity project */,
+				24577AFE294BCE0800A9D6D8 /* AudioPluginPHASE.a in Copy plugin to Unity project */,
 			);
 			name = "Copy plugin to Unity project";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -390,6 +401,9 @@
 			attributes = {
 				LastUpgradeCheck = 1200;
 				TargetAttributes = {
+					241B6AAD2947E2F000EC7B7A = {
+						CreatedOnToolsVersion = 14.1;
+					};
 					302D375D23621CA30030DA9A = {
 						CreatedOnToolsVersion = 11.0;
 					};
@@ -424,6 +438,7 @@
 				302D376C23621EC90030DA9A /* AudioPluginPHASE-Tests-macOS */,
 				6400218C25FC27DE00ED6DA1 /* All - Release */,
 				649B736C276D2F06004E0B8E /* All - Debug */,
+				241B6AAD2947E2F000EC7B7A /* tvOS_sentinel */,
 			);
 		};
 /* End PBXProject section */
@@ -448,8 +463,28 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		241B6AB12947E30A00EC7B7A /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\necho \"\\n[PHASE] tvOS not currently supported by PHASE plug-in. No native library built.\"\n";
+			showEnvVarsInLog = 0;
+		};
 		2492FB5227619556005F5F33 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -729,6 +764,24 @@
 				PRODUCT_NAME = AudioPluginPHASE;
 				SDKROOT = macosx.internal;
 				WRAPPER_EXTENSION = bundle;
+			};
+			name = Release;
+		};
+		241B6AAE2947E2F000EC7B7A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+			};
+			name = Debug;
+		};
+		241B6AAF2947E2F000EC7B7A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
 			};
 			name = Release;
 		};
@@ -1079,6 +1132,15 @@
 			buildConfigurations = (
 				1DEB911F08733D790010E9CD /* Debug */,
 				1DEB912008733D790010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		241B6AB02947E2F000EC7B7A /* Build configuration list for PBXAggregateTarget "tvOS_sentinel" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				241B6AAE2947E2F000EC7B7A /* Debug */,
+				241B6AAF2947E2F000EC7B7A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

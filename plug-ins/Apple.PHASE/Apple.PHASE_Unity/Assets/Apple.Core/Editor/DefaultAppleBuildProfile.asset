@@ -41,9 +41,11 @@ MonoBehaviour:
   m_Name: DefaultAppleBuildProfile
   m_EditorClassIdentifier: 
   AutomateInfoPlist: 1
-  MinimumOSVersion: 
-  AppUsesNonExemptEncryption: 0
   DefaultInfoPlist: {fileID: 0}
+  MinimumOSVersion_iOS: 11.0
+  MinimumOSVersion_tvOS: 11.0
+  MinimumOSVersion_macOS: 10.15.0
+  AppUsesNonExemptEncryption: 0
   AutomateEntitlements: 1
   DefaultEntitlements: {fileID: 0}
 --- !u!114 &2907043304851268973
