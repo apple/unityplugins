@@ -10,6 +10,7 @@ import scripts.upi_unity as unity
 
 # Selection identifiers for which plug-ins to perform build actions upon. Build script will ignore actions for unselected plug-ins.
 plugin_id_accessibility = "Accessibility"
+plugin_id_apple_cloud_kit = "CloudKit"
 plugin_id_apple_core = "Core"
 plugin_id_core_haptics = "CoreHaptics"
 plugin_id_game_controller = "GameController"
@@ -91,7 +92,7 @@ default_unity_install_root_path = pathlib.Path("/Applications/Unity")
 # Handle command line args
 
 argument_parser = argparse.ArgumentParser(description="Builds all native libraries, packages plug-ins, and moves packages to build folder.")
-argument_parser.add_argument("-p", "--plugin-list", dest="plugin_list", nargs='*', default=[plugin_id_all], help=f"Selects the plug-ins to process. Possible values are: {plugin_id_accessibility}, {plugin_id_apple_core}, {plugin_id_core_haptics}, {plugin_id_game_controller}, {plugin_id_game_kit}, {plugin_id_phase}, or {plugin_id_all}. Default is: {plugin_id_all}")
+argument_parser.add_argument("-p", "--plugin-list", dest="plugin_list", nargs='*', default=[plugin_id_all], help=f"Selects the plug-ins to process. Possible values are: {plugin_id_accessibility}, {plugin_id_apple_cloud_kit}, {plugin_id_apple_core}, {plugin_id_core_haptics}, {plugin_id_game_controller}, {plugin_id_game_kit}, {plugin_id_phase}, or {plugin_id_all}. Default is: {plugin_id_all}")
 argument_parser.add_argument("-m", "--platforms", dest="platform_list", nargs='*', default=[platform_id_all], help=f"Selects the desired platforms to target when building native libraries. Possible values are: {platform_id_ios}, {platform_id_macos}, {platform_id_tvos}, or {platform_id_all}. Default is: {platform_id_all}")
 argument_parser.add_argument("-b", "--build-action", dest="build_actions", nargs='*', default=[build_action_native_build, build_action_pack], help=f"Sets the build actions for the selected plug-ins. Possible values are: {build_action_native_build}, {build_action_pack}, {build_action_none} or {build_action_all}. Defaults are: {build_action_native_build}, {build_action_pack}")
 argument_parser.add_argument("-u", "--unity-installation-root", dest="unity_installation_root", default=default_unity_install_root_path, help="Root path to search for Unity installations. Note: performs a full recursive search of the given directory.")
@@ -182,6 +183,7 @@ if __name__ == '__main__':
     
     selected_plugins = {
         plugin_id_accessibility: False,
+        plugin_id_apple_cloud_kit: False,
         plugin_id_apple_core: False,
         plugin_id_core_haptics: False,
         plugin_id_game_controller: False,
@@ -200,7 +202,7 @@ if __name__ == '__main__':
             valid_plugin_found = True
             break
         else:
-            utility.WarningMessage(f"Ignoring unknown plug-in '{plugin_id}'. Valid options are {plugin_id_accessibility}, {plugin_id_apple_core}, {plugin_id_core_haptics}, {plugin_id_game_controller}, {plugin_id_game_kit}, {plugin_id_phase}, or {plugin_id_all} (Default)")
+            utility.WarningMessage(f"Ignoring unknown plug-in '{plugin_id}'. Valid options are {plugin_id_accessibility}, {plugin_id_apple_cloud_kit}, {plugin_id_apple_core}, {plugin_id_core_haptics}, {plugin_id_game_controller}, {plugin_id_game_kit}, {plugin_id_phase}, or {plugin_id_all} (Default)")
 
     if not valid_plugin_found:
         utility.WarningMessage(f"No valid plug-in passed to build script. Using default argument: {plugin_id_all}")

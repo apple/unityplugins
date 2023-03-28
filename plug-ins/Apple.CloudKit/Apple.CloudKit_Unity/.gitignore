@@ -1,0 +1,12 @@
+Library
+Temp
+obj
+Logs
+*.sln
+*.csproj
+.idea
+.vs
+UserSettings
+*.DS_Store
+Assets/TextMesh Pro*
+
