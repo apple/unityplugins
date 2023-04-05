@@ -1,6 +1,13 @@
 # CHANGELOG
 All notable changes to this project will be documented in this file.
 
+## [1.0.3] - 2023-3-7
+## Changed
+- Updated README to include info on Samples.
+
+## Fixed
+- Set undefined fields in Prefabs.
+
 ## [1.0.2] - 2022-11-29
 ## Changed
 - Disabled bitcode generation in all native library project build targets.
