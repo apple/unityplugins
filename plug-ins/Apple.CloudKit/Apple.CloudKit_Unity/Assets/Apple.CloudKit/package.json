@@ -1,0 +1,28 @@
+{
+    "name": "com.apple.unityplugin.cloudkit",
+    "displayName": "Apple.CloudKit",
+    "description": "Exposes Apple's CloudKit.framework to Unity developers via C# script API",
+    "version": "0.0.1",
+    "unity": "2019.4",
+    "dependencies": {
+        "com.apple.unityplugin.core": "1.0.3"
+    },
+    "keywords": [
+        "cloudkit",
+        "NSUbiquitousKeyValueStore",
+        "kvs",
+        "apple"
+    ],
+    "author": {
+        "name": "Apple, Inc",
+        "email": "developer@apple.com",
+        "url": "https://developer.apple.com"
+    },
+    "samples": [
+        {
+            "displayName": "CloudKit Demo",
+            "description": "Demo for CloudKit integration",
+            "path": "Demos~/Apple.CloudKit.Sample"
+        }
+    ]
+}

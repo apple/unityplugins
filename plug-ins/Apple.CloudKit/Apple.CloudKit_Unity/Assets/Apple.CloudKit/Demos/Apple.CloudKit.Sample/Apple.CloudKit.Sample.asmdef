@@ -1,0 +1,23 @@
+{
+    "name": "Apple.CloudKit.Sample",
+    "rootNamespace": "",
+    "references": [
+        "GUID:1e90ac084be3f8d469f923da4b9f7c81",
+        "GUID:01b2c41dbd2854b848cd21cf1e0c1e9e",
+        "GUID:6055be8ebefd69e48b49212b09b47b2f"
+    ],
+    "includePlatforms": [
+        "Editor",
+        "iOS",
+        "macOSStandalone",
+        "tvOS"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
