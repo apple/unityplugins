@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 
 ## Fixed
 - Set undefined fields in Prefabs.
+- Ensures Sound Events are registered before playback
 - Resolve testDestroyListenerDuringPlayback unit test failure
 
 ## [1.0.2] - 2022-11-29
