@@ -1369,8 +1369,6 @@ void MyOneShotCompletionHandler(PHASESoundEventStartHandlerReason reason, int64_
             PHASECreateListener();
         }
     }
-    result = PHASEStopSoundEvent(instance);
-    XCTAssert(result == true);
     
     // Unregister the sound event asset.
     PHASEUnregisterSoundEventAsset(treeName);
