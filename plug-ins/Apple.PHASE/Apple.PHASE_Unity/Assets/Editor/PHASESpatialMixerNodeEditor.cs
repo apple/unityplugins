@@ -19,6 +19,10 @@ public class PHASESpatialMixerNodeEditor : NodeEditor
         var node = target as PHASESpatialMixer;
         NodeEditorGUILayout.PortField(node.GetInputPort("ParentNode"));
 
+        EditorGUILayout.Space();
+        NodeEditorGUILayout.PortField(node.GetOutputPort("GainParameter"));
+        EditorGUILayout.Space();
+
         EditorGUILayout.LabelField("Spatial Mixer Properties");
         EditorGUILayout.Space();
         EditorGUILayout.PropertyField(serializedObject.FindProperty("_directPathModeler"));

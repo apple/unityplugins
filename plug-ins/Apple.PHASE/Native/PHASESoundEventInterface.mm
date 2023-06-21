@@ -144,11 +144,18 @@ void PHASEDestroyMixer(int64_t inMixerId)
     return [engineWrapper destroyMixerWithId:inMixerId];
 }
 
-int64_t PHASECreateSoundEventParameterInt(const char* inParameterName, int inDefaultValue)
+int64_t PHASECreateSoundEventParameterInt(const char* inParameterName, int inDefaultValue, int inMinimumValue, int inMaximumValue)
 {
     PHASEEngineWrapper* engineWrapper = [PHASEEngineWrapper sharedInstance];
     NSString* parameterName = [NSString stringWithUTF8String:inParameterName];
-    return [engineWrapper createMetaParameterWithName:parameterName defaultIntValue:inDefaultValue];
+    return [engineWrapper createMetaParameterWithName:parameterName defaultIntValue:inDefaultValue minimumValue:inMinimumValue maximumValue: inMaximumValue];
+}
+
+int PHASEGetSoundEventParameterInt(int64_t inInstance, const char* inParamName)
+{
+    NSString* paramName = [NSString stringWithUTF8String:inParamName];
+    PHASEEngineWrapper* engineWrapper = [PHASEEngineWrapper sharedInstance];
+    return [engineWrapper getMetaParameterIntValueWithId:inInstance parameterName:paramName];
 }
 
 bool PHASESetSoundEventParameterInt(int64_t inInstance, const char* inParamName, int inParamValue)
@@ -158,11 +165,18 @@ bool PHASESetSoundEventParameterInt(int64_t inInstance, const char* inParamName,
     return [engineWrapper setMetaParameterWithId:inInstance parameterName:paramName intValue:inParamValue];
 }
 
-int64_t PHASECreateSoundEventParameterDbl(const char* inParameterName, double inDefaultValue)
+int64_t PHASECreateSoundEventParameterDbl(const char* inParameterName, double inDefaultValue, double inMinimumValue, double inMaximumValue)
 {
     PHASEEngineWrapper* engineWrapper = [PHASEEngineWrapper sharedInstance];
     NSString* parameterName = [NSString stringWithUTF8String:inParameterName];
-    return [engineWrapper createMetaParameterWithName:parameterName defaultDblValue:inDefaultValue];
+    return [engineWrapper createMetaParameterWithName:parameterName defaultDblValue:inDefaultValue minimumValue:inMinimumValue maximumValue: inMaximumValue];
+}
+
+double PHASEGetSoundEventParameterDbl(int64_t inInstance, const char* inParamName)
+{
+    NSString* paramName = [NSString stringWithUTF8String:inParamName];
+    PHASEEngineWrapper* engineWrapper = [PHASEEngineWrapper sharedInstance];
+    return [engineWrapper getMetaParameterDblValueWithId:inInstance parameterName:paramName];
 }
 
 bool PHASESetSoundEventParameterDbl(int64_t inInstance, const char* inParamName, double inParamValue)
@@ -180,12 +194,40 @@ int64_t PHASECreateSoundEventParameterStr(const char* inParameterName, const cha
     return [engineWrapper createMetaParameterWithName:parameterName defaultStrValue:defaultValue];
 }
 
+/*
+    Note that the caller should handle deallocating the copied string.
+    According to Unity documentation: String values returned from a native method should be UTF–8
+    encoded and allocated on the heap. Mono marshalling calls free for strings like this.
+    https://docs.unity3d.com/Manual/PluginsForIOS.html
+ */
+const char* PHASEGetSoundEventParameterStr(int64_t inInstance, const char* inParamName)
+{
+    NSString* paramName = [NSString stringWithUTF8String:inParamName];
+    PHASEEngineWrapper* engineWrapper = [PHASEEngineWrapper sharedInstance];
+    NSString* param = [engineWrapper getMetaParameterStrValueWithId:inInstance parameterName:paramName];
+    if (param == nil)
+    {
+        return nullptr;
+    }
+
+    const char* paramStr = param.UTF8String;
+    char* paramStrCopy = (char*)malloc(strlen(paramStr) + 1);
+    strcpy(paramStrCopy, paramStr);
+    return paramStrCopy;
+}
+
 bool PHASESetSoundEventParameterStr(int64_t inInstance, const char* inParamName, const char* inParamValue)
 {
     NSString* paramName = [NSString stringWithUTF8String:inParamName];
     NSString* paramValue = [NSString stringWithUTF8String:inParamValue];
     PHASEEngineWrapper* engineWrapper = [PHASEEngineWrapper sharedInstance];
     return [engineWrapper setMetaParameterWithId:inInstance parameterName:paramName stringValue:paramValue];
+}
+
+bool PHASESetMixerGainMetaParameter(int64_t inParameterId, int64_t inMixerId)
+{
+    PHASEEngineWrapper* engineWrapper = [PHASEEngineWrapper sharedInstance];
+    return [engineWrapper setMixerGainParameterOnMixerWithId:inParameterId mixerId:inMixerId];
 }
 
 void PHASEDestroySoundEventParameter(int64_t inParameterId)

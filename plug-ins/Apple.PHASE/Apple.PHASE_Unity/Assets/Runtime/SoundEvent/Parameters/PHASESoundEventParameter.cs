@@ -11,21 +11,18 @@ namespace Apple.PHASE
     {
         // Parameter name.
         [SerializeField] protected string _parameterName;
+        public string ParameterName
+        {
+            get => _parameterName;
+            set => _parameterName = value;
+        }
 
         // Parameter ID - assigned after it gets created.
         protected long _parameterId = Helpers.InvalidId;
-
-        /// <summary>
-        /// Set the name of this parameter to the given string.
-        /// </summary>
-        /// <param name="inParameterName"></param>
-        public void SetParameterName(string inParameterName)
+        public long ParameterId
         {
-            _parameterName = inParameterName;
+            get => _parameterId;
         }
-
-        /// <returns> Returns a long representing the lower level parameter ID.</returns>
-        public long GetParameterId() { return _parameterId; }
 
         /// <summary>
         /// Derived classes create the specific type of parameter in the PHASE engine.

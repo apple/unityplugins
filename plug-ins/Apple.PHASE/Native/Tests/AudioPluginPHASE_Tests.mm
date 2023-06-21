@@ -28,6 +28,13 @@ struct Vector3
     float z;
 };
 
+enum PHASEMixerType
+{
+    AmbientMixer = 0,
+    ChannelMixer = 1,
+    SpatialMixer = 2
+};
+
 @interface AudioPluginPHASE_Tests : XCTestCase {
     struct MeshData
     {
@@ -118,6 +125,217 @@ struct Vector3
     PHASEStop();
 }
 
+- (void)helperTestCreateAndSetInitialMixerGainParameter:(PHASEMixerType)mixerType gainToSet:(double)gainToSet
+{
+    bool gainToSetInValidRange = gainToSet >= 0.0 && gainToSet <= 1.0;
+    char mixerName[] = "TestMixerName";
+    char gainParamName[] = "MixerGain";
+    
+    int64_t mixerId = PHASEInvalidInstanceHandle;
+    switch (mixerType)
+    {
+        case PHASEMixerType::AmbientMixer:
+            mixerId = PHASECreateAmbientMixer(mixerName, ChannelLayoutTypeMono, { 0, 0, 0, 0 });
+            break;
+        case PHASEMixerType::ChannelMixer:
+            mixerId = PHASECreateChannelMixer(mixerName, ChannelLayoutTypeMono);
+            break;
+        case PHASEMixerType::SpatialMixer:
+            mixerId = PHASECreateSpatialMixer(mixerName, true, true, true, 0.0f, mDirectivityModelParameters, mDirectivityModelParameters);
+            break;
+    }
+    
+    XCTAssert(mixerId != PHASEInvalidInstanceHandle);
+    
+    // Create the mixer gain parameter and set the metaGainParameter on the soundevent
+    const int64_t gainParameterId = PHASECreateSoundEventParameterDbl(gainParamName, gainToSet, 0.0, 1.0);
+    if (gainToSetInValidRange)
+    {
+        XCTAssert(gainParameterId != PHASEInvalidInstanceHandle);
+    }
+    else
+    {
+        XCTAssert(gainParameterId == PHASEInvalidInstanceHandle);
+    }
+    
+    bool result = PHASESetMixerGainMetaParameter(gainParameterId, mixerId);
+    if (gainToSetInValidRange)
+    {
+        XCTAssert(result == true);
+    }
+    else
+    {
+        XCTAssert(result == false);
+    }
+    
+    // Create the listener
+    result = PHASECreateListener();
+    XCTAssert(result == true);
+
+    // Create a source
+    const int64_t sourceId = PHASECreateVolumetricSource(mMeshData.mVertexCount, mMeshData.mVertexPositions, mMeshData.mVertexNormals,
+                                                         mMeshData.mIndexCount, mMeshData.mIndices);
+    XCTAssert(sourceId != PHASEInvalidInstanceHandle);
+
+    // Register the buffer asset
+    char assetName[] = "TestBufferAsset";
+    result = PHASERegisterAudioBuffer(assetName, mAudioBuffer.mData, 48000, mAudioBuffer.mDataByteSize, 32, mAudioBuffer.mNumberChannels);
+    XCTAssert(result == true);
+
+    int64_t samplerId = PHASECreateSoundEventSamplerNode(assetName, mixerId, true, CalibrationModeRelativeSpl, 1);
+    XCTAssert(samplerId != PHASEInvalidInstanceHandle);
+
+    // Register the sound event asset.
+    char soundEventName[] = "TestSoundEvent";
+    result = PHASERegisterSoundEventAsset(soundEventName, samplerId);
+    XCTAssert(result == true);
+
+    // Play sound event.
+    PHASESoundEventCompletionHandler soundEventCompletionHandler = MyPlaySoundEventCompletionHandler;
+    int64_t mixerIds[] = { mixerId };
+    int64_t instance = PHASEPlaySoundEvent(soundEventName, sourceId, mixerIds, 1, soundEventCompletionHandler);
+    XCTAssert(instance != PHASEInvalidInstanceHandle);
+    
+    const double mixerGain = PHASEGetSoundEventParameterDbl(instance, gainParamName);
+    
+    if (gainToSetInValidRange)
+    {
+        XCTAssert(mixerGain == gainToSet);
+    }
+    else
+    {
+        XCTAssert(mixerGain != gainToSet);
+    }
+    
+    result = PHASEStopSoundEvent(instance);
+    XCTAssert(result == true);
+
+    // Unregister the sound event asset.
+    PHASEUnregisterSoundEventAsset(soundEventName);
+
+    // Unregister the buffer
+    PHASEUnregisterAudioAsset(assetName);
+
+    // Destroy the source
+    PHASEDestroySource(sourceId);
+
+    // Destroy the listener
+    PHASEDestroyListener();
+
+    // Destory gain parameter
+    PHASEDestroySoundEventParameter(gainParameterId);
+    
+    // Destroy the mixer
+    PHASEDestroyMixer(mixerId);
+}
+
+
+- (void)helperTestSetDynamicallyMixerGainParameter:(PHASEMixerType)mixerType gainToSet:(double)gainToSet
+{
+    bool gainToSetInValidRange = gainToSet >= 0.0 && gainToSet <= 1.0;
+    double initialGain = 0.5f;
+    char gainParamName[] = "MixerGain";
+    
+    // Create the listener
+    bool result = PHASECreateListener();
+    XCTAssert(result == true);
+
+    // Create a source
+    const int64_t sourceId = PHASECreateVolumetricSource(mMeshData.mVertexCount, mMeshData.mVertexPositions, mMeshData.mVertexNormals,
+                                                         mMeshData.mIndexCount, mMeshData.mIndices);
+    XCTAssert(sourceId != PHASEInvalidInstanceHandle);
+
+    // Register the buffer asset
+    char assetName[] = "TestBufferAsset";
+    result = PHASERegisterAudioBuffer(assetName, mAudioBuffer.mData, 48000, mAudioBuffer.mDataByteSize, 32, mAudioBuffer.mNumberChannels);
+    XCTAssert(result == true);
+
+    char mixerName[] = "TestMixername";
+    int64_t mixerId = PHASEInvalidInstanceHandle;
+    
+    switch (mixerType)
+    {
+        case PHASEMixerType::AmbientMixer:
+            mixerId = PHASECreateAmbientMixer(mixerName, ChannelLayoutTypeMono, { 0, 0, 0, 0 });
+            break;
+        case PHASEMixerType::ChannelMixer:
+            mixerId = PHASECreateChannelMixer(mixerName, ChannelLayoutTypeMono);
+            break;
+        case PHASEMixerType::SpatialMixer:
+            mixerId = PHASECreateSpatialMixer(mixerName, true, true, true, 0.0f, mDirectivityModelParameters, mDirectivityModelParameters);
+            break;
+    }
+   
+    XCTAssert(mixerId != PHASEInvalidInstanceHandle);
+    
+    // Create the mixer gain parameter and set the metaGainParameter on the soundevent
+    const int64_t gainParameterId = PHASECreateSoundEventParameterDbl(gainParamName, initialGain, 0.0, 1.0);
+    XCTAssert(gainParameterId != PHASEInvalidInstanceHandle);
+    
+    result = PHASESetMixerGainMetaParameter(gainParameterId, mixerId);
+    XCTAssert(result == true);
+
+    int64_t samplerId = PHASECreateSoundEventSamplerNode(assetName, mixerId, true, CalibrationModeRelativeSpl, 1);
+    XCTAssert(samplerId != PHASEInvalidInstanceHandle);
+
+    // Register the sound event asset.
+    char soundEventName[] = "TestSoundEvent";
+    result = PHASERegisterSoundEventAsset(soundEventName, samplerId);
+    XCTAssert(result == true);
+
+    // Play sound event.
+    PHASESoundEventCompletionHandler soundEventCompletionHandler = MyPlaySoundEventCompletionHandler;
+    int64_t mixerIds[] = { mixerId };
+    int64_t instance = PHASEPlaySoundEvent(soundEventName, sourceId, mixerIds, 1, soundEventCompletionHandler);
+    XCTAssert(instance != PHASEInvalidInstanceHandle);
+
+    for (int i = 0; i < 100; ++i)
+    {
+        PHASEUpdate();
+
+        // Pretend we're updating the objects every 16ms (ie. 60hz)
+        std::this_thread::sleep_for(std::chrono::milliseconds(16));
+
+        if (i == 50)
+        {
+            // Dynamically change the mixer gain
+            bool result = PHASESetSoundEventParameterDbl(instance, gainParamName, gainToSet);
+            XCTAssert(result == true);
+            double updatedGain = PHASEGetSoundEventParameterDbl(instance, gainParamName);
+            
+            if(gainToSetInValidRange)
+            {
+                XCTAssert(updatedGain == gainToSet);
+            }
+            else
+            {
+                XCTAssert(updatedGain != gainToSet); //value should have been clamped by PHASE engine
+            }
+        }
+    }
+    
+    result = PHASEStopSoundEvent(instance);
+    XCTAssert(result == true);
+
+    // Unregister the sound event asset.
+    PHASEUnregisterSoundEventAsset(soundEventName);
+
+    // Unregister the buffer
+    PHASEUnregisterAudioAsset(assetName);
+
+    // Destroy the source
+    PHASEDestroySource(sourceId);
+
+    // Destroy the listener
+    PHASEDestroyListener();
+    
+    // Destory gain parameter
+    PHASEDestroySoundEventParameter(gainParameterId);
+    
+    // Destroy the mixer
+    PHASEDestroyMixer(mixerId);
+}
+
 - (void)testCreateDestroyListener
 {
 
@@ -155,6 +373,45 @@ struct Vector3
     result = PHASESetListenerTransform(transform);
     XCTAssert(result == true);
 
+    result = PHASEDestroyListener();
+    XCTAssert(result == true);
+}
+
+- (void)testSetListenerGain
+{
+    double gain = 0.5f;
+
+    // Try and set the gain - should fail as no listener yet
+    bool result = PHASESetListenerGain(gain);
+    XCTAssert(result == false);
+
+    // Create the listener
+    result = PHASECreateListener();
+    XCTAssert(result == true);
+
+    // Try and set the gain - should succeed
+    result = PHASESetListenerGain(gain);
+    XCTAssert(result == true);
+
+    result = PHASEDestroyListener();
+    XCTAssert(result == true);
+}
+
+- (void)testTrySetListenerGainWithInvalidValue
+{
+    double gain = -1.0f;
+    
+    // Create the listener
+    bool result = PHASECreateListener();
+    XCTAssert(result == true);
+
+    // Try and set the gain outside valid range of [0,1] - should clamp the value
+    result = PHASESetListenerGain(gain);
+    XCTAssert(result == true);
+    
+    const double listenerGain = PHASEGetListenerGain();
+    XCTAssert(listenerGain >= 0.0 && listenerGain <= 1.0);
+    
     result = PHASEDestroyListener();
     XCTAssert(result == true);
 }
@@ -242,6 +499,45 @@ struct Vector3
 
     PHASEDestroySource(sourceId);
 }
+
+- (void)testSetSourceGain
+ {
+     double gain = 0.5f;
+     
+     // Try and set the gain - should fail as invalid sourceId
+     bool result = PHASESetSourceGain(0, gain);
+     XCTAssert(result == false);
+
+     // Create a source
+     const int64_t sourceId = PHASECreateVolumetricSource(mMeshData.mVertexCount, mMeshData.mVertexPositions, mMeshData.mVertexNormals,
+                                                          mMeshData.mIndexCount, mMeshData.mIndices);
+     XCTAssert(sourceId != PHASEInvalidInstanceHandle);
+
+     // Try and set the gain - should succeed
+     result = PHASESetSourceGain(sourceId, gain);
+     XCTAssert(result == true);
+     
+     PHASEDestroySource(sourceId);
+ }
+
+ - (void)testTrySetSourceGainWithInvalidValue
+ {
+     double gain = -1.0f;
+
+     // Create a source
+     const int64_t sourceId = PHASECreateVolumetricSource(mMeshData.mVertexCount, mMeshData.mVertexPositions, mMeshData.mVertexNormals,
+                                                          mMeshData.mIndexCount, mMeshData.mIndices);
+     XCTAssert(sourceId != PHASEInvalidInstanceHandle);
+
+     // Try and set the gain outside valid range of [0,1] - should clamp the value
+     bool result = PHASESetSourceGain(sourceId, gain);
+     XCTAssert(result == true);
+     
+     const double sourceGain = PHASEGetSourceGain(sourceId);
+     XCTAssert(sourceGain >= 0.0 && sourceGain <= 1.0);
+     
+     PHASEDestroySource(sourceId);
+ }
 
 - (void)testCreateDestroyOccluder
 {
@@ -1018,7 +1314,7 @@ void MyOneShotCompletionHandler(PHASESoundEventStartHandlerReason reason, int64_
     EnvelopeSegment inEnvelopeSegments = { .x = 0.5, .y = 0.5, .curveType = EnvelopeCurveTypeSine };
 
     EnvelopeParameters inEnvelopeParameters = { .x = 0, .y = 0, .segmentCount = 1, .envelopeSegments = &inEnvelopeSegments };
-    int64_t inParameterId = PHASECreateSoundEventParameterDbl("ChirpRiseRate", 0.1);
+    int64_t inParameterId = PHASECreateSoundEventParameterDbl("ChirpRiseRate", 0.1, -DBL_MIN, DBL_MAX);
 
     int64_t mappedMetaParameterId = PHASECreateMappedMetaParameter(inParameterId, inEnvelopeParameters);
 
@@ -1030,7 +1326,7 @@ void MyOneShotCompletionHandler(PHASESoundEventStartHandlerReason reason, int64_
 - (void)testSetInvalidValueOnMetaParameter
 {
     char doubleParamName[] = "testDoubleParam";
-    int64_t parameterId = PHASECreateSoundEventParameterDbl(doubleParamName, 1.0f);
+    int64_t parameterId = PHASECreateSoundEventParameterDbl(doubleParamName, 1.0f, -DBL_MIN, DBL_MAX);
     bool result = PHASESetSoundEventParameterStr(parameterId, doubleParamName, "thisShouldFail");
     XCTAssert(result == false);
 
@@ -1044,12 +1340,73 @@ void MyOneShotCompletionHandler(PHASESoundEventStartHandlerReason reason, int64_
     PHASEDestroySoundEventParameter(parameterId);
     
     char intParamName[] = "testIntParam";
-    parameterId = PHASECreateSoundEventParameterInt(intParamName, 1);
+    parameterId = PHASECreateSoundEventParameterInt(intParamName, 1, INT_MIN, INT_MAX);
     result = PHASESetSoundEventParameterDbl(parameterId, stringParamName, 1.0f);
     XCTAssert(result == false);
 
     PHASEDestroySoundEventParameter(parameterId);
 }
+
+- (void)testCreateAndSetAmbientMixerGainMetaParameter
+ {
+     [self helperTestCreateAndSetInitialMixerGainParameter:PHASEMixerType::AmbientMixer gainToSet:0.5];
+ }
+
+- (void)testCreateAndSetChannelMixerGainMetaParameter
+ {
+     [self helperTestCreateAndSetInitialMixerGainParameter:PHASEMixerType::ChannelMixer gainToSet:0.5];
+ }
+
+- (void)testCreateAndSetSpatialMixerGainMetaParameter
+ {
+     [self helperTestCreateAndSetInitialMixerGainParameter:PHASEMixerType::SpatialMixer gainToSet:0.5];
+ }
+
+- (void)testSetDynamicallyAmbientMixerGainMetaParameter
+ {
+     [self helperTestSetDynamicallyMixerGainParameter:PHASEMixerType::AmbientMixer gainToSet:0.2];
+ }
+
+- (void)testSetDynamicallyChannelMixerGainMetaParameter
+ {
+     [self helperTestSetDynamicallyMixerGainParameter:PHASEMixerType::ChannelMixer gainToSet:0.2];
+ }
+
+- (void)testSetDynamicallySpatialMixerGainMetaParameter
+ {
+     [self helperTestSetDynamicallyMixerGainParameter:PHASEMixerType::SpatialMixer gainToSet:0.2];
+ }
+
+- (void)testTryCreateAndSetAmbientMixerGainWithInvalidValue
+{
+    [self helperTestCreateAndSetInitialMixerGainParameter:PHASEMixerType::AmbientMixer gainToSet:-0.5];
+}
+
+- (void)testTryCreateAndSetChannelMixerGainWithInvalidValue
+{
+    [self helperTestCreateAndSetInitialMixerGainParameter:PHASEMixerType::ChannelMixer gainToSet:-0.5];
+}
+
+- (void)testTryCreateAndSetSpatialMixerGainWithInvalidValue
+{
+    [self helperTestCreateAndSetInitialMixerGainParameter:PHASEMixerType::SpatialMixer gainToSet:-0.5];
+}
+
+ - (void)testTrySetAmbientMixerGainDynamicallyWithInvalidValue
+ {
+     [self helperTestSetDynamicallyMixerGainParameter:PHASEMixerType::AmbientMixer gainToSet:-0.5];
+ }
+
+- (void)testTrySetChannelMixerGainDynamicallyWithInvalidValue
+{
+    [self helperTestSetDynamicallyMixerGainParameter:PHASEMixerType::ChannelMixer gainToSet:-0.5];
+}
+
+- (void)testTrySetSpatialMixerGainDynamicallyWithInvalidValue
+{
+    [self helperTestSetDynamicallyMixerGainParameter:PHASEMixerType::SpatialMixer gainToSet:-0.5];
+}
+
 
 - (void)testCreateBlendNodeWithMappedMetaParameter
 {
@@ -1057,7 +1414,7 @@ void MyOneShotCompletionHandler(PHASESoundEventStartHandlerReason reason, int64_
     EnvelopeSegment inEnvelopeSegments = { .x = 0.5, .y = 0.5, .curveType = EnvelopeCurveTypeSine };
 
     EnvelopeParameters inEnvelopeParameters = { .x = 0, .y = 0, .segmentCount = 1, .envelopeSegments = &inEnvelopeSegments };
-    int64_t inParameterId = PHASECreateSoundEventParameterDbl("Default", 0.1);
+    int64_t inParameterId = PHASECreateSoundEventParameterDbl("Default", 0.1, -DBL_MIN, DBL_MAX);
     int64_t mappedMetaParameterId = PHASECreateMappedMetaParameter(inParameterId, inEnvelopeParameters);
     XCTAssert(mappedMetaParameterId != PHASEInvalidInstanceHandle);
 
