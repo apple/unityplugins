@@ -3,10 +3,21 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
+		241B6AA82947AC5500EC7B7A /* macOS_sentinel */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 241B6AAB2947AC5500EC7B7A /* Build configuration list for PBXAggregateTarget "macOS_sentinel" */;
+			buildPhases = (
+				241B6AAC2947ACF700EC7B7A /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = macOS_sentinel;
+			productName = macOS_sentinel;
+		};
 		242473AB276D443B009747F6 /* All */ = {
 			isa = PBXAggregateTarget;
 			buildConfigurationList = 242473AC276D443B009747F6 /* Build configuration list for PBXAggregateTarget "All" */;
@@ -259,6 +270,9 @@
 			attributes = {
 				LastUpgradeCheck = 1250;
 				TargetAttributes = {
+					241B6AA82947AC5500EC7B7A = {
+						CreatedOnToolsVersion = 14.1;
+					};
 					242473AB276D443B009747F6 = {
 						CreatedOnToolsVersion = 13.2;
 					};
@@ -283,6 +297,7 @@
 				C9729D39274324FC009BB169 /* AppleAccessibility_iOS */,
 				C9729E1127434953009BB169 /* AppleAccessibility_tvOS */,
 				242473AB276D443B009747F6 /* All */,
+				241B6AA82947AC5500EC7B7A /* macOS_sentinel */,
 			);
 		};
 /* End PBXProject section */
@@ -303,6 +318,28 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		241B6AAC2947ACF700EC7B7A /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\necho \"\\n[Accessibility] macOS not currently supported by Accessibility plug-in. No native library built.\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		C9729D36274324FC009BB169 /* Sources */ = {
@@ -347,6 +384,24 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		241B6AA92947AC5500EC7B7A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		241B6AAA2947AC5500EC7B7A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
 		242473AD276D443B009747F6 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -405,7 +460,6 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				ENABLE_BITCODE = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -462,7 +516,6 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_BITCODE = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -491,7 +544,7 @@
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INFOPLIST_OUTPUT_FORMAT = XML;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.apple-plugins.AppleAccessibility-iOS";
 				PRODUCT_NAME = AppleAccessibility;
@@ -516,7 +569,7 @@
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INFOPLIST_OUTPUT_FORMAT = XML;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.apple-plugins.AppleAccessibility-iOS";
 				PRODUCT_NAME = AppleAccessibility;
@@ -547,7 +600,7 @@
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				TVOS_DEPLOYMENT_TARGET = 13.0;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -571,7 +624,7 @@
 				SDKROOT = appletvos;
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				TVOS_DEPLOYMENT_TARGET = 13.0;
+				TVOS_DEPLOYMENT_TARGET = 9.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -580,6 +633,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		241B6AAB2947AC5500EC7B7A /* Build configuration list for PBXAggregateTarget "macOS_sentinel" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				241B6AA92947AC5500EC7B7A /* Debug */,
+				241B6AAA2947AC5500EC7B7A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		242473AC276D443B009747F6 /* Build configuration list for PBXAggregateTarget "All" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

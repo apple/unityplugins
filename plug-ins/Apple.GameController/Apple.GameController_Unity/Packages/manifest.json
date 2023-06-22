@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "com.apple.core": "file:../../../Apple.Core/Apple.Core_Unity/Assets/Apple.Core",
+    "com.apple.unityplugin.core": "file:../../../Apple.Core/Apple.Core_Unity/Assets/Apple.Core",
     "com.unity.2d.sprite": "1.0.0",
     "com.unity.2d.tilemap": "1.0.0",
     "com.unity.ide.rider": "2.0.7",

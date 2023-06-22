@@ -54,7 +54,7 @@ namespace Apple.Core.Tests.Editor
 
         public virtual BuildPlayerOptions ModifyOptions(BuildPlayerOptions playerOptions)
         {
-            Debug.Log("com.apple.core: Modifying player options in the test build");
+            Debug.Log("com.apple.unityplugin.core: Modifying player options in the test build");
             playerOptions.options &= ~(BuildOptions.AutoRunPlayer | BuildOptions.ConnectToHost);
 
             var buildLocation = Path.GetFullPath("TestPlayers");
@@ -73,13 +73,13 @@ namespace Apple.Core.Tests.Editor
 
         public virtual void Cleanup()
         {
-            Debug.Log("com.apple.core: Entered cleanup. Checking if commandline run...");
+            Debug.Log("com.apple.unityplugin.core: Entered cleanup. Checking if commandline run...");
             if (s_RunningPlayerTests && IsRunningTestsFromCommandline())
             {
-                Debug.Log("com.apple.core: Exiting Editor.");
+                Debug.Log("com.apple.unityplugin.core: Exiting Editor.");
                 EditorApplication.update += () => { EditorApplication.Exit(0); };
             }
-            Debug.Log("com.apple.core: Exiting Cleanup.");
+            Debug.Log("com.apple.unityplugin.core: Exiting Cleanup.");
         }
 
         internal static bool IsRunningTestsFromCommandline()

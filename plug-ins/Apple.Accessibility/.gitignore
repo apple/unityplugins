@@ -82,7 +82,7 @@ crashlytics-build.properties
 *.vsconfig
 **/Plugins/**/*.meta
 **/.idea/*
-**/com.apple.corehaptics*.tgz
+**/com.apple.unityplugin.corehaptics*.tgz
 
 ## User settings
 **xcuserdata/

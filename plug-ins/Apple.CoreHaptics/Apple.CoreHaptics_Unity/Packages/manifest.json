@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "com.apple.core": "file:../../../Apple.Core/Apple.Core_Unity/Assets/Apple.Core",
+    "com.apple.unityplugin.core": "file:../../../Apple.Core/Apple.Core_Unity/Assets/Apple.Core",
     "com.unity.collab-proxy": "1.15.15",
     "com.unity.ide.rider": "2.0.7",
     "com.unity.ide.visualstudio": "2.0.14",
@@ -42,6 +42,6 @@
     "com.unity.modules.xr": "1.0.0"
   },
   "testables": [
-    "com.apple.core"
+    "com.apple.unityplugin.core"
   ]
 }

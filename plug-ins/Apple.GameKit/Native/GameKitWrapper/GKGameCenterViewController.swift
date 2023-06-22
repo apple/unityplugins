@@ -70,6 +70,7 @@ public func GKGameCenterViewController_Present
 {
     let target = Unmanaged<GKGameCenterViewController>.fromOpaque(pointer).takeUnretainedValue();
     _currentPresentingGameCenterDelegate = GameKitUIDelegateHandler(taskId: taskId, onSuccess: onSuccess);
+    target.gameCenterDelegate = _currentPresentingGameCenterDelegate;
     
 #if os(iOS) || os(tvOS)
     let viewController = UIApplication.shared.windows.first!.rootViewController;

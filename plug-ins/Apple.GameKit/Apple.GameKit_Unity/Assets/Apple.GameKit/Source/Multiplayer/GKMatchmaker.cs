@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using AOT;
 using Apple.Core.Runtime;
+using UnityEngine.Scripting;
 
 namespace Apple.GameKit.Multiplayer
 {
@@ -12,6 +13,7 @@ namespace Apple.GameKit.Multiplayer
     public class GKMatchmaker : InteropReference
     {
         #region Init
+        [Preserve]
         internal GKMatchmaker(IntPtr pointer) : base(pointer) {}
         #endregion
         

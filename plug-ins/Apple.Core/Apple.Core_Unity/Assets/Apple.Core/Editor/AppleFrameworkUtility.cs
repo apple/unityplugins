@@ -77,6 +77,8 @@ namespace Apple.Core
         /// <param name="pbxProject"></param>
         public static void CopyAndEmbed(string source, BuildTarget buildTarget, string pathToBuiltProject, PBXProject pbxProject)
         {
+            Debug.Log($"CopyAndEmbed - source:{source}, build target:{buildTarget}, pbxPath:{pathToBuiltProject}");
+
             var frameworkName = Path.GetFileName(source);
 
             if (pbxProject == null)
@@ -123,7 +125,7 @@ namespace Apple.Core
                     return;
                 }
 
-                // Copy the actual framework over, delete existing & meta files...
+                // Copy the actual framework over, delete existing & meta files
                 var copyBinaryPath = $"{pathToBuiltProject}/{relativeTargetCopyName}/{Path.GetFileName(source)}";
                 Debug.Log($"CopyAndEmbed putting source file {source} to destination {copyBinaryPath}");
                 Copy(source, copyBinaryPath);
@@ -132,13 +134,17 @@ namespace Apple.Core
             // If it was copied over, just find the GUID for the existing version
             else
             {
-                Debug.Log($"Getting portion of source path {source} that comes after {searchString}");
                 var expectedInstallPath = source.Substring(source.LastIndexOf(searchString) + searchString.Length);
+                Debug.Log($"CopyAndEmbed - Expected install path for {frameworkName}: {expectedInstallPath}");
                 fileGuid = pbxProject.FindFileGuidByProjectPath(Path.Combine("Frameworks", expectedInstallPath));
                 if (string.IsNullOrEmpty(fileGuid))
                 {
-                    Debug.LogError($"CopyAndEmbed expected to find an existing GUID for {frameworkName} at {expectedInstallPath} but could not be found.");
-                    return;
+                    fileGuid = pbxProject.FindFileGuidByProjectPath(Path.Combine("Libraries", expectedInstallPath));
+                    if (string.IsNullOrEmpty(fileGuid))
+                    {
+                        Debug.LogError($"CopyAndEmbed expected to find an existing GUID for {frameworkName} at {expectedInstallPath} but could not be found.");
+                        return;
+                    }
                 }
             }
 
@@ -157,7 +163,7 @@ namespace Apple.Core
         /// <param name="destination"></param>
         public static void Copy(string source, string destination)
         {
-            Debug.Log($"AppleFrameworkUtility: Copying {source} as {destination}...");
+            Debug.Log($"AppleFrameworkUtility: Copying {source} to {destination}");
 
             // Clean up any existing unity plugins or old from previous build...
             if (Directory.Exists(destination))
