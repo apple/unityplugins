@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Apple.Core
 {
@@ -11,25 +12,46 @@ namespace Apple.Core
     public class IntroducedAttribute : Attribute
     {
         // Access by property
-        public RuntimeVersion? iOS { get => _osVersionNumbers[(int)RuntimeOperatingSystem.iOS]; }
-        public RuntimeVersion? macOS { get => _osVersionNumbers[(int)RuntimeOperatingSystem.macOS]; }
-        public RuntimeVersion? tvOS { get => _osVersionNumbers[(int)RuntimeOperatingSystem.tvOS]; }
+        public RuntimeVersion? iOS { get => _osVersions[RuntimeOperatingSystem.iOS]; }
+        public RuntimeVersion? macOS { get => _osVersions[RuntimeOperatingSystem.macOS]; }
+        public RuntimeVersion? tvOS { get => _osVersions[RuntimeOperatingSystem.tvOS]; }
 
         // Access by OperatingSystem
         public RuntimeVersion? OperatingSystemVersion(RuntimeOperatingSystem operatingSystem)
         {
-            return _osVersionNumbers[(int)operatingSystem];
+            if (!Enum.IsDefined(typeof(RuntimeOperatingSystem), operatingSystem) || (operatingSystem == RuntimeOperatingSystem.Unknown) || (operatingSystem == RuntimeOperatingSystem.RuntimeOperatingSystemCount))
+            {
+                return null;
+            }
+
+            return _osVersions[operatingSystem];
         }
 
-        protected RuntimeVersion?[] _osVersionNumbers;
+        protected SortedList<RuntimeOperatingSystem, RuntimeVersion?> _osVersions;
 
         public IntroducedAttribute(string iOS = "", string macOS = "", string tvOS = "")
         {
-            _osVersionNumbers = new RuntimeVersion?[(int)RuntimeOperatingSystem.RuntimeOperatingSystemCount];
+            _osVersions = new SortedList<RuntimeOperatingSystem, RuntimeVersion?>();
             
-            _osVersionNumbers[(int)RuntimeOperatingSystem.iOS] = RuntimeVersion.FromString(iOS);
-            _osVersionNumbers[(int)RuntimeOperatingSystem.macOS] = RuntimeVersion.FromString(macOS);
-            _osVersionNumbers[(int)RuntimeOperatingSystem.tvOS] = RuntimeVersion.FromString(tvOS);
+            _osVersions[RuntimeOperatingSystem.iOS] = RuntimeVersion.FromString(iOS);
+            _osVersions[RuntimeOperatingSystem.macOS] = RuntimeVersion.FromString(macOS);
+            _osVersions[RuntimeOperatingSystem.tvOS] = RuntimeVersion.FromString(tvOS);
+        }
+    }
+
+    /// <summary>
+    /// UnavailableAttribute is used to indicate operating systems for which an API is *not* available.
+    /// Example: [Apple.Core.Unavailable(RuntimeOperatingSystem.tvOS)] means that a given API is not available for tvOS, but is available for all other supported OSes.
+    /// </summary>
+    [System.AttributeUsage(System.AttributeTargets.All)]
+    public class UnavailableAttribute : Attribute
+    {
+        public RuntimeOperatingSystem[] UnavailableOperatingSystems { get; protected set; }
+
+        public UnavailableAttribute(params RuntimeOperatingSystem[] unavailableOperatingSystems)
+        {
+            UnavailableOperatingSystems = new RuntimeOperatingSystem[unavailableOperatingSystems.Length];
+            unavailableOperatingSystems.CopyTo(UnavailableOperatingSystems, 0);
         }
     }
 
