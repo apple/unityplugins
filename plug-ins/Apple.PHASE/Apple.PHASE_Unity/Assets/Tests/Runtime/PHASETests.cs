@@ -11,6 +11,8 @@ namespace Apple.PHASE.UnitTests
     {
         static long InvalidId = -1;
 
+        static double InvalidGain = -1.0f;
+
         private string m_testResourcesDir = "TestAssets/";
 
         private Scene m_scene;
@@ -48,6 +50,33 @@ namespace Apple.PHASE.UnitTests
             yield return new WaitForFixedUpdate();
             UnityEngine.Assertions.Assert.IsNull(sourceObject, $"Failed to destroy {testSourceName}");
 
+        }
+
+        [UnityTest]
+        public IEnumerator PHASETestSetInvalidGainOnSource()
+        {
+            GameObject sourceObject = Object.Instantiate(Resources.Load<GameObject>(m_testResourcesDir + "Voice"));
+
+            PHASESource source = sourceObject.GetComponent<PHASESource>();
+            yield return new WaitForFixedUpdate();
+            Assert.IsTrue(source.GetInstanceID() != InvalidId, "Failed to create looping source");
+
+            source.Play();
+            yield return new WaitForSeconds(0.75f);
+            Assert.That(source.IsPlaying(), "Failed to play looping source");
+
+            // Try to set the source gain to a value outside the valid range
+            source.SetGain(InvalidGain);
+            yield return new WaitForSeconds(0.2f);
+            Assert.IsTrue(source.GetGain() != InvalidGain, "Gain of source was set to value out of range of [0,1]");
+
+            source.Stop();
+            yield return new WaitForSeconds(0.1f);
+            Assert.That(!source.IsPlaying(), "Failed to stop source");
+
+            Object.Destroy(sourceObject);
+            yield return new WaitForFixedUpdate();
+            UnityEngine.Assertions.Assert.IsNull(sourceObject, "Failed to destroy PHASE Source");
         }
 
         [UnityTest]
@@ -326,6 +355,35 @@ namespace Apple.PHASE.UnitTests
 
             listener.SetReverbPreset(Helpers.ReverbPresets.MediumRoom);
             yield return new WaitForSeconds(0.2f);
+
+            Object.Destroy(sourceObject);
+            yield return new WaitForFixedUpdate();
+            UnityEngine.Assertions.Assert.IsNull(sourceObject, "Failed to destroy PHASE Source");
+        }
+
+        [UnityTest]
+        public IEnumerator PHASETestSetInvalidGainOnListener()
+        {
+            PHASEListener listener = GameObject.Find("PHASEListener").GetComponent<PHASEListener>();
+
+            GameObject sourceObject = Object.Instantiate(Resources.Load<GameObject>(m_testResourcesDir + "Voice"));
+
+            PHASESource source = sourceObject.GetComponent<PHASESource>();
+            yield return new WaitForFixedUpdate();
+            Assert.IsTrue(source.GetInstanceID() != InvalidId, "Failed to create looping source");
+
+            source.Play();
+            yield return new WaitForSeconds(0.75f);
+            Assert.That(source.IsPlaying(), "Failed to play looping source");
+
+            // Try to set the listener gain to a value outside the valid range
+            listener.SetGain(InvalidGain);
+            yield return new WaitForSeconds(0.2f);
+            Assert.IsTrue(listener.GetGain() != InvalidGain, "Gain of listener was set to value out of range of [0,1]");
+
+            source.Stop();
+            yield return new WaitForSeconds(0.1f);
+            Assert.That(!source.IsPlaying(), "Failed to stop source");
 
             Object.Destroy(sourceObject);
             yield return new WaitForFixedUpdate();

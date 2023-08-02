@@ -127,6 +127,10 @@ namespace Apple.PHASE
                 {
                     Debug.LogError("Failed to create PHASE spatial mixer.");
                 }
+                else
+                {
+                    CreateGainMetaParameter();
+                }
             }
             return _mixerId;
         }

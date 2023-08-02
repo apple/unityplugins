@@ -54,8 +54,7 @@ namespace Apple.PHASE
                 return false;
             }
 
-            _parameterId = Helpers.PHASECreateMappedMetaParameter(_parameter.GetParameterId(), GetEnvelopeParameters());
-
+            _parameterId = Helpers.PHASECreateMappedMetaParameter(_parameter.ParameterId, GetEnvelopeParameters());
 
             if (_parameterId == Helpers.InvalidId)
             {

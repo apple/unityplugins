@@ -49,6 +49,19 @@ bool PHASECreateListener();
 bool PHASESetListenerTransform(Matrix4x4 inTransform);
 
 /*
+    Sets the gain linear scale value of the listener, range of [0,1]
+    Given gain values outside of this range will be clamped.
+    Returns true on success, false otherwise.
+*/
+bool PHASESetListenerGain(double inGain);
+
+/*
+    Gets the gain of the listener
+    Returns double representing listener gain scalar value, range of [0,1]
+*/
+double PHASEGetListenerGain();
+
+/*
     Destroys a PHASE Listener.
     Returns true on success, false otherwise.
  */
@@ -75,6 +88,19 @@ int64_t PHASECreatePointSource();
     Returns true on success, false otherwise.
 */
 bool PHASESetSourceTransform(int64_t inSourceId, Matrix4x4 inTransform);
+
+/*
+    Sets the gain linear scale value of a given source, range of [0,1].
+    Given gain values outside of this range will be clamped.
+    Returns true on success, false otherwise.
+*/
+bool PHASESetSourceGain(int64_t inSourceId, double inGain);
+
+/*
+    Gets the gain of a given source
+    Returns double representing source's gain scalar value, range of [0,1].
+*/
+double PHASEGetSourceGain(int64_t inSourceId);
 
 /*
     Destroys a PHASE Source.
