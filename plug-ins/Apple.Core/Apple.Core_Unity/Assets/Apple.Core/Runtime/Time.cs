@@ -26,16 +26,18 @@ namespace Apple.Core.Runtime
         public static async Task<DateTime> GetNetworkTime()
         {
             var dnsLookupTask = Dns.GetHostEntryAsync(_ntpServer);
-            
-            if (await Task.WhenAny(dnsLookupTask, Task.Delay(DnsLookupTimeoutMS)) == dnsLookupTask)
-            {
-                var ipEndPoint = new IPEndPoint(dnsLookupTask.Result.AddressList[0], 123);
-                return await GetNetworkTime(ipEndPoint);
-            }
-            else
-            {
+
+            if (await Task.WhenAny(dnsLookupTask, Task.Delay(DnsLookupTimeoutMS)) != dnsLookupTask)
                 throw new Exception("Time.GetNetworkTime() DNS lookup has timed out.");
+
+            var ipEndPoint = new IPEndPoint(0, 0);
+            foreach (var t in dnsLookupTask.Result.AddressList)
+            {
+                if (t.AddressFamily != AddressFamily.InterNetwork) continue;
+                ipEndPoint = new IPEndPoint(t, 123);
+                break;
             }
+            return await GetNetworkTime(ipEndPoint);
         }
         
         private static async Task<DateTime> GetNetworkTime(IPEndPoint endPoint)
