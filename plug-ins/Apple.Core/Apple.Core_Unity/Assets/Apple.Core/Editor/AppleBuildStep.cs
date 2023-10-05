@@ -20,6 +20,7 @@ namespace Apple.Core
         /// <summary>
         /// Returns an enumerable collection of all objects in the project which derive from AppleBuildStep
         /// </summary>
+        
         public static IEnumerable<Type> ProjectAppleBuildStepTypes()
         {
             var appleBuildStepTypes = from assembly in AppDomain.CurrentDomain.GetAssemblies()
@@ -37,6 +38,8 @@ namespace Apple.Core
         /// <param name="buildTarget"></param>
         /// <param name="pathToBuiltProject"></param>
         public virtual void OnBeginPostProcess(AppleBuildProfile appleBuildProfile, BuildTarget buildTarget, string pathToBuiltProject) { }
+
+#if UNITY_EDITOR_OSX && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX)
 
         /// <summary>
         /// Called when steps should modify the info plist.
@@ -72,7 +75,7 @@ namespace Apple.Core
         /// <param name="buildTarget"></param>
         /// <param name="exportPlistOptions"></param>
         public virtual void OnProcessExportPlistOptions(AppleBuildProfile appleBuildProfile, BuildTarget buildTarget, string pathToBuiltProject, PlistDocument exportPlistOptions) { }
-
+#endif
         /// <summary>
         /// Called on all steps, in-order, as a final post process command. Any final signatures can be done here (if last step).
         /// </summary>
