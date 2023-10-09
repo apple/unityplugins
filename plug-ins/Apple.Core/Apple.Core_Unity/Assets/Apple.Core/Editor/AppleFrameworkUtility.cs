@@ -43,6 +43,21 @@ namespace Apple.Core
                 }
             }
 
+            if( libraryName.EndsWith(".framework") )
+            {
+                string libraryNameWithoutFramework = libraryName.Substring( 0, libraryName.LastIndexOf(".framework") );
+                results = AssetDatabase.FindAssets(libraryNameWithoutFramework);
+                foreach (string currGUID in results)
+                {
+                    string libraryPath = AssetDatabase.GUIDToAssetPath(currGUID);
+                    string[] folders = libraryPath.Split('/');
+                    if (Array.IndexOf(folders, platformString) > -1)
+                    {
+                        return libraryPath;
+                    }
+                }
+
+            }
             return string.Empty;
         }
 
