@@ -14,13 +14,6 @@ namespace Apple.GameController.Editor
     {
         public override string DisplayName => "GameController";
 
-        readonly Dictionary<BuildTarget, string> _libraryTable = new Dictionary<BuildTarget, string>
-        {
-            {BuildTarget.iOS, "GameControllerWrapper.framework"},
-            {BuildTarget.tvOS, "GameControllerWrapper.framework"},
-            {BuildTarget.StandaloneOSX, "GameControllerWrapper.bundle"}
-        };
-
         public bool GCSupportsControllerUserInteraction = true;
         public bool SupportsMicroGamePad = true;
         public bool SupportsExtendedGamePad = true;
@@ -65,9 +58,9 @@ namespace Apple.GameController.Editor
 
         public override void OnProcessFrameworks(AppleBuildProfile _, BuildTarget buildTarget, string pathToBuiltTarget, PBXProject pbxProject)
         {
-            if (_libraryTable.ContainsKey(buildTarget))
+            if (buildTarget == BuildTarget.iOS || buildTarget == BuildTarget.tvOS || buildTarget == BuildTarget.StandaloneOSX)
             {
-                string libraryName = _libraryTable[buildTarget];
+                const string libraryName = "GameControllerWrapper";
                 string libraryPath = AppleFrameworkUtility.GetPluginLibraryPathForBuildTarget(libraryName, buildTarget);
                 if (String.IsNullOrEmpty(libraryPath))
                 {

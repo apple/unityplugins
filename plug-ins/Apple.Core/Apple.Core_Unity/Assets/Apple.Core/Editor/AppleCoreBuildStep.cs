@@ -13,13 +13,6 @@ namespace Apple.Core
     {
         public override string DisplayName => "Apple.Core";
 
-        readonly Dictionary<BuildTarget, string> _libraryTable = new Dictionary<BuildTarget, string>
-        {
-            {BuildTarget.iOS, "AppleCoreNative.framework"},
-            {BuildTarget.tvOS, "AppleCoreNative.framework"},
-            {BuildTarget.StandaloneOSX, "AppleCoreNativeMac.bundle"}
-        };
-
 #if UNITY_EDITOR_OSX
         public override void OnFinalizePostProcess(AppleBuildProfile appleBuildProfile, BuildTarget buildTarget, string pathToBuiltProject)
         {
@@ -42,9 +35,9 @@ namespace Apple.Core
 
         public override void OnProcessFrameworks(AppleBuildProfile _, BuildTarget buildTarget, string pathToBuiltTarget, PBXProject pbxProject)
         {
-            if (_libraryTable.ContainsKey(buildTarget))
+            if (buildTarget == BuildTarget.iOS || buildTarget == BuildTarget.tvOS || buildTarget == BuildTarget.StandaloneOSX)
             {
-                string libraryName = _libraryTable[buildTarget];
+                string libraryName = buildTarget == BuildTarget.StandaloneOSX ? "AppleCoreNativeMac" : "AppleCoreNative";
                 string libraryPath = AppleFrameworkUtility.GetPluginLibraryPathForBuildTarget(libraryName, buildTarget);
                 if (string.IsNullOrEmpty(libraryPath))
                 {

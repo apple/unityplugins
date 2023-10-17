@@ -14,13 +14,6 @@ namespace Apple.GameKit.Editor
     {
         public override string DisplayName => "GameKit";
 
-        readonly Dictionary<BuildTarget, string> _libraryTable = new Dictionary<BuildTarget, string>
-        {
-            {BuildTarget.iOS, "GameKitWrapper.framework"},
-            {BuildTarget.tvOS, "GameKitWrapper.framework"},
-            {BuildTarget.StandaloneOSX, "GameKitWrapper.bundle"}
-        };
-
 #if UNITY_EDITOR_OSX
         public override void OnProcessEntitlements(AppleBuildProfile _, BuildTarget buildTarget, string _1, PlistDocument entitlements)
         {
@@ -32,9 +25,9 @@ namespace Apple.GameKit.Editor
 
         public override void OnProcessFrameworks(AppleBuildProfile _, BuildTarget buildTarget, string pathToBuiltTarget, PBXProject pbxProject)
         {
-            if (_libraryTable.ContainsKey(buildTarget))
+            if (buildTarget == BuildTarget.iOS || buildTarget == BuildTarget.tvOS || buildTarget == BuildTarget.StandaloneOSX)
             {
-                string libraryName = _libraryTable[buildTarget];
+                const string libraryName = "GameKitWrapper";
                 string libraryPath = AppleFrameworkUtility.GetPluginLibraryPathForBuildTarget(libraryName, buildTarget);
                 if (String.IsNullOrEmpty(libraryPath))
                 {
