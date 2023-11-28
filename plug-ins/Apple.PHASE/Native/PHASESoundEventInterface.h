@@ -61,7 +61,12 @@ void PHASEDestroyMixer(int64_t inMixerId);
 /*
     Creates a sound event parameter of type integer
 */
-int64_t PHASECreateSoundEventParameterInt(const char* inParameterName, int inDefaultValue);
+int64_t PHASECreateSoundEventParameterInt(const char* inParameterName, int inDefaultValue, int inMinimumValue, int inMaximumValue);
+
+/*
+    Get the parameter on a sound event of type integer
+*/
+int PHASEGetSoundEventParameterInt(int64_t inInstance, const char* inParamName);
 
 /*
     Set a parameter on a sound event of type integer
@@ -71,7 +76,12 @@ bool PHASESetSoundEventParameterInt(int64_t inInstance, const char* inParamName,
 /*
     Creates a sound event parameter of type double
 */
-int64_t PHASECreateSoundEventParameterDbl(const char* inParameterName, double inDefaultValue);
+int64_t PHASECreateSoundEventParameterDbl(const char* inParameterName, double inDefaultValue, double inMinimumValue, double inMaximumValue);
+
+/*
+    Get the parameter on a sound event of type double
+*/
+double PHASEGetSoundEventParameterDbl(int64_t inInstance, const char* inParamName);
 
 /*
     Set a parameter on a sound event of type double
@@ -84,9 +94,19 @@ bool PHASESetSoundEventParameterDbl(int64_t inInstance, const char* inParamName,
 int64_t PHASECreateSoundEventParameterStr(const char* inParameterName, const char* inDefaultValue);
 
 /*
+    Get the parameter on a sound event of type string
+*/
+const char* PHASEGetSoundEventParameterStr(int64_t inInstance, const char* inParamName);
+
+/*
     Set a parameter on a sound event of type string
 */
 bool PHASESetSoundEventParameterStr(int64_t inInstance, const char* inParamName, const char* inParamValue);
+
+/*
+    Sets a sound event mixer gain parameter
+*/
+bool PHASESetMixerGainMetaParameter(int64_t inParameterId, int64_t inMixerId);
 
 /*
     Destroys a sound event parameter

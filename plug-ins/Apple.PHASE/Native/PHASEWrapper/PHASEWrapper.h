@@ -140,6 +140,19 @@ enum CalibrationMode
 */
 - (BOOL)setListenerTransform:(simd_float4x4)listenerTransform;
 
+/*! @method setListenerGain
+    @abstract Sets the gain linear scale value of the listener, range of [0,1]
+    @param listenerGain gain to set
+    @return true on success, false otherwise
+*/
+- (BOOL)setListenerGain:(double)listenerGain;
+
+/*! @method getListenerGain
+    @abstract Gets the gain of the listener
+    @return double representing listener gain scalar value, range of [0,1]
+*/
+- (double)getListenerGain;
+
 /*! @method destroyListener
     @abstract Destroys the listener object
     @return true on success, false otherwise
@@ -166,6 +179,21 @@ enum CalibrationMode
     @return true on success, false otherwise
 */
 - (BOOL)setSourceTransformWithId:(int64_t)sourceId transform:(simd_float4x4)transform;
+
+/*! @method setSourceGainWithId
+    @abstract Sets the gain linear scale value of the source, range of [0,1]. Given gain values outside of this range will be clamped.
+    @param sourceId  source ID to update gain for
+    @param sourceGain gain to set on source
+    @return true on success, false otherwise
+*/
+- (BOOL)setSourceGainWithId:(int64_t)sourceId sourceGain:(double)sourceGain;
+
+/*! @method getSourceGainWithId
+    @abstract Gets the gain of the source
+    @param sourceId  source ID to get gain for
+    @return double representing source's gain scalar value, range of [0,1]
+*/
+- (double)getSourceGainWithId:(int64_t)sourceId;
 
 /*! @method destroySourceWithId
     @abstract Destroys a source with a given Id
@@ -301,12 +329,22 @@ enum CalibrationMode
     @abstract Creates a integer meta parameter with a name and default value
     @param name parameter name to create
     @param defaultIntValue default integer value of parameter
+    @param minimumValue minimum value of the parameter
+    @param maximumValue maximum value of the parameter
     @return parameter id
 */
-- (int64_t)createMetaParameterWithName:(NSString*)name defaultIntValue:(int)defaultIntValue;
+- (int64_t)createMetaParameterWithName:(NSString*)name defaultIntValue:(int)defaultIntValue minimumValue:(int)minimumValue maximumValue:(int)maximumValue;
+
+/*! @method getMetaParameterIntValueWithId
+    @abstract Gets the value of a given parameter of type integer on a sound event instance
+    @param instanceId action tree instance to get parameter from
+    @param parameterName name of the parameter to get
+    @return the value of the parameter
+*/
+- (int)getMetaParameterIntValueWithId:(int64_t)instanceId parameterName:(NSString*)parameterName;
 
 /*! @method setMetaParameterWithId
-    @abstract Sets the value of a given parameter of type integer on an action tree instance
+    @abstract Sets the value of a given parameter of type integer on a sound event instance
     @param instanceId action tree instance to set parameter on
     @param parameterName name of the parameter to set
     @param intValue integer value of the parameter to set
@@ -318,12 +356,22 @@ enum CalibrationMode
     @abstract Creates a double meta parameter with a name and default value
     @param name parameter name to create
     @param defaultDblValue default double value of parameter
+    @param minimumValue minimum value of the parameter
+    @param maximumValue maximum value of the parameter
     @return parameter id
 */
-- (int64_t)createMetaParameterWithName:(NSString*)name defaultDblValue:(double)defaultDblValue;
+- (int64_t)createMetaParameterWithName:(NSString*)name defaultDblValue:(double)defaultDblValue minimumValue:(double)minimumValue maximumValue:(double)maximumValue;
 
-/*! @method setMetaParameterWithId
-    @abstract Sets the value of a given parameter of type double on an action tree instance
+/*! @method getMetaParameterDblValueWithId
+    @abstract Gets the value of a given parameter of type double on a sound event instance
+    @param instanceId action tree instance to get parameter from
+    @param parameterName name of the parameter to get
+    @return the value of the parameter
+*/
+- (double)getMetaParameterDblValueWithId:(int64_t)instanceId parameterName:(NSString*)parameterName;
+
+/*! @method setMetaParameterWithIdDbl
+    @abstract Sets the value of a given parameter of type double on a sound event instance
     @param instanceId instance to set parameter on
     @param parameterName name of the parameter to set
     @param doubleValue double value of the parameter to set
@@ -339,8 +387,16 @@ enum CalibrationMode
 */
 - (int64_t)createMetaParameterWithName:(NSString*)name defaultStrValue:(NSString*)defaultStrValue;
 
+/*! @method getMetaParameterStrValueWithId
+    @abstract Gets the value of a given parameter of type string on a sound event instance
+    @param instanceId action tree instance to get parameter from
+    @param parameterName name of the parameter to get
+    @return the value of the parameter
+*/
+- (NSString*)getMetaParameterStrValueWithId:(int64_t)instanceId parameterName:(NSString*)parameterName;
+
 /*! @method setMetaParameterWithId
-    @abstract Sets the value of a given parameter of type string on an action tree instance
+    @abstract Sets the value of a given parameter of type string on a sound event instance
     @param instanceId instance to set parameter on
     @param parameterName name of the parameter to set
     @param stringValue string value of the parameter to set
@@ -365,6 +421,14 @@ enum CalibrationMode
     @param parameterId id of the mapped meta parameter
 */
 - (void)destoryMappedMetaParameterWithId:(int64_t)parameterId;
+
+/*! @method setMixerGainParameterOnMixerWithId
+    @abstract Sets the gainMetaParameterDefinition to the given parameter on the given mixer
+    @param parameterId parameter used to define the gainMetaParameter of the given mixer
+    @param mixerId mixerId mixer to set gainMetaParameterDefinition on
+    @return true on success false otherwise
+*/
+- (BOOL)setMixerGainParameterOnMixerWithId:(int64_t)parameterId mixerId:(int64_t)mixerId;
 
 /*! @method createSoundEventSamplerNodeWithAsset
     @abstract Creates an action tree sampler node with a given asset name and parameters

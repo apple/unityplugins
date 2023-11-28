@@ -14,6 +14,16 @@ namespace Apple.PHASE
 
         // Default int value.
         [SerializeField] private int _defaultValue;
+        public int DefaultValue
+        {
+            get => _defaultValue;
+        }
+
+        // Minimum value of the parameter.
+        private int _minimumValue = int.MinValue;
+
+        // Maximum value of the parameter.
+        private int _maximumValue = int.MaxValue;
 
         /// <summary>
         /// Sets the parameter to the given name and value.
@@ -23,7 +33,7 @@ namespace Apple.PHASE
         public void SetParameterInteger(string inParameterName, int inDefaultValue)
         {
             _defaultValue = inDefaultValue;
-            SetParameterName(inParameterName);
+            _parameterName = inParameterName;
             Create();
         }
 
@@ -33,7 +43,7 @@ namespace Apple.PHASE
         /// <returns> True if succesful, false otherwise. </returns>
         public override bool Create()
         {
-            _parameterId = Helpers.PHASECreateSoundEventParameterInt(_parameterName, _defaultValue);
+            _parameterId = Helpers.PHASECreateSoundEventParameterInt(_parameterName, _defaultValue, _minimumValue, _maximumValue);
             if (_parameterId == Helpers.InvalidId)
             {
                 Debug.Log("Failed to create action tree meta parameter");

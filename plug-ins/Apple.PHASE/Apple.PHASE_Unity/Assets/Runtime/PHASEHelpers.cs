@@ -101,6 +101,21 @@ namespace Apple.PHASE
         /// <param name="inTransform"> A <c>Matrix4x4</c> representing the source's transform. </param>
         /// <returns> True on success, false otherwise. </returns>
         [DllImport(PluginDllName)] public static extern bool PHASESetSourceTransform(long inSourceId, Matrix4x4 inTransform);
+
+        /// <summary>
+        /// Set the gain of the source in the PHASE engine.
+        /// </summary>
+        /// <param name="inSourceId"> The unique ID representing the source. </param>
+        /// <param name="inGain"> A <c>double</c> representing the source's gain scalar value, range of [0,1]. </param>
+        /// <returns> True on success, false otherwise. </returns>
+        [DllImport(PluginDllName)] public static extern bool PHASESetSourceGain(long inSourceId, double inGain);
+
+        /// <summary>
+        /// Get the gain of the source in the PHASE engine.
+        /// </summary>
+        /// <param name="inSourceId"> The unique ID representing the source. </param>
+        /// <returns> A <c>double</c> representing source's gain scalar value, range of [0,1] </returns>
+        [DllImport(PluginDllName)] public static extern double PHASEGetSourceGain(long inSourceId);
         #endregion
 
         #region PHASE Listener native plugin functions
@@ -122,6 +137,19 @@ namespace Apple.PHASE
         /// <param name="inTransform"> A <c>Matrix4x4</c> representing the listener's transform. </param>
         /// <returns> True on success, false otherwise. </returns>
         [DllImport(PluginDllName)] public static extern bool PHASESetListenerTransform(Matrix4x4 inTransform);
+
+        /// <summary>
+        /// Set the gain of the listener in the PHASE engine.
+        /// </summary>
+        /// <param name="inGain"> A <c>double</c> representing the listener's gain scalar value, range of [0,1]. </param>
+        /// <returns> True on success, false otherwise. </returns>
+        [DllImport(PluginDllName)] public static extern bool PHASESetListenerGain(double inGain);
+
+        /// <summary>
+        /// Get the gain of the listener in the PHASE engine.
+        /// </summary>
+        /// <returns> A <c>double</c> representing listener gain scalar value, range of [0,1] </returns>
+        [DllImport(PluginDllName)] public static extern double PHASEGetListenerGain();
         #endregion
 
         #region Mixer native plugin methods and data structures.
@@ -371,16 +399,20 @@ namespace Apple.PHASE
         /// </summary>
         /// <param name="inParameterName"> The unique name of the sound event parameter. </param>
         /// <param name="inDefaultValue"> The default value of the sound event parameter. </param>
+        /// <param name="inMinimumValue"> The minimum value of the sound event parameter. </param>
+        /// <param name="inMaximumValue"> The maximum value of the sound event parameter. </param>
         /// <returns> The unique ID of this parameter, or <c>InvalidId</c> on failure. </returns>
-        [DllImport(PluginDllName)] public static extern long PHASECreateSoundEventParameterDbl(string inParameterName, double inDefaultValue);
+        [DllImport(PluginDllName)] public static extern long PHASECreateSoundEventParameterDbl(string inParameterName, double inDefaultValue, double inMinimumValue, double inMaximumValue);
 
         /// <summary>
         /// Create a sound event parameter of type integer in the PHASE engine.
         /// </summary>
         /// <param name="inParameterName"> The unique name of the sound event parameter. </param>
         /// <param name="inDefaultValue"> The default value of the sound event parameter. </param>
+        /// <param name="inMinimumValue"> The minimum value of the sound event parameter. </param>
+        /// <param name="inMaximumValue"> The maximum value of the sound event parameter. </param>
         /// <returns> The unique ID of this parameter, or <c>InvalidId</c> on failure. </returns>
-        [DllImport(PluginDllName)] public static extern long PHASECreateSoundEventParameterInt(string inParameterName, int inDefaultValue);
+        [DllImport(PluginDllName)] public static extern long PHASECreateSoundEventParameterInt(string inParameterName, int inDefaultValue, int inMinimumValue, int inMaximumValue);
 
         /// <summary>
         /// Create a sound event parameter of type string in the PHASE engine.
@@ -397,6 +429,30 @@ namespace Apple.PHASE
         /// <param name="inEnvelopeParameters"> Envelope paramters that define the meta parameters curves. </param>
         /// <returns> The unique ID of this parameter, or <c>InvalidId</c> on failure. </returns>
         [DllImport(PluginDllName)] public static extern long PHASECreateMappedMetaParameter(long inParameterId, EnvelopeParameters inEnvelopeParameters);
+
+        /// <summary>
+        /// Get the value of the given sound event parameter of type integer.
+        /// </summary>
+        /// <param name="inInstance"> Unique ID of the sound event associated with this parameter. </param>
+        /// <param name="inParamName"> Name of the parameter. </param>
+        /// <returns> The value of the parameter of type integer. </returns>
+        [DllImport(PluginDllName)] public static extern int PHASEGetSoundEventParameterInt(long inInstance, string inParamName);
+
+        /// <summary>
+        /// Get the value of the given sound event parameter of type double.
+        /// </summary>
+        /// <param name="inInstance"> Unique ID of the sound event associated with this parameter. </param>
+        /// <param name="inParamName"> Name of the parameter. </param>
+        /// <returns> The value of the parameter of type double. </returns>
+        [DllImport(PluginDllName)] public static extern double PHASEGetSoundEventParameterDbl(long inInstance, string inParamName);
+
+        /// <summary>
+        /// Get the value of the given sound event parameter of type string.
+        /// </summary>
+        /// <param name="inInstance"> Unique ID of the sound event associated with this parameter. </param>
+        /// <param name="inParamName"> Name of the parameter. </param>
+        /// <returns> The value of the parameter of type string. </returns>
+        [DllImport(PluginDllName)] public static extern string PHASEGetSoundEventParameterStr(long inInstance, string inParamName);
 
         /// <summary>
         /// Set the value of the given sound event parameter of type integer.
@@ -430,6 +486,14 @@ namespace Apple.PHASE
         /// </summary>
         /// <param name="inParameterId"> Unique ID of the sound event parameter to destroy. </param>
         [DllImport(PluginDllName)] public static extern void PHASEDestroySoundEventParameter(long inParameterId);
+
+        /// <summary>
+        /// Sets a sound event mixer gain parameter of type double in the PHASE engine.
+        /// </summary>
+        /// <param name="inParameterId"> Unique ID of the gain meta parameter to set in the PHASE engine for the given mixer. </param>
+        /// <param name="inMixerId"> Unique ID of the mixer to associate the gain meta parameter with. </param>
+        /// <returns> True on success, false otherwise. </returns>
+        [DllImport(PluginDllName)] public static extern bool PHASESetMixerGainMetaParameter(long inParameterId, long inMixerId);
 
         /// <summary>
         /// <list type="bullet">

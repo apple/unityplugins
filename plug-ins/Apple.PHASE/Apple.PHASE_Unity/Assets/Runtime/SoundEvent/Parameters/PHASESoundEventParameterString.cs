@@ -14,6 +14,10 @@ namespace Apple.PHASE
 
         // Default string value.
         [SerializeField] private string _defaultValue;
+        public string DefaultValue
+        {
+            get => _defaultValue;
+        }
 
         /// <summary>
         /// Sets the parameter to the given name and value.
@@ -23,7 +27,7 @@ namespace Apple.PHASE
         public void SetParameterString(string inParameterName, string inDefaultValue)
         {
             _defaultValue = inDefaultValue;
-            SetParameterName(inParameterName);
+            _parameterName = inParameterName;
             Create();
         }
 

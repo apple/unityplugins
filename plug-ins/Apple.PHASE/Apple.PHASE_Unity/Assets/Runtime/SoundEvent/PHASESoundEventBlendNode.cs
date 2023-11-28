@@ -96,7 +96,7 @@ namespace Apple.PHASE
             }
 
             // Now create the blend node with all the entries 
-            long paramId = UseDistanceBlend ? _distanceBlendSpatialMixer.GetMixerId() : BlendParameter.GetParameterId();
+            long paramId = UseDistanceBlend ? _distanceBlendSpatialMixer.GetMixerId() : BlendParameter.ParameterId;
             m_nodeId = Helpers.PHASECreateSoundEventBlendNode(paramId, entries, Entries.Count, UseDistanceBlend);
             if (m_nodeId == Helpers.InvalidId)
             {

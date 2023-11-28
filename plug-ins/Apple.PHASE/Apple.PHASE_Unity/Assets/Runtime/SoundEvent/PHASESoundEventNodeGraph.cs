@@ -76,6 +76,7 @@ namespace Apple.PHASE
         /// </summary>
         public void Unregister()
         {
+            m_isRegistered = false;
             Helpers.PHASEUnregisterSoundEventAsset(name);
             m_rootNode.DestroyFromPHASE();
         }

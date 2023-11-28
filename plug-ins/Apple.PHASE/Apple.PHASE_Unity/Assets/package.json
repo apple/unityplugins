@@ -2,7 +2,7 @@
     "name": "com.apple.unityplugin.phase",
     "displayName": "Apple.PHASE",
     "description": "A Unity plugin for Apple's PHASE.framework.",
-    "version": "1.0.2",
+    "version": "1.0.4",
     "unity": "2020.1",
     "unityRelease": "2f1",
     "dependencies": {

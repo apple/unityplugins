@@ -91,6 +91,18 @@ bool PHASESetListenerTransform(Matrix4x4 inTransform)
     return [engineWrapper setListenerTransform:listenerTransform];
 }
 
+bool PHASESetListenerGain(double inGain)
+{
+    PHASEEngineWrapper* engineWrapper = [PHASEEngineWrapper sharedInstance];
+    return [engineWrapper setListenerGain:inGain];
+}
+
+double PHASEGetListenerGain()
+{
+    PHASEEngineWrapper* engineWrapper = [PHASEEngineWrapper sharedInstance];
+    return [engineWrapper getListenerGain];
+}
+
 bool PHASEDestroyListener()
 {
     PHASEEngineWrapper* engineWrapper = [PHASEEngineWrapper sharedInstance];
@@ -143,6 +155,18 @@ bool PHASESetSourceTransform(int64_t inSourceId, Matrix4x4 inTransform)
     const simd_float4x4 sourceTransform = GetTransform(inTransform);
     PHASEEngineWrapper* engineWrapper = [PHASEEngineWrapper sharedInstance];
     return [engineWrapper setSourceTransformWithId:inSourceId transform:sourceTransform];
+}
+
+bool PHASESetSourceGain(int64_t inSourceId, double inGain)
+{
+    PHASEEngineWrapper* engineWrapper = [PHASEEngineWrapper sharedInstance];
+    return [engineWrapper setSourceGainWithId:inSourceId sourceGain:inGain];
+}
+
+double PHASEGetSourceGain(int64_t inSourceId)
+{
+    PHASEEngineWrapper* engineWrapper = [PHASEEngineWrapper sharedInstance];
+    return [engineWrapper getSourceGainWithId:inSourceId];
 }
 
 void PHASEDestroySource(int64_t inSourceId)

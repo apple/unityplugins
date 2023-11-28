@@ -25,6 +25,10 @@ namespace Apple.PHASE
                 {
                     Debug.LogError("Failed to create PHASE channel mixer.");
                 }
+                else
+                {
+                    CreateGainMetaParameter();
+                }
             }
             return _mixerId;
         }
