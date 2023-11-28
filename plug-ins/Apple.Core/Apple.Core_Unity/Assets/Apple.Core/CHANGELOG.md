@@ -1,6 +1,10 @@
 # CHANGELOG
 All notable changes to this project will be documented in this file.
 
+## [1.0.5] - 2023-11-28
+### Fixed
+- Cleans up an issue with Unity 2022.1 and later in which Unity's Asset Database was unable to find frameworks or bundles.
+
 ## [1.0.4] - 2023-07-25
 ### Added
 - API Availability checking

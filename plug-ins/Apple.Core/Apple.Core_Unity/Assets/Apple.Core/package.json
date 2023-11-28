@@ -2,7 +2,7 @@
     "name": "com.apple.unityplugin.core",
     "displayName": "Apple.Core",
     "description": "Provides project settings, post-build automation tools, and other shared functionality for Apple Unity Plug-ins.",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "unity": "2019.4",
     "keywords": [
         "apple"
