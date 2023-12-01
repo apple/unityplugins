@@ -198,30 +198,38 @@ public func GKLocalPlayer_LoadFriendsAuthorizationStatus
     };
 }
 
-public typealias SuccessTaskFetchItemsCallback = @convention(c) (Int64, char_p, uchar_p, Int32, uchar_p, Int32, UInt) -> Void;
+public typealias SuccessTaskFetchItemsCallback = @convention(c) (Int64, UInt, uchar_p, Int32, uchar_p, Int32, uchar_p, Int32) -> Void;
 
 @_cdecl("GKLocalPlayer_FetchItems")
 public func GKLocalPlayer_FetchItems
 (
+    pointer: UnsafeMutableRawPointer,
     taskId: Int64,
     onSuccess: @escaping SuccessTaskFetchItemsCallback,
     onError: @escaping NSErrorCallback
 )
 {
     if #available(macOS 10.15.5, iOS 13.5, tvOS 13.5, *) {
-        GKLocalPlayer.local.fetchItems(forIdentityVerificationSignature: { publicKeyUrl, signature, salt, timestamp, error in
+        let player = Unmanaged<GKLocalPlayer>.fromOpaque(pointer).takeUnretainedValue();
+        player.fetchItems(forIdentityVerificationSignature: { publicKeyUrl, signature, salt, timestamp, error in
             if(error != nil) {
                 onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
                 return;
             }
             
-            onSuccess(taskId,
-                      publicKeyUrl!.absoluteString.toCharPCopy(),
-                      signature!.toUCharP(),
-                      Int32(signature!.count),
-                      salt!.toUCharP(),
-                      Int32(salt!.count),
-                      UInt(timestamp));
+            let publicKeyUrlData = publicKeyUrl!.absoluteString.data(using: .utf8)
+            
+            onSuccess(
+                taskId,
+                UInt(timestamp),
+                publicKeyUrlData!.toUCharP(),
+                Int32(publicKeyUrlData!.count),
+                signature!.toUCharP(),
+                Int32(signature!.count),
+                salt!.toUCharP(),
+                Int32(salt!.count)
+            )
+            
         })
     } else {
         let error = NSError.init(domain: "GKLocalPlayer", code: -7, userInfo: nil);

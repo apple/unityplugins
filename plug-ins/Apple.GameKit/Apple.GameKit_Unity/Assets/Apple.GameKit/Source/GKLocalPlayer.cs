@@ -90,8 +90,13 @@ namespace Apple.GameKit
         #endregion
         
         #region FetchItems
+        private delegate void SuccessTaskFetchItemsCallback(long taskId, ulong timestamp, 
+            IntPtr publicKeyUrl, int publicKeyUrlLength, 
+            IntPtr signature, int signatureLength, 
+            IntPtr salt, int saltLength);
+
         [DllImport(InteropUtility.DLLName)]
-        private static extern void GKLocalPlayer_FetchItems(IntPtr pointer, long taskId, SuccessTaskCallback<GKIdentityVerificationResponse> onSuccess, NSErrorTaskCallback onError);
+        private static extern void GKLocalPlayer_FetchItems(IntPtr pointer, long taskId, SuccessTaskFetchItemsCallback onSuccess, NSErrorTaskCallback onError);
 
         /// <summary>
         /// Generates a signature so that a third-party server can authenticate the local player.
@@ -104,9 +109,17 @@ namespace Apple.GameKit
             return tcs.Task;
         }
 
-        [MonoPInvokeCallback(typeof(SuccessTaskCallback<GKIdentityVerificationResponse>))]
-        private static void OnFetchItems(long taskId, GKIdentityVerificationResponse response)
+        [MonoPInvokeCallback(typeof(SuccessTaskFetchItemsCallback))]
+        private static void OnFetchItems(long taskId, ulong timestamp,
+            IntPtr publicKeyUrl, int publicKeyUrlLength, 
+            IntPtr signature, int signatureLength, 
+            IntPtr salt, int saltLength)
         {
+            var response = new GKIdentityVerificationResponse(timestamp,
+                publicKeyUrl, publicKeyUrlLength, 
+                signature, signatureLength, 
+                salt, saltLength);
+
             InteropTasks.TrySetResultAndRemove(taskId, response);
         }
 
@@ -116,7 +129,7 @@ namespace Apple.GameKit
             InteropTasks.TrySetExceptionAndRemove<GKIdentityVerificationResponse>(taskId, new GameKitException(errorPointer));
         }
         #endregion
-        
+ 
         #region Authenticate
         [DllImport(InteropUtility.DLLName)]
         private static extern void GKLocalPlayer_Authenticate(long taskId, SuccessTaskCallback<IntPtr> onSuccess, NSErrorTaskCallback onError);

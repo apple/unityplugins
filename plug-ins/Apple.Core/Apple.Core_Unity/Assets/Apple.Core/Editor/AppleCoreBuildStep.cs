@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-#if UNITY_EDITOR_OSX
+#if UNITY_EDITOR_OSX && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX)
 using UnityEditor.iOS.Xcode;
 #endif
 
@@ -20,7 +20,7 @@ namespace Apple.Core
             {BuildTarget.StandaloneOSX, "AppleCoreNativeMac.bundle"}
         };
 
-#if UNITY_EDITOR_OSX
+#if UNITY_EDITOR_OSX && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX)
         public override void OnFinalizePostProcess(AppleBuildProfile appleBuildProfile, BuildTarget buildTarget, string pathToBuiltProject)
         {
             Debug.Log($"AppleBuild: disabling Bitcode for framework and app targets.");
