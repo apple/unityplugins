@@ -1,6 +1,21 @@
 # CHANGELOG
 All notable changes to this project will be documented in this file.
 
+## [1.0.5] - 2023-09-19
+### Added
+- tvOS build target.
+- Add rate parameter to SamplerNode.
+
+### Changed
+- Alphabetized imports.
+- Do not display sharpness for omni directivity pattern.
+- Use term "sound event" consistently.
+- Do not expose obj-c types in PHASEWrapper.
+- Do not fail when attempting to register audio file twice.
+- Fix default quaternion test values.
+- Remove unused test functions.
+- Add new unit tests.
+
 ## [1.0.4] - 2023-06-08
 ### Added
 - Ability to get/set listener global gain level in editor and programatically at runtime.

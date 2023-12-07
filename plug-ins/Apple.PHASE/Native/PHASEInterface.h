@@ -159,6 +159,11 @@ void PHASEStop();
     Update the PHASE engine
  */
 void PHASEUpdate();
+
+/*
+ Set a material's property
+ */
+void PHASESetMaterialProperties(const char* inName, float inScale, float inShift, float inTilt);
 }
 
 #endif  // PHASEInterface_h

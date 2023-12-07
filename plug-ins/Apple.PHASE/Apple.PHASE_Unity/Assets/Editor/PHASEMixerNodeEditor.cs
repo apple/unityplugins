@@ -1,5 +1,5 @@
-﻿using UnityEditor;
-using Apple.PHASE;
+﻿using Apple.PHASE;
+using UnityEditor;
 using XNodeEditor;
 
 [CustomNodeEditor(typeof(PHASEMixer))]

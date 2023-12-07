@@ -18,12 +18,13 @@
     NSMutableDictionary<NSNumber*, PHASEOccluder*>* mOccluders;
     NSMutableDictionary<NSNumber*, PHASESoundEvent*>* mSoundEvents;
     NSMutableDictionary<NSString*, PHASEMaterial*>* mMaterials;
+    
 
-    // Keep track of the number of sound events playing an action tree asset
+    // Keep track of the number of sound events playing an sound event asset
     // For destruction purposes
     NSMutableDictionary<NSString*, NSNumber*>* mActiveSoundEventAssets;
 
-    // For action tree programatic creation
+    // For sound event programatic creation
     NSMutableDictionary* mSoundEventNodeDefinitions;
     NSMutableDictionary* mSoundEventMixerDefinitions;
     NSMutableDictionary* mSoundEventMetaParameterDefinitions;
@@ -57,17 +58,17 @@
 
         // Create sound events dictionary
         mSoundEvents = [[NSMutableDictionary<NSNumber*, PHASESoundEvent*> alloc] init];
-
+        
         // Create materials dictionary
         mMaterials = [[NSMutableDictionary<NSString*, PHASEMaterial*> alloc] init];
 
-        // Creeate active action tree assets tracker dictionary
+        // Creeate active sound event assets tracker dictionary
         mActiveSoundEventAssets = [[NSMutableDictionary<NSString*, NSNumber*> alloc] init];
 
-        // Create action tree nodes dictionary
+        // Create sound event nodes dictionary
         mSoundEventNodeDefinitions = [[NSMutableDictionary alloc] init];
 
-        // Create action tree meta parameters dictionary
+        // Create sound event meta parameters dictionary
         mSoundEventMetaParameterDefinitions = [[NSMutableDictionary alloc] init];
 
         // Create mapped meta parameters dictionary
@@ -397,7 +398,11 @@
                                     normalizationMode:PHASENormalizationModeDynamic
                                                 error:&error];
 
-    if (error)
+    // If we get PHASEAssetErrorAlreadyExists, just return YES.
+    if (error && error.code == PHASEAssetErrorAlreadyExists)
+    {
+        NSLog(@"Asset %@ already registered with PHASE.", uid);
+    } else if (error)
     {
         NSLog(@"Failed to register audio buffer with error %@.", error);
         return NO;
@@ -950,6 +955,7 @@
 
 - (int64_t)createSoundEventSamplerNodeWithAsset:(NSString*)assetName
                                         mixerId:(int64_t)mixerId
+                                rateParameterId:(int64_t)rateParameterId
                                         looping:(BOOL)looping
                                 calibrationMode:(CalibrationMode)calibrationMode
                                           level:(double)level
@@ -984,6 +990,22 @@
     [sampler setCalibrationMode:outCalibrationMode level:level];
 
     const int64_t samplerId = reinterpret_cast<int64_t>(sampler);
+    if (rateParameterId != PHASEInvalidInstanceHandle)
+    {
+        PHASENumberMetaParameterDefinition* rateMetaParameter =
+          [mSoundEventMetaParameterDefinitions objectForKey:[NSNumber numberWithLongLong:rateParameterId]];
+        if (rateMetaParameter == nil)
+        {
+            NSLog(@"Error: Failed to retrieve rate parameter with id %@, unable to set the parameter on the sampler with id %@.",
+                  [NSNumber numberWithLongLong:rateParameterId], [NSNumber numberWithLongLong: samplerId]);
+        }
+        else
+        {
+            sampler.rate = [rateMetaParameter.value floatValue];
+            sampler.rateMetaParameterDefinition = rateMetaParameter;
+        }
+    }
+    
     [mSoundEventNodeDefinitions setObject:sampler forKey:[NSNumber numberWithLongLong:samplerId]];
     return samplerId;
 }
@@ -1122,22 +1144,22 @@
     return blendId;
 }
 
-- (int64_t)createSoundEventContainerNodeWithSubtree:(int64_t*)subtreeIds numSubtrees:(uint32_t)numSubtrees
+- (int64_t)createSoundEventContainerNodeWithChild:(int64_t*)childIds numChildren:(uint32_t)numChildren
 {
-    if (subtreeIds == nil)
+    if (childIds == nil)
     {
-        [NSException raise:@"subtree invalid" format:@"Failed to create Container Node with nil subtreeIds."];
+        [NSException raise:@"child invalid" format:@"Failed to create Container Node with nil childIds."];
     }
-    if (numSubtrees <= 0)
+    if (numChildren <= 0)
     {
-        [NSException raise:@"number of subtrees invalid" format:@"Failed to create Container Node with invalid numSubtrees."];
+        [NSException raise:@"number of children invalid" format:@"Failed to create Container Node with invalid numChildren."];
     }
     PHASEContainerNodeDefinition* containerNode = [[PHASEContainerNodeDefinition alloc] init];
-    for (int i = 0; i < numSubtrees; i++)
+    for (int i = 0; i < numChildren; i++)
     {
-        NSNumber* nodeId = [NSNumber numberWithLongLong:subtreeIds[i]];
-        PHASESoundEventNodeDefinition* subtree = [mSoundEventNodeDefinitions objectForKey:nodeId];
-        [containerNode addSubtree:subtree];
+        NSNumber* nodeId = [NSNumber numberWithLongLong:childIds[i]];
+        PHASESoundEventNodeDefinition* child = [mSoundEventNodeDefinitions objectForKey:nodeId];
+        [containerNode addSubtree:child];
     }
     const int64_t containerId = reinterpret_cast<int64_t>(containerNode);
     [mSoundEventNodeDefinitions setObject:containerNode forKey:[NSNumber numberWithLongLong:containerId]];
@@ -1151,7 +1173,7 @@
 
 - (BOOL)registerSoundEventWithName:(NSString*)name rootNodeId:(int64_t)rootNodeId
 {
-    // Create a tree builder with the sampler node
+    // Create a sound event definition with the sampler node
     PHASESoundEventNodeDefinition* rootNode = [mSoundEventNodeDefinitions objectForKey:[NSNumber numberWithLongLong:rootNodeId]];
     if (rootNode == nil)
     {
@@ -1187,7 +1209,7 @@
                          mixerIds:(int64_t*)mixerIds
                         numMixers:(uint64_t)numMixers
                 completionHandler:
-                  (void (*)(PHASESoundEventStartHandlerReason reason, int64_t sourceId, int64_t soundEventId))completionHandler
+                  (void (*)(StartHandlerReason reason, int64_t sourceId, int64_t soundEventId))completionHandler
 {
     PHASESource* source = [mSources objectForKey:[NSNumber numberWithLongLong:sourceId]];
     if (source == nil)
@@ -1228,20 +1250,33 @@
     }
     if (soundEvent == nil)
     {
-        [NSException raise:@"Sound event invalid." format:@"Failed to create sound event from action tree."];
+        [NSException raise:@"Sound event invalid." format:@"Failed to create sound event from sound event."];
     }
     const int64_t soundEventId = reinterpret_cast<int64_t>(soundEvent);
-
+    
     [soundEvent startWithCompletion:^(PHASESoundEventStartHandlerReason reason) {
       @synchronized(self->mSoundEvents)
       {
+          StartHandlerReason handlerReason;
+          switch (reason)
+          {
+              case PHASESoundEventStartHandlerReasonFailure:
+                  handlerReason = StartHandlerReasonFailure;
+                  break;
+              case PHASESoundEventStartHandlerReasonTerminated:
+                  handlerReason = StartHandlerReasonTerminated;
+                  break;
+              case PHASESoundEventStartHandlerReasonFinishedPlaying:
+                  handlerReason = StartHandlerReasonFinishedPlaying;
+                  break;
+          }
           if (completionHandler != nil)
           {
-              completionHandler(reason, sourceId, soundEventId);
+              completionHandler(handlerReason, sourceId, soundEventId);
           }
           [self->mSoundEvents removeObjectForKey:[NSNumber numberWithLongLong:soundEventId]];
 
-          // Decrement the number of events referencing the tree asset
+          // Decrement the number of events referencing the sound event asset
           self->mActiveSoundEventAssets[name] = [NSNumber numberWithInt:self->mActiveSoundEventAssets[name].intValue - 1];
       }
     }];
@@ -1249,7 +1284,7 @@
     {
         [mSoundEvents setObject:soundEvent forKey:[NSNumber numberWithLongLong:soundEventId]];
 
-        // Increment the number of events referencing the tree asset
+        // Increment the number of events referencing the sound event asset
         mActiveSoundEventAssets[name] = [NSNumber numberWithInt:mActiveSoundEventAssets[name].intValue + 1];
     }
 

@@ -78,6 +78,7 @@
 		64BC78052575A7B900CA6596 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 30E4658C237749A30050BC49 /* AVFoundation.framework */; };
 		64FADC95267A8F0B004FC962 /* ModelIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64FADC94267A8F0B004FC962 /* ModelIO.framework */; };
 		64FADC97267A8F11004FC962 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64FADC96267A8F11004FC962 /* AVFoundation.framework */; };
+		C3D8CDE42ABA411B00D1C184 /* PHASESoundEventInterface.mm in Sources */ = {isa = PBXBuildFile; fileRef = 309301C223A11DA7007FF16D /* PHASESoundEventInterface.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -525,6 +526,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C3D8CDE42ABA411B00D1C184 /* PHASESoundEventInterface.mm in Sources */,
 				30CC5B802373266F002C7623 /* PHASEInterface.mm in Sources */,
 				302D377623621F2E0030DA9A /* AudioPluginPHASE_Tests.mm in Sources */,
 				30CC5B762373266D002C7623 /* PHASEWrapper.mm in Sources */,

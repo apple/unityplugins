@@ -1,9 +1,9 @@
 ﻿using Apple.PHASE;
-using UnityEditor;
 using System.IO;
+using System.Linq;
+using UnityEditor;
 using UnityEngine;
 using UnityPickers;
-using System.Linq;
 using XNodeEditor;
 
 [CustomNodeEditor(typeof(PHASESoundEventSamplerNode))]
@@ -19,6 +19,7 @@ public class PHASESoundEventSamplerNodeEditor : NodeEditor
         EditorGUIUtility.labelWidth = 110;
 
         NodeEditorGUILayout.PortField(_node.GetInputPort("ParentNode"));
+        NodeEditorGUILayout.PortField(_node.GetOutputPort("RateParameter"));
 
         SerializedProperty isStreamingAsset = serializedObject.FindProperty("_isStreamingAsset");
         EditorGUILayout.PropertyField(isStreamingAsset);

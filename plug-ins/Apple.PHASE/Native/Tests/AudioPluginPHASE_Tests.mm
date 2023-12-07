@@ -7,26 +7,11 @@
 
 #import <XCTest/XCTest.h>
 
-#import "PHASEWrapper.h"
+#include "PHASEWrapper.h"
 #include "PhaseInterface.h"
 #include "PhaseSoundEventInterface.h"
 #include <thread>
 #include <chrono>
-
-struct Vector4
-{
-    float x;
-    float y;
-    float z;
-    float w;
-};
-
-struct Vector3
-{
-    float x;
-    float y;
-    float z;
-};
 
 enum PHASEMixerType
 {
@@ -135,7 +120,7 @@ enum PHASEMixerType
     switch (mixerType)
     {
         case PHASEMixerType::AmbientMixer:
-            mixerId = PHASECreateAmbientMixer(mixerName, ChannelLayoutTypeMono, { 0, 0, 0, 0 });
+            mixerId = PHASECreateAmbientMixer(mixerName, ChannelLayoutTypeMono, { 0, 0, 0, 1 });
             break;
         case PHASEMixerType::ChannelMixer:
             mixerId = PHASECreateChannelMixer(mixerName, ChannelLayoutTypeMono);
@@ -256,7 +241,7 @@ enum PHASEMixerType
     switch (mixerType)
     {
         case PHASEMixerType::AmbientMixer:
-            mixerId = PHASECreateAmbientMixer(mixerName, ChannelLayoutTypeMono, { 0, 0, 0, 0 });
+            mixerId = PHASECreateAmbientMixer(mixerName, ChannelLayoutTypeMono, { 0, 0, 0, 1 });
             break;
         case PHASEMixerType::ChannelMixer:
             mixerId = PHASECreateChannelMixer(mixerName, ChannelLayoutTypeMono);
@@ -331,6 +316,177 @@ enum PHASEMixerType
     
     // Destory gain parameter
     PHASEDestroySoundEventParameter(gainParameterId);
+    
+    // Destroy the mixer
+    PHASEDestroyMixer(mixerId);
+}
+
+- (void)helperTestCreateAndSetInitialSamplerRateParameter:(double)rateToSet
+{
+    bool rateToSetInValidRange = rateToSet >= 0.25 && rateToSet <= 4.0;
+    char rateParamName[] = "SamplerRate";
+    
+    int64_t mixerId = PHASECreateChannelMixer("TestMixerName", ChannelLayoutTypeMono);
+    XCTAssert(mixerId != PHASEInvalidInstanceHandle);
+    
+    // Create the sampler rate parameter and set the rateMetaParameter on the soundevent
+    const int64_t rateParameterId = PHASECreateSoundEventParameterDbl(rateParamName, rateToSet, 0.25, 4.0);
+    if (rateToSetInValidRange)
+    {
+        XCTAssert(rateParameterId != PHASEInvalidInstanceHandle);
+    }
+    else
+    {
+        XCTAssert(rateParameterId == PHASEInvalidInstanceHandle);
+    }
+    
+    // Create the listener
+    bool result = PHASECreateListener();
+    XCTAssert(result == true);
+
+    // Create a source
+    const int64_t sourceId = PHASECreateVolumetricSource(mMeshData.mVertexCount, mMeshData.mVertexPositions, mMeshData.mVertexNormals,
+                                                         mMeshData.mIndexCount, mMeshData.mIndices);
+    XCTAssert(sourceId != PHASEInvalidInstanceHandle);
+
+    // Register the buffer asset
+    char assetName[] = "TestBufferAsset";
+    result = PHASERegisterAudioBuffer(assetName, mAudioBuffer.mData, 48000, mAudioBuffer.mDataByteSize, 32, mAudioBuffer.mNumberChannels);
+    XCTAssert(result == true);
+    
+    // Create the sampler node with the rateMetaParameter
+    int64_t samplerId = PHASECreateSoundEventSamplerNode(assetName, mixerId, true, CalibrationModeRelativeSpl, 1, rateParameterId);
+    XCTAssert(samplerId != PHASEInvalidInstanceHandle);
+
+    // Register the sound event asset.
+    char soundEventName[] = "TestSoundEvent";
+    result = PHASERegisterSoundEventAsset(soundEventName, samplerId);
+    XCTAssert(result == true);
+
+    // Play sound event.
+    PHASESoundEventCompletionHandler soundEventCompletionHandler = MyPlaySoundEventCompletionHandler;
+    int64_t mixerIds[] = { mixerId };
+    int64_t instance = PHASEPlaySoundEvent(soundEventName, sourceId, mixerIds, 1, soundEventCompletionHandler);
+    XCTAssert(instance != PHASEInvalidInstanceHandle);
+    
+    PHASEUpdate();
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    
+    // Verify the sampler rate was set correctly on the sound event instance
+    if (rateToSetInValidRange)
+    {
+        XCTAssert(PHASEGetSoundEventParameterDbl(instance, rateParamName) == rateToSet);
+    }
+    
+    result = PHASEStopSoundEvent(instance);
+    XCTAssert(result == true);
+
+    // Unregister the sound event asset.
+    PHASEUnregisterSoundEventAsset(soundEventName);
+
+    // Unregister the buffer
+    PHASEUnregisterAudioAsset(assetName);
+
+    // Destroy the source
+    PHASEDestroySource(sourceId);
+
+    // Destroy the listener
+    PHASEDestroyListener();
+
+    // Destory gain parameter
+    PHASEDestroySoundEventParameter(rateParameterId);
+    
+    // Destroy the mixer
+    PHASEDestroyMixer(mixerId);
+}
+
+
+- (void)helperTestSetDynamicallySamplerRateParameter:(double)rateToSet
+{
+    bool rateToSetInValidRange = rateToSet >= 0.25 && rateToSet <= 4.0;
+    double initialRate = 1.0f;
+    char rateParamName[] = "SamplerRate";
+    
+    // Create the listener
+    bool result = PHASECreateListener();
+    XCTAssert(result == true);
+
+    // Create a source
+    const int64_t sourceId = PHASECreateVolumetricSource(mMeshData.mVertexCount, mMeshData.mVertexPositions, mMeshData.mVertexNormals,
+                                                         mMeshData.mIndexCount, mMeshData.mIndices);
+    XCTAssert(sourceId != PHASEInvalidInstanceHandle);
+
+    // Register the buffer asset
+    char assetName[] = "TestBufferAsset";
+    result = PHASERegisterAudioBuffer(assetName, mAudioBuffer.mData, 48000, mAudioBuffer.mDataByteSize, 32, mAudioBuffer.mNumberChannels);
+    XCTAssert(result == true);
+
+    int64_t mixerId = PHASECreateChannelMixer("TestMixername", ChannelLayoutTypeMono);
+    XCTAssert(mixerId != PHASEInvalidInstanceHandle);
+    
+    // Create the sampler rate parameter and set the rateMetaParameter on the soundevent
+    const int64_t rateParameterId = PHASECreateSoundEventParameterDbl(rateParamName, initialRate, 0.25, 4.0);
+    XCTAssert(rateParameterId != PHASEInvalidInstanceHandle);
+
+    int64_t samplerId = PHASECreateSoundEventSamplerNode(assetName, mixerId, true, CalibrationModeRelativeSpl, 1, rateParameterId);
+    XCTAssert(samplerId != PHASEInvalidInstanceHandle);
+
+    // Register the sound event asset.
+    char soundEventName[] = "TestSoundEvent";
+    result = PHASERegisterSoundEventAsset(soundEventName, samplerId);
+    XCTAssert(result == true);
+
+    // Play sound event.
+    PHASESoundEventCompletionHandler soundEventCompletionHandler = MyPlaySoundEventCompletionHandler;
+    int64_t mixerIds[] = { mixerId };
+    int64_t instance = PHASEPlaySoundEvent(soundEventName, sourceId, mixerIds, 1, soundEventCompletionHandler);
+    XCTAssert(instance != PHASEInvalidInstanceHandle);
+    
+    double rate = PHASEGetSoundEventParameterDbl(instance, rateParamName);
+    XCTAssert(rate == initialRate);
+
+    for (int i = 0; i < 100; ++i)
+    {
+        PHASEUpdate();
+
+        // Pretend we're updating the objects every 16ms (ie. 60hz)
+        std::this_thread::sleep_for(std::chrono::milliseconds(16));
+
+        if (i == 50)
+        {
+            // Dynamically change the mixer gain
+            bool result = PHASESetSoundEventParameterDbl(instance, rateParamName, rateToSet);
+            XCTAssert(result == true);
+            double updatedRate = PHASEGetSoundEventParameterDbl(instance, rateParamName);
+            
+            if(rateToSetInValidRange)
+            {
+                XCTAssert(updatedRate == rateToSet);
+            }
+            else
+            {
+                XCTAssert(updatedRate != rateToSet); //value should have been clamped by PHASE engine
+            }
+        }
+    }
+    
+    result = PHASEStopSoundEvent(instance);
+    XCTAssert(result == true);
+
+    // Unregister the sound event asset.
+    PHASEUnregisterSoundEventAsset(soundEventName);
+
+    // Unregister the buffer
+    PHASEUnregisterAudioAsset(assetName);
+
+    // Destroy the source
+    PHASEDestroySource(sourceId);
+
+    // Destroy the listener
+    PHASEDestroyListener();
+    
+    // Destory gain parameter
+    PHASEDestroySoundEventParameter(rateParameterId);
     
     // Destroy the mixer
     PHASEDestroyMixer(mixerId);
@@ -642,6 +798,22 @@ enum PHASEMixerType
     PHASEUnregisterAudioAsset(name);
 }
 
+- (void)testRegisterAudioAssetTwice
+{
+    char name[] = "Test";
+
+    // Register the buffer
+    bool result = PHASERegisterAudioBuffer(name, mAudioBuffer.mData, 48000, mAudioBuffer.mDataByteSize, 32, mAudioBuffer.mNumberChannels);
+    XCTAssert(result == true);
+    
+    // Register again with the same name
+    result = PHASERegisterAudioBuffer(name, mAudioBuffer.mData, 48000, mAudioBuffer.mDataByteSize, 32, mAudioBuffer.mNumberChannels);
+    XCTAssert(result == true);
+
+    // Unregister the buffer
+    PHASEUnregisterAudioAsset(name);
+}
+
 - (void)testRegisterUnregisterMultiChannelAudioBuffers
 {
     char monoName[] = "StereoAudioBuffer";
@@ -764,14 +936,14 @@ enum PHASEMixerType
     XCTAssert(samplerId != PHASEInvalidInstanceHandle);
 
     // Register the sound event asset.
-    char treeName[] = "TestTree";
-    PHASERegisterSoundEventAsset(treeName, samplerId);
+    char soundEventName[] = "TestSoundEvent";
+    PHASERegisterSoundEventAsset(soundEventName, samplerId);
 
     finishedOneshotCallbackExpectation = [self expectationWithDescription:@"Sound Event OneShot finished playing."];
     // Play sound event.
     PHASESoundEventCompletionHandler soundEventCompletionHandler = MyOneShotCompletionHandler;
     int64_t mixerIds[] = { mixerId };
-    int64_t instance = PHASEPlaySoundEvent("TestTree", sourceId, mixerIds, 1, soundEventCompletionHandler);
+    int64_t instance = PHASEPlaySoundEvent("TestSoundEvent", sourceId, mixerIds, 1, soundEventCompletionHandler);
     XCTAssert(instance != PHASEInvalidInstanceHandle);
     for (int i = 0; i < 100; ++i)
     {
@@ -782,7 +954,7 @@ enum PHASEMixerType
     [self waitForExpectationsWithTimeout:10 handler:nil];
 
     // Unregister the sound event asset.
-    PHASEUnregisterSoundEventAsset(treeName);
+    PHASEUnregisterSoundEventAsset(soundEventName);
 
     // Unregister the buffer
     PHASEUnregisterAudioAsset(assetName);
@@ -832,7 +1004,7 @@ enum PHASEMixerType
     XCTAssert(result == true);
 
     char mixerName[] = "TestMixerName";
-    Quaternion quat = { 0, 0, 0, 0 };
+    Quaternion quat = { 0, 0, 0, 1 };
     int64_t mixerId = PHASECreateAmbientMixer(mixerName, ChannelLayoutTypeMono, quat);
     XCTAssert(mixerId != PHASEInvalidInstanceHandle);
 
@@ -840,14 +1012,14 @@ enum PHASEMixerType
     XCTAssert(samplerId != PHASEInvalidInstanceHandle);
 
     // Register the sound event asset.
-    char treeName[] = "TestTree";
-    PHASERegisterSoundEventAsset(treeName, samplerId);
+    char soundEventName[] = "TestSoundEvent";
+    PHASERegisterSoundEventAsset(soundEventName, samplerId);
 
     finishedOneshotCallbackExpectation = [self expectationWithDescription:@"Sound Event OneShot finished playing."];
     // Play sound event.
     PHASESoundEventCompletionHandler soundEventCompletionHandler = MyOneShotCompletionHandler;
     int64_t mixerIds[] = { mixerId };
-    int64_t instance = PHASEPlaySoundEvent("TestTree", sourceId, mixerIds, 1, soundEventCompletionHandler);
+    int64_t instance = PHASEPlaySoundEvent("TestSoundEvent", sourceId, mixerIds, 1, soundEventCompletionHandler);
     XCTAssert(instance != PHASEInvalidInstanceHandle);
     for (int i = 0; i < 100; ++i)
     {
@@ -858,7 +1030,7 @@ enum PHASEMixerType
     [self waitForExpectationsWithTimeout:10 handler:nil];
 
     // Unregister the sound event asset.
-    PHASEUnregisterSoundEventAsset(treeName);
+    PHASEUnregisterSoundEventAsset(soundEventName);
 
     // Unregister the buffer
     PHASEUnregisterAudioAsset(assetName);
@@ -905,7 +1077,7 @@ enum PHASEMixerType
     XCTAssert(result == true);
 
     char mixerName[] = "TestMixerName";
-    Quaternion quat = { 0, 0, 0, 0 };
+    Quaternion quat = { 0, 0, 0, 1 };
     int64_t mixerId = PHASECreateAmbientMixer(mixerName, ChannelLayoutTypeStereo, quat);
     XCTAssert(mixerId != PHASEInvalidInstanceHandle);
 
@@ -913,14 +1085,14 @@ enum PHASEMixerType
     XCTAssert(samplerId != PHASEInvalidInstanceHandle);
 
     // Register the sound event asset.
-    char treeName[] = "TestTree";
-    PHASERegisterSoundEventAsset(treeName, samplerId);
+    char soundEventName[] = "TestSoundEvent";
+    PHASERegisterSoundEventAsset(soundEventName, samplerId);
 
     finishedOneshotCallbackExpectation = [self expectationWithDescription:@"Sound Event OneShot finished playing."];
     // Play sound event.
     PHASESoundEventCompletionHandler soundEventCompletionHandler = MyOneShotCompletionHandler;
     int64_t mixerIds[] = { mixerId };
-    int64_t instance = PHASEPlaySoundEvent("TestTree", sourceId, mixerIds, 1, soundEventCompletionHandler);
+    int64_t instance = PHASEPlaySoundEvent("TestSoundEvent", sourceId, mixerIds, 1, soundEventCompletionHandler);
     XCTAssert(instance != PHASEInvalidInstanceHandle);
     for (int i = 0; i < 100; ++i)
     {
@@ -931,7 +1103,7 @@ enum PHASEMixerType
     [self waitForExpectationsWithTimeout:10 handler:nil];
 
     // Unregister the sound event asset.
-    PHASEUnregisterSoundEventAsset(treeName);
+    PHASEUnregisterSoundEventAsset(soundEventName);
 
     // Unregister the buffer
     PHASEUnregisterAudioAsset(assetName);
@@ -977,7 +1149,7 @@ enum PHASEMixerType
     XCTAssert(result == true);
 
     char mixerName[] = "TestMixerName";
-    Quaternion quat = { 0, 0, 0, 0 };
+    Quaternion quat = { 0, 0, 0, 1 };
     int64_t mixerId = PHASECreateAmbientMixer(mixerName, ChannelLayoutTypeFiveOne, quat);
     XCTAssert(mixerId != PHASEInvalidInstanceHandle);
 
@@ -985,14 +1157,14 @@ enum PHASEMixerType
     XCTAssert(samplerId != PHASEInvalidInstanceHandle);
 
     // Register the sound event asset.
-    char treeName[] = "TestTree";
-    PHASERegisterSoundEventAsset(treeName, samplerId);
+    char soundEventName[] = "TestSoundEvent";
+    PHASERegisterSoundEventAsset(soundEventName, samplerId);
 
     finishedOneshotCallbackExpectation = [self expectationWithDescription:@"Sound Event OneShot finished playing."];
     // Play sound event.
     PHASESoundEventCompletionHandler soundEventCompletionHandler = MyOneShotCompletionHandler;
     int64_t mixerIds[] = { mixerId };
-    int64_t instance = PHASEPlaySoundEvent("TestTree", sourceId, mixerIds, 1, soundEventCompletionHandler);
+    int64_t instance = PHASEPlaySoundEvent("TestSoundEvent", sourceId, mixerIds, 1, soundEventCompletionHandler);
     XCTAssert(instance != PHASEInvalidInstanceHandle);
     for (int i = 0; i < 100; ++i)
     {
@@ -1003,7 +1175,7 @@ enum PHASEMixerType
     [self waitForExpectationsWithTimeout:10 handler:nil];
 
     // Unregister the sound event asset.
-    PHASEUnregisterSoundEventAsset(treeName);
+    PHASEUnregisterSoundEventAsset(soundEventName);
 
     // Unregister the buffer
     PHASEUnregisterAudioAsset(assetName);
@@ -1050,7 +1222,7 @@ enum PHASEMixerType
     XCTAssert(result == true);
 
     char mixerName[] = "TestMixerName";
-    Quaternion quat = { 0, 0, 0, 0 };
+    Quaternion quat = { 0, 0, 0, 1 };
     int64_t mixerId = PHASECreateAmbientMixer(mixerName, ChannelLayoutTypeSevenOne, quat);
     XCTAssert(mixerId != PHASEInvalidInstanceHandle);
 
@@ -1058,14 +1230,14 @@ enum PHASEMixerType
     XCTAssert(samplerId != PHASEInvalidInstanceHandle);
 
     // Register the sound event asset.
-    char treeName[] = "TestTree";
-    PHASERegisterSoundEventAsset(treeName, samplerId);
+    char soundEventName[] = "TestSoundEvent";
+    PHASERegisterSoundEventAsset(soundEventName, samplerId);
 
     finishedOneshotCallbackExpectation = [self expectationWithDescription:@"Sound Event OneShot finished playing."];
     // Play sound event.
     PHASESoundEventCompletionHandler soundEventCompletionHandler = MyOneShotCompletionHandler;
     int64_t mixerIds[] = { mixerId };
-    int64_t instance = PHASEPlaySoundEvent("TestTree", sourceId, mixerIds, 1, soundEventCompletionHandler);
+    int64_t instance = PHASEPlaySoundEvent("TestSoundEvent", sourceId, mixerIds, 1, soundEventCompletionHandler);
     XCTAssert(instance != PHASEInvalidInstanceHandle);
     for (int i = 0; i < 100; ++i)
     {
@@ -1076,7 +1248,7 @@ enum PHASEMixerType
     [self waitForExpectationsWithTimeout:10 handler:nil];
 
     // Unregister the sound event asset.
-    PHASEUnregisterSoundEventAsset(treeName);
+    PHASEUnregisterSoundEventAsset(soundEventName);
 
     // Unregister the buffer
     PHASEUnregisterAudioAsset(assetName);
@@ -1101,7 +1273,7 @@ enum PHASEMixerType
 - (void)testCreateAmbientMixer
 {
     char mixerName[] = "TestAmbientMixerName";
-    Quaternion quat = { 0, 0, 0, 0 };
+    Quaternion quat = { 0, 0, 0, 1 };
     int64_t mixerId = PHASECreateAmbientMixer(mixerName, ChannelLayoutTypeSevenOne, quat);
     XCTAssert(mixerId != PHASEInvalidInstanceHandle);
 
@@ -1134,44 +1306,27 @@ enum PHASEMixerType
     XCTAssert(samplerId != PHASEInvalidInstanceHandle);
 
     // Register the sound event asset.
-    char treeName[] = "TestTree";
-    PHASERegisterSoundEventAsset(treeName, samplerId);
+    char soundEventName[] = "TestSoundEvent";
+    PHASERegisterSoundEventAsset(soundEventName, samplerId);
 
     // Unregister the sound event asset.
-    PHASEUnregisterSoundEventAsset(treeName);
+    PHASEUnregisterSoundEventAsset(soundEventName);
 
     // Unregister the buffer
     PHASEUnregisterAudioAsset(assetName);
 }
 
-void MySourcePointTestCallback(Vector4* inSourcePoints, int inNumPoints, int64_t inSourceId)
-{
-    for (int ptIdx = 0; ptIdx < inNumPoints; ++ptIdx)
-    {
-        printf("%lld, %f, %f, %f, %f\n", inSourceId, inSourcePoints[ptIdx].x, inSourcePoints[ptIdx].y, inSourcePoints[ptIdx].z,
-               inSourcePoints[ptIdx].w);
-    }
-}
-
-void MyOccluderTestCallback(Vector3* inVoxelPositions, Vector3 inVoxelsSize, int inNumVoxels, int64_t inOccluderId)
-{
-    for (int voxIdx = 0; voxIdx < inNumVoxels; ++voxIdx)
-    {
-        printf("%lld, %f, %f, %f\n", inOccluderId, inVoxelPositions[voxIdx].x, inVoxelPositions[voxIdx].y, inVoxelPositions[voxIdx].z);
-    }
-}
-
-void MyPlaySoundEventCompletionHandler(PHASESoundEventStartHandlerReason reason, int64_t sourceId, int64_t soundEventId)
+void MyPlaySoundEventCompletionHandler(StartHandlerReason reason, int64_t sourceId, int64_t soundEventId)
 {
     switch (reason)
     {
-        case PHASESoundEventStartHandlerReasonFinishedPlaying:
+        case StartHandlerReasonFinishedPlaying:
             printf("SoundEvent stopped because it finished playing");
             break;
-        case PHASESoundEventStartHandlerReasonTerminated:
+        case StartHandlerReasonTerminated:
             printf("SoundEvent stopped because it was killed.");
             break;
-        case PHASESoundEventStartHandlerReasonFailure:
+        case StartHandlerReasonFailure:
             printf("SoundEvent stopped because it had a failure.");
             break;
     }
@@ -1179,9 +1334,9 @@ void MyPlaySoundEventCompletionHandler(PHASESoundEventStartHandlerReason reason,
 
 XCTestExpectation* finishedOneshotCallbackExpectation;
 
-void MyOneShotCompletionHandler(PHASESoundEventStartHandlerReason reason, int64_t source, int64_t soundEvent)
+void MyOneShotCompletionHandler(StartHandlerReason reason, int64_t source, int64_t soundEvent)
 {
-    XCTAssertEqual(reason, PHASESoundEventStartHandlerReasonFinishedPlaying);
+    XCTAssertEqual(reason, StartHandlerReasonFinishedPlaying);
     [finishedOneshotCallbackExpectation fulfill];
 }
 
@@ -1211,15 +1366,15 @@ void MyOneShotCompletionHandler(PHASESoundEventStartHandlerReason reason, int64_
     XCTAssert(samplerId != PHASEInvalidInstanceHandle);
 
     // Register the sound event asset.
-    char treeName[] = "TestTree";
-    result = PHASERegisterSoundEventAsset(treeName, samplerId);
+    char soundEventName[] = "TestSoundEvent";
+    result = PHASERegisterSoundEventAsset(soundEventName, samplerId);
     XCTAssert(result == true);
 
     finishedOneshotCallbackExpectation = [self expectationWithDescription:@"Sound Event OneShot finished playing."];
     // Play sound event.
     PHASESoundEventCompletionHandler soundEventCompletionHandler = MyOneShotCompletionHandler;
     int64_t mixerIds = { mixerId };
-    int64_t instance = PHASEPlaySoundEvent("TestTree", sourceId, &mixerIds, 1, soundEventCompletionHandler);
+    int64_t instance = PHASEPlaySoundEvent("TestSoundEvent", sourceId, &mixerIds, 1, soundEventCompletionHandler);
     XCTAssert(instance != PHASEInvalidInstanceHandle);
     for (int i = 0; i < 150; ++i)
     {
@@ -1230,7 +1385,7 @@ void MyOneShotCompletionHandler(PHASESoundEventStartHandlerReason reason, int64_
     [self waitForExpectationsWithTimeout:5 handler:nil];
 
     // Unregister the sound event asset.
-    PHASEUnregisterSoundEventAsset(treeName);
+    PHASEUnregisterSoundEventAsset(soundEventName);
 
     // Unregister the buffer
     PHASEUnregisterAudioAsset(assetName);
@@ -1267,14 +1422,14 @@ void MyOneShotCompletionHandler(PHASESoundEventStartHandlerReason reason, int64_
     XCTAssert(samplerId != PHASEInvalidInstanceHandle);
 
     // Register the sound event asset.
-    char treeName[] = "TestTree";
-    result = PHASERegisterSoundEventAsset(treeName, samplerId);
+    char soundEventName[] = "TestSoundEvent";
+    result = PHASERegisterSoundEventAsset(soundEventName, samplerId);
     XCTAssert(result == true);
 
     // Play sound event.
     PHASESoundEventCompletionHandler soundEventCompletionHandler = MyPlaySoundEventCompletionHandler;
     int64_t mixerIds[] = { mixerId };
-    int64_t instance = PHASEPlaySoundEvent("TestTree", sourceId, mixerIds, 1, soundEventCompletionHandler);
+    int64_t instance = PHASEPlaySoundEvent("TestSoundEvent", sourceId, mixerIds, 1, soundEventCompletionHandler);
     XCTAssert(instance != PHASEInvalidInstanceHandle);
 
     for (int i = 0; i < 100; ++i)
@@ -1296,7 +1451,7 @@ void MyOneShotCompletionHandler(PHASESoundEventStartHandlerReason reason, int64_
     XCTAssert(result == true);
 
     // Unregister the sound event asset.
-    PHASEUnregisterSoundEventAsset(treeName);
+    PHASEUnregisterSoundEventAsset(soundEventName);
 
     // Unregister the buffer
     PHASEUnregisterAudioAsset(assetName);
@@ -1314,7 +1469,7 @@ void MyOneShotCompletionHandler(PHASESoundEventStartHandlerReason reason, int64_
     EnvelopeSegment inEnvelopeSegments = { .x = 0.5, .y = 0.5, .curveType = EnvelopeCurveTypeSine };
 
     EnvelopeParameters inEnvelopeParameters = { .x = 0, .y = 0, .segmentCount = 1, .envelopeSegments = &inEnvelopeSegments };
-    int64_t inParameterId = PHASECreateSoundEventParameterDbl("ChirpRiseRate", 0.1, -DBL_MIN, DBL_MAX);
+    int64_t inParameterId = PHASECreateSoundEventParameterDbl("ChirpRiseRate", 0.1, std::numeric_limits<double>::lowest(), std::numeric_limits<double>::max());
 
     int64_t mappedMetaParameterId = PHASECreateMappedMetaParameter(inParameterId, inEnvelopeParameters);
 
@@ -1326,7 +1481,7 @@ void MyOneShotCompletionHandler(PHASESoundEventStartHandlerReason reason, int64_
 - (void)testSetInvalidValueOnMetaParameter
 {
     char doubleParamName[] = "testDoubleParam";
-    int64_t parameterId = PHASECreateSoundEventParameterDbl(doubleParamName, 1.0f, -DBL_MIN, DBL_MAX);
+    int64_t parameterId = PHASECreateSoundEventParameterDbl(doubleParamName, 1.0f, std::numeric_limits<double>::lowest(), std::numeric_limits<double>::max());
     bool result = PHASESetSoundEventParameterStr(parameterId, doubleParamName, "thisShouldFail");
     XCTAssert(result == false);
 
@@ -1340,7 +1495,7 @@ void MyOneShotCompletionHandler(PHASESoundEventStartHandlerReason reason, int64_
     PHASEDestroySoundEventParameter(parameterId);
     
     char intParamName[] = "testIntParam";
-    parameterId = PHASECreateSoundEventParameterInt(intParamName, 1, INT_MIN, INT_MAX);
+    parameterId = PHASECreateSoundEventParameterInt(intParamName, 1, std::numeric_limits<int>::lowest(), std::numeric_limits<int>::max());
     result = PHASESetSoundEventParameterDbl(parameterId, stringParamName, 1.0f);
     XCTAssert(result == false);
 
@@ -1407,6 +1562,25 @@ void MyOneShotCompletionHandler(PHASESoundEventStartHandlerReason reason, int64_
     [self helperTestSetDynamicallyMixerGainParameter:PHASEMixerType::SpatialMixer gainToSet:-0.5];
 }
 
+- (void)testCreateAndSetSamplerRateMetaParameter
+ {
+     [self helperTestCreateAndSetInitialSamplerRateParameter:0.5];
+ }
+
+- (void)testSetDynamicallySamplerRateMetaParameter
+ {
+     [self helperTestSetDynamicallySamplerRateParameter:0.5];
+ }
+
+- (void)testCreateAndSetSamplerRateMetaParameterWithInvalidValue
+ {
+     [self helperTestCreateAndSetInitialSamplerRateParameter:0.1];
+ }
+
+- (void)testSetDynamicallySamplerRateMetaParameterWithInvalidValue
+ {
+     [self helperTestSetDynamicallySamplerRateParameter:4.5];
+ }
 
 - (void)testCreateBlendNodeWithMappedMetaParameter
 {
@@ -1414,7 +1588,7 @@ void MyOneShotCompletionHandler(PHASESoundEventStartHandlerReason reason, int64_
     EnvelopeSegment inEnvelopeSegments = { .x = 0.5, .y = 0.5, .curveType = EnvelopeCurveTypeSine };
 
     EnvelopeParameters inEnvelopeParameters = { .x = 0, .y = 0, .segmentCount = 1, .envelopeSegments = &inEnvelopeSegments };
-    int64_t inParameterId = PHASECreateSoundEventParameterDbl("Default", 0.1, -DBL_MIN, DBL_MAX);
+    int64_t inParameterId = PHASECreateSoundEventParameterDbl("Default", 0.1, std::numeric_limits<double>::lowest(), std::numeric_limits<double>::max());
     int64_t mappedMetaParameterId = PHASECreateMappedMetaParameter(inParameterId, inEnvelopeParameters);
     XCTAssert(mappedMetaParameterId != PHASEInvalidInstanceHandle);
 
@@ -1448,14 +1622,14 @@ void MyOneShotCompletionHandler(PHASESoundEventStartHandlerReason reason, int64_
     XCTAssert(blendId != PHASEInvalidInstanceHandle);
 
     // Register the sound event asset.
-    char blendTreeName[] = "TestBlendTree";
-    result = PHASERegisterSoundEventAsset(blendTreeName, blendId);
+    char blendSoundEventName[] = "TestBlendSoundEvent";
+    result = PHASERegisterSoundEventAsset(blendSoundEventName, blendId);
     XCTAssert(result == true);
 
     // Play sound event.
     PHASESoundEventCompletionHandler soundEventCompletionHandler = MyPlaySoundEventCompletionHandler;
     int64_t mixerIds[] = { mixerId };
-    int64_t instance = PHASEPlaySoundEvent("TestBlendTree", sourceId, mixerIds, 1, soundEventCompletionHandler);
+    int64_t instance = PHASEPlaySoundEvent("TestBlendSoundEvent", sourceId, mixerIds, 1, soundEventCompletionHandler);
     XCTAssert(instance != PHASEInvalidInstanceHandle);
 
     for (int i = 0; i < 100; ++i)
@@ -1470,7 +1644,7 @@ void MyOneShotCompletionHandler(PHASESoundEventStartHandlerReason reason, int64_
     XCTAssert(result == true);
 
     // Unregister the sound event asset.
-    PHASEUnregisterSoundEventAsset(blendTreeName);
+    PHASEUnregisterSoundEventAsset(blendSoundEventName);
 
     // Unregister the buffer.
     PHASEUnregisterAudioAsset(assetName);
@@ -1539,15 +1713,15 @@ void MyOneShotCompletionHandler(PHASESoundEventStartHandlerReason reason, int64_
     XCTAssert(soundEventId != PHASEInvalidInstanceHandle);
 
     // Register the sound event asset.
-    char treeName[] = "TestTree";
-    result = PHASERegisterSoundEventAsset(treeName, soundEventId);
+    char soundEventName[] = "TestSoundEvent";
+    result = PHASERegisterSoundEventAsset(soundEventName, soundEventId);
     XCTAssert(result == true);
 
     // Play sound event.
     int64_t mixerIds[] = { mixerId, mixerId2, mixerId3 };
 
     PHASESoundEventCompletionHandler soundEventCompletionHandler = MyPlaySoundEventCompletionHandler;
-    int64_t instance = PHASEPlaySoundEvent(treeName, sourceId, mixerIds, 3, soundEventCompletionHandler);
+    int64_t instance = PHASEPlaySoundEvent(soundEventName, sourceId, mixerIds, 3, soundEventCompletionHandler);
     XCTAssert(instance != PHASEInvalidInstanceHandle);
 
     for (int i = 0; i < 200; ++i)
@@ -1583,7 +1757,7 @@ void MyOneShotCompletionHandler(PHASESoundEventStartHandlerReason reason, int64_
     XCTAssert(result == true);
 
     // Unregister the sound event asset.
-    PHASEUnregisterSoundEventAsset(treeName);
+    PHASEUnregisterSoundEventAsset(soundEventName);
 
     // Unregister the buffer.
     PHASEUnregisterAudioAsset(assetName);
@@ -1643,14 +1817,14 @@ void MyOneShotCompletionHandler(PHASESoundEventStartHandlerReason reason, int64_
     XCTAssert(samplerId != PHASEInvalidInstanceHandle);
 
     // Register the sound event asset
-    char treeName[] = "TestTree";
-    result = PHASERegisterSoundEventAsset(treeName, samplerId);
+    char soundEventName[] = "TestSoundEvent";
+    result = PHASERegisterSoundEventAsset(soundEventName, samplerId);
     XCTAssert(result == true);
 
     // Play sound event
     PHASESoundEventCompletionHandler soundEventCompletionHandler = MyPlaySoundEventCompletionHandler;
     int64_t mixerIds[] = { mixerId };
-    int64_t instance = PHASEPlaySoundEvent(treeName, sourceId, mixerIds, 1, soundEventCompletionHandler);
+    int64_t instance = PHASEPlaySoundEvent(soundEventName, sourceId, mixerIds, 1, soundEventCompletionHandler);
     XCTAssert(instance != PHASEInvalidInstanceHandle);
 
 
@@ -1673,7 +1847,7 @@ void MyOneShotCompletionHandler(PHASESoundEventStartHandlerReason reason, int64_
 
     PHASEUnregisterAudioAsset(assetName);
 
-    PHASEUnregisterSoundEventAsset(treeName);
+    PHASEUnregisterSoundEventAsset(soundEventName);
 }
 
 -(void) testDestroyListenerDuringPlayback
@@ -1702,14 +1876,14 @@ void MyOneShotCompletionHandler(PHASESoundEventStartHandlerReason reason, int64_
     XCTAssert(samplerId != PHASEInvalidInstanceHandle);
 
     // Register the sound event asset.
-    char treeName[] = "TestTree";
-    result = PHASERegisterSoundEventAsset(treeName, samplerId);
+    char soundEventName[] = "TestSoundEvent";
+    result = PHASERegisterSoundEventAsset(soundEventName, samplerId);
     XCTAssert(result == true);
 
     // Play sound event.
     PHASESoundEventCompletionHandler soundEventCompletionHandler = MyOneShotCompletionHandler;
     int64_t mixerIds = { mixerId };
-    int64_t instance = PHASEPlaySoundEvent("TestTree", sourceId, &mixerIds, 1, soundEventCompletionHandler);
+    int64_t instance = PHASEPlaySoundEvent("TestSoundEvent", sourceId, &mixerIds, 1, soundEventCompletionHandler);
     XCTAssert(instance != PHASEInvalidInstanceHandle);
     for (int i = 0; i < 250; ++i)
     {
@@ -1728,7 +1902,7 @@ void MyOneShotCompletionHandler(PHASESoundEventStartHandlerReason reason, int64_
     }
     
     // Unregister the sound event asset.
-    PHASEUnregisterSoundEventAsset(treeName);
+    PHASEUnregisterSoundEventAsset(soundEventName);
 
     // Unregister the buffer
     PHASEUnregisterAudioAsset(assetName);

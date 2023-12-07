@@ -1,9 +1,9 @@
-﻿using System.Collections;
+﻿using NUnit.Framework;
 using System.Collections.Generic;
-using NUnit.Framework;
-using UnityEngine;
-using UnityEngine.TestTools;
+using System.Collections;
 using UnityEngine.SceneManagement;
+using UnityEngine.TestTools;
+using UnityEngine;
 
 namespace Apple.PHASE.UnitTests
 {

@@ -115,6 +115,13 @@ enum CalibrationMode
     CalibrationModeAbsoluteSpl = 2
 };
 
+enum StartHandlerReason
+{
+    StartHandlerReasonFailure = 0,
+    StartHandlerReasonFinishedPlaying = 1,
+    StartHandlerReasonTerminated = 2
+};
+
 /****************************************************************************************************/
 /*! @class PHASEEngineWrapper
     @abstract A PHASEEngineWrapper allows creating and managing PHASE objects
@@ -268,7 +275,7 @@ enum CalibrationMode
 */
 - (BOOL)registerAudioAssetWithURL:(NSURL*)url identifier:(NSString*)identifier audioFormat:(AVAudioFormat*)audioFormat;
 
-/*! @method unregisterAudioBufferWithUID
+/*! @method unregisterAudioBufferWithIndentifier
     @param identifier unique identifier of buffer to unregister
     @abstract Unregisters an audio buffer with a given identifier
 */
@@ -337,15 +344,15 @@ enum CalibrationMode
 
 /*! @method getMetaParameterIntValueWithId
     @abstract Gets the value of a given parameter of type integer on a sound event instance
-    @param instanceId action tree instance to get parameter from
+    @param instanceId sound event instance to get parameter from
     @param parameterName name of the parameter to get
     @return the value of the parameter
 */
 - (int)getMetaParameterIntValueWithId:(int64_t)instanceId parameterName:(NSString*)parameterName;
 
 /*! @method setMetaParameterWithId
-    @abstract Sets the value of a given parameter of type integer on a sound event instance
-    @param instanceId action tree instance to set parameter on
+    @abstract Sets the value of a given parameter of type integer on an sound event instance
+    @param instanceId sound event instance to set parameter on
     @param parameterName name of the parameter to set
     @param intValue integer value of the parameter to set
     @return true on success false otherwise
@@ -364,7 +371,7 @@ enum CalibrationMode
 
 /*! @method getMetaParameterDblValueWithId
     @abstract Gets the value of a given parameter of type double on a sound event instance
-    @param instanceId action tree instance to get parameter from
+    @param instanceId sound event instance to get parameter from
     @param parameterName name of the parameter to get
     @return the value of the parameter
 */
@@ -380,7 +387,7 @@ enum CalibrationMode
 - (BOOL)setMetaParameterWithId:(int64_t)instanceId parameterName:(NSString*)parameterName doubleValue:(double)doubleValue;
 
 /*! @method createMetaParameterWithName
-    @abstract Creates a string action tree meta parameter with a name and default value
+    @abstract Creates a string sound event meta parameter with a name and default value
     @param name parameter name to create
     @param defaultStrValue default stringvalue of parameter
     @return parameter id
@@ -389,7 +396,7 @@ enum CalibrationMode
 
 /*! @method getMetaParameterStrValueWithId
     @abstract Gets the value of a given parameter of type string on a sound event instance
-    @param instanceId action tree instance to get parameter from
+    @param instanceId sound event instance to get parameter from
     @param parameterName name of the parameter to get
     @return the value of the parameter
 */
@@ -405,7 +412,7 @@ enum CalibrationMode
 - (BOOL)setMetaParameterWithId:(int64_t)instanceId parameterName:(NSString*)parameterName stringValue:(NSString*)stringValue;
 
 /*! @method destroyMetaParameterWithId
-    @abstract Destroys an action tree meta parameter
+    @abstract Destroys an sound event meta parameter
     @param parameterId parameter id to destroy
 */
 - (void)destroyMetaParameterWithId:(int64_t)parameterId;
@@ -431,9 +438,10 @@ enum CalibrationMode
 - (BOOL)setMixerGainParameterOnMixerWithId:(int64_t)parameterId mixerId:(int64_t)mixerId;
 
 /*! @method createSoundEventSamplerNodeWithAsset
-    @abstract Creates an action tree sampler node with a given asset name and parameters
+    @abstract Creates an sound event sampler node with a given asset name and parameters
     @param assetName name of the asset to create sampler node for
     @param mixerId mixer Id to attach this sampler to
+    @param rateParameterId  rate meta parameter Id to associated with this sampler
     @param looping whether the asset loops or not
     @param calibrationMode the PHASECalibrationMode of the sampler node
     @param level the volume level
@@ -441,25 +449,26 @@ enum CalibrationMode
 */
 - (int64_t)createSoundEventSamplerNodeWithAsset:(NSString*)assetName
                                         mixerId:(int64_t)mixerId
+                                rateParameterId:(int64_t)rateParameterId
                                         looping:(BOOL)looping
                                 calibrationMode:(CalibrationMode)calibrationMode
                                           level:(double)level;
 
 /*! @method createSoundEventSwitchNodeWithParameter
-    @abstract creates an action tree switch node with a given meta parameter id and switch entries
+    @abstract creates an sound event switch node with a given meta parameter id and switch entries
     @param parameterId meta parameter Id that controls the switch node
-    @param switchEntries entries containing the different action tree nodes to switch from
+    @param switchEntries entries containing the different sound event nodes to switch from
 */
 - (int64_t)createSoundEventSwitchNodeWithParameter:(int64_t)parameterId switchEntries:(NSDictionary*)switchEntries;
 
 /*! @method createSoundEventRandomNodeWithEntries
-    @abstract creates an action tree random node with given random entries to select from
+    @abstract creates an sound event random node with given random entries to select from
     @param randomEntries entries to randomize
 */
 - (int64_t)createSoundEventRandomNodeWithEntries:(NSDictionary*)randomEntries;
 
 /*! @method createSoundEventBlendNodeWithParameter
-    @abstract creates an action tree blend node with a given meta parameter id and blend entries
+    @abstract creates an sound event blend node with a given meta parameter id and blend entries
     @param parameterId meta parameter Id that controls the switch node
     @param blendRanges array of ranges
     @param numRanges number of Ranges
@@ -470,37 +479,37 @@ enum CalibrationMode
                                         numRanges:(uint32_t)numRanges
                              useAutoDistanceBlend:(bool)useAutoDistanceBlend;
 
-/*! @method createSoundEventContainerNodeWithSubtree
-    @param subtreeIds array of child node ids
-    @param numSubtrees number of child nodes in the subtreeId array
+/*! @method createSoundEventContainerNodeWithChild
+    @param childIds array of child node ids
+    @param numChildren number of child nodes in the childIds array
     @return container node instance id
  */
-- (int64_t)createSoundEventContainerNodeWithSubtree:(int64_t*)subtreeIds numSubtrees:(uint32_t)numSubtrees;
+- (int64_t)createSoundEventContainerNodeWithChild:(int64_t*)childIds numChildren:(uint32_t)numChildren;
 
 /*! @method destroySoundEventNodeWithId
     @param nodeId node id to destroy
-    @abstract destroys an action tree node
+    @abstract destroys an sound event node
 */
 - (void)destroySoundEventNodeWithId:(int64_t)nodeId;
 
 /*! @method registerSoundEventWithName
-    @abstract Creates and registers an action tree asset with a given name and root node Id
-    @param name unique name to register the action tree with
-    @param rootNodeId  id of the root node of the action tree
+    @abstract Creates and registers an sound event asset with a given name and root node Id
+    @param name unique name to register the sound event with
+    @param rootNodeId  id of the root node of the sound event
     @return true on success, false otherwise
 */
 - (BOOL)registerSoundEventWithName:(NSString*)name rootNodeId:(int64_t)rootNodeId;
 
 /*! @method unregisterSoundEventWithName
-    @abstract Unregisters an action tree with a given name
-    @param name name of action tree to unregister
+    @abstract Unregisters an sound event with a given name
+    @param name name of sound event to unregister
 */
 - (void)unregisterSoundEventWithName:(NSString*)name;
 
 /*! @method playSoundEventWithName
-    @abstract Plays an action tree
-    @param name name of action tree to play
-    @param sourceId source Id of source to play action tree from
+    @abstract Plays an sound event
+    @param name name of sound event to play
+    @param sourceId source Id of source to play sound event from
     @param completionHandler callback function called when SoundEvent is completed
     @return playing instance id
 */
@@ -509,10 +518,10 @@ enum CalibrationMode
                          mixerIds:(int64_t*)mixerIds
                         numMixers:(uint64_t)numMixers
                 completionHandler:
-                  (void (*)(PHASESoundEventStartHandlerReason reason, int64_t sourceId, int64_t soundEventId))completionHandler;
+                  (void (*)(StartHandlerReason reason, int64_t sourceId, int64_t soundEventId))completionHandler;
 
 /*! @method stopSoundEventWithId
-    @abstract Stops an action tree instance
+    @abstract Stops an sound event instance
     @param instanceId instance Id to stop
     @return true on success false otherwise
 */

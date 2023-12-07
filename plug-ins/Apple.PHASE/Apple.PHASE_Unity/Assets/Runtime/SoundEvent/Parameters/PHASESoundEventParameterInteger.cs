@@ -46,7 +46,7 @@ namespace Apple.PHASE
             _parameterId = Helpers.PHASECreateSoundEventParameterInt(_parameterName, _defaultValue, _minimumValue, _maximumValue);
             if (_parameterId == Helpers.InvalidId)
             {
-                Debug.Log("Failed to create action tree meta parameter");
+                Debug.Log("Failed to create sound event meta parameter");
                 return false;
             }
             return true;

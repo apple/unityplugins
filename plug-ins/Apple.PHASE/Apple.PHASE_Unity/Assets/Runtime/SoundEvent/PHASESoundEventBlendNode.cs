@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 using XNode;
 
@@ -85,7 +85,7 @@ namespace Apple.PHASE
                 bool result = node.Create();
                 if (result == false)
                 {
-                    Debug.LogError("Failed to create subnodes of blend action tree node.");
+                    Debug.LogError("Failed to create subnodes of blend sound event node.");
                 }
 
                 entries[entryIdx].LowValue = Entries[entryIdx].LowValue;
