@@ -1,6 +1,6 @@
-﻿using UnityEngine;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using System;
+using UnityEngine;
 
 namespace Apple.PHASE
 {
@@ -14,7 +14,7 @@ namespace Apple.PHASE
         /// </summary>
 #if UNITY_EDITOR || UNITY_STANDALONE_OSX
         public const string PluginDllName = "AudioPluginPHASE";
-#elif UNITY_IOS
+#elif UNITY_IOS || UNITY_TVOS
         public const string PluginDllName = "__Internal";
 #endif
 
@@ -330,8 +330,9 @@ namespace Apple.PHASE
         /// <param name="inLooping"> Set true to loop the audio on this sampler node. </param>
         /// <param name="inCalibrationMode"> Calibration mode of this sampler node. </param>
         /// <param name="inLevel"> Volume level of the sampler node. </param>
+        /// <param name="inRateParameterId"> ID of the rate meta parameter associated with this sampler node. </param>
         /// <returns> The unique ID of this node, or <c>InvalidId</c> on failure. </returns>
-        [DllImport(PluginDllName)] public static extern long PHASECreateSoundEventSamplerNode(string inAssetName, long inMixerId, bool inLooping, CalibrationMode inCalibrationMode, double inLevel);
+        [DllImport(PluginDllName)] public static extern long PHASECreateSoundEventSamplerNode(string inAssetName, long inMixerId, bool inLooping, CalibrationMode inCalibrationMode, double inLevel, long inRateParameterId);
 
         /// <summary>
         /// Create a sound event switch node with the PHASE engine.
@@ -353,10 +354,10 @@ namespace Apple.PHASE
         /// <summary>
         /// Create a sound event container node with the PHASE engine.
         /// </summary>
-        /// <param name="inSubtreeIds"> Array of subtrees in this container node. </param>
-        /// <param name="inNumSubtrees"> Number of subtrees. </param>
+        /// <param name="inChildIds"> Array of children in this container node. </param>
+        /// <param name="inNumchildren"> Number of children. </param>
         /// <returns> The unique ID of this node, or <c>InvalidId</c> on failure. </returns>
-        [DllImport(PluginDllName)] public static extern long PHASECreateSoundEventContainerNode(long[] inSubtreeIds, int inNumSubtrees);
+        [DllImport(PluginDllName)] public static extern long PHASECreateSoundEventContainerNode(long[] inChildIds, int inNumChildren);
 
         /// <summary>
         /// Create a sound event blend node with the PHASE engine.

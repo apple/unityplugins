@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using Apple.PHASE;
+﻿using Apple.PHASE;
+using UnityEngine;
 
 public class AmbienceBlender : MonoBehaviour
 {

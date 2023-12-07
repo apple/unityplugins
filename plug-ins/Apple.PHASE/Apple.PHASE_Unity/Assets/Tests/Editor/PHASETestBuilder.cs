@@ -1,8 +1,8 @@
-﻿using Apple.PHASE.UnitTests;
-using Apple.Core.Tests.Editor;
+﻿using Apple.Core.Tests.Editor;
+using Apple.PHASE.UnitTests;
 using System.Collections.Generic;
-using UnityEngine.TestTools;
 using UnityEditor.TestTools;
+using UnityEngine.TestTools;
 
 /*
  * Build the UnitTest player with:

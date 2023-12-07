@@ -23,7 +23,7 @@ bool PHASERegisterAudioBuffer(const char* inName,
         NSLog(@"Failed to register audio buffer - invalid parameters.");
         return false;
     }
-
+    
     NSString* UID = [NSString stringWithUTF8String:inName];
     AudioStreamBasicDescription desc;
     desc.mSampleRate = inSampleRate;
@@ -55,10 +55,10 @@ bool PHASERegisterAudioBuffer(const char* inName,
             return false;
     }
     AVAudioFormat* format = [[AVAudioFormat alloc]
-      initWithStreamDescription:&desc
-                  channelLayout:[[AVAudioChannelLayout alloc] initWithLayoutTag:[PHASEEngineWrapper getChannelLayoutTag:layoutType]]];
+                             initWithStreamDescription:&desc
+                             channelLayout:[[AVAudioChannelLayout alloc] initWithLayoutTag:[PHASEEngineWrapper getChannelLayoutTag:layoutType]]];
     NSData* data = [NSData dataWithBytes:inBufferData length:inBufferSizeInBytes];
-
+    
     PHASEEngineWrapper* engineWrapper = [PHASEEngineWrapper sharedInstance];
     return [engineWrapper registerAudioBufferWithData:data identifier:UID audioFormat:format];
 }
@@ -75,7 +75,7 @@ bool PHASERegisterAudioFile(const char* inName, const char* inPath)
     NSArray* pathComponents = @[ [NSString stringWithUTF8String:inPath], [NSString stringWithUTF8String:inName] ];
     NSURL* url = [NSURL fileURLWithPathComponents:pathComponents];
     NSString* UID = [NSString stringWithUTF8String:inName];
-
+    
     NSError* error = [NSError alloc];
     AVAudioFile* audioFile = [[AVAudioFile alloc] initForReading:url error:&error];
     if (error)
@@ -83,25 +83,25 @@ bool PHASERegisterAudioFile(const char* inName, const char* inPath)
         NSLog(@"Failed to register audio file with error %@.", error);
         return NO;
     }
-
+    
     PHASEEngineWrapper* engineWrapper = [PHASEEngineWrapper sharedInstance];
     return [engineWrapper registerAudioAssetWithURL:url identifier:UID audioFormat:audioFile.fileFormat];
 }
 
 int64_t PHASECreateSpatialMixer(const char* inName,
-                                 bool inEnableDirectPath,
-                                 bool inEnableEarlyReflections,
-                                 bool inEnableLateReverb,
-                                 float inCullDistance,
-                                 DirectivityModelParameters inSourceDirectivityModelParameters,
-                                 DirectivityModelParameters inListenerDirectivityModelParameters)
+                                bool inEnableDirectPath,
+                                bool inEnableEarlyReflections,
+                                bool inEnableLateReverb,
+                                float inCullDistance,
+                                DirectivityModelParameters inSourceDirectivityModelParameters,
+                                DirectivityModelParameters inListenerDirectivityModelParameters)
 {
     if (inName == nullptr)
     {
         return PHASEInvalidInstanceHandle;
     }
-
-
+    
+    
     NSString* mixerName = [NSString stringWithUTF8String:inName];
     PHASEEngineWrapper* engineWrapper = [PHASEEngineWrapper sharedInstance];
     return [engineWrapper  createSpatialMixerWithName:mixerName
@@ -119,7 +119,7 @@ int64_t PHASECreateChannelMixer(const char* inName, ChannelLayoutType inChannelL
     {
         return PHASEInvalidInstanceHandle;
     }
-
+    
     NSString* mixerName = [NSString stringWithUTF8String:inName];
     PHASEEngineWrapper* engineWrapper = [PHASEEngineWrapper sharedInstance];
     return [engineWrapper createChannelMixerWithName:mixerName channelLayout:inChannelLayout];
@@ -132,7 +132,7 @@ int64_t PHASECreateAmbientMixer(const char* inName, ChannelLayoutType inChannelL
     {
         return PHASEInvalidInstanceHandle;
     }
-
+    
     NSString* mixerName = [NSString stringWithUTF8String:inName];
     PHASEEngineWrapper* engineWrapper = [PHASEEngineWrapper sharedInstance];
     return [engineWrapper createAmbientMixerWithName:mixerName channelLayout:inChannelLayout orientation:inOrientation];
@@ -252,14 +252,16 @@ int64_t PHASECreateSoundEventSamplerNode(const char* inAssetName,
                                          int64_t inMixerId,
                                          bool inLooping,
                                          CalibrationMode inCalibrationMode,
-                                         double inLevel)
+                                         double inLevel,
+                                         int64_t inRateParameterId)
 {
     @try
     {
         NSString* assetName = [NSString stringWithUTF8String:inAssetName];
         PHASEEngineWrapper* engineWrapper = [PHASEEngineWrapper sharedInstance];
         return [engineWrapper createSoundEventSamplerNodeWithAsset:assetName
-                                                          mixerId:inMixerId
+                                                           mixerId:inMixerId
+                                                   rateParameterId:inRateParameterId
                                                            looping:inLooping
                                                    calibrationMode:inCalibrationMode
                                                              level:inLevel];
@@ -280,7 +282,7 @@ int64_t PHASECreateSoundEventSwitchNode(int64_t inSwitchParameterId, SwitchNodeE
         NSString* switchValue = [NSString stringWithUTF8String:inSwitchEntries[entryIdx].switchValue];
         [switchEntries setObject:switchValue forKey:[NSNumber numberWithLongLong:nodeId]];
     }
-
+    
     @try
     {
         PHASEEngineWrapper* engineWrapper = [PHASEEngineWrapper sharedInstance];
@@ -302,7 +304,7 @@ int64_t PHASECreateSoundEventRandomNode(RandomNodeEntry* inRandomEntries, uint32
         NSNumber* weight = [NSNumber numberWithFloat:inRandomEntries[entryIdx].weight];
         [randomEntries setObject:weight forKey:[NSNumber numberWithLongLong:nodeId]];
     }
-
+    
     @try
     {
         PHASEEngineWrapper* engineWrapper = [PHASEEngineWrapper sharedInstance];
@@ -335,12 +337,12 @@ int64_t PHASECreateSoundEventBlendNode(int64_t inBlendParameterId,
     }
 }
 
-int64_t PHASECreateSoundEventContainerNode(int64_t* inSubtreeIds, uint32_t inNumSubtrees)
+int64_t PHASECreateSoundEventContainerNode(int64_t* inChildIds, uint32_t inNumChildren)
 {
     @try
     {
         PHASEEngineWrapper* engineWrapper = [PHASEEngineWrapper sharedInstance];
-        return [engineWrapper createSoundEventContainerNodeWithSubtree:inSubtreeIds numSubtrees:inNumSubtrees];
+        return [engineWrapper createSoundEventContainerNodeWithChild:inChildIds numChildren:inNumChildren];
     }
     @catch (NSException* exception)
     {

@@ -1,8 +1,8 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Collections.Generic;
-using XNode;
 using System;
+using UnityEngine;
+using XNode;
 
 namespace Apple.PHASE
 {
@@ -61,7 +61,7 @@ namespace Apple.PHASE
                 bool result = node.Create();
                 if (result == false)
                 {
-                    Debug.LogError("Failed to create subnodes of switch action tree node.");
+                    Debug.LogError("Failed to create subnodes of switch sound event node.");
                     return false;
                 }
 

@@ -1,6 +1,6 @@
-﻿using UnityEditor;
+﻿using Apple.PHASE;
+using UnityEditor;
 using UnityEngine;
-using Apple.PHASE;
 using XNodeEditor;
 
 [CustomNodeEditor(typeof(PHASESpatialMixer))]
@@ -51,8 +51,8 @@ public class PHASESpatialMixerNodeEditor : NodeEditor
                 serializedObject.FindProperty("_listenerDirectivityInnerAngle").floatValue = outerAngle;
             }
         }
-        // Only display sharpness if it is not a cone directivity pattern.
-        else if (listenerPreset.enumValueIndex != 0)
+        // Only display sharpness if it is not a cone directivity or omni pattern.
+        else if (listenerPreset.enumValueIndex != 0 && listenerPreset.enumValueIndex != 2)
         {
             EditorGUILayout.PropertyField(serializedObject.FindProperty("_listenerDirectivitySharpness"), new GUIContent("Sharpness"));
         }
@@ -79,8 +79,8 @@ public class PHASESpatialMixerNodeEditor : NodeEditor
                 serializedObject.FindProperty("_sourceDirectivityInnerAngle").floatValue = outerAngle;
             }
         }
-        // Only display sharpness if it is not a cone directivity pattern.
-        else if (sourcePreset.enumValueIndex != 0)
+        // Only display sharpness if it is not a cone or omni directivity pattern.
+        else if (sourcePreset.enumValueIndex != 0 && sourcePreset.enumValueIndex != 2)
         {
             EditorGUILayout.PropertyField(serializedObject.FindProperty("_sourceDirectivitySharpness"), new GUIContent("Sharpness"));
         }

@@ -1,7 +1,7 @@
-﻿using UnityEditor;
+﻿using Apple.PHASE;
+using UnityEditor;
 using UnityEngine;
 using XNodeEditor;
-using Apple.PHASE;
 
 [CustomNodeEditor(typeof(PHASESoundEventRandomNode))]
 public class PHASESoundEventRandomNodeEditor : NodeEditor

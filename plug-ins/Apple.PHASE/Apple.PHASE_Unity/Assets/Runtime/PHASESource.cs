@@ -1,11 +1,10 @@
-﻿using UnityEngine;
-using System.Runtime.InteropServices;
+﻿using AOT;
 using System.Collections.Generic;
-using AOT;
-
+using System.Runtime.InteropServices;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
+using UnityEngine;
 
 namespace Apple.PHASE
 {
@@ -62,7 +61,7 @@ namespace Apple.PHASE
         /// </summary>
         [SerializeField] private bool _playOnAwake = true;
 
-        // Active action tree instance on this source.
+        // Active sound event instance on this source.
         private List<long> _soundEventInstance = new List<long>();
 
         // Source id to store.
@@ -458,7 +457,7 @@ namespace Apple.PHASE
                 return;
             }
 
-            // The listener doesn't know about action trees or mixers,
+            // The listener doesn't know about sound events or mixers,
             // So we need to send it the info it needs to draw the visualization.
             if (_listener == null)
             {
