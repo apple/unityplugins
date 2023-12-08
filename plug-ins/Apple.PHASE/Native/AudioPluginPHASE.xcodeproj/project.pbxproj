@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 55;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -45,9 +45,9 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		24577AFE294BCE0800A9D6D8 /* AudioPluginPHASE.a in Copy plugin to Unity project */ = {isa = PBXBuildFile; fileRef = FF98C0671F23DCD70043047A /* AudioPluginPHASE.a */; platformFilter = ios; };
-		302D376323621CA40030DA9A /* AudioPluginPHASE.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FF98C0671F23DCD70043047A /* AudioPluginPHASE.a */; platformFilter = ios; };
-		302D377623621F2E0030DA9A /* AudioPluginPHASE_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 302D377523621F2E0030DA9A /* AudioPluginPHASE_Tests.mm */; platformFilter = ios; };
+		24577AFE294BCE0800A9D6D8 /* AudioPluginPHASE.a in Copy plugin to Unity project */ = {isa = PBXBuildFile; fileRef = FF98C0671F23DCD70043047A /* AudioPluginPHASE.a */; platformFilters = (ios, ); };
+		302D376323621CA40030DA9A /* AudioPluginPHASE.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FF98C0671F23DCD70043047A /* AudioPluginPHASE.a */; platformFilters = (ios, ); };
+		302D377623621F2E0030DA9A /* AudioPluginPHASE_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 302D377523621F2E0030DA9A /* AudioPluginPHASE_Tests.mm */; platformFilters = (ios, ); };
 		302D377723621F2E0030DA9A /* AudioPluginPHASE_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 302D377523621F2E0030DA9A /* AudioPluginPHASE_Tests.mm */; };
 		302D377823621F550030DA9A /* PHASEWrapper.h in Sources */ = {isa = PBXBuildFile; fileRef = 30B5DE4023608C730035B5D1 /* PHASEWrapper.h */; };
 		302D377923621F550030DA9A /* PHASEWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = 30B5DE3F23608C730035B5D1 /* PHASEWrapper.mm */; };
@@ -69,7 +69,7 @@
 		30DF014B23905DE8005C4C06 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 30E4658C237749A30050BC49 /* AVFoundation.framework */; };
 		30E4658A237741830050BC49 /* anechoic-vox-mono.wav in Resources */ = {isa = PBXBuildFile; fileRef = 30E46589237741830050BC49 /* anechoic-vox-mono.wav */; };
 		30E4658B237741830050BC49 /* anechoic-vox-mono.wav in Resources */ = {isa = PBXBuildFile; fileRef = 30E46589237741830050BC49 /* anechoic-vox-mono.wav */; };
-		4A6D65EE2397FF3A00E93D89 /* AudioPluginPHASE.a in CopyFiles */ = {isa = PBXBuildFile; fileRef = FF98C0671F23DCD70043047A /* AudioPluginPHASE.a */; platformFilter = ios; };
+		4A6D65EE2397FF3A00E93D89 /* AudioPluginPHASE.a in CopyFiles */ = {isa = PBXBuildFile; fileRef = FF98C0671F23DCD70043047A /* AudioPluginPHASE.a */; platformFilters = (ios, ); };
 		64B68A67267A9EAD00DB5DA7 /* PHASE.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64FADC8E267A8EDF004FC962 /* PHASE.framework */; };
 		64B68A68267A9EB400DB5DA7 /* PHASE.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64FADC92267A8F06004FC962 /* PHASE.framework */; };
 		64B68A69267A9ECC00DB5DA7 /* PHASE.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64FADC8E267A8EDF004FC962 /* PHASE.framework */; };
@@ -572,7 +572,9 @@
 /* Begin PBXTargetDependency section */
 		302D376523621CA40030DA9A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			platformFilter = ios;
+			platformFilters = (
+				ios,
+			);
 			target = FF98C0041F220DA10043047A /* AudioPluginPHASE-iOS */;
 			targetProxy = 302D376423621CA40030DA9A /* PBXContainerItemProxy */;
 		};
@@ -612,7 +614,6 @@
 				COPY_PHASE_STRIP = NO;
 				DEPLOYMENT_LOCATION = YES;
 				DEVELOPMENT_TEAM = "";
-				DSTROOT = "$(PROJECT_DIR)/build";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_MODEL_TUNING = G5;
@@ -659,7 +660,6 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEPLOYMENT_LOCATION = YES;
 				DEVELOPMENT_TEAM = "";
-				DSTROOT = "$(PROJECT_DIR)/build";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_MODEL_TUNING = G5;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
@@ -1059,7 +1059,6 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				DEAD_CODE_STRIPPING = NO;
-				DSTROOT = "$(PROJECT_DIR)/build";
 				EXECUTABLE_PREFIX = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					ENABLE_ENVIRONMENTAL_PROCESS,
@@ -1096,7 +1095,6 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				DEAD_CODE_STRIPPING = NO;
-				DSTROOT = "$(PROJECT_DIR)/build";
 				EXECUTABLE_PREFIX = "";
 				INFOPLIST_OUTPUT_FORMAT = XML;
 				INSTALL_PATH = /Plugins/iOS;
