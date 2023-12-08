@@ -82,7 +82,7 @@ int64_t PHASECreateSoundEventParameterDbl(const char* inParameterName, double in
  Gets the parameter on a sound event of type double
  */
 double PHASEGetSoundEventParameterDbl(int64_t inInstance, const char* inParamName);
- 
+
 /*
  Sets a parameter on a sound event of type double
  */
@@ -184,5 +184,5 @@ int64_t PHASEPlaySoundEvent(const char* inName,
  Stop a sound event instance.
  */
 bool PHASEStopSoundEvent(int64_t inInstance);
-
+} //extern "C"
 #endif  // PHASESoundEventInterface_h
