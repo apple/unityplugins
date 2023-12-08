@@ -181,10 +181,10 @@ matchRequest.MaxPlayers = 2;
 
 GKMatch match = await GKMatchmakerViewController.Request(matchRequest);
 
-match.DataReceived += OnMatchDataReceived;
-match.DataReceivedForPlayer ++ OnMatchDataReceivedForPlayer;
-match.DidFailWithError += OnMatchErrorReceived;
-match.PlayerConnectionStateChanged += OnMatchPlayerConnectionStateChanged;
+match.Delegate.DataReceived += OnMatchDataReceived;
+match.Delegate.DataReceivedForPlayer ++ OnMatchDataReceivedForPlayer;
+match.Delegate.DidFailWithError += OnMatchErrorReceived;
+match.Delegate.PlayerConnectionStateChanged += OnMatchPlayerConnectionStateChanged;
 
 private void OnMatchDataReceived(byte[] data, GKPlayer fromPlayer)
 {
