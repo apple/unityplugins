@@ -14,6 +14,10 @@ namespace Apple.PHASE
 
         // Default string value.
         [SerializeField] private string _defaultValue;
+        public string DefaultValue
+        {
+            get => _defaultValue;
+        }
 
         /// <summary>
         /// Sets the parameter to the given name and value.
@@ -23,7 +27,7 @@ namespace Apple.PHASE
         public void SetParameterString(string inParameterName, string inDefaultValue)
         {
             _defaultValue = inDefaultValue;
-            SetParameterName(inParameterName);
+            _parameterName = inParameterName;
             Create();
         }
 
@@ -36,7 +40,7 @@ namespace Apple.PHASE
             _parameterId = Helpers.PHASECreateSoundEventParameterStr(_parameterName, _defaultValue);
             if (_parameterId == Helpers.InvalidId)
             {
-                Debug.Log("Failed to create action tree meta parameter");
+                Debug.Log("Failed to create sound event meta parameter");
                 return false;
             }
             return true;

@@ -14,6 +14,26 @@ namespace Apple.PHASE
 
         // Default double value.
         [SerializeField] private double _defaultValue;
+        public double DefaultValue
+        {
+            get => _defaultValue;
+        }
+
+        // Minimum value of the parameter.
+        private double _minimumValue = double.MinValue;
+        public double MinimumValue
+        {
+            get => _minimumValue;
+            set => _minimumValue = value;
+        }
+
+        // Maximum value of the parameter.
+        private double _maximumValue = double.MaxValue;
+        public double MaximumValue
+        {
+            get => _maximumValue;
+            set => _maximumValue = value;
+        }
 
         /// <summary>
         /// Sets the parameter to the given name and value.
@@ -23,7 +43,7 @@ namespace Apple.PHASE
         public void SetParameterDouble(string inParameterName, double inDefaultValue)
         {
             _defaultValue = inDefaultValue;
-            SetParameterName(inParameterName);
+            _parameterName = inParameterName;
             Create();
         }
 
@@ -33,10 +53,10 @@ namespace Apple.PHASE
         /// <returns> True if succesful, false otherwise. </returns>
         public override bool Create()
         {
-            _parameterId = Helpers.PHASECreateSoundEventParameterDbl(_parameterName, _defaultValue);
+            _parameterId = Helpers.PHASECreateSoundEventParameterDbl(_parameterName, _defaultValue, _minimumValue, _maximumValue);
             if (_parameterId == Helpers.InvalidId)
             {
-                Debug.Log("Failed to create action tree meta parameter");
+                Debug.Log("Failed to create sound event meta parameter");
                 return false;
             }
             return true;

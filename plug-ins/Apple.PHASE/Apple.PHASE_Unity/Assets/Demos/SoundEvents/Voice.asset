@@ -100,8 +100,8 @@ MonoBehaviour:
       _typeConstraint: 0
       _dynamic: 0
   ParentNode: {fileID: 0}
-  _isStreamingAsset: 1
-  _audioClip: {fileID: 0}
+  _isStreamingAsset: 0
+  _audioClip: {fileID: 8300000, guid: 2ae046f63d4354a7b980a5421541a4a9, type: 3}
   _looping: 1
   _calibrationMode: 1
   _levelNone: 1

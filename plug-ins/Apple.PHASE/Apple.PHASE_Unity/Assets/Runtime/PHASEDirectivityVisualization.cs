@@ -34,8 +34,8 @@ namespace Apple.PHASE
             Vector3[] vertices = new Vector3[steps + 1];
             int[] triangles = new int[steps * 6];
 
-            float startAngle = (Mathf.PI - angle) / 2f;
-            vertices[0] = Vector3.zero; // center point of circle
+            float startAngle = angle / -2f;
+            vertices[0] = Vector3.zero; // Center point of circle
             for (int i = 1; i <= steps; i++)
             {
                 int index = (i - 1) * 6;
@@ -44,7 +44,7 @@ namespace Apple.PHASE
                 float curY = _radius * Mathf.Sin(startAngle + curAngle);
                 vertices[i] = new Vector3(curY, 0f, curX);
 
-                if (angle == Mathf.PI * 2f) // if angle is 2PI then connect circle edges
+                if (angle == Mathf.PI * 2f) // If angle is 2PI then connect circle edges
                 {
                     triangles[index] = 1;
                 }
@@ -55,7 +55,7 @@ namespace Apple.PHASE
 
                 triangles[index + 1] = i;
 
-                // wraparound the last vertex
+                // Wraparound the last vertex
                 if (i == steps)
                 {
                     triangles[index + 2] = 0;
@@ -87,7 +87,7 @@ namespace Apple.PHASE
         private static Mesh GenerateCardioidMeshFromVertices(Vector3[] vertices)
         {
             int[] triangles = new int[vertices.Length * 6];
-            vertices[0] = Vector3.zero; // center point of cardioid
+            vertices[0] = Vector3.zero; // Center point of cardioid
             for (int i = 0; i < vertices.Length - 1; i++)
             {
                 int index = i * 6;
@@ -98,7 +98,7 @@ namespace Apple.PHASE
                     triangles[index + 1] = i + 1;
                     triangles[index + 2] = i + 2;
                 }
-                // wraparound last triangle
+                // Wraparound last triangle
                 else
                 {
                     triangles[index] = 0;

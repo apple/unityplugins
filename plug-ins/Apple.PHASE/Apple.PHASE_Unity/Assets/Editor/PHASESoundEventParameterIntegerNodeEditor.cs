@@ -1,6 +1,6 @@
-﻿using XNodeEditor;
+﻿using Apple.PHASE;
 using UnityEditor;
-using Apple.PHASE;
+using XNodeEditor;
 
 [CustomNodeEditor(typeof(PHASESoundEventParameterInteger))]
 public class PHASESoundEventParameterIntegerNodeEditor : NodeEditor

@@ -164,12 +164,12 @@
 
 /* Begin PBXFileReference section */
 		7A3320E526014AD100B447CD /* CHHapticEngine_Supported.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CHHapticEngine_Supported.swift; sourceTree = "<group>"; };
-		7A3320EC26014B2E00B447CD /* CHHapticEngine_Protocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CHHapticEngine_Protocol.swift; path = "../New Group/CHHapticEngine_Protocol.swift"; sourceTree = "<group>"; };
+		7A3320EC26014B2E00B447CD /* CHHapticEngine_Protocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CHHapticEngine_Protocol.swift; path = CoreHapticsWrapper/Haptics/HapticEngine/CHHapticEngine_Protocol.swift; sourceTree = SOURCE_ROOT; };
 		7A3320F326014BF500B447CD /* CHHapticEngine_Unsupported.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CHHapticEngine_Unsupported.swift; sourceTree = "<group>"; };
 		7A3320FA26015A3000B447CD /* CHHapticPatternPlayer_Protocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CHHapticPatternPlayer_Protocol.swift; sourceTree = "<group>"; };
 		7A33210126015AA100B447CD /* CHHapticPatternPlayer_Supported.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CHHapticPatternPlayer_Supported.swift; sourceTree = "<group>"; };
 		7A33210826015B1000B447CD /* CHHapticPatternPlayer_Unsupported.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CHHapticPatternPlayer_Unsupported.swift; sourceTree = "<group>"; };
-		7A33210F26015D1A00B447CD /* CHHapticAdvancedPatternPlayer_Protocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CHHapticAdvancedPatternPlayer_Protocol.swift; path = "../New Group1/CHHapticAdvancedPatternPlayer_Protocol.swift"; sourceTree = "<group>"; };
+		7A33210F26015D1A00B447CD /* CHHapticAdvancedPatternPlayer_Protocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CHHapticAdvancedPatternPlayer_Protocol.swift; sourceTree = "<group>"; };
 		7A33211626015D7F00B447CD /* CHHapticAdvancedPatternPlayer_Supported.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CHHapticAdvancedPatternPlayer_Supported.swift; sourceTree = "<group>"; };
 		7A33211D26015EB700B447CD /* CHHapticAdvancedPatternPlayer_Unsupported.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CHHapticAdvancedPatternPlayer_Unsupported.swift; sourceTree = "<group>"; };
 		7A443C722603D68D0048A408 /* CHHapticPatternPlayer_BridgingHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CHHapticPatternPlayer_BridgingHeader.h; sourceTree = "<group>"; };

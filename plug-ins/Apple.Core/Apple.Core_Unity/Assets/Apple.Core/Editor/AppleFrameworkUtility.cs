@@ -32,7 +32,16 @@ namespace Apple.Core
                     return string.Empty;
             }
 
+#if UNITY_2022_1_OR_NEWER
+            // The asset database in Unity 2022.1 and newer will no longer find libraries when the suffix, such as '.framework' or '.bundle', is included in the asset name.
+            int suffix_index = libraryName.LastIndexOf(".");
+            string libraryNameStem = suffix_index == -1 ? libraryName : libraryName.Substring(0, suffix_index);
+
+            Debug.Log($"[AppleFrameworkUtility] Unity 2022.1 or newer in use: Input library name [{libraryName}], target asset name [{libraryNameStem}]");
+            string[] results = AssetDatabase.FindAssets(libraryNameStem);
+#else
             string[] results = AssetDatabase.FindAssets(libraryName);
+#endif
             foreach (string currGUID in results)
             {
                 string libraryPath = AssetDatabase.GUIDToAssetPath(currGUID);

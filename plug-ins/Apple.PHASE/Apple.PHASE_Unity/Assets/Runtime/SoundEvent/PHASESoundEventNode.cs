@@ -1,6 +1,6 @@
-﻿using XNode;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
+using XNode;
 
 namespace Apple.PHASE
 {

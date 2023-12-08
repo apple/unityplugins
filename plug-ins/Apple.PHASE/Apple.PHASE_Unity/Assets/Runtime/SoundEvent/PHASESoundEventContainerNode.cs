@@ -15,7 +15,7 @@ namespace Apple.PHASE
         [SerializeField]
         public List<string> Nodes = new List<string>();
 
-        private long[] _subtreeIds = { };
+        private long[] _childIds = { };
 
 
         /// <summary>
@@ -28,14 +28,14 @@ namespace Apple.PHASE
             {
                 return false;
             }
-            _subtreeIds = new long[Nodes.Count];
+            _childIds = new long[Nodes.Count];
             for (int i = 0; i < Nodes.Count; i++)
             {
                 PHASESoundEventNode node = GetPort(Nodes[i]).GetConnection(0).node as PHASESoundEventNode;
                 bool result = node.Create();
                 if (result)
                 {
-                    _subtreeIds[i] = node.GetNodeId();
+                    _childIds[i] = node.GetNodeId();
                 }
                 else
                 {
@@ -44,7 +44,7 @@ namespace Apple.PHASE
                 }
             }
 
-            m_nodeId = Helpers.PHASECreateSoundEventContainerNode(_subtreeIds, _subtreeIds.Length);
+            m_nodeId = Helpers.PHASECreateSoundEventContainerNode(_childIds, _childIds.Length);
             if (m_nodeId == Helpers.InvalidId)
             {
                 Debug.LogError("Failed to create PHASE Sound Event Container Node");

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 using XNode;
 
@@ -85,7 +85,7 @@ namespace Apple.PHASE
                 bool result = node.Create();
                 if (result == false)
                 {
-                    Debug.LogError("Failed to create subnodes of blend action tree node.");
+                    Debug.LogError("Failed to create subnodes of blend sound event node.");
                 }
 
                 entries[entryIdx].LowValue = Entries[entryIdx].LowValue;
@@ -96,7 +96,7 @@ namespace Apple.PHASE
             }
 
             // Now create the blend node with all the entries 
-            long paramId = UseDistanceBlend ? _distanceBlendSpatialMixer.GetMixerId() : BlendParameter.GetParameterId();
+            long paramId = UseDistanceBlend ? _distanceBlendSpatialMixer.GetMixerId() : BlendParameter.ParameterId;
             m_nodeId = Helpers.PHASECreateSoundEventBlendNode(paramId, entries, Entries.Count, UseDistanceBlend);
             if (m_nodeId == Helpers.InvalidId)
             {

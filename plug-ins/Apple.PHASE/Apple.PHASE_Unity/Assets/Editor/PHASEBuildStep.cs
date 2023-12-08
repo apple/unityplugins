@@ -8,6 +8,7 @@ using UnityEngine;
 #if UNITY_EDITOR_OSX && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX)
 using UnityEditor.iOS.Xcode;
 #endif
+using UnityEngine;
 
 namespace Apple.PHASE.Editor
 {
@@ -18,7 +19,8 @@ namespace Apple.PHASE.Editor
         readonly Dictionary<BuildTarget, string> _libraryTable = new Dictionary<BuildTarget, string>
         {
             {BuildTarget.iOS, "AudioPluginPHASE"},
-            {BuildTarget.StandaloneOSX, "AudioPluginPHASE.bundle"}
+            {BuildTarget.StandaloneOSX, "AudioPluginPHASE.bundle"},
+            {BuildTarget.tvOS, "AudioPluginPHASE"}
         };
 
 #if UNITY_EDITOR_OSX && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX)
@@ -35,7 +37,7 @@ namespace Apple.PHASE.Editor
                 else
                 {
                     AppleFrameworkUtility.CopyAndEmbed(libraryPath, buildTarget, pathToBuiltTarget, pbxProject);
-                    if (buildTarget == BuildTarget.iOS)
+                    if (buildTarget == BuildTarget.iOS || buildTarget == BuildTarget.tvOS)
                     {
                         pbxProject.AddFrameworkToProject(pbxProject.GetUnityFrameworkTargetGuid(), "PHASE.framework", false);
                         pbxProject.AddFrameworkToProject(pbxProject.GetUnityFrameworkTargetGuid(), "ModelIO.framework", false);
@@ -56,7 +58,7 @@ namespace Apple.PHASE.Editor
 
         public override void OnBeginPostProcess(AppleBuildProfile appleBuildProfile, BuildTarget buildTarget, string pathToBuiltProject)
         {
-            if (buildTarget == BuildTarget.iOS)
+            if (buildTarget == BuildTarget.iOS || buildTarget == BuildTarget.tvOS)
             {
                 var projectPath = PBXProject.GetPBXProjectPath(pathToBuiltProject);
                 PBXProject project = new PBXProject();

@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
-using System.Runtime.InteropServices;
+using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices;
+using UnityEngine;
 
 namespace Apple.PHASE
 {
@@ -57,6 +57,13 @@ namespace Apple.PHASE
         [SerializeField] private string _streamingAssetSubDirectory = "";
 
         static List<string> _registeredAssets = new List<string>();
+        
+        // Rate parameter to modify playback speed for the sampler node. 
+        [Output] public PHASESoundEventParameterDouble RateParameter = null;
+        private PHASESoundEventParameterDouble _rateParameter = null;
+
+        private const double MinRate = 0.25;
+        private const double MaxRate = 4.0;
 
         /// <summary>
         /// Create this sampler node in the PHASE engine.
@@ -111,8 +118,10 @@ namespace Apple.PHASE
                 }
             }
 
+            CreateRateMetaParameter();
+
             // Create sampler node
-            m_nodeId = Helpers.PHASECreateSoundEventSamplerNode(_assetName, _mixer.GetMixerId(), _looping, _calibrationMode, GetLevel());
+            m_nodeId = Helpers.PHASECreateSoundEventSamplerNode(_assetName, _mixer.GetMixerId(), _looping, _calibrationMode, GetLevel(), _rateParameter ? _rateParameter.ParameterId : Helpers.InvalidId);
             if (m_nodeId == Helpers.InvalidId)
             {
                 Debug.LogError($"Failed to create PHASE sampler node: {name}.");
@@ -166,6 +175,37 @@ namespace Apple.PHASE
             {
                 return new List<PHASEMixer>();
             }
+        }
+        
+        /// <summary>
+        /// Creates a Rate Meta Parameter to enable runtime playback rate modification for this sampler's audio.
+        /// </summary>
+        private void CreateRateMetaParameter()
+        {
+            var parameterPort = GetOutputPort("RateParameter");
+            bool hasValidConnection = parameterPort != null && parameterPort.Connection != null && parameterPort.Connection.node;
+            if (!hasValidConnection)
+            {
+                return;
+            }
+
+            if (parameterPort.ConnectionCount > 1)
+            {
+                Debug.LogError($"PHASESoundEventSamplerNode {name} with id {_assetName} is connected to more than one Rate Parameter.");
+                return;
+            }
+
+            _rateParameter = parameterPort.Connection.node as PHASESoundEventParameterDouble;
+
+            if (_rateParameter.ParameterName.Length == 0)
+            {
+                Debug.LogError($"Failed to create rateMetaParameter {_rateParameter.ParameterName} for PHASESoundEventSamplerNode {name} with id {_assetName}. No parameter name specified in Sound Event Composer!");
+                return;
+            }
+
+            _rateParameter.MinimumValue = MinRate;
+            _rateParameter.MaximumValue = MaxRate;
+            _rateParameter.Create();
         }
 
         private float GetLevel()

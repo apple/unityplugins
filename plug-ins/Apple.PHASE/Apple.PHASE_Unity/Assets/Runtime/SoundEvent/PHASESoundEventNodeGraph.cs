@@ -16,7 +16,7 @@ namespace Apple.PHASE
         [System.NonSerialized]
         private bool m_isRegistered = false;
 
-        // Root node of this action tree
+        // Root node of this sound event
         [SerializeField] private PHASESoundEventNode m_rootNode = null;
 
         /// <summary>
@@ -33,15 +33,15 @@ namespace Apple.PHASE
             bool result = m_rootNode.Create();
             if (result == false)
             {
-                Debug.LogError($"Failed to register PHASE action tree root node {m_rootNode.name}.");
+                Debug.LogError($"Failed to register PHASE sound event root node {m_rootNode.name}.");
                 return;
             }
 
-            // Create action tree asset
+            // Create sound event asset
             result = Helpers.PHASERegisterSoundEventAsset(name, m_rootNode.GetNodeId());
             if (result == false)
             {
-                Debug.LogError($"Failed to register PHASE action tree asset: {name}.");
+                Debug.LogError($"Failed to register PHASE sound event asset: {name}.");
             }
             else
             {
@@ -76,6 +76,7 @@ namespace Apple.PHASE
         /// </summary>
         public void Unregister()
         {
+            m_isRegistered = false;
             Helpers.PHASEUnregisterSoundEventAsset(name);
             m_rootNode.DestroyFromPHASE();
         }
@@ -85,9 +86,9 @@ namespace Apple.PHASE
         /// </summary>
         static public void UnregisterAll()
         {
-            foreach (PHASESoundEventNodeGraph tree in m_registeredSoundEvents)
+            foreach (PHASESoundEventNodeGraph soundEvent in m_registeredSoundEvents)
             {
-                tree.Unregister();
+                soundEvent.Unregister();
             }
 
             m_registeredSoundEvents.Clear();
