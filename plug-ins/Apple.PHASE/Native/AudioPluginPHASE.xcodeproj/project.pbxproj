@@ -69,7 +69,6 @@
 		30DF014B23905DE8005C4C06 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 30E4658C237749A30050BC49 /* AVFoundation.framework */; };
 		30E4658A237741830050BC49 /* anechoic-vox-mono.wav in Resources */ = {isa = PBXBuildFile; fileRef = 30E46589237741830050BC49 /* anechoic-vox-mono.wav */; };
 		30E4658B237741830050BC49 /* anechoic-vox-mono.wav in Resources */ = {isa = PBXBuildFile; fileRef = 30E46589237741830050BC49 /* anechoic-vox-mono.wav */; };
-		4A6D65EE2397FF3A00E93D89 /* AudioPluginPHASE.a in CopyFiles */ = {isa = PBXBuildFile; fileRef = FF98C0671F23DCD70043047A /* AudioPluginPHASE.a */; platformFilters = (ios, ); };
 		64B68A67267A9EAD00DB5DA7 /* PHASE.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64FADC8E267A8EDF004FC962 /* PHASE.framework */; };
 		64B68A68267A9EB400DB5DA7 /* PHASE.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64FADC92267A8F06004FC962 /* PHASE.framework */; };
 		64B68A69267A9ECC00DB5DA7 /* PHASE.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64FADC8E267A8EDF004FC962 /* PHASE.framework */; };
@@ -139,16 +138,6 @@
 				24577AFE294BCE0800A9D6D8 /* AudioPluginPHASE.a in Copy plugin to Unity project */,
 			);
 			name = "Copy plugin to Unity project";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		FF98C0031F220DA10043047A /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "${PROJECT_DIR}/build/iOS/$(CONFIGURATION)";
-			dstSubfolderSpec = 0;
-			files = (
-				4A6D65EE2397FF3A00E93D89 /* AudioPluginPHASE.a in CopyFiles */,
-			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -382,7 +371,6 @@
 			buildPhases = (
 				FF98C01A1F220FED0043047A /* Sources */,
 				FF98C0021F220DA10043047A /* Frameworks */,
-				FF98C0031F220DA10043047A /* CopyFiles */,
 				646655DA2609523800EBAB9D /* Copy plugin to Unity project */,
 			);
 			buildRules = (
