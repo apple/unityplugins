@@ -4,6 +4,9 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using AOT;
 using UnityEngine;
+#if APPLECOREHAPTICS
+using Apple.CoreHaptics;
+#endif
 
 namespace Apple.GameController.Controller
 {
@@ -172,7 +175,23 @@ namespace Apple.GameController.Controller
             Debug.Log($"Setting controller {controllerHandle.UniqueId} to [{red}, {green}, {blue}]");
         }
         #endregion
-        
+
+        #region Controller Haptics
+#if APPLECOREHAPTICS
+        [DllImport(InteropUtility.DLLName)]
+        private static extern IntPtr GameControllerWrapper_CreateHapticsEngine(string uniqueId, ErrorCallback onError);
+
+        public static CHHapticEngine CreateHapticsEngine(GCControllerHandle controllerHandle)
+        {
+            IntPtr EnginePtr = GameControllerWrapper_CreateHapticsEngine(controllerHandle.UniqueId, (error) => {
+                throw new GCException(error);
+            });
+            //Debug.Log($"Haptic engine for controller {controllerHandle.UniqueId} created");
+            return new CHHapticEngine(EnginePtr);
+        }
+#endif
+        #endregion
+
         #region Get Symbol for Input Name
         [DllImport(InteropUtility.DLLName)]
         private static extern GCGetSymbolForInputNameResponse GameControllerWrapper_GetSymbolForInputName(string uniqueId, GCControllerInputName inputName, GCControllerSymbolScale symbolScale, GCControllerRenderingMode renderingMode);

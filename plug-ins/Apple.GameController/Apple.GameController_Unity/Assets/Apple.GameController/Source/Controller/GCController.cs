@@ -3,6 +3,9 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using AOT;
+#if APPLECOREHAPTICS
+using Apple.CoreHaptics;
+#endif
 
 namespace Apple.GameController.Controller
 {
@@ -190,5 +193,12 @@ namespace Apple.GameController.Controller
         {
             GCControllerService.SetControllerLightColor(Handle, red, green, blue);
         }
+
+#if APPLECOREHAPTICS
+        public CHHapticEngine CreateHapticsEngine()
+        {
+            return GCControllerService.CreateHapticsEngine(Handle);
+        }
+#endif
     }
 } 
