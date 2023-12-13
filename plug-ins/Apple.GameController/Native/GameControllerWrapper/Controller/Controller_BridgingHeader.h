@@ -62,6 +62,8 @@ typedef struct {
     float thumbstickRightHorizontal;
     float thumbstickRightVertical;
     float thumbstickRightButton;
+    // motion
+    double attitude[4];
     // Dualshock and DualSense
     float touchpadButton;
     float touchpadPrimaryHorizontal;
@@ -82,6 +84,7 @@ typedef struct {
     bool hasHaptics;
     bool hasLight;
     bool hasBattery;
+    bool hasAttitude;
 } GCWController;
 
 typedef struct {

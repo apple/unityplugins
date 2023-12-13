@@ -308,6 +308,7 @@ fileprivate func _pollExtendedController
     state.thumbstickRightHorizontal = profile.rightThumbstick.xAxis.value;
     state.thumbstickRightVertical = profile.rightThumbstick.yAxis.value;
     state.thumbstickRightButton = profile.rightThumbstickButton?.value ?? 0;
+    state.attitude = (profile.controller?.motion?.attitude ?? GCQuaternion()).toDoubleArray();
     state.batteryLevel = 0;
     state.batteryState = -1;
     
@@ -366,6 +367,7 @@ fileprivate func _pollMicroController
     state.buttonX = profile.buttonX.isPressed.toFloat();
     state.dpadHorizontal = profile.dpad.xAxis.value;
     state.dpadVertical = profile.dpad.yAxis.value;
+    state.attitude = (profile.controller?.motion?.attitude ?? GCQuaternion()).toDoubleArray();
 }
 
 class GCWNotificationHandler : NSObject  {

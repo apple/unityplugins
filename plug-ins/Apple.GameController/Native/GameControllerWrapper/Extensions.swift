@@ -92,6 +92,12 @@ extension Bool {
     }
 }
 
+extension GCQuaternion {
+    func toDoubleArray() -> (Double, Double, Double, Double) {
+        return (self.x, self.y, self.z, self.w);
+    }
+}
+
 extension GCController {
     func toGCWController(uid : String) -> GCWController {
         if #available(macOS 10.16, tvOS 14, iOS 14, *) {
@@ -102,7 +108,8 @@ extension GCController {
                 isAttachedToDevice: self.isAttachedToDevice,
                 hasHaptics: self.haptics != nil,
                 hasLight: self.light != nil,
-                hasBattery: self.battery != nil
+                hasBattery: self.battery != nil,
+                hasAttitude: self.motion?.hasAttitude ?? false
             );
         } else {
             return GCWController(
@@ -112,7 +119,8 @@ extension GCController {
                 isAttachedToDevice: self.isAttachedToDevice,
                 hasHaptics: false,
                 hasLight: false,
-                hasBattery: false
+                hasBattery: false,
+                hasAttitude: false
             );
         }
     }
