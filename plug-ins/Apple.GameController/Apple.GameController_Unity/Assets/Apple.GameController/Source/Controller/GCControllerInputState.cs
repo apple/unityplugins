@@ -27,6 +27,18 @@ namespace Apple.GameController.Controller
         public float ThumbstickRightHorizontal;
         public float ThumbstickRightVertical;
         public float ThumbstickRightButton;
+
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+        public double[] Attitude;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+        public double[] RotationalRate;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+        public double[] Acceleration;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+        public double[] Gravity;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+        public double[] UserAcceleration;
+
         // Dualshock & DualSense
         public float TouchpadButton;
         public float TouchpadPrimaryHorizontal;

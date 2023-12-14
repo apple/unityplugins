@@ -309,6 +309,14 @@ fileprivate func _pollExtendedController
     state.thumbstickRightVertical = profile.rightThumbstick.yAxis.value;
     state.thumbstickRightButton = profile.rightThumbstickButton?.value ?? 0;
     state.attitude = (profile.controller?.motion?.attitude ?? GCQuaternion()).toDoubleArray();
+    state.rotationalRate = (profile.controller?.motion?.rotationRate ?? GCRotationRate()).toDoubleArray();
+    if #available(macOS 11.0, tvOS 14, iOS 14, *) {
+        state.acceleration = (profile.controller?.motion?.acceleration ?? GCAcceleration()).toDoubleArray()
+    } else {
+        state.acceleration = GCAcceleration().toDoubleArray();
+    };
+    state.gravity = (profile.controller?.motion?.gravity ?? GCAcceleration()).toDoubleArray();
+    state.userAcceleration = (profile.controller?.motion?.userAcceleration ?? GCAcceleration()).toDoubleArray();
     state.batteryLevel = 0;
     state.batteryState = -1;
     
@@ -368,6 +376,14 @@ fileprivate func _pollMicroController
     state.dpadHorizontal = profile.dpad.xAxis.value;
     state.dpadVertical = profile.dpad.yAxis.value;
     state.attitude = (profile.controller?.motion?.attitude ?? GCQuaternion()).toDoubleArray();
+    state.rotationalRate = (profile.controller?.motion?.rotationRate ?? GCRotationRate()).toDoubleArray();
+    if #available(macOS 11.0, tvOS 14, iOS 14, *) {
+        state.acceleration = (profile.controller?.motion?.acceleration ?? GCAcceleration()).toDoubleArray()
+    } else {
+        state.acceleration = GCAcceleration().toDoubleArray();
+    };
+    state.gravity = (profile.controller?.motion?.gravity ?? GCAcceleration()).toDoubleArray();
+    state.userAcceleration = (profile.controller?.motion?.userAcceleration ?? GCAcceleration()).toDoubleArray();
 }
 
 class GCWNotificationHandler : NSObject  {

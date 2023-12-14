@@ -98,6 +98,24 @@ extension GCQuaternion {
     }
 }
 
+extension GCRotationRate {
+    func toDoubleArray() -> (Double, Double, Double) {
+        return (self.x, self.y, self.z);
+    }
+}
+
+extension GCEulerAngles {
+    func toDoubleArray() -> (Double, Double, Double) {
+        return (self.pitch, self.roll, self.yaw);
+    }
+}
+
+extension GCAcceleration {
+    func toDoubleArray() -> (Double, Double, Double) {
+        return (self.x, self.y, self.z);
+    }
+}
+
 extension GCController {
     func toGCWController(uid : String) -> GCWController {
         if #available(macOS 10.16, tvOS 14, iOS 14, *) {
@@ -109,7 +127,10 @@ extension GCController {
                 hasHaptics: self.haptics != nil,
                 hasLight: self.light != nil,
                 hasBattery: self.battery != nil,
-                hasAttitude: self.motion?.hasAttitude ?? false
+                availableMotion: self.motion == nil ? 0 :
+                    (self.motion!.hasAttitude ? 0 : 1) &
+                    (self.motion!.hasRotationRate ? 0 : 2) &
+                    (self.motion!.hasGravityAndUserAcceleration ? 0 : 4)
             );
         } else {
             return GCWController(
@@ -120,7 +141,7 @@ extension GCController {
                 hasHaptics: false,
                 hasLight: false,
                 hasBattery: false,
-                hasAttitude: false
+                availableMotion: 0
             );
         }
     }

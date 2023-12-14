@@ -21,6 +21,8 @@ namespace Apple.GameController.Controller
         public bool HasLight;
         [MarshalAs(UnmanagedType.I1)]
         public bool HasBattery;
+        [MarshalAs(UnmanagedType.I1)]
+        public int AvailableMotion;
 
         public GCControllerType GetControllerType()
         {
