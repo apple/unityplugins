@@ -99,8 +99,8 @@ public extension Error {
 public extension Array {
     func toUnsafeMutablePointer() -> UnsafeMutablePointer<Element> {
         let ptr = UnsafeMutablePointer<Element>.allocate(capacity: self.count);
-        ptr.assign(from: self, count: self.count);
-        
+        ptr.update(from: self, count: self.count);
+
         return ptr;
     }
 }

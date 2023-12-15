@@ -8,15 +8,6 @@
 import Foundation
 import GameKit
 
-@_cdecl("GKTurnBasedMatchmakerViewController_Free")
-public func GKTurnBasedMatchmakerViewController_Free
-(
-    pointer: UnsafeMutableRawPointer
-)
-{
-    _ = Unmanaged<GKTurnBasedMatchmakerViewController>.fromOpaque(pointer).autorelease();
-}
-
 @_cdecl("GKTurnBasedMatchmakerViewController_InitWithMatchRequest")
 public func GKTurnBasedMatchmakerViewController_InitWithMatchRequest
 (

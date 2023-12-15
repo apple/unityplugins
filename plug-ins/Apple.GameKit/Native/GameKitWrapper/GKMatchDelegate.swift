@@ -59,15 +59,6 @@ public class GKWMatchDelegate : NSObject, GKMatchDelegate {
     }
 }
 
-@_cdecl("GKMatchDelegate_Free")
-public func GKMatchDelegate_Free
-(
-    pointer: UnsafeMutableRawPointer
-)
-{
-    _ = Unmanaged<GKWMatchDelegate>.fromOpaque(pointer).autorelease();
-}
-
 @_cdecl("GKMatchDelegate_SetDataReceived")
 public func GKMatchDelegate_SetDataReceived
 (

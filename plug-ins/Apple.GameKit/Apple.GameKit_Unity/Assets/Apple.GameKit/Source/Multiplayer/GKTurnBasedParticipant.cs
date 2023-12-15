@@ -4,91 +4,37 @@ using Apple.Core.Runtime;
 
 namespace Apple.GameKit.Multiplayer
 {
-    public class GKTurnBasedParticipant : InteropReference
+    public class GKTurnBasedParticipant : NSObject
     {
-        #region Init & Dispose
         internal GKTurnBasedParticipant(IntPtr pointer) : base(pointer)
         {
         }
-
-        [DllImport(InteropUtility.DLLName)]
-        private static extern void GKTurnBasedParticipant_Free(IntPtr pointer);
-
-        protected override void OnDispose(bool isDisposing)
-        {
-            if (Pointer != IntPtr.Zero)
-            {
-                GKTurnBasedParticipant_Free(Pointer);
-                Pointer = IntPtr.Zero;
-            }
-        }
-
-        #endregion
         
-        #region Player
-        [DllImport(InteropUtility.DLLName)]
-        private static extern IntPtr GKTurnBasedParticipant_GetPlayer(IntPtr pointer);
-
-        public GKPlayer Player
-        {
-            get => PointerCast<GKPlayer>(GKTurnBasedParticipant_GetPlayer(Pointer));
-        }
-        #endregion
-        
-        #region Status
-        [DllImport(InteropUtility.DLLName)]
-        private static extern GKTurnBasedParticipantStatus GKTurnBasedParticipant_GetStatus(IntPtr pointer);
+        public GKPlayer Player => PointerCast<GKPlayer>(Interop.GKTurnBasedParticipant_GetPlayer(Pointer));
 
         /// <summary>
         /// The current status of the participant.
         /// </summary>
-        public GKTurnBasedParticipantStatus Status
-        {
-            get => GKTurnBasedParticipant_GetStatus(Pointer);
-        }
-        #endregion
-        
-        #region LastTurnDate
-        [DllImport(InteropUtility.DLLName)]
-        private static extern long GKTurnBasedParticipant_GetLastTurnDate(IntPtr pointer);
+        public GKTurnBasedParticipantStatus Status => Interop.GKTurnBasedParticipant_GetStatus(Pointer);
 
         /// <summary>
         /// The date and time that this participant last took a turn in the game.
         /// </summary>
-        public DateTimeOffset LastTurnDate
-        {
-            get => DateTimeOffset.FromUnixTimeSeconds(GKTurnBasedParticipant_GetLastTurnDate(Pointer));
-        }
-        #endregion
-        
-        #region TimeoutDate
-        [DllImport(InteropUtility.DLLName)]
-        private static extern long GKTurnBasedParticipant_GetTimeoutDate(IntPtr pointer);
+        public DateTimeOffset LastTurnDate => DateTimeOffset.FromUnixTimeSeconds(Interop.GKTurnBasedParticipant_GetLastTurnDate(Pointer));
 
         /// <summary>
         /// The date and time that the participant's turn timed out.
         /// </summary>
-        public DateTimeOffset TimeoutDate
-        {
-            get => DateTimeOffset.FromUnixTimeSeconds(GKTurnBasedParticipant_GetTimeoutDate(Pointer));
-        }
-        #endregion
-        
-        #region MatchOutcome
-        [DllImport(InteropUtility.DLLName)]
-        private static extern GKTurnBasedMatch.Outcome GKTurnBasedParticipant_GetMatchOutcome(IntPtr pointer);
-        [DllImport(InteropUtility.DLLName)]
-        private static extern void GKTurnBasedParticipant_SetMatchOutcome(IntPtr pointer, GKTurnBasedMatch.Outcome value);
+        public DateTimeOffset TimeoutDate => DateTimeOffset.FromUnixTimeSeconds(Interop.GKTurnBasedParticipant_GetTimeoutDate(Pointer));
 
         /// <summary>
         /// The end-state of this participant in the match.
         /// </summary>
         public GKTurnBasedMatch.Outcome MatchOutcome
         {
-            get => GKTurnBasedParticipant_GetMatchOutcome(Pointer);
-            set => GKTurnBasedParticipant_SetMatchOutcome(Pointer, value);
+            get => Interop.GKTurnBasedParticipant_GetMatchOutcome(Pointer);
+            set => Interop.GKTurnBasedParticipant_SetMatchOutcome(Pointer, value);
         }
-        #endregion
 
         /// <summary>
         /// The information that describes a participant in a turn-based match.
@@ -119,6 +65,22 @@ namespace Apple.GameKit.Multiplayer
             /// The participant has exited the match. Your game sets the matchOutcome property to state why the participant left the match.
             /// </summary>
             Done = 5
+        }
+
+        private static class Interop
+        {
+            [DllImport(InteropUtility.DLLName)]
+            public static extern IntPtr GKTurnBasedParticipant_GetPlayer(IntPtr pointer);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern GKTurnBasedParticipantStatus GKTurnBasedParticipant_GetStatus(IntPtr pointer);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern long GKTurnBasedParticipant_GetLastTurnDate(IntPtr pointer);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern long GKTurnBasedParticipant_GetTimeoutDate(IntPtr pointer);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern GKTurnBasedMatch.Outcome GKTurnBasedParticipant_GetMatchOutcome(IntPtr pointer);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKTurnBasedParticipant_SetMatchOutcome(IntPtr pointer, GKTurnBasedMatch.Outcome value);
         }
     }
 }

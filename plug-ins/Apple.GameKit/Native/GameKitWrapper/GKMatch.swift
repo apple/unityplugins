@@ -8,15 +8,6 @@
 import Foundation
 import GameKit
 
-@_cdecl("GKMatch_Free")
-public func GKMatch_Free
-(
-    pointer: UnsafeMutableRawPointer
-)
-{
-    _  = Unmanaged<GKMatch>.fromOpaque(pointer).autorelease();
-}
-
 @_cdecl("GKMatch_GetExpectedPlayerCount")
 public func GKMatch_GetExpectedPlayerCount
 (
@@ -35,6 +26,40 @@ public func GKMatch_GetPlayers
 {
     let target = Unmanaged<GKMatch>.fromOpaque(pointer).takeUnretainedValue();
     return Unmanaged.passRetained(target.players as NSArray).toOpaque();
+}
+
+@_cdecl("GKMatch_GetProperties")
+public func GKMatch_GetProperties
+(
+    gkMatchPtr: UnsafeMutableRawPointer
+) -> UnsafeMutableRawPointer?
+{
+    // GKMatchProperties is not exposed to Swift from Objective-C.
+    // In Swift, it's merely a dictionary of strings to objects.
+    if #available(iOS 17.2, tvOS 17.2, macOS 14.2, *) {
+        let gkMatch = Unmanaged<GKMatch>.fromOpaque(gkMatchPtr).takeUnretainedValue()
+        if let gkMatchProperties = gkMatch.properties as NSDictionary? {
+            return Unmanaged.passRetained(gkMatchProperties).toOpaque();
+        }
+    }
+
+    return nil;
+}
+
+@_cdecl("GKMatch_GetPlayerProperties")
+public func GKMatch_GetPlayerProperties
+(
+    gkMatchPtr: UnsafeMutableRawPointer
+) -> UnsafeMutableRawPointer?
+{
+    if #available(iOS 17.2, tvOS 17.2, macOS 14.2, *) {
+        let gkMatch = Unmanaged<GKMatch>.fromOpaque(gkMatchPtr).takeUnretainedValue()
+        if let dictionary = gkMatch.playerProperties as NSDictionary? {
+            return Unmanaged.passRetained(dictionary).toOpaque();
+        }
+    }
+
+    return nil;
 }
 
 @_cdecl("GKMatch_SendToAll")

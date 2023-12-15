@@ -1,4 +1,8 @@
-﻿namespace Apple.GameKit
+﻿using UnityEngine.Scripting;
+
+[assembly:Preserve]
+
+namespace Apple.GameKit
 {
     internal static class InteropUtility
     {

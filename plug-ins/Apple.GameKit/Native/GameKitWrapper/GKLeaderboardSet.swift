@@ -8,15 +8,6 @@
 import Foundation
 import GameKit
 
-@_cdecl("GKLeaderboardSet_Free")
-public func GKLeaderboardSet_Free
-(
-    pointer: UnsafeMutableRawPointer
-)
-{
-    _ = Unmanaged<GKLeaderboardSet>.fromOpaque(pointer).autorelease();
-}
-
 @_cdecl("GKLeaderboardSet_GetTitle")
 public func GKLeaderboardSet_GetTitle
 (
@@ -125,7 +116,7 @@ public func GKLeaderboardSet_LoadImage
                 Int32(data.count));
     });
     #else
-    let error = NSError(domain: "GameKit", code: -7, userInfo: nil);
+    let error = NSError(domain: "GameKit", code: GKErrorCodeExtension.unsupportedOperationForOSVersion.rawValue, userInfo: nil);
     onError(taskId, Unmanaged.passRetained(error).toOpaque());
     #endif
 }

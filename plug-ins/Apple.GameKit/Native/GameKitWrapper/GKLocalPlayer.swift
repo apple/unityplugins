@@ -224,7 +224,7 @@ public func GKLocalPlayer_FetchItems
                       UInt(timestamp));
         })
     } else {
-        let error = NSError.init(domain: "GKLocalPlayer", code: -7, userInfo: nil);
+        let error = NSError.init(domain: "GKLocalPlayer", code: GKErrorCodeExtension.unsupportedOperationForOSVersion.rawValue, userInfo: nil);
         onError(taskId, Unmanaged.passRetained(error as NSError).toOpaque());
     };
 }

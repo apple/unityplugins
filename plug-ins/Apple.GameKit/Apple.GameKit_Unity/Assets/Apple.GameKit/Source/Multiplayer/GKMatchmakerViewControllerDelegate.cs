@@ -1,15 +1,19 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using AOT;
+using Apple.Core;
 using Apple.Core.Runtime;
 
 namespace Apple.GameKit.Multiplayer
 {
+    using GKMatchProperties = NSDictionary<NSString, NSObject>;
+
     /// <summary>
     /// An object that handles when the status of matchmaking changes.
     /// </summary>
-    public class GKMatchmakerViewControllerDelegate : InteropReference
+    public class GKMatchmakerViewControllerDelegate : NSObject
     {
         private static readonly Dictionary<IntPtr, GKMatchmakerViewControllerDelegate> _delegates = new Dictionary<IntPtr, GKMatchmakerViewControllerDelegate>();
         
@@ -23,7 +27,7 @@ namespace Apple.GameKit.Multiplayer
         public delegate void DidFailWithErrorHandler(GKMatchmakerViewController matchmakerViewController, GameKitException exception);
         private delegate void InteropDidFailWithErrorHandler(IntPtr pointer,IntPtr matchmakerViewController, IntPtr errorPointer);
         public delegate void HostedPlayerDidAcceptHandler(GKMatchmakerViewController matchmakerViewController, GKPlayer acceptingPlayer);
-        private delegate void InteropHostedPlayerDidAcceptHandler(IntPtr pointer,IntPtr matchmakerViewController, IntPtr player);
+        private delegate void InteropHostedPlayerDidAcceptHandler(IntPtr pointer, IntPtr matchmakerViewController, IntPtr player);
         #endregion
 
         #region Events
@@ -40,39 +44,31 @@ namespace Apple.GameKit.Multiplayer
             _delegates.Add(pointer, this);
             
             // Delegate callbacks...
-            GKMatchmakerViewControllerDelegate_SetDidFindMatchCallback(Pointer, OnDidFindMatch);
-            GKMatchmakerViewControllerDelegate_SetDidFindHostedPlayersCallback(Pointer, OnDidFindHostedPlayers);
-            GKMatchmakerViewControllerDelegate_SetMatchmakingCanceledCallback(Pointer, OnMatchmakingCanceled);
-            GKMatchmakerViewControllerDelegate_SetHostedPlayerDidAccept(Pointer, OnHostedPlayerDidAccept);
-            GKMatchmakerViewControllerDelegate_SetDidFailWithErrorCallback(Pointer, OnDidFailWithError);
-        }
+            Interop.GKMatchmakerViewControllerDelegate_SetDidFindMatchCallback(Pointer, OnDidFindMatch);
+            Interop.GKMatchmakerViewControllerDelegate_SetDidFindHostedPlayersCallback(Pointer, OnDidFindHostedPlayers);
+            Interop.GKMatchmakerViewControllerDelegate_SetMatchmakingCanceledCallback(Pointer, OnMatchmakingCanceled);
+            Interop.GKMatchmakerViewControllerDelegate_SetHostedPlayerDidAccept(Pointer, OnHostedPlayerDidAccept);
+            Interop.GKMatchmakerViewControllerDelegate_SetDidFailWithErrorCallback(Pointer, OnDidFailWithError);
 
-        [DllImport(InteropUtility.DLLName)]
-        private static extern void GKMatchmakerViewControllerDelegate_Free(IntPtr pointer);
+            if (Availability.Available(RuntimeOperatingSystem.macOS, 14, 2) ||
+                Availability.Available(RuntimeOperatingSystem.iOS, 17, 2) ||
+                Availability.Available(RuntimeOperatingSystem.tvOS, 17, 2))
+            {
+                Interop.GKMatchmakerViewControllerDelegate_SetGetMatchPropertiesForRecipientCallback(Pointer, OnGetMatchPropertiesForRecipient);
+            }
+        }
 
         protected override void OnDispose(bool isDisposing)
         {
             if (Pointer != IntPtr.Zero)
             {
-                GKMatchmakerViewControllerDelegate_Free(Pointer);
                 _delegates.Remove(Pointer);
-                Pointer = IntPtr.Zero;
             }
+            base.OnDispose(isDisposing);
         }
         #endregion
         
         #region Event Registration
-        [DllImport(InteropUtility.DLLName)]
-        private static extern void GKMatchmakerViewControllerDelegate_SetDidFindMatchCallback(IntPtr pointer, InteropDidFindMatchHandler callback);
-        [DllImport(InteropUtility.DLLName)]
-        private static extern void GKMatchmakerViewControllerDelegate_SetDidFindHostedPlayersCallback(IntPtr pointer, InteropDidFindHostedPlayersHandler callback);
-        [DllImport(InteropUtility.DLLName)]
-        private static extern void GKMatchmakerViewControllerDelegate_SetMatchmakingCanceledCallback(IntPtr pointer, InteropMatchmakingCanceledHandler callback);
-        [DllImport(InteropUtility.DLLName)]
-        private static extern void GKMatchmakerViewControllerDelegate_SetDidFailWithErrorCallback(IntPtr pointer, InteropDidFailWithErrorHandler callback);
-        [DllImport(InteropUtility.DLLName)]
-        private static extern void GKMatchmakerViewControllerDelegate_SetHostedPlayerDidAccept(IntPtr pointer, InteropHostedPlayerDidAcceptHandler callback);
-
         [MonoPInvokeCallback(typeof(InteropDidFindMatchHandler))]
         private static void OnDidFindMatch(IntPtr pointer, IntPtr matchmakerViewController, IntPtr match)
         {
@@ -92,7 +88,7 @@ namespace Apple.GameKit.Multiplayer
             
             matchmakerViewControllerDelegate?.DidFindHostedPlayers?.Invoke(
                 PointerCast<GKMatchmakerViewController>(matchmakerViewController), 
-                PointerCast<NSArrayGKPlayer>(hostedPlayers));
+                PointerCast<NSArray<GKPlayer>>(hostedPlayers));
         }
         
         [MonoPInvokeCallback(typeof(InteropMatchmakingCanceledHandler))]
@@ -127,5 +123,62 @@ namespace Apple.GameKit.Multiplayer
                 PointerCast<GKPlayer>(hostedPlayer));
         }
         #endregion
+
+        #region GetMatchPropertiesForRecipient
+        /// <summary>
+        /// Returns the properties for another player that the local player invites using the view controller interface.
+        /// </summary>
+        /// <remarks>Implement this method if you can provide properties for the recipients of this match request to better fine tune the Game Center matchmaking using rules.</remarks>
+        /// <param name="matchmakerViewController">The view controller that finds players for the match.</param>
+        /// <param name="invitedPlayer">A player to invite to the match.</param>
+        /// <returns>The properties for recipient that the local player invites to the match.</returns>
+        [Introduced(iOS: "17.2", macOS: "14.2", tvOS: "17.2")]
+        public delegate Task<GKMatchProperties> GetMatchPropertiesForRecipientHandler(GKMatchmakerViewController matchmakerViewController, GKPlayer invitedPlayer);
+        private delegate void InteropGetMatchPropertiesForRecipientHandler(IntPtr gkMatchmakerViewControllerDelegatePtr, IntPtr gkMatchmakerViewControllerPtr, IntPtr gkPlayerPtr, IntPtr completionHandlerPtr);
+
+        /// <summary>
+        /// Dispatches GetMatchPropertiesForRecipient events.
+        /// </summary>
+        [Introduced(iOS: "17.2", macOS: "14.2", tvOS: "17.2")]
+        public event GetMatchPropertiesForRecipientHandler GetMatchPropertiesForRecipient;
+
+        [MonoPInvokeCallback(typeof(InteropGetMatchPropertiesForRecipientHandler))]
+        private static async void OnGetMatchPropertiesForRecipient(IntPtr gkMatchmakerViewControllerDelegatePtr, IntPtr gkMatchmakerViewControllerPtr, IntPtr gkPlayerPtr, IntPtr completionHandlerPtr)
+        {
+            if (!_delegates.TryGetValue(gkMatchmakerViewControllerDelegatePtr, out var gkMatchmakerViewControllerDelegate))
+            {
+                return;
+            }
+
+            var gkMatchProperties = await gkMatchmakerViewControllerDelegate?.GetMatchPropertiesForRecipient?.Invoke(
+                PointerCast<GKMatchmakerViewController>(gkMatchmakerViewControllerPtr),
+                PointerCast<GKPlayer>(gkPlayerPtr));
+
+            // call completion handler
+            Interop.GKMatchmakerViewControllerDelegate_CallGetMatchPropertiesForRecipientCompletionHandler(completionHandlerPtr, gkMatchProperties.Pointer);
+        }
+        #endregion
+
+        private static class Interop
+        {
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKMatchmakerViewControllerDelegate_SetDidFindMatchCallback(IntPtr pointer, InteropDidFindMatchHandler callback);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKMatchmakerViewControllerDelegate_SetDidFindHostedPlayersCallback(IntPtr pointer, InteropDidFindHostedPlayersHandler callback);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKMatchmakerViewControllerDelegate_SetMatchmakingCanceledCallback(IntPtr pointer, InteropMatchmakingCanceledHandler callback);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKMatchmakerViewControllerDelegate_SetDidFailWithErrorCallback(IntPtr pointer, InteropDidFailWithErrorHandler callback);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKMatchmakerViewControllerDelegate_SetHostedPlayerDidAccept(IntPtr pointer, InteropHostedPlayerDidAcceptHandler callback);
+
+            // event registration
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKMatchmakerViewControllerDelegate_SetGetMatchPropertiesForRecipientCallback(IntPtr pointer, InteropGetMatchPropertiesForRecipientHandler callback);
+
+            // completion handler
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKMatchmakerViewControllerDelegate_CallGetMatchPropertiesForRecipientCompletionHandler(IntPtr completionHandlerPtr, IntPtr gkMatchPropertiesPtr);
+        }
     }
 }

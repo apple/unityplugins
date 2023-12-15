@@ -10,15 +10,6 @@ import GameKit
 
 var _currentPresentingGameCenterDelegate : GameKitUIDelegateHandler? = nil;
 
-@_cdecl("GKGameCenterViewController_Free")
-public func GKGameCenterViewController_Free
-(
-    pointer: UnsafeMutableRawPointer
-)
-{
-    _ =  Unmanaged<GKGameCenterViewController>.fromOpaque(pointer).autorelease();
-}
-
 @_cdecl("GKGameCenterViewController_InitWithState")
 public func GKGameCenterViewController_InitWithState
 (

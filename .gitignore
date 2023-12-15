@@ -8,3 +8,4 @@ plug-ins/**/TestPlayers
 **/.vsconfig
 **/xcuserdata
 *.vsconfig
+**/.vscode/*

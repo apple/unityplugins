@@ -9,19 +9,19 @@ namespace Apple.GameKit.Multiplayer
     /// <summary>
     /// The object that handles turn-based matchmaker view controller changes.
     /// </summary>
-    public class GKTurnBasedMatchmakerViewControllerDelegate : InteropReference
+    public class GKTurnBasedMatchmakerViewControllerDelegate : NSObject
     {
         private static readonly Dictionary<IntPtr, GKTurnBasedMatchmakerViewControllerDelegate> _delegates = new Dictionary<IntPtr, GKTurnBasedMatchmakerViewControllerDelegate>();
 
-        #region Init & Dispose
+        #region Init
         public GKTurnBasedMatchmakerViewControllerDelegate(IntPtr pointer) : base(pointer)
         {
             _delegates.Add(pointer, this);
             
             // Handles events from matchmaker...
-            GKTurnBasedMatchmakerViewControllerDelegate_SetDidFindMatchCallback(Pointer, OnDidFindMatch);
-            GKTurnBasedMatchmakerViewControllerDelegate_SetMatchmakingCanceledCallback(Pointer, OnMatchmakingCanceled);
-            GKTurnBasedMatchmakerViewControllerDelegate_SetDidFailWithErrorCallback(Pointer, OnDidFailWithError);
+            Interop.GKTurnBasedMatchmakerViewControllerDelegate_SetDidFindMatchCallback(Pointer, OnDidFindMatch);
+            Interop.GKTurnBasedMatchmakerViewControllerDelegate_SetMatchmakingCanceledCallback(Pointer, OnMatchmakingCanceled);
+            Interop.GKTurnBasedMatchmakerViewControllerDelegate_SetDidFailWithErrorCallback(Pointer, OnDidFailWithError);
         }
         #endregion
         
@@ -50,13 +50,6 @@ namespace Apple.GameKit.Multiplayer
         #endregion
         
         #region Event Registration
-        [DllImport(InteropUtility.DLLName)]
-        private static extern void GKTurnBasedMatchmakerViewControllerDelegate_SetDidFindMatchCallback(IntPtr pointer, _DidFindMatchHandler callback);
-        [DllImport(InteropUtility.DLLName)]
-        private static extern void GKTurnBasedMatchmakerViewControllerDelegate_SetMatchmakingCanceledCallback(IntPtr pointer, _MatchmakingCanceledHandler callback);
-        [DllImport(InteropUtility.DLLName)]
-        private static extern void GKTurnBasedMatchmakerViewControllerDelegate_SetDidFailWithErrorCallback(IntPtr pointer, _DidFailWithErrorHandler callback);
-
         [MonoPInvokeCallback(typeof(_DidFindMatchHandler))]
         private static void OnDidFindMatch(IntPtr pointer, IntPtr matchmakerViewController, IntPtr match)
         {
@@ -88,5 +81,15 @@ namespace Apple.GameKit.Multiplayer
                 new GameKitException(errorPointer));
         }
         #endregion
+
+        private static class Interop
+        {
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKTurnBasedMatchmakerViewControllerDelegate_SetDidFindMatchCallback(IntPtr pointer, _DidFindMatchHandler callback);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKTurnBasedMatchmakerViewControllerDelegate_SetMatchmakingCanceledCallback(IntPtr pointer, _MatchmakingCanceledHandler callback);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKTurnBasedMatchmakerViewControllerDelegate_SetDidFailWithErrorCallback(IntPtr pointer, _DidFailWithErrorHandler callback);
+        }
     }
 }

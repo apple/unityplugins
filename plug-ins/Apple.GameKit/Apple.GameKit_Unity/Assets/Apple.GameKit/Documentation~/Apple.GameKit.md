@@ -521,7 +521,7 @@ foreach (var c in challenges)
 ```csharp
 GKInvite.InviteAccepted += OnInviteAccepted;
 
-public void OnInviteAccepted(GKPlayer invitingPlayer, GKInvite invite) {
+public void OnInviteAccepted(GKPlayer invitedPlayer, GKInvite invite) {
 
 }
 ```
