@@ -20,4 +20,5 @@ FOUNDATION_EXPORT const unsigned char GameKitWrapperVersionString[];
 
     #import "AppleCoreRuntimeShared.h"
     #import "AccessPoint_BridgingHeader.h"
+    #import "GKErrorCodeExtension.h"
 #endif

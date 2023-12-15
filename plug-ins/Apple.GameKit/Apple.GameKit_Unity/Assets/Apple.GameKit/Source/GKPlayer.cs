@@ -3,14 +3,13 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using AOT;
 using Apple.Core.Runtime;
-using Apple.GameKit.Players;
 using UnityEngine;
 
 namespace Apple.GameKit
 {
     public delegate void SuccessTaskImageCallback(long taskId, int width, int height, IntPtr data, int dataLength);
     
-    public class GKPlayer : InteropReference
+    public class GKPlayer : NSObject
     {
         /// <summary>
         /// The size of a photo that Game Center loads.
@@ -20,106 +19,45 @@ namespace Apple.GameKit
             Small = 0,
             Normal = 1
         }
-        
-        #region Init & Dispose
+
         internal GKPlayer(IntPtr pointer) : base(pointer) {}
-        #endregion
-        
-        #region GamePlayerId
-        [DllImport(InteropUtility.DLLName)]
-        private static extern string GKPlayer_GetGamePlayerId(IntPtr pointer);
 
         /// <summary>
         /// A unique identifier for a player of the game.
         /// </summary>
-        public string GamePlayerId
-        {
-            get => GKPlayer_GetGamePlayerId(Pointer);
-        }
-        #endregion
-        
-        #region TeamPlayerId
-        [DllImport(InteropUtility.DLLName)]
-        private static extern string GKPlayer_GetTeamPlayerId(IntPtr pointer);
+        public string GamePlayerId => Interop.GKPlayer_GetGamePlayerId(Pointer);
 
         /// <summary>
         /// A unique identifier for a player of the game.
         /// </summary>
-        public string TeamPlayerId
-        {
-            get => GKPlayer_GetTeamPlayerId(Pointer);
-        }
-        #endregion
-        
-        #region ScopedIdsArePersistent
-        [DllImport(InteropUtility.DLLName)]
-        private static extern bool GKPlayer_GetScopedIdsArePersistent(IntPtr pointer);
+        public string TeamPlayerId => Interop.GKPlayer_GetTeamPlayerId(Pointer);
 
         /// <summary>
         /// Returns a Boolean value depending on whether the game and Team ID for this player are persistent or unique to this game instance.
         /// </summary>
-        public bool ScopedIdsArePersistent
-        {
-            get => GKPlayer_GetScopedIdsArePersistent(Pointer);
-        }
-        #endregion
-        
-        #region Alias
-        [DllImport(InteropUtility.DLLName)]
-        private static extern string GKPlayer_GetAlias(IntPtr pointer);
+        public bool ScopedIdsArePersistent => Interop.GKPlayer_GetScopedIdsArePersistent(Pointer);
 
         /// <summary>
         /// A string the player chooses to identify themself to other players.
         /// </summary>
-        public string Alias
-        {
-            get => GKPlayer_GetAlias(Pointer);
-        }
-        #endregion
-
-        #region DisplayName
-        [DllImport(InteropUtility.DLLName)]
-        private static extern string GKPlayer_GetDisplayName(IntPtr pointer);
+        public string Alias => Interop.GKPlayer_GetAlias(Pointer);
 
         /// <summary>
         /// A string to display for the player.
         /// </summary>
-        public string DisplayName
-        {
-            get => GKPlayer_GetDisplayName(Pointer);
-        }
-        #endregion
-        
-        #region IsInvitable
-        [DllImport(InteropUtility.DLLName)]
-        private static extern bool GKPlayer_GetIsInvitable(IntPtr pointer);
+        public string DisplayName => Interop.GKPlayer_GetDisplayName(Pointer);
 
         /// <summary>
         /// A Boolean value that indicates whether the local player can send an invitation to the player.
         /// </summary>
-        public bool IsInvitable
-        {
-            get => GKPlayer_GetIsInvitable(Pointer);
-        }
-        #endregion
-        
-        #region GuestIdentifier
-        [DllImport(InteropUtility.DLLName)]
-        private static extern string GKPlayer_GetGuestIdentifier(IntPtr pointer);
+        public bool IsInvitable => Interop.GKPlayer_GetIsInvitable(Pointer);
 
         /// <summary>
         /// A developer-created string that identifies a guest player.
         /// </summary>
-        public string GuestIdentifier
-        {
-            get => GKPlayer_GetGuestIdentifier(Pointer);
-        }
-        #endregion
+        public string GuestIdentifier => Interop.GKPlayer_GetGuestIdentifier(Pointer);
         
         #region LoadPhoto
-        [DllImport(InteropUtility.DLLName)]
-        private static extern void GKPlayer_LoadPhoto(IntPtr pointer, long taskId, PhotoSize photoSize, SuccessTaskImageCallback onLoaded, NSErrorTaskCallback onError);
-
         /// <summary>
         /// Loads a photo of the player from Game Center.
         /// </summary>
@@ -128,7 +66,7 @@ namespace Apple.GameKit
         public Task<Texture2D> LoadPhoto(PhotoSize photoSize)
         {
             var tcs = InteropTasks.Create<Texture2D>(out var taskId);
-            GKPlayer_LoadPhoto(Pointer, taskId, photoSize, OnPhotoLoaded, OnPhotoError);
+            Interop.GKPlayer_LoadPhoto(Pointer, taskId, photoSize, OnPhotoLoaded, OnPhotoError);
             return tcs.Task;
         }
 
@@ -155,10 +93,6 @@ namespace Apple.GameKit
             InteropTasks.TrySetExceptionAndRemove<Texture2D>(taskId, new GameKitException(errorPointer));
         }
         #endregion
-        
-        #region AnonymousGuestPlayer
-        [DllImport(InteropUtility.DLLName)]
-        private static extern IntPtr GKPlayer_AnonymousGuestPlayer(string identifier);
 
         /// <summary>
         /// Creates a guest player with the specified identifier.
@@ -167,13 +101,34 @@ namespace Apple.GameKit
         /// <returns>A player object that represents the guest.</returns>
         public static GKPlayer AnonymousGuestPlayer(string identifier)
         {
-            var pointer = GKPlayer_AnonymousGuestPlayer(identifier);
+            var pointer = Interop.GKPlayer_AnonymousGuestPlayer(identifier);
             
             if(pointer != IntPtr.Zero)
                 return new GKPlayer(pointer);
 
             return null;
         }
-        #endregion
+
+        private static class Interop
+        {
+            [DllImport(InteropUtility.DLLName)]
+            public static extern string GKPlayer_GetGamePlayerId(IntPtr pointer);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern string GKPlayer_GetTeamPlayerId(IntPtr pointer);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern bool GKPlayer_GetScopedIdsArePersistent(IntPtr pointer);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern string GKPlayer_GetAlias(IntPtr pointer);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern string GKPlayer_GetDisplayName(IntPtr pointer);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern bool GKPlayer_GetIsInvitable(IntPtr pointer);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern string GKPlayer_GetGuestIdentifier(IntPtr pointer);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKPlayer_LoadPhoto(IntPtr pointer, long taskId, PhotoSize photoSize, SuccessTaskImageCallback onLoaded, NSErrorTaskCallback onError);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern IntPtr GKPlayer_AnonymousGuestPlayer(string identifier);
+        }
     }
 }

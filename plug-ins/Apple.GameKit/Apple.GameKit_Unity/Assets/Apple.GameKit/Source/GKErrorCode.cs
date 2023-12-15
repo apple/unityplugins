@@ -1,4 +1,6 @@
-﻿namespace Apple.GameKit
+﻿using System;
+
+namespace Apple.GameKit
 {
     public enum GKErrorCode : int
     {
@@ -38,16 +40,35 @@
         TurnBasedInvalidParticipant = 22,
         TurnBasedInvalidTurn = 23,
         TurnBasedInvalidState = 24,
+
+        // Values below this point were renumbered in the iOS 17.2 / MacOS 14.2
+        // time frame to fix a discrepancy discovered between the C# version of
+        // this enum and the actual values used by GameKit. The "Offline = 25"
+        // value (which is not actually defined by GameKit) was included by
+        // mistake, causing all subsequent values to be off by one. This
+        // direcrepancy has now been corrected and the "Offline" value has been
+        // removed. If your code depended on the "Offline" value being defined
+        // then you will need to modify your code accordingly.
+
+        [Obsolete("Offline value should not be used. It was mistakenly included in prior versions of this enumeration.", error: true)]
         Offline = 25,
-        InvitationsDisabled = 26,
-        PlayerPhotoFailure = 27,
-        UbiquityContainerUnavailable = 28,
-        MatchNotConnected = 29,
-        GameSessionRequestInvalid = 30,
-        RestrictedToAutomatch = 31,
-        APINotAvailable = 32,
-        NotAuthorized = 33,
-        ConnectionTimeout = 34,
-        APIObsolete = 35
+
+        InvitationsDisabled = 25,
+        PlayerPhotoFailure = 26,
+        UbiquityContainerUnavailable = 27,
+        MatchNotConnected = 28,
+        GameSessionRequestInvalid = 29,
+        RestrictedToAutomatch = 30,
+        APINotAvailable = 31,
+        NotAuthorized = 32,
+        ConnectionTimeout = 33,
+        APIObsolete = 34,
+        ICloudUnavailable = 35,
+        LockdownMode = 36,
+        
+        FriendListDescriptionMissing = 100,
+        FriendListRestricted = 101,
+        FriendListDenied = 102,
+        FriendRequestNotAvailable = 103,
     }
 }

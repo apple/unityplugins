@@ -8,23 +8,19 @@ namespace Apple.GameKit
     /// </summary>
     public class GKAchievementChallenge : GKChallenge
     {
-        #region Init & Dispose
         internal GKAchievementChallenge(IntPtr pointer) : base(pointer)
         {
         }
-        #endregion
-        
-        #region Achievement
-        [DllImport(InteropUtility.DLLName)]
-        private static extern IntPtr GKAchievementChallenge_GetAchievement(IntPtr pointer);
 
         /// <summary>
         /// The achievement that the player must earn to complete the challenge.
         /// </summary>
-        public GKAchievement Achievement
+        public GKAchievement Achievement => PointerCast<GKAchievement>(Interop.GKAchievementChallenge_GetAchievement(Pointer));
+
+        private static class Interop
         {
-            get => PointerCast<GKAchievement>(GKAchievementChallenge_GetAchievement(Pointer));
+            [DllImport(InteropUtility.DLLName)]
+            public static extern IntPtr GKAchievementChallenge_GetAchievement(IntPtr pointer);
         }
-        #endregion
     }
 }

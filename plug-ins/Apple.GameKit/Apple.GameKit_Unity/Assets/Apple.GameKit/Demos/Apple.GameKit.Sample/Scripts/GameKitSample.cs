@@ -1,64 +1,62 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using Apple.Core;
 using Apple.GameKit.Leaderboards;
 using Apple.GameKit.Multiplayer;
 using UnityEngine;
+using UnityEngine.Scripting;
 using UnityEngine.UI;
+
+[assembly:Preserve]
 
 namespace Apple.GameKit.Sample
 {
     public class GameKitSample : MonoBehaviour
     {
 #pragma warning disable 0649
-        [SerializeField]
-        private RawImage _playerPhotoImage;
+        [SerializeField] private RawImage _playerPhotoImage;
 
-        [SerializeField]
-        private Text _playerDisplayName;
+        [SerializeField] private Text _playerDisplayName;
+        [SerializeField] private Text _isMultiplayerGamingRestrictedText;
+        [SerializeField] private Text _isPersonalizedCommunicationRestrictedText;
+        [SerializeField] private Text _isUnderageText;
 
-        [SerializeField]
-        private Button _showAchievementsBtn;
+        [SerializeField] private GameObject _panelArea;
 
-        [SerializeField]
-        private Button _showTurnBasedMatchesBtn;
+        [SerializeField] private GameObject _mainButtonLayout;
+        [SerializeField] private RealtimeMatchRequestPanel _realtimeMatchRequestPanel;
+        [SerializeField] private RealtimeMatchStatusPanel _realtimeMatchStatusPanel;
 
-        [SerializeField]
-        private Button _takeTurnButton;
+        [SerializeField] private Button _authenticateBtn;
+        [SerializeField] private Text _authenticateBtnText;
 
-        [SerializeField]
-        private Button _endMatchWinnerButton;
-
-        [SerializeField]
-        private Button _reportLeaderboardScore;
-
-        [SerializeField]
-        private Button _toggleAccessPoint;
-
-        [SerializeField]
-        private Button _triggerAccessPoint;
-
-        [SerializeField]
-        private Button _realtimeMatchmakeUI;
+        [SerializeField] private Button _showAchievementsBtn;
+        [SerializeField] private Button _showTurnBasedMatchesBtn;
+        [SerializeField] private Button _takeTurnButton;
+        [SerializeField] private Button _endMatchWinnerButton;
+        [SerializeField] private Button _reportLeaderboardScore;
+        [SerializeField] private Button _toggleAccessPoint;
+        [SerializeField] private Button _triggerAccessPoint;
+        [SerializeField] private Button _realtimeMatchmakingButton;
 #pragma warning restore 0649
 
         private GKLocalPlayer _localPlayer;
         private GKTurnBasedMatch _activeMatch;
 
-        private async Task Start()
+        private void Start()
         {
             try
             {
-                _localPlayer = await GKLocalPlayer.Authenticate();
-                UnityEngine.Debug.Log($"GameKit Authentication: isAuthenticated => {_localPlayer.IsAuthenticated}, displayName: {_localPlayer.DisplayName}");
+                // Send Unity log messages to NSLog.
+                _ = new AppleLogger();
 
                 GKAccessPoint.Shared.Location = GKAccessPoint.GKAccessPointLocation.TopLeading;
                 GKAccessPoint.Shared.ShowHighlights = false;
                 GKAccessPoint.Shared.IsActive = true;
 
-                _playerDisplayName.text = _localPlayer.DisplayName;
-
+                _authenticateBtn.onClick.AddListener(OnAuthenticate);
                 _showAchievementsBtn.onClick.AddListener(OnShowAchievements);
                 _showTurnBasedMatchesBtn.onClick.AddListener(OnShowTurnBasedMatches);
                 _takeTurnButton.onClick.AddListener(OnTakeTurn);
@@ -66,45 +64,154 @@ namespace Apple.GameKit.Sample
                 _reportLeaderboardScore.onClick.AddListener(OnReportLeaderboardScore);
                 _toggleAccessPoint.onClick.AddListener(OnToggleAccessPoint);
                 _triggerAccessPoint.onClick.AddListener(OnTriggerAccessPoint);
-                _realtimeMatchmakeUI.onClick.AddListener(OnRealtimeMatchmake);
+                _realtimeMatchmakingButton.onClick.AddListener(OnRealtimeMatchmaking);
+
+                foreach (var btn in _mainButtonLayout.GetComponentsInChildren<Button>())
+                {
+                    if (btn != _authenticateBtn)
+                    {
+                        btn.interactable = false;
+                    }
+                    else
+                    {
+                        btn.interactable = true;
+                    }
+                }
 
                 GKTurnBasedMatch.TurnEventReceived += OnMatchTurnEnded;
                 GKTurnBasedMatch.MatchEnded += OnMatchEnded;
+
+                GKInvite.InviteAccepted += OnInviteAccepted;
+
+                // Hide all of the interchangeable panels to start.
+                for (int i = 0; i < _panelArea.transform.childCount; i++)
+                {
+                    _panelArea.transform.GetChild(i).gameObject.SetActive(false);
+                }
+
+                // Make the main button layout be the one visible panel.
+                PushPanel(_mainButtonLayout);
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                UnityEngine.Debug.LogError(exception);
+                Debug.LogError(ex);
             }
         }
 
-        private async void OnRealtimeMatchmake()
+        private async void OnAuthenticate()
         {
-            var request = GKMatchRequest.Init();
-            request.MinPlayers = 2;
-            request.MaxPlayers = 2;
+            try
+            {
+                _authenticateBtnText.text = "Authenticating...";
+                _authenticateBtn.interactable = false;
 
-            // Wait for match to start...
-            var match = await GKMatchmakerViewController.Request(request);
-            match.Delegate.DidFailWithError += OnRealtimeMatchDidFailWithError;
-            match.Delegate.DataReceived += OnRealtimeMatchDataReceived;
+                var authenticateTask = GKLocalPlayer.Authenticate();
+                _localPlayer = await authenticateTask;
+            }
+            catch (Exception ex)
+            {
+                Debug.LogException(ex);
+            }
 
-            // Send some data...
-            match.Send(new byte[1] { 0 }, GKMatch.GKSendDataMode.Reliable);
+            if (_localPlayer?.IsAuthenticated ?? false)
+            {
+                foreach (var btn in _mainButtonLayout.GetComponentsInChildren<Button>())
+                {
+                    if (btn != _authenticateBtn)
+                    {
+                        btn.interactable = true;
+                    }
+                }
+
+                _authenticateBtnText.text = "Authenticated";
+            }
+            else
+            {
+                _authenticateBtnText.text = "Authentication Failed";
+                _authenticateBtn.interactable = true;
+            }
+
+
+            if (_localPlayer != null)
+            {
+                Debug.Log($"GameKit Authentication: isAuthenticated => {_localPlayer.IsAuthenticated}, displayName: {_localPlayer.DisplayName}");
+
+                _playerDisplayName.text = _localPlayer.DisplayName;
+
+                try
+                {
+                    _playerPhotoImage.texture = await _localPlayer.LoadPhoto(GKPlayer.PhotoSize.Normal);
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogException(ex);
+                }
+
+                _isMultiplayerGamingRestrictedText.text = $"IsMultiplayerGamingRestricted: {_localPlayer.IsMultiplayerGamingRestricted}";
+                _isPersonalizedCommunicationRestrictedText.text = $"IsPersonalizedCommunicationRestricted: {_localPlayer.IsPersonalizedCommunicationRestricted}";
+                _isUnderageText.text = $"IsUnderage: {_localPlayer.IsUnderage}";
+            }
         }
-        
-        private void OnRealtimeMatchDataReceived(byte[] data, GKPlayer fromPlayer)
+
+        private static Stack<GameObject> _panelStack;
+        private static Stack<GameObject> PanelStack => _panelStack ??= new Stack<GameObject>();
+
+        public static void PushPanel(GameObject panel)
         {
-            Debug.Log($"Realtime match data received");
+            var oldPanel = (PanelStack.Count > 0) ? PanelStack.Peek() : null;
+            if (oldPanel != null)
+            {
+                oldPanel.SetActive(false);
+            }
+
+            PanelStack.Push(panel);
+            panel.SetActive(true);
         }
 
-        private void OnRealtimeMatchDidFailWithError(GameKitException exception)
+        public static void PopPanel()
         {
-            Debug.LogError(exception);
+            var oldPanel = (PanelStack.Count > 0) ? PanelStack.Pop() : null;
+            if (oldPanel != null)
+            {
+                oldPanel.SetActive(false);
+            }
+
+            if (PanelStack.Count > 0)
+            {
+                PanelStack.Peek().SetActive(true);
+            }
+        }
+
+        public static void ReplaceActivePanel(GameObject panel)
+        {
+            // Important: Deactivate last because it might end the script if the
+            // caller is deactivating itself.
+            var oldPanel = (PanelStack.Count > 0) ? PanelStack.Pop() : null;
+
+            PanelStack.Push(panel);
+            panel.SetActive(true);
+
+            if (oldPanel != null)
+            {
+                oldPanel.SetActive(false);
+            }
+        }
+
+        private void OnRealtimeMatchmaking()
+        {
+            PushPanel(_realtimeMatchStatusPanel.Match != null ? _realtimeMatchStatusPanel.gameObject : _realtimeMatchRequestPanel.gameObject);
+        }
+
+        public async void OnInviteAccepted(GKPlayer invitedPlayer, GKInvite invite)
+        {
+            var match = await GKMatchmakerViewController.Request(invite);
+            _realtimeMatchStatusPanel.Populate(match);
+            PushPanel(_realtimeMatchStatusPanel.gameObject);
         }
 
         private void OnTriggerAccessPoint()
-        { 
-            if(GKAccessPoint.Shared.IsVisible)
+        {
+            if (GKAccessPoint.Shared.IsVisible)
                 GKAccessPoint.Shared.Trigger();
         }
 
@@ -124,27 +231,64 @@ namespace Apple.GameKit.Sample
                 // Log all achievements in game...
                 var descriptions = await GKAchievementDescription.LoadAchievementDescriptions();
 
-                foreach(var achievement in descriptions)
+                if (descriptions.Count > 0)
                 {
-                    Debug.Log(achievement.Identifier);
-                }
+                    var isRarityPropertyAvailable = 
+                        Availability.Available(RuntimeOperatingSystem.macOS, 14, 0) ||
+                        Availability.Available(RuntimeOperatingSystem.iOS, 17, 2) ||
+                        Availability.Available(RuntimeOperatingSystem.tvOS, 17, 2);
 
-                // Get an achievement the player has completed...
-                var achievements = await GKAchievement.LoadAchievements();
+                    var builder = new StringBuilder();
+                    builder.AppendLine("Achievement descriptions:");
 
-                if (achievements.Count() > 0)
-                {
-                    var achievement = achievements.FirstOrDefault();
-
-                    if (!string.IsNullOrEmpty(achievement.Identifier))
+                    foreach (var achievement in descriptions)
                     {
-                        Debug.LogError(achievement.Identifier);
+                        builder.Append($"  {achievement.Identifier}: {achievement.Title}");
+
+                        if (isRarityPropertyAvailable)
+                        {
+                            builder.AppendLine($" (Rarity: {achievement.RarityPercent * 100.0:F2}%)");
+                        }
+                        else
+                        {
+                            builder.AppendLine();
+                        }
+                    }
+                    Debug.Log(builder.ToString());
+
+                    // Get the player's achievements.
+                    var achievements = await GKAchievement.LoadAchievements();
+
+                    if (achievements.Count() > 0)
+                    {
+                        builder.Clear();
+                        builder.AppendLine("Player achievements:");
+
+                        foreach (var achievement in achievements)
+                        {
+                            if (!string.IsNullOrEmpty(achievement.Identifier))
+                            {
+                                var description = descriptions
+                                    .Where(d => d.Identifier.Equals(achievement.Identifier))
+                                    .FirstOrDefault();
+
+                                var title = description?.Title ?? string.Empty;
+
+                                builder.AppendLine($"  {achievement.Identifier}: {title} ({achievement.PercentComplete * 100.0:F0}% complete)");
+                            }
+                        }
+
+                        Debug.Log(builder.ToString());
                     }
                 }
+                else
+                {
+                    Debug.Log("This game has no achievements.");
+                }
             }
-            catch(Exception exception)
+            catch (Exception exception)
             {
-                Debug.LogError(exception);
+                Debug.LogException(exception);
             }
         }
 
@@ -159,7 +303,7 @@ namespace Apple.GameKit.Sample
                 _activeMatch = await GKTurnBasedMatchmakerViewController.Request(request);
                 _playerDisplayName.text = $"Match: {_activeMatch.MatchId}, Status: {_activeMatch.MatchStatus}, IsMyTurn: {_activeMatch.IsActivePlayer}";
 
-                foreach(var participant in _activeMatch.Participants)
+                foreach (var participant in _activeMatch.Participants)
                 {
                     _playerDisplayName.text += participant.Player.GamePlayerId;
                 }
@@ -182,9 +326,9 @@ namespace Apple.GameKit.Sample
             // Find the match outcome for the local player...
             var localOutcome = GKTurnBasedMatch.Outcome.None;
 
-            foreach(var participant in match.Participants)
+            foreach (var participant in match.Participants)
             {
-                if(participant.Player.GamePlayerId == _localPlayer.GamePlayerId)
+                if (participant.Player.GamePlayerId == _localPlayer.GamePlayerId)
                 {
                     localOutcome = participant.MatchOutcome;
                 }
@@ -223,7 +367,7 @@ namespace Apple.GameKit.Sample
                 var data = Encoding.UTF8.GetBytes("Hello World");
                 await _activeMatch.EndTurn(GetNextParticipants(_activeMatch), GKTurnBasedMatch.TurnTimeoutNone, data);
             }
-            catch(GameKitException e)
+            catch (GameKitException e)
             {
                 Debug.LogError(e);
             }
@@ -248,7 +392,7 @@ namespace Apple.GameKit.Sample
                 {
                     participant.MatchOutcome = participant.Player.GamePlayerId == _localPlayer.GamePlayerId ? GKTurnBasedMatch.Outcome.Won : GKTurnBasedMatch.Outcome.Lost;
                 }
-                
+
                 // End match...
                 await _activeMatch.EndMatchInTurn(_activeMatch.MatchData);
             }
@@ -262,29 +406,20 @@ namespace Apple.GameKit.Sample
         {
             var leaderboards = await GKLeaderboard.LoadLeaderboards();
             var leaderboard = leaderboards.First(l => l.BaseLeaderboardId == "topscores");
-            
-            await leaderboard.SubmitScore( 100, 0, GKLocalPlayer.Local);
+
+            await leaderboard.SubmitScore(100, 0, GKLocalPlayer.Local);
 
             var gameCenter = GKGameCenterViewController.Init(GKGameCenterViewController.GKGameCenterViewControllerState.Leaderboards);
             await gameCenter.Present();
 
             var scores = await leaderboard.LoadEntries(GKLeaderboard.PlayerScope.Global, GKLeaderboard.TimeScope.AllTime, 0, 100);
-            
+
             Debug.LogError($"my score: {scores.LocalPlayerEntry.Score}");
 
-            foreach(var score in scores.Entries)
+            foreach (var score in scores.Entries)
             {
                 Debug.LogError($"score: {score.Score} by {score.Player.DisplayName}");
             }
-        }
-
-        private Task<GKMatch> OnFindRealtimeMatch()
-        {
-            var request = GKMatchRequest.Init();
-            request.MinPlayers = 2;
-            request.MaxPlayers = 4;
-
-            return GKMatchmakerViewController.Request(request);
         }
     }
 }

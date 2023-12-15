@@ -18,15 +18,6 @@ public func GKAchievement_Init
     return Unmanaged.passRetained(achievement).toOpaque();
 }
 
-@_cdecl("GKAchievement_Free")
-public func GKAchievement_Free
-(
-    pointer : UnsafeMutableRawPointer
-)
-{
-    _ = Unmanaged<GKAchievement>.fromOpaque(pointer).autorelease();
-}
-
 @_cdecl("GKAchievement_GetIdentifier")
 public func GKAchievement_GetIdentifier
 (

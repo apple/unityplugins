@@ -1,0 +1,6 @@
+<linker>
+    <assembly fullname="Apple.Core" preserve="all"/>
+    <assembly fullname="System.Collections" preserve="all"/>
+    <assembly fullname="System.Collections.Generic" preserve="all"/>
+    <assembly fullname="System.Reflection" preserve="all"/>
+</linker>

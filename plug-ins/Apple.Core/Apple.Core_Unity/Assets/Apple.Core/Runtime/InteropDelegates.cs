@@ -9,4 +9,5 @@ namespace Apple.Core.Runtime
     public delegate void ErrorCallback(InteropError error);
     public delegate void NSErrorTaskCallback(long taskId, IntPtr errorPointer);
     public delegate void NSErrorCallback(IntPtr errorPointer);
+    public delegate void NSExceptionCallback(IntPtr exceptionPointer);
 }

@@ -8,15 +8,6 @@
 import Foundation
 import GameKit
 
-@_cdecl("GKTurnBasedMatch_Free")
-public func GKTurnBasedMatch_Free
-(
-    pointer: UnsafeMutableRawPointer
-)
-{
-    _ = Unmanaged<GKTurnBasedMatch>.fromOpaque(pointer).autorelease();
-}
-
 @_cdecl("GKTurnBasedMatch_GetParticipants")
 public func GKTurnBasedMatch_GetParticipants
 (

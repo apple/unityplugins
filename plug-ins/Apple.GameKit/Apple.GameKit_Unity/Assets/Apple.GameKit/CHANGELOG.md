@@ -1,6 +1,17 @@
 # CHANGELOG
 All notable changes to this project will be documented in this file.
 
+## [2.0.0] - 2023-11-09
+### Added
+- Support new rule-based matchmaking APIs available in iOS/tvOS 17.2 and macOS 14.2.
+- New `RarityPercent` property of `GKAchievementDescription`.
+### Changed
+- BREAKING CHANGE: Removed `NSArrayExtensions` since `NSArray<>` and `NSMutableArray<>` are now generic classes that no longer need these extensions.
+- BREAKING CHANGE: Where appropriate, all `GK*` types now derive from `NSObject` rather than `InteropReference`.
+- BREAKING CHANGE: `GameKitException` now contains `NSError` rather than deriving from it.
+### Fixed
+- Fixed a discrepency in the `GKErrorCode` enumeration.
+
 ## [1.0.4] - 2022-12-21
 ### Changed
 - Post build script phase of native library project was failing to correctly copy libraries; updated to use Xcode's built in 'copy files' phase.

@@ -8,15 +8,6 @@
 import Foundation
 import GameKit
 
-@_cdecl("GKAchievementDescription_Free")
-public func GKAchievementDescription_Free
-(
-    pointer: UnsafeMutableRawPointer
-)
-{
-    _ = Unmanaged<GKAchievementDescription>.fromOpaque(pointer).autorelease();
-}
-
 @_cdecl("GKAchievementDescription_GetIdentifier")
 public func GKAchievementDescription_GetIdentifier
 (
@@ -95,6 +86,21 @@ public func GKAchievementDescription_GetIsReplayable
 {
     let target = Unmanaged<GKAchievementDescription>.fromOpaque(pointer).takeUnretainedValue();
     return target.isReplayable;
+}
+
+@_cdecl("GKAchievementDescription_GetRarityPercent")
+public func GKAchievementDescription_GetRarityPercent
+(
+    pointer: UnsafeMutableRawPointer
+) -> Double
+{
+    if #available(macOS 14.0, iOS 17.0, tvOS 17.0, *) {
+        let target = Unmanaged<GKAchievementDescription>.fromOpaque(pointer).takeUnretainedValue()
+        return target.rarityPercent ?? 0.0
+    }
+    else {
+        return 0.0
+    }
 }
 
 @_cdecl("GKAchievementDescription_LoadAchievementDescriptions")

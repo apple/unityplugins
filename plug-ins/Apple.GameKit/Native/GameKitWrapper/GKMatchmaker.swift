@@ -107,6 +107,38 @@ public func GKMatchmaker_FindPlayers
     });
 }
 
+@_cdecl("GKMatchMaker_FindMatchedPlayers")
+public func GKMatchMaker_FindMatchedPlayers
+(
+    gkMatchmakerPtr: UnsafeMutableRawPointer,
+    taskId: Int64,
+    gkMatchRequestPtr: UnsafeMutableRawPointer,
+    onSuccess: @escaping SuccessTaskPtrCallback,
+    onError: @escaping NSErrorCallback
+)
+{
+    if #available(iOS 17.2, tvOS 17.2, macOS 14.2, *) {
+        let gkMatchMaker = Unmanaged<GKMatchmaker>.fromOpaque(gkMatchmakerPtr).takeUnretainedValue()
+        let gkMatchRequest = Unmanaged<GKMatchRequest>.fromOpaque(gkMatchRequestPtr).takeUnretainedValue()
+
+        gkMatchMaker.findMatchedPlayers(gkMatchRequest, withCompletionHandler: { gkMatchedPlayers, error in
+            if (error != nil) {
+                onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque())
+                return;
+            }
+
+            if (gkMatchedPlayers != nil) {
+                onSuccess(taskId, Unmanaged.passRetained(gkMatchedPlayers! as GKMatchedPlayers).toOpaque())
+            } else {
+                onSuccess(taskId, nil);
+            }
+        })
+    } else {
+        // API not available
+        onError(taskId, Unmanaged.passRetained(NSError.init(domain: "GKMatchmaker", code: GKErrorCodeExtension.unsupportedOperationForOSVersion.rawValue, userInfo: nil)).toOpaque())
+    }
+}
+
 @_cdecl("GKMatchmaker_AddPlayers")
 public func GKMatchmaker_AddPlayers
 (
@@ -150,6 +182,32 @@ public func GKMatchmaker_QueryActivity
         
         onSuccess(taskId, numPlayers);
     });
+}
+
+@_cdecl("GKMatchmaker_QueryQueueActivity")
+public func GKMatchmaker_QueryQueueActivity
+(
+    gkMatchmakerPtr: UnsafeMutableRawPointer,
+    taskId: Int64,
+    queueName: char_p,
+    onSuccess: @escaping SuccessTaskIntCallback,
+    onError: @escaping NSErrorCallback
+)
+{
+    if #available(iOS 17.2, tvOS 17.2, macOS 14.2, *) {
+        let gkMatchmaker = Unmanaged<GKMatchmaker>.fromOpaque(gkMatchmakerPtr).takeUnretainedValue();
+        gkMatchmaker.queryQueueActivity(queueName.toString(), withCompletionHandler: { numPlayers, error in
+            if (error != nil) {
+                onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
+                return;
+            }
+
+            onSuccess(taskId, numPlayers);
+        });
+    } else {
+        // API not available
+        onError(taskId, Unmanaged.passRetained(NSError.init(domain: "GKMatchmaker", code: GKErrorCodeExtension.unsupportedOperationForOSVersion.rawValue, userInfo: nil)).toOpaque())
+    }
 }
 
 @_cdecl("GKMatchmaker_QueryPlayerGroupActivity")

@@ -7,36 +7,12 @@ using Apple.GameKit.Leaderboards;
 
 namespace Apple.GameKit
 {
-    public class GKGameCenterViewController : InteropReference
+    public class GKGameCenterViewController : NSObject
     {
-        #region Init & Dispose
         public GKGameCenterViewController(IntPtr pointer) : base(pointer)
         {
         }
         
-        [DllImport(InteropUtility.DLLName)]
-        private static extern void GKGameCenterViewController_Free(IntPtr pointer);
-
-        protected override void OnDispose(bool isDisposing)
-        {
-            if (Pointer != IntPtr.Zero)
-            {
-                GKGameCenterViewController_Free(Pointer);
-                Pointer = IntPtr.Zero;
-            }
-        }
-        #endregion
-        
-        #region Static Init
-        [DllImport(InteropUtility.DLLName)]
-        private static extern IntPtr GKGameCenterViewController_InitWithState(GKGameCenterViewControllerState state);
-
-        [DllImport(InteropUtility.DLLName)]
-        private static extern IntPtr GKGameCenterViewController_InitWithLeaderboard(IntPtr leaderboard, GKLeaderboard.PlayerScope playerScope, GKLeaderboard.TimeScope timeScope);
-        
-        [DllImport(InteropUtility.DLLName)]
-        private static extern IntPtr GKGameCenterViewController_InitWithAchievement(IntPtr achievement);
-
         /// <summary>
         /// Returns a view controller that presents the specified Game Center content.
         /// </summary>
@@ -44,7 +20,7 @@ namespace Apple.GameKit
         /// <returns></returns>
         public static GKGameCenterViewController Init(GKGameCenterViewControllerState state)
         {
-            return PointerCast<GKGameCenterViewController>(GKGameCenterViewController_InitWithState(state));
+            return PointerCast<GKGameCenterViewController>(Interop.GKGameCenterViewController_InitWithState(state));
         }
 
         /// <summary>
@@ -56,7 +32,7 @@ namespace Apple.GameKit
         /// <returns></returns>
         public static GKGameCenterViewController Init(GKLeaderboard leaderboard, GKLeaderboard.PlayerScope playerScope, GKLeaderboard.TimeScope timeScope)
         {
-            return PointerCast<GKGameCenterViewController>(GKGameCenterViewController_InitWithLeaderboard(leaderboard.Pointer, playerScope, timeScope));
+            return PointerCast<GKGameCenterViewController>(Interop.GKGameCenterViewController_InitWithLeaderboard(leaderboard.Pointer, playerScope, timeScope));
         }
 
         /// <summary>
@@ -66,13 +42,10 @@ namespace Apple.GameKit
         /// <returns></returns>
         public static GKGameCenterViewController Init(GKAchievement achievement)
         {
-            return PointerCast<GKGameCenterViewController>(GKGameCenterViewController_InitWithAchievement(achievement.Pointer));
+            return PointerCast<GKGameCenterViewController>(Interop.GKGameCenterViewController_InitWithAchievement(achievement.Pointer));
         }
-        #endregion
 
         #region Present
-        [DllImport(InteropUtility.DLLName)]
-        private static extern void GKGameCenterViewController_Present(IntPtr pointer, long taskId, SuccessTaskCallback onSuccess);
 
         /// <summary>
         /// Displays the view controller and awaits for the user to dismiss it.
@@ -81,7 +54,7 @@ namespace Apple.GameKit
         public Task Present()
         {
             var tcs = InteropTasks.Create<bool>(out var taskId);
-            GKGameCenterViewController_Present(Pointer, taskId, OnPresent);
+            Interop.GKGameCenterViewController_Present(Pointer, taskId, OnPresent);
             return tcs.Task;
         }
 
@@ -125,6 +98,18 @@ namespace Apple.GameKit
             /// The view controller should present the friends list.
             /// </summary>
             LocalPlayerFriendsList = 5
+        }
+
+        private static class Interop
+        {
+            [DllImport(InteropUtility.DLLName)]
+            public static extern IntPtr GKGameCenterViewController_InitWithState(GKGameCenterViewControllerState state);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern IntPtr GKGameCenterViewController_InitWithLeaderboard(IntPtr leaderboard, GKLeaderboard.PlayerScope playerScope, GKLeaderboard.TimeScope timeScope);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern IntPtr GKGameCenterViewController_InitWithAchievement(IntPtr achievement);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKGameCenterViewController_Present(IntPtr pointer, long taskId, SuccessTaskCallback onSuccess);
         }
     }
 }

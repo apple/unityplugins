@@ -9,7 +9,7 @@ namespace Apple.GameKit.Multiplayer
     /// <summary>
     /// An object that receives connection status and data transmitted in a multiplayer game.
     /// </summary>
-    public class GKMatchDelegate : InteropReference
+    public class GKMatchDelegate : NSObject
     {
         #region Delegates
         /// <summary>
@@ -80,38 +80,23 @@ namespace Apple.GameKit.Multiplayer
         {
             _delegates[Pointer] = this;
             
-            GKMatchDelegate_SetDataReceived(Pointer, OnDataReceived);
-            GKMatchDelegate_SetDataReceivedForPlayer(Pointer, OnDataReceivedForPlayer);
-            GKMatchDelegate_SetDidFailWithError(Pointer, OnDidFailWithError);
-            GKMatchDelegate_SetPlayerConnectedDidChange(Pointer, OnPlayerConnectionDidChange);
-            GKMatchDelegate_SetShouldReinviteDisconnectedPlayer(Pointer, OnShouldReinviteDisconnectedPlayer);
+            Interop.GKMatchDelegate_SetDataReceived(Pointer, OnDataReceived);
+            Interop.GKMatchDelegate_SetDataReceivedForPlayer(Pointer, OnDataReceivedForPlayer);
+            Interop.GKMatchDelegate_SetDidFailWithError(Pointer, OnDidFailWithError);
+            Interop.GKMatchDelegate_SetPlayerConnectedDidChange(Pointer, OnPlayerConnectionDidChange);
+            Interop.GKMatchDelegate_SetShouldReinviteDisconnectedPlayer(Pointer, OnShouldReinviteDisconnectedPlayer);
         }
-        
-        [DllImport(InteropUtility.DLLName)]
-        private static extern void GKMatchDelegate_Free(IntPtr pointer);
-
         protected override void OnDispose(bool isDisposing)
         {
             if (Pointer != IntPtr.Zero)
             {
-                GKMatchDelegate_Free(Pointer);
                 _delegates.Remove(Pointer);
-                Pointer = IntPtr.Zero;
             }
+            base.OnDispose(isDisposing);
         }
         #endregion
         
         #region Callback Handlers
-        [DllImport(InteropUtility.DLLName)]
-        private static extern void GKMatchDelegate_SetDataReceivedForPlayer(IntPtr pointer, InteropDataReceivedForPlayerHandler handler);
-        [DllImport(InteropUtility.DLLName)]
-        private static extern void GKMatchDelegate_SetDataReceived(IntPtr pointer, InteropDataReceivedHandler handler);
-        [DllImport(InteropUtility.DLLName)]
-        private static extern void GKMatchDelegate_SetPlayerConnectedDidChange(IntPtr pointer, InteropPlayerConnectionDidChangeHandler handler);
-        [DllImport(InteropUtility.DLLName)]
-        private static extern void GKMatchDelegate_SetDidFailWithError(IntPtr pointer, InteropDidFailWithErrorHandler handler);
-        [DllImport(InteropUtility.DLLName)]
-        private static extern void GKMatchDelegate_SetShouldReinviteDisconnectedPlayer(IntPtr pointer, InteropShouldReinviteDisconnectedPlayerHandler handler);
 
         [MonoPInvokeCallback(typeof(InteropDataReceivedForPlayerHandler))]
         private static void OnDataReceivedForPlayer(IntPtr pointer, IntPtr dataPtr, int dataLength, IntPtr forRecipientPtr, IntPtr fromPlayerPtr)
@@ -188,6 +173,20 @@ namespace Apple.GameKit.Multiplayer
             /// A state in which a player disconnects from the match and canâ€™t receive data.
             /// </summary>
             Disconnected = 2
+        }
+
+        private static class Interop
+        {
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKMatchDelegate_SetDataReceivedForPlayer(IntPtr pointer, InteropDataReceivedForPlayerHandler handler);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKMatchDelegate_SetDataReceived(IntPtr pointer, InteropDataReceivedHandler handler);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKMatchDelegate_SetPlayerConnectedDidChange(IntPtr pointer, InteropPlayerConnectionDidChangeHandler handler);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKMatchDelegate_SetDidFailWithError(IntPtr pointer, InteropDidFailWithErrorHandler handler);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKMatchDelegate_SetShouldReinviteDisconnectedPlayer(IntPtr pointer, InteropShouldReinviteDisconnectedPlayerHandler handler);
         }
     }
 }
