@@ -10,6 +10,16 @@ import CoreGraphics
 import CoreHaptics
 import GameController
 
+import OSLog
+@available(macOS 11.0, tvOS 14, iOS 14, *)
+extension Logger {
+    /// Using your bundle identifier is a great way to ensure a unique identifier.
+    private static var subsystem = Bundle.main.bundleIdentifier!
+
+    /// Logs the view cycles like a view that appeared.
+    static let motion = Logger(subsystem: subsystem, category: "motion")
+}
+
 var _controllerMapping = ControllerDictionary();
 
 // Notifications...
@@ -151,6 +161,21 @@ public func GameControllerWrapper_SetControllerLightColor
             if let light = controller?.light {
                 light.color = GCColor(red:r, green:g, blue:b);
             }
+        }
+    }
+}
+
+@_cdecl("GameControllerWrapper_SetSensorsActive")
+public func GameControllerWrapper_SetSensorsActive
+(
+    uniqueId : char_p,
+    flag : Bool
+)
+{
+    if #available(macOS 11, iOS 14, tvOS 14, *) {
+        let controller = _controllerMapping.elements[uniqueId.toString()];
+        if let motion = controller?.motion {
+            motion.sensorsActive = flag;
         }
     }
 }
@@ -308,17 +333,50 @@ fileprivate func _pollExtendedController
     state.thumbstickRightHorizontal = profile.rightThumbstick.xAxis.value;
     state.thumbstickRightVertical = profile.rightThumbstick.yAxis.value;
     state.thumbstickRightButton = profile.rightThumbstickButton?.value ?? 0;
-    state.attitude = (profile.controller?.motion?.attitude ?? GCQuaternion()).toDoubleArray();
-    state.rotationalRate = (profile.controller?.motion?.rotationRate ?? GCRotationRate()).toDoubleArray();
-    if #available(macOS 11.0, tvOS 14, iOS 14, *) {
-        state.acceleration = (profile.controller?.motion?.acceleration ?? GCAcceleration()).toDoubleArray()
-    } else {
-        state.acceleration = GCAcceleration().toDoubleArray();
-    };
-    state.gravity = (profile.controller?.motion?.gravity ?? GCAcceleration()).toDoubleArray();
-    state.userAcceleration = (profile.controller?.motion?.userAcceleration ?? GCAcceleration()).toDoubleArray();
     state.batteryLevel = 0;
     state.batteryState = -1;
+
+    if #available(macOS 11.0, tvOS 14, iOS 14, *) , 
+        let motion = profile.controller?.motion {
+        state.sensorsActive = motion.sensorsActive;
+        state.sensorsRequireManualActivation = motion.sensorsRequireManualActivation;
+
+        state.hasAttitude = motion.hasAttitude;
+        if (motion.hasAttitude)
+        {
+            state.attitude = motion.attitude.toDoubleArray();
+            Logger.motion.info("apunpl att: \(motion.attitude.x), \(motion.attitude.y), \(motion.attitude.z), \(motion.attitude.w)");
+        }
+
+        state.hasRotationRate = motion.hasRotationRate;
+        if (motion.hasRotationRate)
+        {
+            state.rotationRate = motion.rotationRate.toDoubleArray();
+            Logger.motion.info("apunpl rr: \(motion.rotationRate.x), \(motion.rotationRate.y), \(motion.rotationRate.z)");
+        }
+        
+        state.hasGravityAndUserAcceleration = motion.hasGravityAndUserAcceleration;
+        
+        if (motion.hasGravityAndUserAcceleration)
+        {
+            state.gravity = motion.gravity.toDoubleArray();
+            state.userAcceleration = motion.userAcceleration.toDoubleArray();
+        }
+        
+        state.acceleration = motion.acceleration.toDoubleArray();
+
+        Logger.motion.info("apunpl acc: \(motion.acceleration.x), \(motion.acceleration.y), \(motion.acceleration.z)");
+
+        Logger.motion.info("apunpl SA:\(motion.sensorsActive) SRMA:\(motion.sensorsRequireManualActivation) HA:\(motion.hasAttitude) HRR:\(motion.hasRotationRate) HGUA:\(motion.hasGravityAndUserAcceleration)")
+    }
+    else
+    {
+        state.sensorsActive = false;
+        state.sensorsRequireManualActivation = false;
+        state.hasAttitude = false;
+        state.hasRotationRate = false;
+        state.hasGravityAndUserAcceleration = false;
+    }
     
     if #available(iOS 14, macOS 10.16, tvOS 14, *) {
         if let dualshockProfile = profile as? GCDualShockGamepad {
@@ -375,15 +433,42 @@ fileprivate func _pollMicroController
     state.buttonX = profile.buttonX.isPressed.toFloat();
     state.dpadHorizontal = profile.dpad.xAxis.value;
     state.dpadVertical = profile.dpad.yAxis.value;
-    state.attitude = (profile.controller?.motion?.attitude ?? GCQuaternion()).toDoubleArray();
-    state.rotationalRate = (profile.controller?.motion?.rotationRate ?? GCRotationRate()).toDoubleArray();
-    if #available(macOS 11.0, tvOS 14, iOS 14, *) {
-        state.acceleration = (profile.controller?.motion?.acceleration ?? GCAcceleration()).toDoubleArray()
-    } else {
-        state.acceleration = GCAcceleration().toDoubleArray();
-    };
-    state.gravity = (profile.controller?.motion?.gravity ?? GCAcceleration()).toDoubleArray();
-    state.userAcceleration = (profile.controller?.motion?.userAcceleration ?? GCAcceleration()).toDoubleArray();
+    
+    if #available(macOS 11.0, tvOS 14, iOS 14, *) ,
+        let motion = profile.controller?.motion {
+        state.sensorsActive = motion.sensorsActive;
+        state.sensorsRequireManualActivation = motion.sensorsRequireManualActivation;
+
+        state.hasAttitude = motion.hasAttitude;
+        if (motion.hasAttitude)
+        {
+            state.attitude = motion.attitude.toDoubleArray();
+        }
+
+        state.hasRotationRate = motion.hasRotationRate;
+        if (motion.hasRotationRate)
+        {
+            state.rotationRate = motion.rotationRate.toDoubleArray();
+        }
+        
+        state.hasGravityAndUserAcceleration = motion.hasGravityAndUserAcceleration;
+        
+        if (motion.hasGravityAndUserAcceleration)
+        {
+            state.gravity = motion.gravity.toDoubleArray();
+            state.userAcceleration = motion.userAcceleration.toDoubleArray();
+        }
+        
+        state.acceleration = motion.acceleration.toDoubleArray();
+    }
+    else
+    {
+        state.sensorsActive = false;
+        state.sensorsRequireManualActivation = false;
+        state.hasAttitude = false;
+        state.hasRotationRate = false;
+        state.hasGravityAndUserAcceleration = false;
+    }
 }
 
 class GCWNotificationHandler : NSObject  {

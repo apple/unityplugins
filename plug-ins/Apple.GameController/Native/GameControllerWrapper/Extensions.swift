@@ -126,11 +126,7 @@ extension GCController {
                 isAttachedToDevice: self.isAttachedToDevice,
                 hasHaptics: self.haptics != nil,
                 hasLight: self.light != nil,
-                hasBattery: self.battery != nil,
-                availableMotion: self.motion == nil ? 0 :
-                    (self.motion!.hasAttitude ? 0 : 1) &
-                    (self.motion!.hasRotationRate ? 0 : 2) &
-                    (self.motion!.hasGravityAndUserAcceleration ? 0 : 4)
+                hasBattery: self.battery != nil
             );
         } else {
             return GCWController(
@@ -140,8 +136,7 @@ extension GCController {
                 isAttachedToDevice: self.isAttachedToDevice,
                 hasHaptics: false,
                 hasLight: false,
-                hasBattery: false,
-                availableMotion: 0
+                hasBattery: false
             );
         }
     }
