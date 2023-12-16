@@ -10,16 +10,6 @@ import CoreGraphics
 import CoreHaptics
 import GameController
 
-import OSLog
-@available(macOS 11.0, tvOS 14, iOS 14, *)
-extension Logger {
-    /// Using your bundle identifier is a great way to ensure a unique identifier.
-    private static var subsystem = Bundle.main.bundleIdentifier!
-
-    /// Logs the view cycles like a view that appeared.
-    static let motion = Logger(subsystem: subsystem, category: "motion")
-}
-
 var _controllerMapping = ControllerDictionary();
 
 // Notifications...
@@ -345,14 +335,12 @@ fileprivate func _pollExtendedController
         if (motion.hasAttitude)
         {
             state.attitude = motion.attitude.toDoubleArray();
-            Logger.motion.info("apunpl att: \(motion.attitude.x), \(motion.attitude.y), \(motion.attitude.z), \(motion.attitude.w)");
         }
 
         state.hasRotationRate = motion.hasRotationRate;
         if (motion.hasRotationRate)
         {
             state.rotationRate = motion.rotationRate.toDoubleArray();
-            Logger.motion.info("apunpl rr: \(motion.rotationRate.x), \(motion.rotationRate.y), \(motion.rotationRate.z)");
         }
         
         state.hasGravityAndUserAcceleration = motion.hasGravityAndUserAcceleration;
@@ -364,10 +352,6 @@ fileprivate func _pollExtendedController
         }
         
         state.acceleration = motion.acceleration.toDoubleArray();
-
-        Logger.motion.info("apunpl acc: \(motion.acceleration.x), \(motion.acceleration.y), \(motion.acceleration.z)");
-
-        Logger.motion.info("apunpl SA:\(motion.sensorsActive) SRMA:\(motion.sensorsRequireManualActivation) HA:\(motion.hasAttitude) HRR:\(motion.hasRotationRate) HGUA:\(motion.hasGravityAndUserAcceleration)")
     }
     else
     {
