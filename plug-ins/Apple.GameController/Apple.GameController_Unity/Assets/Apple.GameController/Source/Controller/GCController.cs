@@ -179,8 +179,6 @@ namespace Apple.GameController.Controller
         public Quaternion GetAttitude()
         {
             double[] value = InputState.Attitude;
-            if (value == null)
-                return Quaternion.identity;
 
             return new Quaternion() {
                 x = (float)value[0],
@@ -192,9 +190,7 @@ namespace Apple.GameController.Controller
 
         public Vector3 GetRotationRate()
         {
-            double[] value = InputState.RotationalRate;
-            if (value == null)
-                return Vector3.zero;
+            double[] value = InputState.RotationRate;
 
             return new Vector3()
             {
@@ -207,8 +203,6 @@ namespace Apple.GameController.Controller
         public Vector3 GetAcceleration()
         {
             double[] value = InputState.Acceleration;
-            if (value == null)
-                return Vector3.zero;
 
             return new Vector3()
             {
@@ -221,8 +215,6 @@ namespace Apple.GameController.Controller
         public Vector3 GetGravity()
         {
             double[] value = InputState.Gravity;
-            if (value == null)
-                return Vector3.zero;
 
             return new Vector3()
             {
@@ -235,8 +227,6 @@ namespace Apple.GameController.Controller
         public Vector3 GetUserAcceleration()
         {
             double[] value = InputState.UserAcceleration;
-            if (value == null)
-                return Vector3.zero;
 
             return new Vector3()
             {
@@ -270,5 +260,10 @@ namespace Apple.GameController.Controller
             return GCControllerService.CreateHapticsEngine(Handle);
         }
 #endif
+
+        public void SetSensorsActive(bool flag)
+        {
+            GCControllerService.SetSensorsActive(Handle, flag);
+        }
     }
-} 
+}
