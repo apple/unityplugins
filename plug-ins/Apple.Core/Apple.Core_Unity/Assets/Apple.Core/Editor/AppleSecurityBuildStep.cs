@@ -1,5 +1,7 @@
 using UnityEditor;
+#if UNITY_EDITOR_OSX && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX)
 using UnityEditor.iOS.Xcode;
+#endif
 using UnityEngine;
 
 namespace Apple.Core
@@ -59,6 +61,7 @@ namespace Apple.Core
         [Tooltip("A Boolean value that indicates whether the app may have read-write access to the Movies folder.")]
         public bool AllowMoviesReadWrite;
 
+#if UNITY_EDITOR_OSX && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX)
         public override void OnProcessEntitlements(AppleBuildProfile appleBuildProfile, BuildTarget buildTarget, string pathToBuiltTarget, PlistDocument entitlements)
         {
             if (AppSandboxEntitlement)
@@ -128,5 +131,6 @@ namespace Apple.Core
             if(AllowMoviesReadWrite)
                 entitlements.root.SetBoolean("com.apple.security.assets.movies.read-write", true);
         }
+#endif
     }
 }
