@@ -1,7 +1,7 @@
 # CHANGELOG
 All notable changes to this project will be documented in this file.
 
-## [2.0.0] - 2023-11-09
+## [2.0.0] - 2023-12-15
 ### Added
 - Support new rule-based matchmaking APIs available in iOS/tvOS 17.2 and macOS 14.2.
 - New `RarityPercent` property of `GKAchievementDescription`.

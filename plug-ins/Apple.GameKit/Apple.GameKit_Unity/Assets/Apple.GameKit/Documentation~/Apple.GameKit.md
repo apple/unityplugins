@@ -9,7 +9,7 @@
 See the [Quick-Start Guide](../../../../../../Documentation/Quickstart.md) for general installation instructions.
 
 ## Usage
-Since most calls to GameKit are asynchronous, the public methods are Task, or Task<> based. For a comprehensive guide to GameKit on Apple devices, please see [GameKit Developer Documentation](https://developer.apple.com/documentation/gamekit/)
+Since most calls to GameKit are asynchronous, the public methods are `Task`, or `Task<>` based. For a comprehensive guide to GameKit on Apple devices, please see [GameKit Developer Documentation](https://developer.apple.com/documentation/gamekit/)
 
 ### Exceptions
 If there is any error reported from GameKit, it will be reported by throwing a `GameKitException`. In all cases, a `try -catch` should be used to properly handle exceptions.
@@ -55,7 +55,7 @@ var localPlayer = GKLocalPlayer.Local;
 Debug.Log($"Local Player: {localPlayer.DisplayName}");
 
 if(!localPlayer.IsUnderage) { 
-  // Ask for analytics permissions, etc
+  // Ask for analytics permissions, etc.
 }
 ```
 
@@ -64,19 +64,19 @@ Each call to LoadPlayerPhoto generates a new Texture2D so ensure you cache as ne
 ```csharp
 var player = await GKLocalPlayer.Local;
 
-// Resolves a new instance of the players photo as a Texture2D
+// Resolves a new instance of the players photo as a Texture2D.
 var photo = await player.LoadPhoto(size);
 ```
 
 #### 1.4 Friends
 ```csharp
-// Loads the local player's friends list if the local player and their friends grant access
+// Loads the local player's friends list if the local player and their friends grant access.
 var friends = await GKLocalPlayer.Local.LoadFriends();
 
 // Loads players to whom the local player can issue a challenge.
 var challengeableFriends = await GKLocalPlayer.Local.LoadChallengeableFriends();
 
-// Loads players from the friends list or players that recently participated in a game with the local player
+// Loads players from the friends list or players that recently participated in a game with the local player.
 var recentPlayers = await GKLocalPlayer.Local.LoadRecentPlayers();
 ```
 
@@ -125,7 +125,7 @@ var achievements = await GKAchievement.LoadAchievements();
 foreach(var a in achievements) 
 {
   var image = await a.LoadImage();
-  // Do something with the image
+  // Do something with the image.
 }
 ```
 
@@ -137,7 +137,7 @@ var showCompletionBanner = true;
 
 var achievements = await GKAchievement.LoadAchievements();
 
-// Only completed achievements are returned
+// Only completed achievements are returned.
 var achievement = achievements.FirstOrDefault(a => a.Identifier == achievementId);
 
 // If null, initialize it
@@ -147,7 +147,7 @@ if(!achievement.IsCompleted) {
     achievement.PercentComplete = progressPercentage;
     achievement.ShowCompletionBanner = showCompletionBanner;
 
-    // Accepts a param GKAchievement[] for reporting multiple achievements
+    // Accepts a param GKAchievement[] for reporting multiple achievements.
     await GKAchievement.Report(achievement, ...);
 }
 
@@ -184,7 +184,8 @@ GKMatch match = await GKMatchmakerViewController.Request(matchRequest);
 match.Delegate.DataReceived += OnMatchDataReceived;
 match.Delegate.DataReceivedForPlayer ++ OnMatchDataReceivedForPlayer;
 match.Delegate.DidFailWithError += OnMatchErrorReceived;
-match.Delegate.PlayerConnectionStateChanged += OnMatchPlayerConnectionStateChanged;
+match.Delegate.PlayerConnectionChanged += OnMatchPlayerConnectionChanged;
+match.Delegate.ShouldReinviteDisconnectedPlayer += OnShouldReinviteDisconnectedPlayer;
 
 private void OnMatchDataReceived(byte[] data, GKPlayer fromPlayer)
 {
@@ -201,9 +202,14 @@ private void OnMatchErrorReceived(GameKitException exception)
   // Handle error
 }
 
-private void OnMatchPlayerConnectionStateChanged(GKPlayer player, GKPlayerConnectionState state)
+private void OnMatchPlayerConnectionChanged(GKPlayer player, GKPlayerConnectionState state)
 {
   // Handle state change
+}
+
+private bool ShouldReinviteDisconnectedPlayerHandler(GKPlayer player)
+{
+  // Reinvite disconnected player
 }
 ```
 
@@ -217,7 +223,17 @@ request.PlayerAttributes = 0;
 request.PlayerGroup = 0;
 request.RestrictToAutomatch = false;
 
+// If using rule-based matchmaking...
+request.QueueName = "NameOfYourMatchmakerQueue";
+
+request.Properties = GKMatchProperties.FromJson(jsonPropertyBagToSendToServer); 
+// -or-
+request.Properties = new NSMutableDictionary<NSString, NSObject> { 
+  { "YourPropertyNameHere", new NSNumber(3.14159) },
+  { "AnotherPropertyName", new NSString("some string value") }
+};
 ```
+
 ##### 4.2.1 Request using native OS UI
 ```csharp
 var match = await GKMatchmakerViewController.Request(request);
@@ -225,28 +241,34 @@ var match = await GKMatchmakerViewController.Request(request);
 
 ##### 4.2.2 Request without using native OS UI.
 ```csharp
-// A match based on the GKMatchRequest
+// A match based on the GKMatchRequest.
 var match = await GKMatchmaker.Shared.FindMatch(request);
 
-// A match from an accepted invite
+// A match from an accepted invite.
 var matchForInvite = await GKMatchmaker.Shared.Match(invite);
 
-// Initiates a request to find players for a hosted match
+// Initiates a request to find players for a hosted match.
 var players = await GKMatchmaker.Shared.FindPlayers(request);
+
+// Initiates a request to find players for a hosted match via rule-based matchmaking.
+GKMatchedPlayers matchedPlayers = GKMatchmaker.Shared.FindMatchedPlayers(request);
 
 // Invites additional players to an existing match...
 await GKMatchmaker.Shared.AddPlayers(match, request);
 
-// Finds the number of players, across player groups, who recently requested a match
+// Finds the number of players, across player groups, who recently requested a match.
 var numMatchRequests = await GKMatchmaker.Shared.QueryActivity();
 
-// Finds the number of players in a player group who recently requested a match
+// Finds the number of players, across player groups, who recently requested a match via the specified rule-based matchmaking queue.
+var numMatchRequests = await.GKMatchmaker.Shared.QueryQueueActivity("NameOfYourQueue");
+
+// Finds the number of players in a player group who recently requested a match.
 var numMatchRequestsInGroup = await GKMatchmaker.Shared.QueryPlayerGroupActivity(playerGroupId);
 
-// Cancels a matchmaking request
+// Cancels a matchmaking request.
 GKMatchmaker.Shared.Cancel();
 
-// Cancels a pending invitation to another player
+// Cancels a pending invitation to another player.
 GKMatchmaker.Shared.CancelPendingInvite(playerBeingInvited);
 ```
 
@@ -258,16 +280,16 @@ match.Disconnect();
 #### 4.4 Send To All
 Sends a message to all players
 ```csharp
-var data = Encoding.ASCII.GetBytes("Hello World");
-match.Send(data, GKSendDataMode.Reliable);
+var data = Encoding.UTF8.GetBytes("Hello World");
+match.Send(data, GKMatch.GKSendDataMode.Reliable);
 ```
 
 #### 4.4 Send To Players
 Sends a message to the selected players
 ```csharp
 var players = new GKPlayer[] { ... };
-var data = Encoding.ASCII.GetBytes("Hello World");
-match.SendToPlayers(data, players, GKSendDataMode.Reliable);
+var data = Encoding.UTF8.GetBytes("Hello World");
+match.SendToPlayers(data, players, GKMatch.GKSendDataMode.Reliable);
 ```
 
 #### 4.5 GKVoiceChat
