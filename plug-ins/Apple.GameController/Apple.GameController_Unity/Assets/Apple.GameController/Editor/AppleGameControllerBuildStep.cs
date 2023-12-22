@@ -1,6 +1,7 @@
 ﻿using Apple.Core;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -53,6 +54,10 @@ namespace Apple.GameController.Editor
                 newController.SetString("ProfileName", "MicroGamepad");
                 supportedControllers.values.Add(newController);
             }
+            else
+            {
+                supportedControllers.values.Remove(supportedControllers.values.First(pi => pi["ProfileName"].AsString() == "MicroGamepad"));
+            }
 
             // ExtendedGamepad...
             if (SupportsExtendedGamePad)
@@ -60,6 +65,10 @@ namespace Apple.GameController.Editor
                 var newController = new PlistElementDict();
                 newController.SetString("ProfileName", "ExtendedGamepad");
                 supportedControllers.values.Add(newController);
+            }
+            else
+            {
+                supportedControllers.values.Remove(supportedControllers.values.First(pi => pi["ProfileName"].AsString() == "ExtendedGamepad"));
             }
         }
 
