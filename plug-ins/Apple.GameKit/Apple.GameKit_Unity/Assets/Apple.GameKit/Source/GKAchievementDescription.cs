@@ -98,25 +98,21 @@ namespace Apple.GameKit
         public Task<Texture2D> LoadImage()
         {
             var tcs = InteropTasks.Create<Texture2D>(out var taskId);
-            Interop.GKAchievementDescription_LoadImage(Pointer, OnLoadImage, OnLoadImageError);
+            Interop.GKAchievementDescription_LoadImage(Pointer, taskId, OnLoadImage, OnLoadImageError);
             return tcs.Task;
         }
 
         [MonoPInvokeCallback(typeof(SuccessTaskImageCallback))]
-        private static void OnLoadImage(long taskId, int width, int height, IntPtr data, int dataLength)
+        private static void OnLoadImage(long taskId, IntPtr nsDataPtr)
         {
-            Texture2D texture = null;
-
-            if (dataLength > 0)
+            try
             {
-                var image = new byte[dataLength];
-                Marshal.Copy(data, image, 0, dataLength);
-
-                texture = new Texture2D(width, height);
-                texture.LoadImage(image);
+                InteropTasks.TrySetResultAndRemove(taskId, Texture2DExtensions.CreateFromNSDataPtr(nsDataPtr));
             }
-
-            InteropTasks.TrySetResultAndRemove(taskId, texture);
+            catch (Exception ex)
+            {
+                InteropTasks.TrySetExceptionAndRemove<Texture2D>(taskId, ex);
+            }
         }
 
         [MonoPInvokeCallback(typeof(NSErrorTaskCallback))]
@@ -149,7 +145,7 @@ namespace Apple.GameKit
             [DllImport(InteropUtility.DLLName)]
             public static extern void GKAchievementDescription_LoadAchievementDescriptions(long taskId, SuccessTaskCallback<IntPtr> onSuccess, NSErrorTaskCallback onError);
             [DllImport(InteropUtility.DLLName)]
-            public static extern void GKAchievementDescription_LoadImage(IntPtr pointer, SuccessTaskImageCallback onSuccess, NSErrorTaskCallback onError);
+            public static extern void GKAchievementDescription_LoadImage(IntPtr pointer, long taskId, SuccessTaskImageCallback onSuccess, NSErrorTaskCallback onError);
         }
     }
 }

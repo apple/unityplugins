@@ -1,4 +1,6 @@
 <linker>
+    <assembly fullname="Apple.Core" preserve="all"/>
+    <assembly fullname="Apple.Core.Runtime" preserve="all"/>
     <assembly fullname="Apple.GameKit" preserve="all"/>
     <assembly fullname="System.Collections" preserve="all"/>
     <assembly fullname="System.Collections.Generic" preserve="all"/>

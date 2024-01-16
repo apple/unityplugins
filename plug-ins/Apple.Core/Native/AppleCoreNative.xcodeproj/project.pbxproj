@@ -65,6 +65,9 @@
 		FB8694412AD47FFA009B8676 /* NSNull.m in Sources */ = {isa = PBXBuildFile; fileRef = FB8694402AD47FFA009B8676 /* NSNull.m */; };
 		FB8694422AD47FFA009B8676 /* NSNull.m in Sources */ = {isa = PBXBuildFile; fileRef = FB8694402AD47FFA009B8676 /* NSNull.m */; };
 		FB8694432AD47FFA009B8676 /* NSNull.m in Sources */ = {isa = PBXBuildFile; fileRef = FB8694402AD47FFA009B8676 /* NSNull.m */; };
+		FB8FF4922B338A1A0058B918 /* NSData.m in Sources */ = {isa = PBXBuildFile; fileRef = FB8FF4912B338A110058B918 /* NSData.m */; };
+		FB8FF4932B338A1A0058B918 /* NSData.m in Sources */ = {isa = PBXBuildFile; fileRef = FB8FF4912B338A110058B918 /* NSData.m */; };
+		FB8FF4942B338A1A0058B918 /* NSData.m in Sources */ = {isa = PBXBuildFile; fileRef = FB8FF4912B338A110058B918 /* NSData.m */; };
 		FBB2BEC02AC77D160040E5E0 /* NSNumber.m in Sources */ = {isa = PBXBuildFile; fileRef = FBB2BEBF2AC77D160040E5E0 /* NSNumber.m */; };
 		FBB2BEC12AC77D160040E5E0 /* NSNumber.m in Sources */ = {isa = PBXBuildFile; fileRef = FBB2BEBF2AC77D160040E5E0 /* NSNumber.m */; };
 		FBB2BEC22AC77D160040E5E0 /* NSNumber.m in Sources */ = {isa = PBXBuildFile; fileRef = FBB2BEBF2AC77D160040E5E0 /* NSNumber.m */; };
@@ -148,6 +151,7 @@
 		FB6C73C22AFDA7800077714C /* NSException.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NSException.m; sourceTree = "<group>"; };
 		FB86943C2ACF32FB009B8676 /* NSObject.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NSObject.m; sourceTree = "<group>"; };
 		FB8694402AD47FFA009B8676 /* NSNull.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NSNull.m; sourceTree = "<group>"; };
+		FB8FF4912B338A110058B918 /* NSData.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NSData.m; sourceTree = "<group>"; };
 		FBB2BEBF2AC77D160040E5E0 /* NSNumber.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NSNumber.m; sourceTree = "<group>"; };
 		FBB2BEC32ACB2FDE0040E5E0 /* NSString.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NSString.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -198,22 +202,23 @@
 		CFE5338E263B6CCC00078448 /* AppleCoreNative */ = {
 			isa = PBXGroup;
 			children = (
-				245B212627DEA521007479CE /* NSError.swift */,
-				245B212227DEA517007479CE /* AppleCoreRuntimeShared.swift */,
+				24B8F1882A73397C00914A67 /* ACRuntimeEnvironment.swift */,
+				244F33522A6F0A2B005099AE /* AppleCore_BridgingHeader.h */,
 				CFE5338F263B6CCC00078448 /* AppleCoreNative.h */,
+				245B212227DEA517007479CE /* AppleCoreRuntimeShared.swift */,
 				CFE53398263B6D1400078448 /* CoreUtilities.swift */,
 				CFE53442263B7A2A00078448 /* Info.plist */,
-				244F33522A6F0A2B005099AE /* AppleCore_BridgingHeader.h */,
-				24B8F1882A73397C00914A67 /* ACRuntimeEnvironment.swift */,
-				FBB2BEBF2AC77D160040E5E0 /* NSNumber.m */,
-				FBB2BEC32ACB2FDE0040E5E0 /* NSString.m */,
-				FB86943C2ACF32FB009B8676 /* NSObject.m */,
-				FB8694402AD47FFA009B8676 /* NSNull.m */,
 				FB32D8782AF96000006A8FE4 /* NSArray.m */,
-				FB32D87C2AF97A09006A8FE4 /* NSMutableArray.m */,
+				FB8FF4912B338A110058B918 /* NSData.m */,
 				FB32D8802AFAADAA006A8FE4 /* NSDictionary.m */,
-				FB32D8842AFADF1A006A8FE4 /* NSMutableDictionary.m */,
+				245B212627DEA521007479CE /* NSError.swift */,
 				FB6C73C22AFDA7800077714C /* NSException.m */,
+				FB32D87C2AF97A09006A8FE4 /* NSMutableArray.m */,
+				FB32D8842AFADF1A006A8FE4 /* NSMutableDictionary.m */,
+				FB8694402AD47FFA009B8676 /* NSNull.m */,
+				FBB2BEBF2AC77D160040E5E0 /* NSNumber.m */,
+				FB86943C2ACF32FB009B8676 /* NSObject.m */,
+				FBB2BEC32ACB2FDE0040E5E0 /* NSString.m */,
 			);
 			path = AppleCoreNative;
 			sourceTree = "<group>";
@@ -387,6 +392,7 @@
 				FBB2BEC42ACB2FDE0040E5E0 /* NSString.m in Sources */,
 				FB32D87D2AF97A09006A8FE4 /* NSMutableArray.m in Sources */,
 				245B212327DEA517007479CE /* AppleCoreRuntimeShared.swift in Sources */,
+				FB8FF4922B338A1A0058B918 /* NSData.m in Sources */,
 				FB8694412AD47FFA009B8676 /* NSNull.m in Sources */,
 				FB32D8812AFAADAA006A8FE4 /* NSDictionary.m in Sources */,
 				FB6C73C32AFDA7800077714C /* NSException.m in Sources */,
@@ -407,6 +413,7 @@
 				FBB2BEC52ACB2FDE0040E5E0 /* NSString.m in Sources */,
 				FB32D87E2AF97A09006A8FE4 /* NSMutableArray.m in Sources */,
 				245B212427DEA517007479CE /* AppleCoreRuntimeShared.swift in Sources */,
+				FB8FF4932B338A1A0058B918 /* NSData.m in Sources */,
 				FB8694422AD47FFA009B8676 /* NSNull.m in Sources */,
 				FB32D8822AFAADAA006A8FE4 /* NSDictionary.m in Sources */,
 				FB6C73C42AFDA7800077714C /* NSException.m in Sources */,
@@ -427,6 +434,7 @@
 				CFE5340C263B700A00078448 /* CoreUtilities.swift in Sources */,
 				FB32D87F2AF97A09006A8FE4 /* NSMutableArray.m in Sources */,
 				245B212527DEA517007479CE /* AppleCoreRuntimeShared.swift in Sources */,
+				FB8FF4942B338A1A0058B918 /* NSData.m in Sources */,
 				FB8694432AD47FFA009B8676 /* NSNull.m in Sources */,
 				FB32D8832AFAADAA006A8FE4 /* NSDictionary.m in Sources */,
 				FB6C73C52AFDA7800077714C /* NSException.m in Sources */,

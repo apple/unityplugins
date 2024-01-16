@@ -111,12 +111,12 @@ public func GKLeaderboard_LoadPreviousOccurrence
     let target = Unmanaged<GKLeaderboard>.fromOpaque(pointer).takeUnretainedValue();
     if #available(iOS 14, tvOS 14, macOS 11.0, *) {
         target.loadPreviousOccurrence(completionHandler: { leaderboard, error in
-            if(error != nil) {
+            if (error != nil) {
                 onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
                 return;
             }
             
-            if(leaderboard != nil) {
+            if (leaderboard != nil) {
                 onSuccess(taskId, Unmanaged.passRetained(leaderboard!).toOpaque());
             } else {
                 onSuccess(taskId, nil);
@@ -153,7 +153,7 @@ public func GKLeaderboard_LoadEntries
                timeScope: GKLeaderboard.TimeScope.init(rawValue: timeScope)!,
                range: gkRange,
                completionHandler: { localPlayerEntry, entries, totalPlayerCount, error in
-                   if(error != nil) {
+                   if (error != nil) {
                        onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
                        return;
                    }
@@ -181,18 +181,15 @@ public func GKLeaderboard_LoadImage
     let target = Unmanaged<GKLeaderboard>.fromOpaque(pointer).takeUnretainedValue();
     #if !os(tvOS)
     target.loadImage(completionHandler: { (image, error) in
-            if(error != nil) {
-                onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
-                return;
-            }
-        
-            let data = image!.pngData()!;
-            onImageLoaded(
-                taskId,
-                Int32(image!.size.width),
-                Int32(image!.size.height),
-                data.toUCharP(),
-                Int32(data.count));
+        if (error != nil) {
+            onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
+            return;
+        }
+
+        let data = image!.pngData()!;
+        onImageLoaded(
+            taskId,
+            Unmanaged.passRetained(data as NSData).toOpaque());
     });
     #else
     let error = NSError(domain: "GameKit", code: GKErrorCodeExtension.unsupportedOperationForOSVersion.rawValue, userInfo: nil);
@@ -217,7 +214,7 @@ public func GKLeaderboard_SubmitScore
     
     if #available(iOS 14, tvOS 14, macOS 11.0, *) {
         target.submitScore(score, context: context, player: player, completionHandler: { error in
-            if(error != nil) {
+            if (error != nil) {
                 onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
                 return;
             }
@@ -243,12 +240,12 @@ public func GKLeaderboard_LoadLeaderboards
     
     if #available(iOS 14, tvOS 14, macOS 11.0, *) {
         GKLeaderboard.loadLeaderboards(IDs: ids, completionHandler: { leaderboards, error in
-            if(error != nil) {
+            if (error != nil) {
                 onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
                 return;
             }
             
-            if(leaderboards != nil) {
+            if (leaderboards != nil) {
                 onSuccess(taskId, Unmanaged.passRetained(leaderboards! as NSArray).toOpaque());
             } else {
                 onSuccess(taskId, nil);

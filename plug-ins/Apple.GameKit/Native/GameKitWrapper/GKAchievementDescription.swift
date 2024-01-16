@@ -112,12 +112,12 @@ public func GKAchievementDescription_LoadAchievementDescriptions
 )
 {
     GKAchievementDescription.loadAchievementDescriptions(completionHandler: {descriptions, error in
-        if(error != nil) {
+        if (error != nil) {
             onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
             return;
         }
         
-        if(descriptions != nil) {
+        if (descriptions != nil) {
             onSuccess(taskId, Unmanaged.passRetained(descriptions! as NSArray).toOpaque());
         } else {
             onSuccess(taskId, nil);
@@ -130,24 +130,22 @@ public func GKAchievementDescription_LoadImage
 (
     pointer: UnsafeMutableRawPointer,
     taskId: Int64,
-    photoSize: Int,
     onImageLoaded: @escaping SuccessTaskImageCallback,
     onError: @escaping NSErrorCallback
 )
 {
     let target = Unmanaged<GKAchievementDescription>.fromOpaque(pointer).takeUnretainedValue();
     target.loadImage(completionHandler: {image, error in
-        if(error != nil) {
+        if (error != nil) {
             onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
             return;
         }
-    
+
         let data = image!.pngData()!;
         onImageLoaded(
             taskId,
-            Int32(image!.size.width),
-            Int32(image!.size.height),
-            data.toUCharP(),
-            Int32(data.count));
+            Unmanaged.passRetained(data as NSData).toOpaque());
     });
 }
+
+
