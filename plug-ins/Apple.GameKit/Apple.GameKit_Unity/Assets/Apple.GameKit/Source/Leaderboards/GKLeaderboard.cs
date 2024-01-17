@@ -256,14 +256,21 @@ namespace Apple.GameKit.Leaderboards
         [MonoPInvokeCallback(typeof(GKLeaderboardLoadEntriesHandler))]
         private static void OnLoadEntries(long taskId, IntPtr localEntry, IntPtr entries, int totalPlayerCount)
         {
-            var response = new GKLeaderboardLoadEntriesResponse
+            try
             {
-                LocalPlayerEntry = PointerCast<GKLeaderboard.Entry>(localEntry), 
-                Entries = PointerCast<NSArray<GKLeaderboard.Entry>>(entries), 
-                TotalPlayerCount = totalPlayerCount
-            };
+                var response = new GKLeaderboardLoadEntriesResponse
+                {
+                    LocalPlayerEntry = PointerCast<GKLeaderboard.Entry>(localEntry), 
+                    Entries = PointerCast<NSArray<GKLeaderboard.Entry>>(entries), 
+                    TotalPlayerCount = totalPlayerCount
+                };
 
-            InteropTasks.TrySetResultAndRemove(taskId, response);
+                InteropTasks.TrySetResultAndRemove(taskId, response);
+            }
+            catch (Exception ex)
+            {
+                InteropTasks.TrySetExceptionAndRemove<GKLeaderboardLoadEntriesResponse>(taskId, ex);
+            }
         }
 
         [MonoPInvokeCallback(typeof(NSErrorTaskCallback))]

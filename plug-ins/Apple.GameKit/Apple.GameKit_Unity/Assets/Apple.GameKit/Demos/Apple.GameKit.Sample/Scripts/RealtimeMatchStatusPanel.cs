@@ -13,14 +13,12 @@ namespace Apple.GameKit.Sample
 
     public class RealtimeMatchStatusPanel : MonoBehaviour
     {
-#pragma warning disable 0649
-        [SerializeField] private GameObject _playerStatusPanelPrefab;
-        [SerializeField] private GameObject _playerListContent;
-        [SerializeField] private Text _messageLogText;
-        [SerializeField] private Text _matchStatusTitleText;
-        [SerializeField] private GameObject _matchButtonArea;
-        [SerializeField] private GameObject _inviteButtonArea;
-#pragma warning restore 0649
+        [SerializeField] private GameObject _playerStatusPanelPrefab = default;
+        [SerializeField] private GameObject _playerListContent = default;
+        [SerializeField] private Text _messageLogText = default;
+        [SerializeField] private Text _matchStatusTitleText = default;
+        [SerializeField] private GameObject _matchButtonArea = default;
+        [SerializeField] private GameObject _inviteButtonArea = default;
 
         public void Populate(GKMatch match) => Populate(
             GKPlayerConnectionState.Connected,
@@ -99,6 +97,10 @@ namespace Apple.GameKit.Sample
             }
 
             // clear the previous list of players
+            foreach (Transform transform in _playerListContent.transform)
+            {
+                Destroy(transform.gameObject);
+            }            
             _playerListContent.transform.DetachChildren();
             _playerStatusPanels.Clear();
 

@@ -14,27 +14,25 @@ namespace Apple.GameKit.Sample
 
     public class RealtimeMatchRequestPanel : MonoBehaviour
     {
-#pragma warning disable 0649
-        [SerializeField] private Dropdown _minPlayersDropdown;
-        [SerializeField] private Dropdown _maxPlayersDropdown;
-        [SerializeField] private Dropdown _matchmakingModeDropdown;
+        [SerializeField] private Dropdown _minPlayersDropdown = default;
+        [SerializeField] private Dropdown _maxPlayersDropdown = default;
+        [SerializeField] private Dropdown _matchmakingModeDropdown = default;
 
-        [SerializeField] private Toggle _fastStartToggle;
-        [SerializeField] private Toggle _serverHostedToggle;
+        [SerializeField] private Toggle _fastStartToggle = default;
+        [SerializeField] private Toggle _serverHostedToggle = default;
 
-        [SerializeField] private InputField _queueNameInputField;
+        [SerializeField] private InputField _queueNameInputField = default;
 
-        [SerializeField] private GameObject _queueRelatedItems;
-        [SerializeField] private InputField _propertiesInputField;
-        [SerializeField] private InputField _recipientPropertiesInputField;
-        [SerializeField] private Button _queryQueueActivityButton;
-        [SerializeField] private Text   _queueQueueActivityButtonText;
-        [SerializeField] private string _updateString;
-        [SerializeField] private string _updatingString;
+        [SerializeField] private GameObject _queueRelatedItems = default;
+        [SerializeField] private InputField _propertiesInputField = default;
+        [SerializeField] private InputField _recipientPropertiesInputField = default;
+        [SerializeField] private Button _queryQueueActivityButton = default;
+        [SerializeField] private Text   _queueQueueActivityButtonText = default;
+        [SerializeField] private string _updateString = default;
+        [SerializeField] private string _updatingString = default;
 
-        [SerializeField] private RealtimeMatchStatusPanel _realtimeMatchStatusPanel;
-        [SerializeField] private WaitPanel _waitPanel;
-#pragma warning restore 0649
+        [SerializeField] private RealtimeMatchStatusPanel _realtimeMatchStatusPanel = default;
+        [SerializeField] private WaitPanel _waitPanel = default;
 
         private Color _propertiesTextDefaultColor = Color.black;
         private GKMatchProperties _propertiesDictionary = null;
@@ -157,7 +155,10 @@ namespace Apple.GameKit.Sample
                 }
                 _queueQueueActivityButtonText.text = _updateString;
             }
-            _queryQueueActivityButton.interactable = true;
+            finally
+            {
+                _queryQueueActivityButton.interactable = true;
+            }
         }
 
         public void OnPropertiesChanged(string propertiesJson)

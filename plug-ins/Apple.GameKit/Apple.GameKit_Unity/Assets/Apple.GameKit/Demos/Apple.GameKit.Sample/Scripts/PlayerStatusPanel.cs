@@ -50,19 +50,17 @@ namespace Apple.GameKit.Sample
             }
         }
 
-#pragma warning disable 0649
-        [SerializeField] private RawImage _playerPhotoImage;
-        [SerializeField] private Text _localPlayerText;
+        [SerializeField] private RawImage _playerPhotoImage = default;
+        [SerializeField] private Text _localPlayerText = default;
 
-        [SerializeField] private Text _displayNameText;
-        [SerializeField] private Text _aliasText;
-        [SerializeField] private Text _gamePlayerIdText;
-        [SerializeField] private Text _teamPlayerIdText;
+        [SerializeField] private Text _displayNameText = default;
+        [SerializeField] private Text _aliasText = default;
+        [SerializeField] private Text _gamePlayerIdText = default;
+        [SerializeField] private Text _teamPlayerIdText = default;
 
-        [SerializeField] private Text _matchPropertiesText;
+        [SerializeField] private Text _matchPropertiesText = default;
 
-        [SerializeField] private Text _connectionStateText;
-#pragma warning restore 0649
+        [SerializeField] private Text _connectionStateText = default;
 
         private async Task UpdatePlayerImage()
         {

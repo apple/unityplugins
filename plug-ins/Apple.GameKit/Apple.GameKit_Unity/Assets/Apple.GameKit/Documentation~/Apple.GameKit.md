@@ -102,7 +102,7 @@ var timestamp = fetchItemsResponse.Timestamp;
 ```csharp
 var achievements = await GKAchievement.LoadAchievements();
 
-foreach(var a in achievements) 
+foreach (var a in achievements) 
 {
   Debug.Log($"Achievement: {a.Identifier}");
 }
@@ -112,7 +112,7 @@ foreach(var a in achievements)
 ```csharp
 var descriptions = await GKAchievementDescription.LoadAchievementDescriptions();
 
-foreach(var d in descriptions) 
+foreach (var d in descriptions) 
 {
   Debug.Log($"Achievement: {a.Identifier}, Unachieved Description: {d.UnachievedDescription}, Achieved Description: {d.AchievedDescription}");
 }
@@ -120,11 +120,11 @@ foreach(var d in descriptions)
 
 #### 2.3 Load Image
 ```csharp
-var achievements = await GKAchievement.LoadAchievements();
+var descriptions = await GKAchievementDescription.LoadAchievementDescriptions();
 
-foreach(var a in achievements) 
+foreach (var d in descriptions) 
 {
-  var image = await a.LoadImage();
+  var image = await d.LoadImage();
   // Do something with the image.
 }
 ```
@@ -155,7 +155,7 @@ if(!achievement.IsCompleted) {
 
 #### 2.5 Reset All Achievements
 ```csharp
-await GKAchievement.Reset();
+await GKAchievement.ResetAchievements();
 ```
 
 ### 3 GKGameCenterViewController
@@ -331,7 +331,7 @@ private void OnMatchEnded(GKPlayer player, GKTurnBasedMatch match)
 ```csharp
 var turnBasedMatches = await GKTurnBasedMatch.LoadMatches();
 
-foreach(var match in turnBasedMatches)
+foreach (var match in turnBasedMatches)
 {
   Debug.Log($"TurnBasedMatch: {match.MatchId}");
 }
@@ -397,7 +397,7 @@ using (var stream = new MemoryStream())
   var data = stream.ToArray();
 
   // Set the outcomes...
-  foreach(var participant in match.Participants) {
+  foreach (var participant in match.Participants) {
     participant.MatchOutcome = Outcome.Won;
   }
 

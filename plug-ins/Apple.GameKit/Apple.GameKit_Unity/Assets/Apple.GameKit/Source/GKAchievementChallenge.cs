@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 namespace Apple.GameKit
 {
     /// <summary>
-    /// A type of challenge where a player must earn another playerâ€™s achievement.
+    /// A type of challenge where a player must earn another player's achievement.
     /// </summary>
     public class GKAchievementChallenge : GKChallenge
     {

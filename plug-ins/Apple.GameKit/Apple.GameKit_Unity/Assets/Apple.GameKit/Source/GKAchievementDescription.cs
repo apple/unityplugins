@@ -122,6 +122,24 @@ namespace Apple.GameKit
         }
         #endregion
 
+        /// <summary>
+        /// A common image that you can display when the player hasn’t completed the achievement.
+        /// </summary>
+        /// <remarks>
+        /// Note: Customization of this symbol image is not supported yet in Unity.
+        /// </remarks>
+        public static Texture2D IncompleteAchievementImage => _incompleteAchievementImage ??= Texture2DExtensions.CreateFromNSDataPtr(Interop.GKAchievementDescription_GetIncompleteAchievementImage());
+        private static Texture2D _incompleteAchievementImage = null;
+
+        /// <summary>
+        /// A placeholder image that you can display when the player completes the achievement.
+        /// </summary>
+        /// <remarks>
+        /// Note: Customization of this symbol image is not supported yet in Unity.
+        /// </remarks>
+        public static Texture2D PlaceholderCompletedAchievementImage => _placeholderCompletedAchievementImage ??= Texture2DExtensions.CreateFromNSDataPtr(Interop.GKAchievementDescription_GetPlaceholderCompletedAchievementImage());
+        private static Texture2D _placeholderCompletedAchievementImage = null;
+
         private static class Interop
         {
             [DllImport(InteropUtility.DLLName)]
@@ -146,6 +164,10 @@ namespace Apple.GameKit
             public static extern void GKAchievementDescription_LoadAchievementDescriptions(long taskId, SuccessTaskCallback<IntPtr> onSuccess, NSErrorTaskCallback onError);
             [DllImport(InteropUtility.DLLName)]
             public static extern void GKAchievementDescription_LoadImage(IntPtr pointer, long taskId, SuccessTaskImageCallback onSuccess, NSErrorTaskCallback onError);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern IntPtr GKAchievementDescription_GetIncompleteAchievementImage();
+            [DllImport(InteropUtility.DLLName)]
+            public static extern IntPtr GKAchievementDescription_GetPlaceholderCompletedAchievementImage();
         }
     }
 }

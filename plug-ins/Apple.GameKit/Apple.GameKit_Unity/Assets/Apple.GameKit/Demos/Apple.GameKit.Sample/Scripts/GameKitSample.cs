@@ -15,32 +15,32 @@ namespace Apple.GameKit.Sample
 {
     public class GameKitSample : MonoBehaviour
     {
-#pragma warning disable 0649
-        [SerializeField] private RawImage _playerPhotoImage;
+        [SerializeField] private RawImage _playerPhotoImage = default;
 
-        [SerializeField] private Text _playerDisplayName;
-        [SerializeField] private Text _isMultiplayerGamingRestrictedText;
-        [SerializeField] private Text _isPersonalizedCommunicationRestrictedText;
-        [SerializeField] private Text _isUnderageText;
+        [SerializeField] private Text _playerDisplayName = default;
+        [SerializeField] private Text _isMultiplayerGamingRestrictedText = default;
+        [SerializeField] private Text _isPersonalizedCommunicationRestrictedText = default;
+        [SerializeField] private Text _isUnderageText = default;
 
-        [SerializeField] private GameObject _panelArea;
+        [SerializeField] private GameObject _panelArea = default;
 
-        [SerializeField] private GameObject _mainButtonLayout;
-        [SerializeField] private RealtimeMatchRequestPanel _realtimeMatchRequestPanel;
-        [SerializeField] private RealtimeMatchStatusPanel _realtimeMatchStatusPanel;
+        [SerializeField] private GameObject _mainButtonLayout = default;
+        [SerializeField] private RealtimeMatchRequestPanel _realtimeMatchRequestPanel = default;
+        [SerializeField] private RealtimeMatchStatusPanel _realtimeMatchStatusPanel = default;
 
-        [SerializeField] private Button _authenticateBtn;
-        [SerializeField] private Text _authenticateBtnText;
+        [SerializeField] private AchievementsPanel _achievementsPanel = default;
 
-        [SerializeField] private Button _showAchievementsBtn;
-        [SerializeField] private Button _showTurnBasedMatchesBtn;
-        [SerializeField] private Button _takeTurnButton;
-        [SerializeField] private Button _endMatchWinnerButton;
-        [SerializeField] private Button _reportLeaderboardScore;
-        [SerializeField] private Button _toggleAccessPoint;
-        [SerializeField] private Button _triggerAccessPoint;
-        [SerializeField] private Button _realtimeMatchmakingButton;
-#pragma warning restore 0649
+        [SerializeField] private Button _authenticateBtn = default;
+        [SerializeField] private Text _authenticateBtnText = default;
+
+        [SerializeField] private Button _showAchievementsBtn = default;
+        [SerializeField] private Button _showTurnBasedMatchesBtn = default;
+        [SerializeField] private Button _takeTurnButton = default;
+        [SerializeField] private Button _endMatchWinnerButton = default;
+        [SerializeField] private Button _reportLeaderboardScore = default;
+        [SerializeField] private Button _toggleAccessPoint = default;
+        [SerializeField] private Button _triggerAccessPoint = default;
+        [SerializeField] private Button _realtimeMatchmakingButton = default;
 
         private GKLocalPlayer _localPlayer;
         private GKTurnBasedMatch _activeMatch;
@@ -220,76 +220,9 @@ namespace Apple.GameKit.Sample
             GKAccessPoint.Shared.IsActive = !GKAccessPoint.Shared.IsActive;
         }
 
-        private async void OnShowAchievements()
+        private void OnShowAchievements()
         {
-            try
-            {
-                // Wait for player to close the dialog...
-                var gameCenter = GKGameCenterViewController.Init(GKGameCenterViewController.GKGameCenterViewControllerState.Achievements);
-                await gameCenter.Present();
-
-                // Log all achievements in game...
-                var descriptions = await GKAchievementDescription.LoadAchievementDescriptions();
-
-                if (descriptions.Count > 0)
-                {
-                    var isRarityPropertyAvailable = 
-                        Availability.Available(RuntimeOperatingSystem.macOS, 14, 0) ||
-                        Availability.Available(RuntimeOperatingSystem.iOS, 17, 2) ||
-                        Availability.Available(RuntimeOperatingSystem.tvOS, 17, 2);
-
-                    var builder = new StringBuilder();
-                    builder.AppendLine("Achievement descriptions:");
-
-                    foreach (var achievement in descriptions)
-                    {
-                        builder.Append($"  {achievement.Identifier}: {achievement.Title}");
-
-                        if (isRarityPropertyAvailable)
-                        {
-                            builder.AppendLine($" (Rarity: {achievement.RarityPercent * 100.0:F2}%)");
-                        }
-                        else
-                        {
-                            builder.AppendLine();
-                        }
-                    }
-                    Debug.Log(builder.ToString());
-
-                    // Get the player's achievements.
-                    var achievements = await GKAchievement.LoadAchievements();
-
-                    if (achievements.Count() > 0)
-                    {
-                        builder.Clear();
-                        builder.AppendLine("Player achievements:");
-
-                        foreach (var achievement in achievements)
-                        {
-                            if (!string.IsNullOrEmpty(achievement.Identifier))
-                            {
-                                var description = descriptions
-                                    .Where(d => d.Identifier.Equals(achievement.Identifier))
-                                    .FirstOrDefault();
-
-                                var title = description?.Title ?? string.Empty;
-
-                                builder.AppendLine($"  {achievement.Identifier}: {title} ({achievement.PercentComplete * 100.0:F0}% complete)");
-                            }
-                        }
-
-                        Debug.Log(builder.ToString());
-                    }
-                }
-                else
-                {
-                    Debug.Log("This game has no achievements.");
-                }
-            }
-            catch (Exception exception)
-            {
-                Debug.LogException(exception);
-            }
+            PushPanel(_achievementsPanel.gameObject);
         }
 
         private async void OnShowTurnBasedMatches()

@@ -148,4 +148,33 @@ public func GKAchievementDescription_LoadImage
     });
 }
 
+@_cdecl("GKAchievementDescription_GetIncompleteAchievementImage")
+public func GKAchievementDescription_GetIncompleteAchievementImage
+(
+) -> UnsafeMutableRawPointer?
+{
+    let image = GKAchievementDescription.incompleteAchievementImage()
+
+    guard let data = image.pngData()
+    else {
+        return nil;
+    }
+
+    return Unmanaged.passRetained(data as NSData).toOpaque();
+}
+
+@_cdecl("GKAchievementDescription_GetPlaceholderCompletedAchievementImage")
+public func GKAchievementDescription_GetPlaceholderCompletedAchievementImage
+(
+) -> UnsafeMutableRawPointer?
+{
+    let image = GKAchievementDescription.placeholderCompletedAchievementImage()
+
+    guard let data = image.pngData()
+    else {
+        return nil;
+    }
+
+    return Unmanaged.passRetained(data as NSData).toOpaque();
+}
 
