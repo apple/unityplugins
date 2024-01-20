@@ -25,6 +25,7 @@ namespace Apple.GameKit.Sample
         [SerializeField] private GameObject _panelArea = default;
 
         [SerializeField] private GameObject _mainButtonLayout = default;
+        [SerializeField] private AccessPointPanel _accessPointPanel = default;
         [SerializeField] private RealtimeMatchRequestPanel _realtimeMatchRequestPanel = default;
         [SerializeField] private RealtimeMatchStatusPanel _realtimeMatchStatusPanel = default;
 
@@ -38,8 +39,7 @@ namespace Apple.GameKit.Sample
         [SerializeField] private Button _takeTurnButton = default;
         [SerializeField] private Button _endMatchWinnerButton = default;
         [SerializeField] private Button _reportLeaderboardScore = default;
-        [SerializeField] private Button _toggleAccessPoint = default;
-        [SerializeField] private Button _triggerAccessPoint = default;
+        [SerializeField] private Button _accessPointButton = default;
         [SerializeField] private Button _realtimeMatchmakingButton = default;
 
         private GKLocalPlayer _localPlayer;
@@ -52,18 +52,13 @@ namespace Apple.GameKit.Sample
                 // Send Unity log messages to NSLog.
                 _ = new AppleLogger();
 
-                GKAccessPoint.Shared.Location = GKAccessPoint.GKAccessPointLocation.TopLeading;
-                GKAccessPoint.Shared.ShowHighlights = false;
-                GKAccessPoint.Shared.IsActive = true;
-
                 _authenticateBtn.onClick.AddListener(OnAuthenticate);
                 _showAchievementsBtn.onClick.AddListener(OnShowAchievements);
                 _showTurnBasedMatchesBtn.onClick.AddListener(OnShowTurnBasedMatches);
                 _takeTurnButton.onClick.AddListener(OnTakeTurn);
                 _endMatchWinnerButton.onClick.AddListener(OnEndMatchWinner);
                 _reportLeaderboardScore.onClick.AddListener(OnReportLeaderboardScore);
-                _toggleAccessPoint.onClick.AddListener(OnToggleAccessPoint);
-                _triggerAccessPoint.onClick.AddListener(OnTriggerAccessPoint);
+                _accessPointButton.onClick.AddListener(OnShowAccessPointPanel);
                 _realtimeMatchmakingButton.onClick.AddListener(OnRealtimeMatchmaking);
 
                 foreach (var btn in _mainButtonLayout.GetComponentsInChildren<Button>())
@@ -209,15 +204,9 @@ namespace Apple.GameKit.Sample
             PushPanel(_realtimeMatchStatusPanel.gameObject);
         }
 
-        private void OnTriggerAccessPoint()
+        private void OnShowAccessPointPanel()
         {
-            if (GKAccessPoint.Shared.IsVisible)
-                GKAccessPoint.Shared.Trigger();
-        }
-
-        private void OnToggleAccessPoint()
-        {
-            GKAccessPoint.Shared.IsActive = !GKAccessPoint.Shared.IsActive;
+            PushPanel(_accessPointPanel.gameObject);
         }
 
         private void OnShowAchievements()

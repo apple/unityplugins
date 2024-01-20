@@ -24,8 +24,24 @@ public func GKAccessPoint_Trigger
 {
     let target = Unmanaged<GKAccessPoint>.fromOpaque(pointer).takeUnretainedValue();
     
-    if(!target.isPresentingGameCenter) {
+    if (!target.isPresentingGameCenter) {
         target.trigger(handler: {});
+    }
+}
+
+@_cdecl("GKAccessPoint_TriggerWithState")
+public func GKAccessPoint_TriggerWithState
+(
+    pointer: UnsafeMutableRawPointer,
+    state: Int64 // GKGameCenterViewControllerState
+)
+{
+    let target = Unmanaged<GKAccessPoint>.fromOpaque(pointer).takeUnretainedValue();
+
+    if (!target.isPresentingGameCenter) {
+        if let stateEnum = GKGameCenterViewControllerState(rawValue: Int(truncatingIfNeeded: state)) {
+            target.trigger(state: stateEnum, handler: {});
+        }
     }
 }
 

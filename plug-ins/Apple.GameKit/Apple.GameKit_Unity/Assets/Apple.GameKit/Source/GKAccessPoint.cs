@@ -6,6 +6,8 @@ using UnityEngine.Scripting;
 
 namespace Apple.GameKit
 {
+    using GKGameCenterViewControllerState = GKGameCenterViewController.GKGameCenterViewControllerState;
+
     /// <summary>
     /// An object that allows players to view and manage their Game Center information from within your game.
     /// </summary>
@@ -76,12 +78,17 @@ namespace Apple.GameKit
         /// </summary>
         public bool IsFocused => Interop.GKAccessPoint_GetIsFocused(Pointer);
 #endif
-        
+
         /// <summary>
         /// Displays the Game Center dashboard.
         /// </summary>
         public void Trigger() => Interop.GKAccessPoint_Trigger(Pointer);
-        
+
+        /// <summary>
+        /// Displays the Game Center dashboard in the specified state.
+        /// </summary>
+        public void Trigger(GKGameCenterViewControllerState state) => Interop.GKAccessPoint_TriggerWithState(Pointer, (long)state);
+
         /// <summary>
         /// Specifies the corner of the screen to display the access point.
         /// </summary>
@@ -137,6 +144,8 @@ namespace Apple.GameKit
 
             [DllImport(InteropUtility.DLLName)]
             public static extern void GKAccessPoint_Trigger(IntPtr pointer);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKAccessPoint_TriggerWithState(IntPtr pointer, long state);
         }
 
     }
