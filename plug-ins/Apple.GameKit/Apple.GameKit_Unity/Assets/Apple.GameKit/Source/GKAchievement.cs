@@ -197,10 +197,21 @@ namespace Apple.GameKit
         /// Initializes an achievement for the local player.
         /// </summary>
         /// <param name="identifier"></param>
-        /// <returns></returns>
+        /// <returns>GKAchievement</returns>
         public static GKAchievement Init(string identifier)
         {
             return PointerCast<GKAchievement>(Interop.GKAchievement_Init(identifier));
+        }
+
+        /// <summary>
+        /// Initialize the achievement for a specific player. Use to submit participant achievements when ending a turn-based match.
+        /// </summary>
+        /// <param name="identifier"></param>
+        /// <param name="player"></param>
+        /// <returns>GKAchievement</returns>
+        public static GKAchievement Init(string identifier, GKPlayer player)
+        {
+            return PointerCast<GKAchievement>(Interop.GKAchievement_InitForPlayer(identifier, player));
         }
 
         private static class Interop
@@ -235,6 +246,8 @@ namespace Apple.GameKit
             public static extern void GKAchievement_ChallengeComposeController(IntPtr pointer, string message, IntPtr players);
             [DllImport(InteropUtility.DLLName)]
             public static extern IntPtr GKAchievement_Init(string identifier);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern IntPtr GKAchievement_InitForPlayer(string identifier, GKPlayer player);
         }
     }
 }
