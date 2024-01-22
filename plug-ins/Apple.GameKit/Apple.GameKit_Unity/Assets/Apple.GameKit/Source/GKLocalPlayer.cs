@@ -124,6 +124,31 @@ namespace Apple.GameKit
         }
         #endregion
         
+        #region LoadFriendsAuthorizationStatus
+
+        /// <summary>
+        /// Returns whether the player authorizes your game to access their friends list.
+        /// </summary>
+        public Task<GKFriendsAuthorizationStatus> LoadFriendsAuthorizationStatus()
+        {
+            var tcs = InteropTasks.Create<GKFriendsAuthorizationStatus>(out var taskId);
+            Interop.GKLocalPlayer_LoadFriendsAuthorizationStatus(Pointer, taskId, OnLoadFriendsAuthorizationStatus, OnLoadFriendsAuthorizationStatusError);
+            return tcs.Task;
+        }
+
+        [MonoPInvokeCallback(typeof(SuccessTaskCallback<GKFriendsAuthorizationStatus>))]
+        private static void OnLoadFriendsAuthorizationStatus(long taskId, GKFriendsAuthorizationStatus authStatus)
+        {
+            InteropTasks.TrySetResultAndRemove(taskId, authStatus);
+        }
+
+        [MonoPInvokeCallback(typeof(NSErrorTaskCallback))]
+        private static void OnLoadFriendsAuthorizationStatusError(long taskId, IntPtr errorPointer)
+        {
+            InteropTasks.TrySetExceptionAndRemove<GKFriendsAuthorizationStatus>(taskId, new GameKitException(errorPointer));
+        }
+        #endregion
+
         #region LoadChallengableFriends
 
         /// <summary>
@@ -198,6 +223,8 @@ namespace Apple.GameKit
             public static extern void GKLocalPlayer_Authenticate(long taskId, SuccessTaskCallback<IntPtr> onSuccess, NSErrorTaskCallback onError);
             [DllImport(InteropUtility.DLLName)]
             public static extern void GKLocalPlayer_LoadFriends(IntPtr pointer, long taskId, SuccessTaskCallback<IntPtr> onCallback, NSErrorTaskCallback onError);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKLocalPlayer_LoadFriendsAuthorizationStatus(IntPtr pointer, long taskId, SuccessTaskCallback<GKFriendsAuthorizationStatus> onCallback, NSErrorTaskCallback onError);
             [DllImport(InteropUtility.DLLName)]
             public static extern void GKLocalPlayer_LoadChallengableFriends(IntPtr pointer, long taskId, SuccessTaskCallback<IntPtr> onCallback, NSErrorTaskCallback onError);
             [DllImport(InteropUtility.DLLName)]

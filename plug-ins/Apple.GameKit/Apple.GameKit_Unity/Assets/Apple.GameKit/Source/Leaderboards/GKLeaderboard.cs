@@ -279,7 +279,55 @@ namespace Apple.GameKit.Leaderboards
             InteropTasks.TrySetExceptionAndRemove<GKLeaderboardLoadEntriesResponse>(taskId, new GameKitException(errorPointer));
         }
         #endregion
-        
+
+        #region LoadEntriesForPlayers
+
+        private delegate void GKLeaderboardLoadEntriesForPlayersHandler(long taskId, IntPtr localEntry, IntPtr entries);
+
+        /// <summary>
+        /// Returns the scores for the local player and other players for the specified time period.
+        /// </summary>
+        /// <param name="players">The players whose scores this method returns.</param>
+        /// <param name="timeScope">
+        /// Specifies the time period for the scores. This parameter is applicable to nonrecurring leaderboards only.
+        /// For recurring leaderboards, pass GKLeaderboardTimeScopeAllTime for this parameter.
+        /// </param>
+        /// <returns></returns>
+        public Task<GKLeaderboardLoadEntriesForPlayersResponse> LoadEntriesForPlayers(NSArray<GKPlayer> players, TimeScope timeScope)
+        {
+            var tcs = InteropTasks.Create<GKLeaderboardLoadEntriesForPlayersResponse>(out var taskId);
+
+            Interop.GKLeaderboard_LoadEntriesForPlayers(Pointer, taskId, players.Pointer, timeScope, OnLoadEntriesForPlayers, OnLoadEntriesForPlayersError);
+            return tcs.Task;
+        }
+
+        [MonoPInvokeCallback(typeof(GKLeaderboardLoadEntriesForPlayersHandler))]
+        private static void OnLoadEntriesForPlayers(long taskId, IntPtr localEntry, IntPtr entries)
+        {
+            try
+            {
+                var response = new GKLeaderboardLoadEntriesForPlayersResponse
+                {
+                    LocalPlayerEntry = PointerCast<GKLeaderboard.Entry>(localEntry), 
+                    Entries = PointerCast<NSArray<GKLeaderboard.Entry>>(entries), 
+                };
+
+                InteropTasks.TrySetResultAndRemove(taskId, response);
+            }
+            catch (Exception ex)
+            {
+                InteropTasks.TrySetExceptionAndRemove<GKLeaderboardLoadEntriesForPlayersResponse>(taskId, ex);
+            }
+        }
+
+        [MonoPInvokeCallback(typeof(NSErrorTaskCallback))]
+        private static void OnLoadEntriesForPlayersError(long taskId, IntPtr errorPointer)
+        {
+            InteropTasks.TrySetExceptionAndRemove<GKLeaderboardLoadEntriesForPlayersResponse>(taskId, new GameKitException(errorPointer));
+        }
+
+        #endregion
+
         #region LoadImage
         
         /// <summary>
@@ -350,6 +398,8 @@ namespace Apple.GameKit.Leaderboards
             public static extern void GKLeaderboard_LoadPreviousOccurrence(IntPtr pointer, long taskId, SuccessTaskCallback<IntPtr> onCallback, NSErrorTaskCallback onError);
             [DllImport(InteropUtility.DLLName)]
             public static extern void GKLeaderboard_LoadEntries(IntPtr pointer, long taskId, PlayerScope playerScope, TimeScope timeScope, long rankMin, long rankMax, GKLeaderboardLoadEntriesHandler onSuccess, NSErrorTaskCallback onError);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKLeaderboard_LoadEntriesForPlayers(IntPtr gkLeaderboardPtr, long taskId, IntPtr players, TimeScope timeScope, GKLeaderboardLoadEntriesForPlayersHandler onSuccess, NSErrorTaskCallback onError);
             [DllImport(InteropUtility.DLLName)]
             public static extern void GKLeaderboard_LoadImage(IntPtr pointer, long taskId, SuccessTaskImageCallback onSuccess, NSErrorTaskCallback onError);
         }
