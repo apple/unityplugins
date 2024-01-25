@@ -204,7 +204,6 @@ public func GKLeaderboard_LoadEntriesForPlayers
         // TODO: Handle fallback?
         onSuccess(taskId, nil, nil);
     };
-
 }
 
 @_cdecl("GKLeaderboard_LoadImage")

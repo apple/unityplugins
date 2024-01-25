@@ -82,6 +82,8 @@ MonoBehaviour:
   m_Name: AppleGameKitBuildStep
   m_EditorClassIdentifier: 
   IsEnabled: 1
+  FriendListUsageDescription: Please grant access to your friends list so the sample
+    app can display it.
 --- !u!114 &5727258473835731888
 MonoBehaviour:
   m_ObjectHideFlags: 0

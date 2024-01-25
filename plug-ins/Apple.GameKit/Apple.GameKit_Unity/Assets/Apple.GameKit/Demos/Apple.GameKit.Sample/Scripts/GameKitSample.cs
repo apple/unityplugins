@@ -26,20 +26,21 @@ namespace Apple.GameKit.Sample
 
         [SerializeField] private GameObject _mainButtonLayout = default;
         [SerializeField] private AccessPointPanel _accessPointPanel = default;
+        [SerializeField] private FriendsPanel _friendsPanel = default;
+        [SerializeField] private AchievementsPanel _achievementsPanel = default;
         [SerializeField] private RealtimeMatchRequestPanel _realtimeMatchRequestPanel = default;
         [SerializeField] private RealtimeMatchStatusPanel _realtimeMatchStatusPanel = default;
-
-        [SerializeField] private AchievementsPanel _achievementsPanel = default;
 
         [SerializeField] private Button _authenticateBtn = default;
         [SerializeField] private Text _authenticateBtnText = default;
 
+        [SerializeField] private Button _accessPointButton = default;
+        [SerializeField] private Button _friendsButton = default;
         [SerializeField] private Button _showAchievementsBtn = default;
         [SerializeField] private Button _showTurnBasedMatchesBtn = default;
         [SerializeField] private Button _takeTurnButton = default;
         [SerializeField] private Button _endMatchWinnerButton = default;
         [SerializeField] private Button _reportLeaderboardScore = default;
-        [SerializeField] private Button _accessPointButton = default;
         [SerializeField] private Button _realtimeMatchmakingButton = default;
 
         private GKLocalPlayer _localPlayer;
@@ -53,12 +54,13 @@ namespace Apple.GameKit.Sample
                 _ = new AppleLogger();
 
                 _authenticateBtn.onClick.AddListener(OnAuthenticate);
+                _accessPointButton.onClick.AddListener(OnShowAccessPointPanel);
+                _friendsButton.onClick.AddListener(OnShowFriendsPanel);
                 _showAchievementsBtn.onClick.AddListener(OnShowAchievements);
                 _showTurnBasedMatchesBtn.onClick.AddListener(OnShowTurnBasedMatches);
                 _takeTurnButton.onClick.AddListener(OnTakeTurn);
                 _endMatchWinnerButton.onClick.AddListener(OnEndMatchWinner);
                 _reportLeaderboardScore.onClick.AddListener(OnReportLeaderboardScore);
-                _accessPointButton.onClick.AddListener(OnShowAccessPointPanel);
                 _realtimeMatchmakingButton.onClick.AddListener(OnRealtimeMatchmaking);
 
                 foreach (var btn in _mainButtonLayout.GetComponentsInChildren<Button>())
@@ -207,6 +209,11 @@ namespace Apple.GameKit.Sample
         private void OnShowAccessPointPanel()
         {
             PushPanel(_accessPointPanel.gameObject);
+        }
+
+        private void OnShowFriendsPanel()
+        {
+            PushPanel(_friendsPanel.gameObject);
         }
 
         private void OnShowAchievements()

@@ -14,6 +14,9 @@ namespace Apple.GameKit.Editor
     {
         public override string DisplayName => "GameKit";
 
+        [Tooltip("A message that tells the user why the app needs access to their Game Center friends list.")]
+        public string FriendListUsageDescription;
+
         readonly Dictionary<BuildTarget, string> _libraryTable = new Dictionary<BuildTarget, string>
         {
             {BuildTarget.iOS, "GameKitWrapper.framework"},
@@ -24,9 +27,15 @@ namespace Apple.GameKit.Editor
 #if UNITY_EDITOR_OSX
         public override void OnProcessEntitlements(AppleBuildProfile _, BuildTarget buildTarget, string _1, PlistDocument entitlements)
         {
-            if(buildTarget == BuildTarget.StandaloneOSX)
+            entitlements.root.SetBoolean("com.apple.developer.game-center", true);
+        }
+
+        public override void OnProcessInfoPlist(AppleBuildProfile appleBuildProfile, BuildTarget buildTarget, string pathToBuiltTarget, PlistDocument infoPlist)
+        {
+            if (buildTarget == BuildTarget.iOS)
             {
-                entitlements.root.SetBoolean("com.apple.developer.game-center", true);
+                if (!string.IsNullOrWhiteSpace(FriendListUsageDescription))
+                infoPlist.root.SetString("NSGKFriendListUsageDescription", FriendListUsageDescription);
             }
         }
 
