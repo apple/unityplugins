@@ -59,6 +59,9 @@ namespace Apple.GameKit.Leaderboards
         {
             internal Entry(IntPtr pointer) : base(pointer) {}
 
+            // This allows interop to work with the Objective-C type which has a different name: GKLeaderboardEntry.
+            internal static string InteropTypeName => "GKLeaderboardEntry";
+
             /// <summary>
             /// An integer value that your game uses.
             /// </summary>
@@ -77,18 +80,7 @@ namespace Apple.GameKit.Leaderboards
             /// <summary>
             /// The player who earns the score.
             /// </summary>
-            public GKPlayer Player
-            {
-                get
-                {
-                    var pointer = Interop.GKLeaderboardEntry_GetPlayer(Pointer);
-                    
-                    if (pointer != IntPtr.Zero)
-                        return new GKPlayer(pointer);
-
-                    return null;
-                }
-            }
+            public GKPlayer Player => PointerCast<GKPlayer>(Interop.GKLeaderboardEntry_GetPlayer(Pointer));
 
             /// <summary>
             /// The position of the score in the results of a leaderboard search.
@@ -100,7 +92,7 @@ namespace Apple.GameKit.Leaderboards
             /// </summary>
             public long Score => Interop.GKLeaderboardEntry_GetScore(Pointer);
         }
-        
+
         internal GKLeaderboard(IntPtr pointer) : base(pointer) {}
         
         /// <summary>
@@ -143,20 +135,24 @@ namespace Apple.GameKit.Leaderboards
         /// <summary>
         /// Loads leaderboards for the specified leaderboard IDs that Game Center uses.
         /// </summary>
-        /// <param name="identifiers">The leaderboards that match the IDs.</param>
+        /// <param name="identifiers">The leaderboards that match the IDs or null for all leaderboards.</param>
         /// <returns></returns>
         public static Task<NSArray<GKLeaderboard>> LoadLeaderboards(params string[] identifiers)
         {
             var tcs = InteropTasks.Create<NSArray<GKLeaderboard>>(out var taskId);
             
             // Prepare identifiers array...
-            var ids = new NSMutableArray<NSString>();
-            foreach (var identifier in identifiers)
+            NSMutableArray<NSString> ids = null;
+            if (identifiers != null && identifiers.Length > 0)
             {
-                ids.Add(new NSString(identifier));
+                ids = new NSMutableArray<NSString>();
+                foreach (var identifier in identifiers)
+                {
+                    ids.Add(identifier);
+                }
             }
             
-            Interop.GKLeaderboard_LoadLeaderboards(ids.Pointer, taskId, OnLoadLeaderboards, OnLoadLoaderboardsError);
+            Interop.GKLeaderboard_LoadLeaderboards(ids?.Pointer ?? IntPtr.Zero, taskId, OnLoadLeaderboards, OnLoadLoaderboardsError);
             return tcs.Task;
         }
 

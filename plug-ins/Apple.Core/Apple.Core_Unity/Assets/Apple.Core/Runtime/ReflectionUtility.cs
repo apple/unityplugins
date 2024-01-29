@@ -47,7 +47,9 @@ namespace Apple.Core.Runtime
             }
 
             if (pointer == IntPtr.Zero)
+            {
                 return default;
+            }
 
             var constructor = GetConstructor(type);
 

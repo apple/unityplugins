@@ -334,20 +334,26 @@ namespace Apple.GameKit.Sample
         private async void OnReportLeaderboardScore()
         {
             var leaderboards = await GKLeaderboard.LoadLeaderboards();
-            var leaderboard = leaderboards.First(l => l.BaseLeaderboardId == "topscores");
+            var leaderboard = leaderboards?.FirstOrDefault();
 
-            await leaderboard.SubmitScore(100, 0, GKLocalPlayer.Local);
+            if (leaderboard != null)
+            {
+                await leaderboard.SubmitScore(100, 0, GKLocalPlayer.Local);
+            }
 
             var gameCenter = GKGameCenterViewController.Init(GKGameCenterViewController.GKGameCenterViewControllerState.Leaderboards);
             await gameCenter.Present();
 
-            var scores = await leaderboard.LoadEntries(GKLeaderboard.PlayerScope.Global, GKLeaderboard.TimeScope.AllTime, 0, 100);
-
-            Debug.LogError($"my score: {scores.LocalPlayerEntry.Score}");
-
-            foreach (var score in scores.Entries)
+            if (leaderboard != null)
             {
-                Debug.LogError($"score: {score.Score} by {score.Player.DisplayName}");
+                var scores = await leaderboard.LoadEntries(GKLeaderboard.PlayerScope.Global, GKLeaderboard.TimeScope.AllTime, 0, 100);
+
+                Debug.LogError($"my score: {scores.LocalPlayerEntry.Score}");
+
+                foreach (var score in scores.Entries)
+                {
+                    Debug.LogError($"score: {score.Score} by {score.Player.DisplayName}");
+                }
             }
         }
     }

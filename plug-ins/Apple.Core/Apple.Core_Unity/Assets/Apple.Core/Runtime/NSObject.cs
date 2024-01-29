@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Reflection;
 using System.Runtime.InteropServices;
+using UnityEngine;
 
 namespace Apple.Core.Runtime
 {
@@ -35,6 +37,13 @@ namespace Apple.Core.Runtime
         {
             var typeName = type.Name;
 
+            // Special case for types that provide a custom interop type name.
+            if (type.GetProperty("InteropTypeName", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
+                    ?.GetValue(null) is string customTypeName)
+            {
+                typeName = customTypeName;
+            }
+
             // Special cases for NSArray<>, NSDictionary<>, and other NS*<> generics.
             // Strip off the C# generic notation since it's not used for the underlying types on the Swift/ObjC side.
             if (type.IsGenericType && typeName.StartsWith("NS"))
@@ -51,6 +60,19 @@ namespace Apple.Core.Runtime
         }
 
         #region As
+        private IntPtr NSObject_As(IntPtr nsObjectPtr, string targetClassName)
+        {
+            var ptr = Interop.NSObject_As(nsObjectPtr, targetClassName);
+
+            // Log a warning message to the debug console if the type conversion wasn't possible.
+            // This isn't necessarily fatal but might indicate a problematic type naming inconsistency between C# and Objective-C.
+            if (ptr == IntPtr.Zero)
+            {
+                Debug.LogWarning($"Unable to convert object to type {targetClassName}");
+            }
+
+            return ptr;
+        }
         /// <summary>
         /// Try to cast this NSObject to the given type <typeparamref name="T"/>.
         /// </summary>
@@ -58,7 +80,7 @@ namespace Apple.Core.Runtime
         /// <returns>A reference to the object of type <typeparamref name="T"/> or null if the cast could not be performed.</returns>
         public T As<T>() where T : NSObject
         {
-            return Pointer != IntPtr.Zero ? PointerCast<T>(Interop.NSObject_As(Pointer, GetInteropTypeName(typeof(T)))) : null;
+            return Pointer != IntPtr.Zero ? PointerCast<T>(NSObject_As(Pointer, GetInteropTypeName(typeof(T)))) : null;
         }
 
         /// <summary>
@@ -69,7 +91,7 @@ namespace Apple.Core.Runtime
         /// Because this method isn't generic, the caller is responsible for casting the returned object to the desired type if the call was successful.</returns>
         public NSObject As(Type type)
         {
-            return (Pointer != IntPtr.Zero) ? PointerCast(type, Interop.NSObject_As(Pointer, GetInteropTypeName(type))) as NSObject : null;
+            return (Pointer != IntPtr.Zero) ? PointerCast(type, NSObject_As(Pointer, GetInteropTypeName(type))) as NSObject : null;
         }
         #endregion
 
