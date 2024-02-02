@@ -71,11 +71,16 @@ namespace Apple.GameKit.Multiplayer
         [MonoPInvokeCallback(typeof(InternalPlayerVoiceChatStateDidChangeHandler))]
         private static void OnPlayerVoiceChatStateDidChange(IntPtr pointer, IntPtr playerPtr, PlayerState state)
         {
-            if (!_gkVoiceChats.TryGetValue(pointer, out var voiceChat))
-                return;
+            InteropPInvokeExceptionHandler.CatchAndLog(() =>
+            {
+                if (!_gkVoiceChats.TryGetValue(pointer, out var voiceChat))
+                {
+                    return;
+                }
 
-            var player = playerPtr != IntPtr.Zero ? new GKPlayer(playerPtr) : null;
-            voiceChat.PlayerVoiceChatStateDidChange?.Invoke(player, state);
+                var player = playerPtr != IntPtr.Zero ? new GKPlayer(playerPtr) : null;
+                voiceChat.PlayerVoiceChatStateDidChange?.Invoke(player, state);
+            });
         }
         #endregion
 

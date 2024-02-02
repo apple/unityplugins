@@ -79,43 +79,43 @@ namespace Apple.GameKit.Multiplayer
         [MonoPInvokeCallback(typeof(InteropExchangeCanceledHandler))]
         private static void OnExchangeCanceled(IntPtr player, IntPtr exchange, IntPtr match)
         {
-            ExchangeCanceled?.Invoke(PointerCast<GKPlayer>(player), PointerCast<GKTurnBasedExchange>(exchange), PointerCast<GKTurnBasedMatch>(match));
+            InteropPInvokeExceptionHandler.CatchAndLog(() => ExchangeCanceled?.Invoke(PointerCast<GKPlayer>(player), PointerCast<GKTurnBasedExchange>(exchange), PointerCast<GKTurnBasedMatch>(match)));
         }
         
         [MonoPInvokeCallback(typeof(InteropExchangeReceivedHandler))]
         private static void OnExchangeReceived(IntPtr player, IntPtr exchange, IntPtr match)
         {
-            ExchangeReceived?.Invoke(PointerCast<GKPlayer>(player), PointerCast<GKTurnBasedExchange>(exchange), PointerCast<GKTurnBasedMatch>(match));
+            InteropPInvokeExceptionHandler.CatchAndLog(() => ExchangeReceived?.Invoke(PointerCast<GKPlayer>(player), PointerCast<GKTurnBasedExchange>(exchange), PointerCast<GKTurnBasedMatch>(match)));
         }
         
         [MonoPInvokeCallback(typeof(InteropExchangeCompletedHandler))]
         private static void OnExchangeCompleted(IntPtr player, IntPtr replies, IntPtr exchange, IntPtr match)
         {
-            ExchangeCompleted?.Invoke(PointerCast<GKPlayer>(player), PointerCast<NSArray<GKTurnBasedExchangeReply>>(replies), PointerCast<GKTurnBasedExchange>(exchange), PointerCast<GKTurnBasedMatch>(match));
+            InteropPInvokeExceptionHandler.CatchAndLog(() => ExchangeCompleted?.Invoke(PointerCast<GKPlayer>(player), PointerCast<NSArray<GKTurnBasedExchangeReply>>(replies), PointerCast<GKTurnBasedExchange>(exchange), PointerCast<GKTurnBasedMatch>(match)));
         }
 
         [MonoPInvokeCallback(typeof(InteropMatchRequestedWithOtherPlayersHandler))]
         private static void OnMatchRequestedWithOtherPlayers(IntPtr player, IntPtr otherPlayers)
         {
-            MatchRequestedWithOtherPlayers?.Invoke(PointerCast<GKPlayer>(player), PointerCast<NSArray<GKPlayer>>(otherPlayers));
+            InteropPInvokeExceptionHandler.CatchAndLog(() => MatchRequestedWithOtherPlayers?.Invoke(PointerCast<GKPlayer>(player), PointerCast<NSArray<GKPlayer>>(otherPlayers)));
         }
 
         [MonoPInvokeCallback(typeof(InteropMatchEndedHandler))]
         private static void OnMatchEnded(IntPtr player, IntPtr match)
         {
-            MatchEnded?.Invoke(PointerCast<GKPlayer>(player), PointerCast<GKTurnBasedMatch>(match));
+            InteropPInvokeExceptionHandler.CatchAndLog(() => MatchEnded?.Invoke(PointerCast<GKPlayer>(player), PointerCast<GKTurnBasedMatch>(match)));
         }
 
         [MonoPInvokeCallback(typeof(InteropTurnEventReceivedHandler))]
         private static void OnTurnEventReceived(IntPtr player, IntPtr match, bool didBecomeActive)
         {
-            TurnEventReceived?.Invoke(PointerCast<GKPlayer>(player), PointerCast<GKTurnBasedMatch>(match), didBecomeActive);
+            InteropPInvokeExceptionHandler.CatchAndLog(() => TurnEventReceived?.Invoke(PointerCast<GKPlayer>(player), PointerCast<GKTurnBasedMatch>(match), didBecomeActive));
         }
 
         [MonoPInvokeCallback(typeof(InteropPlayerWantsToQuitMatchHandler))]
         private static void OnPlayerWantsToQuit(IntPtr player, IntPtr match)
         {
-            PlayerWantsToQuit?.Invoke(PointerCast<GKPlayer>(player), PointerCast<GKTurnBasedMatch>(match));
+            InteropPInvokeExceptionHandler.CatchAndLog(() => PlayerWantsToQuit?.Invoke(PointerCast<GKPlayer>(player), PointerCast<GKTurnBasedMatch>(match)));
         }
         #endregion
 
@@ -219,7 +219,7 @@ namespace Apple.GameKit.Multiplayer
             return tcs.Task;
         }
 
-        [MonoPInvokeCallback(typeof(SuccessCallback<InteropData>))]
+        [MonoPInvokeCallback(typeof(SuccessTaskCallback<InteropData>))]
         private static void OnLoadMatchData(long taskId, InteropData data)
         {
             InteropTasks.TrySetResultAndRemove(taskId, data.ToBytes());
