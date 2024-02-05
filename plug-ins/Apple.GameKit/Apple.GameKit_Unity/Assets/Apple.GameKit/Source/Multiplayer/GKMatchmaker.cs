@@ -78,6 +78,13 @@ namespace Apple.GameKit.Multiplayer
             InteropTasks.TrySetExceptionAndRemove<GKMatch>(taskId, new GameKitException(errorPointer));
         }
         #endregion
+
+        #region FinishMatchmaking
+        public void FinishMatchmaking(GKMatch match)
+        {
+            Interop.GKMatchmaker_FinishMatchmaking(Pointer, match.Pointer);
+        }
+        #endregion
         
         #region FindPlayers
 
@@ -265,6 +272,8 @@ namespace Apple.GameKit.Multiplayer
             public static extern void GKMatchmaker_FindMatch(IntPtr pointer, long taskId, IntPtr matchRequest, SuccessTaskCallback<IntPtr> onSuccess, NSErrorTaskCallback onError);
             [DllImport(InteropUtility.DLLName)]
             public static extern void GKMatchmaker_MatchForInvite(IntPtr pointer, long taskId, IntPtr invite, SuccessTaskCallback<IntPtr> onSuccess, NSErrorTaskCallback onError);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKMatchmaker_FinishMatchmaking(IntPtr gkMatchmakerPtr, IntPtr gkMatchPtr);
             [DllImport(InteropUtility.DLLName)]
             public static extern void GKMatchmaker_FindPlayers(IntPtr pointer, long taskId, IntPtr request, SuccessTaskCallback<IntPtr> onSuccess, NSErrorTaskCallback onError);
             [DllImport(InteropUtility.DLLName)]

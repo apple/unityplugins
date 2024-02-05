@@ -47,16 +47,7 @@ namespace Apple.GameKit.Multiplayer
         /// <summary>
         /// The object that handles matchmaker view controller changes.
         /// </summary>
-        public GKTurnBasedMatchmakerViewControllerDelegate MatchmakerDelegate
-        {
-            get
-            {
-                if(_delegate == null)
-                    _delegate = PointerCast<GKTurnBasedMatchmakerViewControllerDelegate>(Interop.GKTurnBasedMatchmakerViewController_GetMatchmakerDelegate(Pointer));
-
-                return _delegate;
-            }
-        }
+        public GKTurnBasedMatchmakerViewControllerDelegate MatchmakerDelegate => _delegate ??= PointerCast<GKTurnBasedMatchmakerViewControllerDelegate>(Interop.GKTurnBasedMatchmakerViewController_GetMatchmakerDelegate(Pointer));
 
         /// <summary>
         /// Displays the view controller.

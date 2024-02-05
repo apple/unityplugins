@@ -38,6 +38,22 @@ public class TestNSArray
     }
 
     [Test]
+    public void TestConstructFromCollection()
+    {
+        int[] intArray = null;
+        var mutableArray = new NSMutableArray<int>(intArray);
+        Assert.AreEqual(0, mutableArray.Count);
+
+        intArray = new int[] { 0, 1, 2, 3 };
+        mutableArray = new NSMutableArray<int>(intArray);
+        Assert.AreEqual(4, mutableArray.Count);
+        Assert.AreEqual(0, mutableArray[0]);
+        Assert.AreEqual(1, mutableArray[1]);
+        Assert.AreEqual(2, mutableArray[2]);
+        Assert.AreEqual(3, mutableArray[3]);
+    }
+
+    [Test]
     public void TestTryGetValueAt()
     {
         // string

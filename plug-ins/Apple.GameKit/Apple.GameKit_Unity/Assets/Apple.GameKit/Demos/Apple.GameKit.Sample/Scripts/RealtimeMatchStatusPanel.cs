@@ -19,15 +19,17 @@ namespace Apple.GameKit.Sample
         [SerializeField] private Text _matchStatusTitleText = default;
         [SerializeField] private GameObject _matchButtonArea = default;
         [SerializeField] private GameObject _inviteButtonArea = default;
+        [SerializeField] private GameObject _startGameButtonArea = default;
 
         public void Populate(GKMatch match) => Populate(
             GKPlayerConnectionState.Connected,
             match: match);
 
-        public void Populate(GKMatchRequest request, GKMatch match) => Populate(
+        public void Populate(GKMatchRequest request, GKMatch match, bool showStartGameButton) => Populate(
             GKPlayerConnectionState.Connected,
             request: request,
-            match: match);
+            match: match,
+            showStartGameButton: showStartGameButton);
 
         public void Populate(GKMatchRequest request, GKMatchedPlayers matchedPlayers) => Populate(
             GKPlayerConnectionState.Unknown,
@@ -43,6 +45,7 @@ namespace Apple.GameKit.Sample
             GKPlayerConnectionState initialConnectionState,
             GKMatchRequest request = null,
             GKMatch match = null,
+            bool showStartGameButton = false,
             GKMatchedPlayers matchedPlayers = null,
             NSArray<GKPlayer> players = null)
         {
@@ -81,7 +84,8 @@ namespace Apple.GameKit.Sample
             }
 
             _matchStatusTitleText.gameObject.SetActive(Match != null);
-            _matchButtonArea.SetActive(Match != null);
+            _startGameButtonArea.SetActive(Match != null && showStartGameButton);
+            _matchButtonArea.SetActive(Match != null && !showStartGameButton);
             _inviteButtonArea.SetActive(MatchRequest != null && MatchedPlayers?.Players?.Count > 0);
         }
 
@@ -157,7 +161,7 @@ namespace Apple.GameKit.Sample
             if (connectionState == GKPlayerConnectionState.Connected)
             {
                 // get player properties for this new player
-                Match?.PlayerProperties.TryGetValue(player, out matchProperties);
+                Match?.PlayerProperties?.TryGetValue(player, out matchProperties);
             }
 
             AddOrUpdatePlayerPanel(player, connectionState, matchProperties);
@@ -223,6 +227,16 @@ namespace Apple.GameKit.Sample
             {
                 IsRequestingMatch = true;
                 GameKitSample.PopPanel();
+            }
+        }
+
+        public void FinishMatchmaking()
+        {
+            if (Match != null)
+            {
+                GKMatchmaker.Shared?.FinishMatchmaking(Match);
+                _startGameButtonArea.SetActive(false);
+                _matchButtonArea.SetActive(true);
             }
         }
     }

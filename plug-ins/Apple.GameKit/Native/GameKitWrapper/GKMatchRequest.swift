@@ -240,3 +240,63 @@ public func GKMatchRequest_SetRecipientProperties
         }
     }
 }
+
+public typealias GKMatchRequestRecipientResponseHandler = @convention(c) (UnsafeMutableRawPointer /*GKMatchRequest*/, UnsafeMutableRawPointer /*GKPlayer*/, Int /*GKInviteRecipientResponse*/) -> Void;
+
+@_cdecl("GKMatchRequest_SetRecipientResponseHandler")
+public func GKMatchRequest_SetRecipientResponseHandler
+(
+    gkMatchRequestPtr: UnsafeMutableRawPointer,
+    recipientResponseHandler: GKMatchRequestRecipientResponseHandler? // optional func params are @escaping by default
+)
+{
+    let gkMatchRequest = Unmanaged<GKMatchRequest>.fromOpaque(gkMatchRequestPtr).takeUnretainedValue();
+
+    guard let recipientResponseHandler = recipientResponseHandler else {
+        gkMatchRequest.recipientResponseHandler = nil;
+        return;
+    }
+
+    // NOTE: The match request pointer is passed back without retaining it. This is
+    // because the C# callback will map it to an existing C# wrapper for GKMatchRequest
+    // so it is not necessary to increase the reference count. The C# callback has to
+    // find the original C# GKMatchRequest wrapper because it contains the reference to
+    // the C# event handler set by the user.
+    // See additional comments in GKMatchRequest.cs near the _instanceMap Dictionary.
+    gkMatchRequest.recipientResponseHandler = { gkPlayer, gkInviteRecipientResponse in
+        recipientResponseHandler(
+            gkMatchRequestPtr, // see note above
+            Unmanaged.passRetained(gkPlayer).toOpaque(),
+            gkInviteRecipientResponse.rawValue);
+    }
+}
+
+@_cdecl("GKMatchRequest_GetDefaultNumberOfPlayers")
+public func GKMatchRequest_GetDefaultNumberOfPlayers
+(
+    gkMatchRequestPtr: UnsafeMutableRawPointer
+) -> Int
+{
+    let gkMatchRequest = Unmanaged<GKMatchRequest>.fromOpaque(gkMatchRequestPtr).takeUnretainedValue();
+    return gkMatchRequest.defaultNumberOfPlayers;
+}
+
+@_cdecl("GKMatchRequest_SetDefaultNumberOfPlayers")
+public func GKMatchRequest_SetDefaultNumberOfPlayers
+(
+    gkMatchRequestPtr: UnsafeMutableRawPointer,
+    value: Int
+)
+{
+    let gkMatchRequest = Unmanaged<GKMatchRequest>.fromOpaque(gkMatchRequestPtr).takeUnretainedValue();
+    gkMatchRequest.defaultNumberOfPlayers = value;
+}
+
+@_cdecl("GKMatchRequest_GetMaxPlayersAllowedForMatchOfType")
+public func GKMatchRequest_GetMaxPlayersAllowedForMatchOfType
+(
+    matchType: UInt // GKMatchType
+) -> Int
+{
+    return GKMatchRequest.maxPlayersAllowedForMatch(of: GKMatchType(rawValue: matchType)!);
+}

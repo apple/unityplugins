@@ -11,7 +11,7 @@ namespace Apple.GameKit.Multiplayer
     /// </summary>
     public class GKVoiceChat : NSObject
     {
-        private static readonly Dictionary<IntPtr, GKVoiceChat> _gkVoiceChats = new Dictionary<IntPtr, GKVoiceChat>();
+        private static readonly Dictionary<IntPtr, WeakReference<GKVoiceChat>> _instanceMap = new Dictionary<IntPtr, WeakReference<GKVoiceChat>>();
 
         /// <summary>
         /// A method that handles when a player's voice chat changes state.
@@ -20,15 +20,15 @@ namespace Apple.GameKit.Multiplayer
         
         internal GKVoiceChat(IntPtr pointer) : base(pointer)
         {
-            _gkVoiceChats.Add(pointer, this);
-            Interop.GKVoiceChat_PlayerVoiceChatStateDidChangeHandler(Pointer, OnPlayerVoiceChatStateDidChange);
+            _instanceMap.Add(pointer, new WeakReference<GKVoiceChat>(this));
+            Interop.GKVoiceChat_PlayerVoiceChatStateDidChangeHandler(pointer, OnPlayerVoiceChatStateDidChange);
         }
 
         protected override void OnDispose(bool isDisposing)
         {
             if (Pointer != IntPtr.Zero)
             {
-                _gkVoiceChats.Remove(Pointer);
+                _instanceMap.Remove(Pointer);
             }
             base.OnDispose(isDisposing);
         }
@@ -73,13 +73,12 @@ namespace Apple.GameKit.Multiplayer
         {
             InteropPInvokeExceptionHandler.CatchAndLog(() =>
             {
-                if (!_gkVoiceChats.TryGetValue(pointer, out var voiceChat))
+                if (_instanceMap.TryGetValue(pointer, out var gkVoiceChatRef) &&
+                    gkVoiceChatRef.TryGetTarget(out var gkVoiceChat))
                 {
-                    return;
+                    var player = PointerCast<GKPlayer>(playerPtr);
+                    gkVoiceChat?.PlayerVoiceChatStateDidChange?.Invoke(player, state);
                 }
-
-                var player = playerPtr != IntPtr.Zero ? new GKPlayer(playerPtr) : null;
-                voiceChat.PlayerVoiceChatStateDidChange?.Invoke(player, state);
             });
         }
         #endregion

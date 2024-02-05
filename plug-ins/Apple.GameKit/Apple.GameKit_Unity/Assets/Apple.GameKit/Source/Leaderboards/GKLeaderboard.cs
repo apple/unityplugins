@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using AOT;
@@ -145,11 +146,7 @@ namespace Apple.GameKit.Leaderboards
             NSMutableArray<NSString> ids = null;
             if (identifiers != null && identifiers.Length > 0)
             {
-                ids = new NSMutableArray<NSString>();
-                foreach (var identifier in identifiers)
-                {
-                    ids.Add(identifier);
-                }
+                ids = new NSMutableArray<NSString>(identifiers.Select(id => new NSString(id)));
             }
             
             Interop.GKLeaderboard_LoadLeaderboards(ids?.Pointer ?? IntPtr.Zero, taskId, OnLoadLeaderboards, OnLoadLoaderboardsError);

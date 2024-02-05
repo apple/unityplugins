@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Apple.Core;
 using Apple.Core.Runtime;
@@ -56,15 +57,15 @@ namespace Apple.GameKit.Sample
                             }
 
                             // This is completely unnecessary except to verify that LoadFriends(NSArray<NSString> identifiers) returns the same result.
-                            var identifiers = new NSMutableArray<NSString>();
-                            foreach (var friend in friends)
-                            {
-                                identifiers.Add(friend.GamePlayerId);
-                            }
+                            var identifiers = new NSMutableArray<NSString>(friends.Select(friend => new NSString(friend.GamePlayerId)));
                             var friends2 = await localPlayer.LoadFriends(identifiers);
-                            if (friends2.Count != friends.Count)
+                            if (friends2.Count == friends.Count)
                             {
-                                throw new Exception("LoadFriends(identifiers) returned the wrong number of results.");
+                                Debug.Log($"LoadFriends(identifiers) returned the correct number of results ({friends2.Count}).");
+                            }
+                            else
+                            {
+                                Debug.LogError($"LoadFriends(identifiers) returned the wrong number of results (expected {friends.Count} but got {friends2.Count}).");
                             }
                         }
                     }

@@ -12,17 +12,7 @@ namespace Apple.Core
             Application.logMessageReceivedThreaded += AppleLog;
         }
 
-        public AppleLogger Instance
-        {
-            get
-            {
-                if (instance == null)
-                {
-                    instance = new AppleLogger();
-                }
-                return instance;
-            }
-        }
+        public AppleLogger Instance => instance ??= new AppleLogger();
 
         private void AppleLog(string msg, string trace, LogType t)
         {

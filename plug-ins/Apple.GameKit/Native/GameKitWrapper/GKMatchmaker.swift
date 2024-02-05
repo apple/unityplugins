@@ -29,17 +29,16 @@ public func GKMatchmaker_MatchForInvite
 {
     let matchmaker = Unmanaged<GKMatchmaker>.fromOpaque(pointer).takeUnretainedValue();
     let invite = Unmanaged<GKInvite>.fromOpaque(invitePtr).takeUnretainedValue();
-    
+
     matchmaker.match(for: invite, completionHandler: { match, error in
-        if(error != nil) {
+        if (error != nil) {
             onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
             return;
         }
         
         let delegate = GKWMatchDelegate();
         match!.delegate = delegate;
-        
-        matchmaker.finishMatchmaking(for: match!);
+
         onSuccess(taskId, Unmanaged.passRetained(match!).toOpaque());
     });
 }
@@ -56,19 +55,31 @@ public func GKMatchmaker_FindMatch
 {
     let matchmaker = Unmanaged<GKMatchmaker>.fromOpaque(pointer).takeUnretainedValue();
     let matchRequest = Unmanaged<GKMatchRequest>.fromOpaque(matchRequestPtr).takeUnretainedValue();
-    
+
     matchmaker.findMatch(for: matchRequest, withCompletionHandler: { match, error in
-        if(error != nil) {
+        if (error != nil) {
             onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
             return;
         }
         
         let delegate = GKWMatchDelegate();
         match!.delegate = delegate;
-        
-        matchmaker.finishMatchmaking(for: match!);
+
         onSuccess(taskId, Unmanaged.passRetained(match!).toOpaque());
     });
+}
+
+@_cdecl("GKMatchmaker_FinishMatchmaking")
+public func GKMatchmaker_FinishMatchmaking
+(
+    gkMatchmakerPtr : UnsafeMutableRawPointer,
+    gkMatchPtr : UnsafeMutableRawPointer
+)
+{
+    let gkMatchmaker = Unmanaged<GKMatchmaker>.fromOpaque(gkMatchmakerPtr).takeUnretainedValue();
+    let gkMatch = Unmanaged<GKMatch>.fromOpaque(gkMatchPtr).takeUnretainedValue();
+
+    gkMatchmaker.finishMatchmaking(for: gkMatch);
 }
 
 @_cdecl("GKMatchmaker_Cancel")

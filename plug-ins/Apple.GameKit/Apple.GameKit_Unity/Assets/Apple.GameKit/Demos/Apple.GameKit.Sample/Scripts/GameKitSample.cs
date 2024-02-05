@@ -227,7 +227,7 @@ namespace Apple.GameKit.Sample
             {
                 var request = GKMatchRequest.Init();
                 request.MinPlayers = 2;
-                request.MaxPlayers = 2;
+                request.MaxPlayers = Math.Max(request.MinPlayers, GKMatchRequest.MaxPlayersAllowedForMatch(GKMatchRequest.GKMatchType.TurnBased));
 
                 _activeMatch = await GKTurnBasedMatchmakerViewController.Request(request);
                 _playerDisplayName.text = $"Match: {_activeMatch.MatchId}, Status: {_activeMatch.MatchStatus}, IsMyTurn: {_activeMatch.IsActivePlayer}";

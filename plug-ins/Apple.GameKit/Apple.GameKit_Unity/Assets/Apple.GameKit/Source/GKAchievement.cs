@@ -68,12 +68,7 @@ namespace Apple.GameKit
         {
             var tcs = InteropTasks.Create<bool>(out var taskId);
 
-            var mutable = new NSMutableArray<GKAchievement>();
-
-            foreach (var achievement in achievements)
-            {
-                mutable.Add(achievement);
-            }
+            var mutable = new NSMutableArray<GKAchievement>(achievements);
             
             Interop.GKAchievement_Report(taskId, mutable.Pointer, OnReportSuccess, OnReportError);
             return tcs.Task;
@@ -154,10 +149,7 @@ namespace Apple.GameKit
         public Task<NSArray<GKPlayer>> SelectChallengeablePlayers(GKPlayer[] players)
         {
             // Mutable players...
-            var mutablePlayers = new NSMutableArray<GKPlayer>();
-            if(players != null)
-                foreach(var player in players)
-                    mutablePlayers.Add(player);
+            var mutablePlayers = new NSMutableArray<GKPlayer>(players);
             
             var tcs = InteropTasks.Create<NSArray<GKPlayer>>(out var taskId);
             Interop.GKAchievement_SelectChallengeablePlayers(Pointer, taskId, mutablePlayers.Pointer, OnSelectChallengeablePlayers, OnSelectChallengeablePlayersError);
@@ -185,10 +177,7 @@ namespace Apple.GameKit
         public void ChallengeComposeController(string message, GKPlayer[] players)
         {
             // Mutable players...
-            var mutablePlayers = new NSMutableArray<GKPlayer>();
-            if(players != null)
-                foreach(var player in players)
-                    mutablePlayers.Add(player);
+            var mutablePlayers = new NSMutableArray<GKPlayer>(players);
             
             Interop.GKAchievement_ChallengeComposeController(Pointer, message, mutablePlayers.Pointer);
         }
