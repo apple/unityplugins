@@ -254,3 +254,70 @@ public func GKMatchmaker_CancelPendingInvite
     
     matchmaker.cancelPendingInvite(to: player);
 }
+
+public typealias GKMatchmakerNearbyPlayerReachableHandler = @convention(c) (UnsafeMutableRawPointer /*GKMatchmaker*/, UnsafeMutableRawPointer /*GKPlayer*/, Bool /*reachable*/) -> Void;
+
+@_cdecl("GKMatchmaker_StartBrowsingForNearbyPlayers")
+public func GKMatchmaker_StartBrowsingForNearbyPlayers
+(
+    gkMatchmakerPtr: UnsafeMutableRawPointer,
+    nearbyPlayerReachableHandler: @escaping GKMatchmakerNearbyPlayerReachableHandler
+)
+{
+    if #available(iOS 8.0, tvOS 9.0, macOS 10.10, *) {
+        let gkMatchmaker = Unmanaged<GKMatchmaker>.fromOpaque(gkMatchmakerPtr).takeUnretainedValue();
+        gkMatchmaker.startBrowsingForNearbyPlayers(handler: { gkPlayer, isReachable in
+            nearbyPlayerReachableHandler(
+                gkMatchmakerPtr,    // not retained as per notes in InteropWeakMap.cs.
+                Unmanaged.passRetained(gkPlayer).toOpaque(),
+                isReachable);
+        });
+    }
+}
+
+@_cdecl("GKMatchmaker_StopBrowsingForNearbyPlayers")
+public func GKMatchmaker_StopBrowsingForNearbyPlayers
+(
+    gkMatchmakerPtr: UnsafeMutableRawPointer
+)
+{
+    if #available(iOS 6.0, tvOS 9.0, macOS 10.9, *) {
+        let gkMatchmaker = Unmanaged<GKMatchmaker>.fromOpaque(gkMatchmakerPtr).takeUnretainedValue();
+        gkMatchmaker.stopBrowsingForNearbyPlayers();
+    }
+}
+
+public typealias GKMatchmakerGroupActivityPlayerHandler = @convention(c) (UnsafeMutableRawPointer /*GKMatchmaker*/, UnsafeMutableRawPointer /*GKPlayer*/) -> Void;
+
+@_cdecl("GKMatchmaker_StartGroupActivity")
+public func GKMatchmaker_StartGroupActivity
+(
+    gkMatchmakerPtr: UnsafeMutableRawPointer,
+    groupActivityPlayerHandler: @escaping GKMatchmakerGroupActivityPlayerHandler
+)
+{
+    #if !os(tvOS)
+    if #available(iOS 16.2, macOS 13.1, *) {
+        let gkMatchmaker = Unmanaged<GKMatchmaker>.fromOpaque(gkMatchmakerPtr).takeUnretainedValue();
+        gkMatchmaker.startGroupActivity(playerHandler: { gkPlayer in
+            groupActivityPlayerHandler(
+                gkMatchmakerPtr,    // not retained as per notes in InteropWeakMap.cs.
+                Unmanaged.passRetained(gkPlayer).toOpaque());
+        });
+    }
+    #endif
+}
+
+@_cdecl("GKMatchmaker_StopGroupActivity")
+public func GKMatchmaker_StopGroupActivity
+(
+    gkMatchmakerPtr: UnsafeMutableRawPointer
+)
+{
+    #if !os(tvOS)
+    if #available(iOS 16.2, macOS 13.1, *) {
+        let gkMatchmaker = Unmanaged<GKMatchmaker>.fromOpaque(gkMatchmakerPtr).takeUnretainedValue();
+        gkMatchmaker.stopGroupActivity();
+    }
+    #endif
+}

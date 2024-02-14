@@ -24,7 +24,6 @@ public class GKWMatchDelegate : NSObject, GKMatchDelegate {
     public var DidFailWithErrorHandler: GKMatchDidFailWithErrorCallback? = nil;
 
     public func match(_ match: GKMatch, didReceive data: Data, fromRemotePlayer player: GKPlayer) {
-        print(player);
         DataReceivedHandler?(
             Unmanaged.passRetained(self).toOpaque(),
             data.toUCharP(),

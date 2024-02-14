@@ -56,6 +56,7 @@ namespace Apple.Core.Runtime
         #region IDisposable
 
         private bool _isDisposed;
+        internal bool IsDisposed => _isDisposed;
         private void Dispose(bool isDisposing)
         {
             if (_isDisposed)

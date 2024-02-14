@@ -41,3 +41,23 @@ bool NSObject_Is(void * nsObjectPtr, const char * targetClassName) {
     }
     return false;
 }
+
+bool NSObject_IsEqual(void * nsObject1Ptr, void * nsObject2Ptr) {
+
+    // Pointers to same address mean both objects are the same.
+    if (nsObject1Ptr == nsObject2Ptr) {
+        return true;
+    }
+
+    // Pointers are not the same but if one is NULL then they are definitely not the same object.
+    if (nsObject1Ptr == NULL || nsObject2Ptr == NULL) {
+        return false;
+    }
+
+    // Pointers are not the same and neither are NULL. Use isEqual to determine equality.
+    return [(__bridge NSObject *)nsObject1Ptr isEqual:(__bridge NSObject *)nsObject2Ptr];
+}
+
+unsigned long NSObject_Hash(void * nsObjectPtr) {
+    return (unsigned long)((__bridge NSObject *)nsObjectPtr).hash;
+}

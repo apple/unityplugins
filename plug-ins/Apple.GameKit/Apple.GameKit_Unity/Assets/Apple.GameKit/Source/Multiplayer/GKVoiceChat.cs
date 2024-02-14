@@ -11,7 +11,7 @@ namespace Apple.GameKit.Multiplayer
     /// </summary>
     public class GKVoiceChat : NSObject
     {
-        private static readonly Dictionary<IntPtr, WeakReference<GKVoiceChat>> _instanceMap = new Dictionary<IntPtr, WeakReference<GKVoiceChat>>();
+        private static readonly InteropWeakMap<GKVoiceChat> _instanceMap = new InteropWeakMap<GKVoiceChat>();
 
         /// <summary>
         /// A method that handles when a player's voice chat changes state.
@@ -20,16 +20,13 @@ namespace Apple.GameKit.Multiplayer
         
         internal GKVoiceChat(IntPtr pointer) : base(pointer)
         {
-            _instanceMap.Add(pointer, new WeakReference<GKVoiceChat>(this));
+            _instanceMap.Add(this);
             Interop.GKVoiceChat_PlayerVoiceChatStateDidChangeHandler(pointer, OnPlayerVoiceChatStateDidChange);
         }
 
         protected override void OnDispose(bool isDisposing)
         {
-            if (Pointer != IntPtr.Zero)
-            {
-                _instanceMap.Remove(Pointer);
-            }
+            _instanceMap.Remove(this);
             base.OnDispose(isDisposing);
         }
         
@@ -73,11 +70,10 @@ namespace Apple.GameKit.Multiplayer
         {
             InteropPInvokeExceptionHandler.CatchAndLog(() =>
             {
-                if (_instanceMap.TryGetValue(pointer, out var gkVoiceChatRef) &&
-                    gkVoiceChatRef.TryGetTarget(out var gkVoiceChat))
+                if (_instanceMap.TryGet(pointer, out var gkVoiceChat))
                 {
                     var player = PointerCast<GKPlayer>(playerPtr);
-                    gkVoiceChat?.PlayerVoiceChatStateDidChange?.Invoke(player, state);
+                    gkVoiceChat.PlayerVoiceChatStateDidChange?.Invoke(player, state);
                 }
             });
         }

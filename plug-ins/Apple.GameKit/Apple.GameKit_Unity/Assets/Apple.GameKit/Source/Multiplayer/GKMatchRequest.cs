@@ -64,26 +64,17 @@ namespace Apple.GameKit.Multiplayer
             TurnBased = 2
         }
 
-        // Keep a collection of weak references to existing C# GKMatchRequest wrappers.
-        // This allows us to map the address of the underlying GKMatchRequest to the corresponding C# wrapper
-        // and guarantees that we can retrieve the correct RecipientResponseHandler that was originally set.
-        // Without this mapping, we might end up creating a duplicate C# wrapper around the underlying GKMatchRequest
-        // upon receiving the callback and the duplicate would not contain the RecipientResponseHandler that
-        // was originally set on the first copy of the wrapper.
-        private static readonly Dictionary<IntPtr, WeakReference<GKMatchRequest>> _instanceMap = new Dictionary<IntPtr, WeakReference<GKMatchRequest>>();
+        private static readonly InteropWeakMap<GKMatchRequest> _instanceMap = new InteropWeakMap<GKMatchRequest>();
 
         internal GKMatchRequest(IntPtr pointer) : base(pointer)
         {
-            _instanceMap.Add(pointer, new WeakReference<GKMatchRequest>(this));
+            _instanceMap.Add(this);
             Interop.GKMatchRequest_SetRecipientResponseHandler(pointer, OnRecipientResponse);
         }
         
         protected override void OnDispose(bool isDisposing)
         {
-            if (Pointer != IntPtr.Zero)
-            {
-                _instanceMap.Remove(Pointer);
-            }
+            _instanceMap.Remove(this);
             base.OnDispose(isDisposing);
         }
 
@@ -185,11 +176,10 @@ namespace Apple.GameKit.Multiplayer
             InteropPInvokeExceptionHandler.CatchAndLog(() =>
             {
                 // Rehydrate the weak reference to the original C# GKMatchRequest wrapper that contains the RecipientResponse handler.
-                if (_instanceMap.TryGetValue(gkMatchRequestPtr, out var gkMatchRequestRef) &&
-                    gkMatchRequestRef.TryGetTarget(out var gkMatchRequest))
+                if (_instanceMap.TryGet(gkMatchRequestPtr, out var gkMatchRequest))
                 {
                     var gkPlayer = PointerCast<GKPlayer>(gkPlayerPtr);
-                    gkMatchRequest?.RecipientResponse?.Invoke(gkPlayer, response);
+                    gkMatchRequest.RecipientResponse?.Invoke(gkPlayer, response);
                 }
             });
         }

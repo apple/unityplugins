@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Apple.Core;
+using Apple.Core.Runtime;
 using Apple.GameKit.Leaderboards;
 using Apple.GameKit.Multiplayer;
 using UnityEngine;
@@ -28,6 +29,7 @@ namespace Apple.GameKit.Sample
         [SerializeField] private AccessPointPanel _accessPointPanel = default;
         [SerializeField] private FriendsPanel _friendsPanel = default;
         [SerializeField] private AchievementsPanel _achievementsPanel = default;
+        [SerializeField] private NearbyPlayersPanel _nearbyPlayersPanel = default;
         [SerializeField] private RealtimeMatchRequestPanel _realtimeMatchRequestPanel = default;
         [SerializeField] private RealtimeMatchStatusPanel _realtimeMatchStatusPanel = default;
 
@@ -37,6 +39,7 @@ namespace Apple.GameKit.Sample
         [SerializeField] private Button _accessPointButton = default;
         [SerializeField] private Button _friendsButton = default;
         [SerializeField] private Button _showAchievementsBtn = default;
+        [SerializeField] private Button _nearbyPlayersButton = default;
         [SerializeField] private Button _showTurnBasedMatchesBtn = default;
         [SerializeField] private Button _takeTurnButton = default;
         [SerializeField] private Button _endMatchWinnerButton = default;
@@ -57,6 +60,7 @@ namespace Apple.GameKit.Sample
                 _accessPointButton.onClick.AddListener(OnShowAccessPointPanel);
                 _friendsButton.onClick.AddListener(OnShowFriendsPanel);
                 _showAchievementsBtn.onClick.AddListener(OnShowAchievements);
+                _nearbyPlayersButton.onClick.AddListener(OnShowNearbyPlayersPanel);
                 _showTurnBasedMatchesBtn.onClick.AddListener(OnShowTurnBasedMatches);
                 _takeTurnButton.onClick.AddListener(OnTakeTurn);
                 _endMatchWinnerButton.onClick.AddListener(OnEndMatchWinner);
@@ -221,6 +225,11 @@ namespace Apple.GameKit.Sample
             PushPanel(_achievementsPanel.gameObject);
         }
 
+        private void OnShowNearbyPlayersPanel()
+        {
+            PushPanel(_nearbyPlayersPanel.gameObject);
+        }
+
         private async void OnShowTurnBasedMatches()
         {
             try
@@ -346,13 +355,24 @@ namespace Apple.GameKit.Sample
 
             if (leaderboard != null)
             {
-                var scores = await leaderboard.LoadEntries(GKLeaderboard.PlayerScope.Global, GKLeaderboard.TimeScope.AllTime, 0, 100);
+                var players = new NSMutableArray<GKPlayer>();
 
-                Debug.LogError($"my score: {scores.LocalPlayerEntry.Score}");
-
-                foreach (var score in scores.Entries)
+                // Demonstrate LoadEntries().
+                var scores1 = await leaderboard.LoadEntries(GKLeaderboard.PlayerScope.Global, GKLeaderboard.TimeScope.AllTime, 0, 100);
+                Debug.Log($"GKLeaderboard.LoadEntries: my score: {scores1.LocalPlayerEntry.Score}");
+                foreach (var score in scores1.Entries.OrderByDescending(e => e.Score).ToArray())
                 {
-                    Debug.LogError($"score: {score.Score} by {score.Player.DisplayName}");
+                    Debug.Log($"GKLeaderboard.LoadEntries: score: {score.Score} by {score.Player.DisplayName}");
+                    players.Add(score.Player);
+                }
+
+                // Demonstrate LoadEntriesForPlayers().
+                var scores2 = await leaderboard.LoadEntriesForPlayers(players, GKLeaderboard.TimeScope.AllTime);
+                Debug.Log($"GKLeaderboard.LoadEntriesForPlayers: my score: {scores2.LocalPlayerEntry.Score}");
+                foreach (var score in scores2.Entries.OrderByDescending(e => e.Score).ToArray())
+                {
+                    Debug.Log($"GKLeaderboard.LoadEntriesForPlayers: score: {score.Score} by {score.Player.DisplayName}");
+                    players.Add(score.Player);
                 }
             }
         }

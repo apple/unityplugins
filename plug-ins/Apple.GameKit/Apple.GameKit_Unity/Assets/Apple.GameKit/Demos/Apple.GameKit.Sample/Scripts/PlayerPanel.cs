@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace Apple.GameKit.Sample
 {
-    public class FriendPanel : MonoBehaviour
+    public class PlayerPanel : MonoBehaviour
     {
         private GKPlayer _player;
         public GKPlayer Player

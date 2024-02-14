@@ -123,9 +123,9 @@ namespace Apple.GameKit.Sample
         public GKMatchedPlayers MatchedPlayers { get; private set; }
         public bool IsRequestingMatch { get; private set; }
 
-        private Dictionary<GKPlayer, PlayerStatusPanel> _playerStatusPanels = new Dictionary<GKPlayer, PlayerStatusPanel>();
+        private Dictionary<GKPlayer, MatchPlayerPanel> _playerStatusPanels = new Dictionary<GKPlayer, MatchPlayerPanel>();
 
-        private PlayerStatusPanel AddOrUpdatePlayerPanel(GKPlayer player, GKPlayerConnectionState connectionState, GKMatchProperties matchProperties = null)
+        private MatchPlayerPanel AddOrUpdatePlayerPanel(GKPlayer player, GKPlayerConnectionState connectionState, GKMatchProperties matchProperties = null)
         {
             if (_playerStatusPanels.TryGetValue(player, out var panel))
             {
@@ -137,7 +137,7 @@ namespace Apple.GameKit.Sample
                 // New player: create new panel.
                 var panelObject = Instantiate(_playerStatusPanelPrefab, _playerListContent.transform, worldPositionStays: false);
 
-                panel = panelObject.GetComponent<PlayerStatusPanel>();
+                panel = panelObject.GetComponent<MatchPlayerPanel>();
                 panel.Player = player;
                 panel.ConnectionState = connectionState;
 
@@ -237,6 +237,14 @@ namespace Apple.GameKit.Sample
                 GKMatchmaker.Shared?.FinishMatchmaking(Match);
                 _startGameButtonArea.SetActive(false);
                 _matchButtonArea.SetActive(true);
+            }
+        }
+
+        public async void AddPlayers()
+        {
+            if (MatchRequest != null && Match != null)
+            {
+                await GKMatchmakerViewController.AddPlayersToMatch(MatchRequest, Match);
             }
         }
     }

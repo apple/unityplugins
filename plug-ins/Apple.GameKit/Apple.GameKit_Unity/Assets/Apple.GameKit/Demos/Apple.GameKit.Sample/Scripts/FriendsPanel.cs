@@ -52,7 +52,7 @@ namespace Apple.GameKit.Sample
                             {
                                 var panelObject = Instantiate(_friendPanelPrefab, _friendsListContent.transform, worldPositionStays: false);
 
-                                var panel = panelObject.GetComponent<FriendPanel>();
+                                var panel = panelObject.GetComponent<PlayerPanel>();
                                 panel.Player = friend;
                             }
 

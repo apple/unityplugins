@@ -257,15 +257,9 @@ public func GKMatchRequest_SetRecipientResponseHandler
         return;
     }
 
-    // NOTE: The match request pointer is passed back without retaining it. This is
-    // because the C# callback will map it to an existing C# wrapper for GKMatchRequest
-    // so it is not necessary to increase the reference count. The C# callback has to
-    // find the original C# GKMatchRequest wrapper because it contains the reference to
-    // the C# event handler set by the user.
-    // See additional comments in GKMatchRequest.cs near the _instanceMap Dictionary.
     gkMatchRequest.recipientResponseHandler = { gkPlayer, gkInviteRecipientResponse in
         recipientResponseHandler(
-            gkMatchRequestPtr, // see note above
+            gkMatchRequestPtr, // not retained as per notes in InteropWeakMap.cs.
             Unmanaged.passRetained(gkPlayer).toOpaque(),
             gkInviteRecipientResponse.rawValue);
     }

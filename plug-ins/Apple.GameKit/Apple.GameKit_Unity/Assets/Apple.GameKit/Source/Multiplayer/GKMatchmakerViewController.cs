@@ -100,6 +100,7 @@ namespace Apple.GameKit.Multiplayer
         /// </summary>
         /// <param name="matchRequest"></param>
         /// <param name="mode">The matchmaking to use when making the request.</param>
+        /// <param name="canStartWithMinimumPlayers">Whether your game can start after a minimum number of players join a match.</param>
         /// <param name="getMatchPropertiesForRecipientHandler">Optional handler to provide properties for each player as they join the match.</param>
         /// <returns></returns>
         public static async Task<GKMatch> Request(
@@ -114,7 +115,7 @@ namespace Apple.GameKit.Multiplayer
             matchmaker.CanStartWithMinimumPlayers = canStartWithMinimumPlayers;
             matchmaker.IsHosted = false;
 
-            return await Request(matchmaker, mode, canStartWithMinimumPlayers, getMatchPropertiesForRecipientHandler);
+            return await Request(matchmaker, getMatchPropertiesForRecipientHandler);
         }
 
         /// <summary>
@@ -130,13 +131,40 @@ namespace Apple.GameKit.Multiplayer
             GKMatchmakerViewControllerDelegate.GetMatchPropertiesForRecipientHandler getMatchPropertiesForRecipientHandler = default)
         {
             var matchmaker = Init(invite);
-            return await Request(matchmaker, GKMatchmakingMode.Default, canStartWithMinimumPlayers: default, getMatchPropertiesForRecipientHandler);
+
+            return await Request(matchmaker, getMatchPropertiesForRecipientHandler);
+        }
+
+        /// <summary>
+        /// Utility method to add players to an existing match via the view controller.
+        /// Throws a TaskCanceledException if the user canceled the operation.
+        /// </summary>
+        /// <param name="matchRequest"></param>
+        /// <param name="match">The existing match to which to add the new players.</param>
+        /// <param name="mode">The matchmaking to use when making the request.</param>
+        /// <param name="canStartWithMinimumPlayers">Whether your game can start after a minimum number of players join a match.</param>
+        /// <param name="getMatchPropertiesForRecipientHandler">Optional handler to provide properties for each player as they join the match.</param>
+        /// <returns></returns>
+        public static async Task AddPlayersToMatch(
+            GKMatchRequest matchRequest,
+            GKMatch match,
+            GKMatchmakingMode mode = GKMatchmakingMode.Default,
+            bool canStartWithMinimumPlayers = false,
+            GKMatchmakerViewControllerDelegate.GetMatchPropertiesForRecipientHandler getMatchPropertiesForRecipientHandler = default)
+        {
+            var matchmaker = Init(matchRequest);
+
+            matchmaker.MatchmakingMode = mode;
+            matchmaker.CanStartWithMinimumPlayers = canStartWithMinimumPlayers;
+            matchmaker.IsHosted = false;
+
+            Interop.GKMatchmakerViewController_AddPlayersToMatch(matchmaker.Pointer, match.Pointer);
+
+            await Request(matchmaker, getMatchPropertiesForRecipientHandler);
         }
 
         private static Task<GKMatch> Request(
             GKMatchmakerViewController matchmaker, 
-            GKMatchmakingMode mode,
-            bool canStartWithMinimumPlayers,
             GKMatchmakerViewControllerDelegate.GetMatchPropertiesForRecipientHandler getMatchPropertiesForRecipientHandler)
         {
             var tcs = new TaskCompletionSource<GKMatch>();
@@ -238,6 +266,8 @@ namespace Apple.GameKit.Multiplayer
             public static extern void GKMatchmakerViewController_Present(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
             public static extern IntPtr GKMatchmakerViewController_GetMatchmakerDelegate(IntPtr pointer);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKMatchmakerViewController_AddPlayersToMatch(IntPtr gkMatchmakerViewControllerPtr, IntPtr gkMatchPtr);
         }
     }
 }

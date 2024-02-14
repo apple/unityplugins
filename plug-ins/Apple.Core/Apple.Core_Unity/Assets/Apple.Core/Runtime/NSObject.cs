@@ -8,7 +8,7 @@ namespace Apple.Core.Runtime
     /// <summary>
     /// C# wrapper around NSObject.
     /// </summary>
-    public class NSObject : InteropReference
+    public class NSObject : InteropReference, IEquatable<NSObject>
     {
         #region Init & Dispose
         /// <summary>
@@ -117,6 +117,28 @@ namespace Apple.Core.Runtime
         }
         #endregion
 
+        #region Equals
+        /// <summary>
+        /// Check for equality with some other object.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public override bool Equals(object obj) => (obj is NSObject nsObject2) && Equals(nsObject2);
+
+        /// <summary>
+        /// Check for equality with some other NSObject via the native NSObject isEqual method.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public bool Equals(NSObject obj) => (obj != null) && Interop.NSObject_IsEqual(Pointer, obj.Pointer);
+
+        /// <summary>
+        /// Override of object.GetHashCode() that gets the has code from the native NSObject.
+        /// </summary>
+        /// <returns></returns>
+        public override int GetHashCode() => (int)Interop.NSObject_Hash(Pointer);
+        #endregion
+
         private static class Interop
         {
             [DllImport(InteropUtility.DLLName)]
@@ -125,6 +147,10 @@ namespace Apple.Core.Runtime
             public static extern IntPtr NSObject_As(IntPtr nsObjectPtr, string targetClassName);
             [DllImport(InteropUtility.DLLName)]
             public static extern bool NSObject_Is(IntPtr nsObjectPtr, string targetClassName);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern bool NSObject_IsEqual(IntPtr nsObject1Ptr, IntPtr nsObject2Ptr);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern ulong NSObject_Hash(IntPtr nsObjectPtr);
         }
     }
 }

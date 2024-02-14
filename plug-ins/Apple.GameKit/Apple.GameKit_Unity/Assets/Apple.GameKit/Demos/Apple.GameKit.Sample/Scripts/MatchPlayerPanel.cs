@@ -10,7 +10,7 @@ namespace Apple.GameKit.Sample
     using GKMatchProperties = NSDictionary<NSString, NSObject>;
     using GKPlayerConnectionState = GKMatchDelegate.GKPlayerConnectionState;
 
-    public class PlayerStatusPanel : MonoBehaviour
+    public class MatchPlayerPanel : MonoBehaviour
     {
         private GKPlayer _player;
         public GKPlayer Player
