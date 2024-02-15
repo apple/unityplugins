@@ -1,6 +1,15 @@
 # CHANGELOG
 All notable changes to this project will be documented in this file.
 
+## [2.0.1] - 2024-02-15
+### Added
+- Add C# wrapper for `NSData`.
+- Add Texture2D extension methods for loading images from `NSData` objects.
+### Changed
+- Improve equality checks between `NSObject` derived objects by using the native `IsEquals` method.
+- Add helper methods to `NSString` C# wrapper for interoperating with `NSData`.
+- Improve handling of exceptions thrown during P/Invoke callbacks.
+
 ## [2.0.0] - 2023-11-09
 ### Added
 - Add C# wrappers for `NSNull`, `NSNumber`, `NSObject`, `NSString`.
