@@ -52,10 +52,26 @@ namespace Apple.GameKit
             return tcs.Task;
         }
 
-        [MonoPInvokeCallback(typeof(SuccessTaskCallback<GKIdentityVerificationResponse>))]
-        private static void OnFetchItems(long taskId, GKIdentityVerificationResponse response)
+        internal delegate void InternalOnFetchItemsHandler(long taskId, string publicKeyUrl, IntPtr signaturePtr, IntPtr saltPtr, UInt64 timestamp);
+
+        [MonoPInvokeCallback(typeof(InternalOnFetchItemsHandler))]
+        private static void OnFetchItems(long taskId, string publicKeyUrl, IntPtr signaturePtr, IntPtr saltPtr, UInt64 timestamp)
         {
-            InteropTasks.TrySetResultAndRemove(taskId, response);
+            try
+            {
+                var response = new GKIdentityVerificationResponse
+                {
+                    PublicKeyUrl = publicKeyUrl,
+                    Signature = PointerCast<NSData>(signaturePtr),
+                    Salt = PointerCast<NSData>(saltPtr),
+                    Timestamp = timestamp
+                };
+                InteropTasks.TrySetResultAndRemove(taskId, response);
+            }
+            catch (Exception ex)
+            {
+                InteropTasks.TrySetExceptionAndRemove<GKIdentityVerificationResponse>(taskId, ex);
+            }
         }
 
         [MonoPInvokeCallback(typeof(NSErrorTaskCallback))]
@@ -233,7 +249,7 @@ namespace Apple.GameKit
             [DllImport(InteropUtility.DLLName)]
             public static extern IntPtr GKLocalPlayer_GetLocal();
             [DllImport(InteropUtility.DLLName)]
-            public static extern void GKLocalPlayer_FetchItems(IntPtr pointer, long taskId, SuccessTaskCallback<GKIdentityVerificationResponse> onSuccess, NSErrorTaskCallback onError);
+            public static extern void GKLocalPlayer_FetchItems(IntPtr pointer, long taskId, InternalOnFetchItemsHandler onSuccess, NSErrorTaskCallback onError);
             [DllImport(InteropUtility.DLLName)]
             public static extern void GKLocalPlayer_Authenticate(long taskId, SuccessTaskCallback<IntPtr> onSuccess, NSErrorTaskCallback onError);
             [DllImport(InteropUtility.DLLName)]

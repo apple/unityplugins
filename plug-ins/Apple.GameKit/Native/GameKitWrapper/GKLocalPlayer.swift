@@ -226,30 +226,35 @@ public func GKLocalPlayer_LoadFriendsAuthorizationStatus
     };
 }
 
-public typealias SuccessTaskFetchItemsCallback = @convention(c) (Int64, char_p, uchar_p, Int32, uchar_p, Int32, UInt) -> Void;
+public typealias SuccessTaskFetchItemsCallback = @convention(c) (
+    Int64 /*taskId*/,
+    char_p /*publicKeyUrl*/,
+    UnsafeMutableRawPointer /*signatureData*/,
+    UnsafeMutableRawPointer /*saltData*/,
+    UInt64 /*timestamp*/) -> Void;
 
 @_cdecl("GKLocalPlayer_FetchItems")
 public func GKLocalPlayer_FetchItems
 (
+    gkLocalPlayerPtr: UnsafeMutableRawPointer,
     taskId: Int64,
     onSuccess: @escaping SuccessTaskFetchItemsCallback,
     onError: @escaping NSErrorCallback
 )
 {
     if #available(macOS 10.15.5, iOS 13.5, tvOS 13.5, *) {
-        GKLocalPlayer.local.fetchItems(forIdentityVerificationSignature: { publicKeyUrl, signature, salt, timestamp, error in
+        let player = Unmanaged<GKLocalPlayer>.fromOpaque(gkLocalPlayerPtr).takeUnretainedValue();
+        player.fetchItems(forIdentityVerificationSignature: { publicKeyUrl, signature, salt, timestamp, error in
             if (error != nil) {
                 onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
                 return;
             }
-            
+
             onSuccess(taskId,
                       publicKeyUrl!.absoluteString.toCharPCopy(),
-                      signature!.toUCharP(),
-                      Int32(signature!.count),
-                      salt!.toUCharP(),
-                      Int32(salt!.count),
-                      UInt(timestamp));
+                      Unmanaged.passRetained(signature! as NSData).toOpaque(),
+                      Unmanaged.passRetained(salt! as NSData).toOpaque(),
+                      UInt64(timestamp));
         })
     } else {
         let error = NSError.init(domain: "GKLocalPlayer", code: GKErrorCodeExtension.unsupportedOperationForOSVersion.rawValue, userInfo: nil);

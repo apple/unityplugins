@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Apple.Core;
 using Apple.Core.Runtime;
 using Apple.GameKit.Leaderboards;
@@ -151,7 +152,20 @@ namespace Apple.GameKit.Sample
                 _isMultiplayerGamingRestrictedText.text = $"IsMultiplayerGamingRestricted: {_localPlayer.IsMultiplayerGamingRestricted}";
                 _isPersonalizedCommunicationRestrictedText.text = $"IsPersonalizedCommunicationRestricted: {_localPlayer.IsPersonalizedCommunicationRestricted}";
                 _isUnderageText.text = $"IsUnderage: {_localPlayer.IsUnderage}";
+
+                await TestFetchItems();
             }
+        }
+
+        private async Task TestFetchItems()
+        {
+            var items = await GKLocalPlayer.Local.FetchItems();
+            Debug.Log(
+                "GKLocalPlayer.FetchItems:\n" + 
+                $"  PublicKeyUrl={items.PublicKeyUrl}\n" + 
+                $"  Signature={Convert.ToBase64String(items.GetSignature())} ({items.Signature.Length} bytes)\n" + 
+                $"  Salt={Convert.ToBase64String(items.GetSalt())} ({items.Salt.Length} bytes)\n" +
+                $"  Timestamp={items.Timestamp}\n");
         }
 
         private static Stack<GameObject> _panelStack;
