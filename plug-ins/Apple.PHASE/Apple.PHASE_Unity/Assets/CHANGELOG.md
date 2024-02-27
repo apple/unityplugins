@@ -1,6 +1,10 @@
 # CHANGELOG
 All notable changes to this project will be documented in this file.
 
+## [1.1.0] - 2024-02-11
+### Updated
+- Adopt Apple.Core 3.0.0
+
 ## [1.0.5] - 2023-09-19
 ### Added
 - tvOS build target.

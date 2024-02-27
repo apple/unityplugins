@@ -35,11 +35,11 @@ namespace Apple.Core
         [RuntimeInitializeOnLoadMethod]
         private static void OnApplicationStart()
         {
-            Debug.Log("[Apple.Core Plug-In] Initializing API Availability Checking");
+            Debug.Log("[Apple.Core Plug-In Runtime] Initializing API Availability Checking");
 
             _runtimeEnvironment = AppleCore_GetRuntimeEnvironment();
 
-            Debug.Log($"[Apple.Core Plug-In] Availability Runtime Environment: {_runtimeEnvironment.RuntimeOperatingSystem.ToString()} {_runtimeEnvironment.VersionNumber.Major}.{_runtimeEnvironment.VersionNumber.Minor}");
+            Debug.Log($"[Apple.Core Plug-In Runtime] Availability Runtime Environment: {_runtimeEnvironment.RuntimeOperatingSystem.ToString()} {_runtimeEnvironment.VersionNumber.Major}.{_runtimeEnvironment.VersionNumber.Minor}");
         }
         #endregion
     }

@@ -1,0 +1,22 @@
+//
+//  Accessibility.xcconfig
+//  Accessibility
+//
+//  Copyright © 2024 Apple, Inc. All rights reserved.
+//
+//  This file defines custom build settings for the Apple.Accessibility plug-in's native libraries
+//
+
+// Path to shell scripts
+AUP_SHELL_SCRIPT_PATH=$(PROJECT_DIR)/../../../scripts/shell
+
+// Build output paths
+// ------------------
+
+// (Required for copy_native_libraries.sh)
+// Name of the folder which contains the plug-in Unity project
+UNITY_PROJECT_FOLDER_NAME=Apple.Accessibility_Unity
+
+// (Required for copy_native_libraries.sh)
+// Name of the folder under the plug-in Unity project's /Assets folder where native libraries should be copied.
+NATIVE_LIBRARY_ROOT_FOLDER_NAME=Apple.Accessibility

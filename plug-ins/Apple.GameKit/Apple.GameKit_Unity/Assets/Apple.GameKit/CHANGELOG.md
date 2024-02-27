@@ -1,6 +1,10 @@
 # CHANGELOG
 All notable changes to this project will be documented in this file.
 
+## [2.1.0] - 2023-02-15
+### Updated
+- Adopt Apple.Core 3.0.0
+
 ## [2.0.1] - 2024-02-15
 ### Added
 - C# wrappers for the following GameKit APIs:

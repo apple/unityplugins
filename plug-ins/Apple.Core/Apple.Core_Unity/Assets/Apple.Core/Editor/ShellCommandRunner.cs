@@ -1,4 +1,4 @@
-﻿#if UNITY_EDITOR_OSX
+﻿#if (UNITY_EDITOR_OSX && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX))
 using System;
 using UnityEngine;
 
@@ -96,4 +96,4 @@ namespace Apple.Core
         }
     }
 }
-#endif
+#endif // (UNITY_EDITOR_OSX && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX))

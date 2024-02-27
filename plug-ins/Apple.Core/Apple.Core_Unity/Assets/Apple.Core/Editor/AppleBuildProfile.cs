@@ -1,3 +1,4 @@
+#if (UNITY_EDITOR_OSX && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX))
 using System;
 using System.IO;
 using System.Linq;
@@ -8,12 +9,15 @@ using Object = UnityEngine.Object;
 
 namespace Apple.Core
 {
+    /// <summary>
+    /// AppleBuildProfile is used to store build settings and meta data for the Apple Unity Plug-Ins.
+    /// </summary>
     [CreateAssetMenu(menuName = "Apple/Build/Apple Build Profile")]
     public class AppleBuildProfile : ScriptableObject
     {
-        public const string BuildSettingsPath = "Assets/Apple.Core/Editor/";
-        public const string DefaultAsset = "DefaultAppleBuildProfile.asset";
-        public const string DefaultBuildSettingsAssetPath = BuildSettingsPath + DefaultAsset;
+        public static string BuildSettingsPath => ApplePlugInEnvironment.ApplePlugInSupportEditorPath;
+        public static string DefaultAsset => "DefaultAppleBuildProfile.asset";
+        public static string DefaultBuildSettingsAssetPath => $"{BuildSettingsPath}/{DefaultAsset}";
 
         public Dictionary<string, AppleBuildStep> buildSteps = new Dictionary<string, AppleBuildStep>();
 
@@ -34,18 +38,6 @@ namespace Apple.Core
         /// </summary>
         public static AppleBuildProfile DefaultProfile()
         {
-            if (!Directory.Exists(BuildSettingsPath))
-            {
-                Debug.Log($"Failed to locate path {BuildSettingsPath}. Creating");
-
-                if (!Directory.Exists("Assets/Apple.Core/"))
-                {
-                    AssetDatabase.CreateFolder("Assets", "Apple.Core");
-                }
-
-                AssetDatabase.CreateFolder("Assets/Apple.Core", "Editor");
-            }
-
             AppleBuildProfile defaultProfile = null;
             var profs = Array.Empty<Object>();
             if (File.Exists(DefaultBuildSettingsAssetPath))
@@ -56,7 +48,7 @@ namespace Apple.Core
 
             if (defaultProfile is null)
             {
-                Debug.Log("Failed to find previous default build profile. Creating a new one.");
+                Debug.Log("[AppleBuildProfile] Creating Apple Unity Plug-Ins build setting asset.");
                 defaultProfile = CreateInstance<AppleBuildProfile>();
 
                 AssetDatabase.CreateAsset(defaultProfile, DefaultBuildSettingsAssetPath);
@@ -118,3 +110,4 @@ namespace Apple.Core
         }
     }
 }
+#endif // (UNITY_EDITOR_OSX && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX))
