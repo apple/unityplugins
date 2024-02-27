@@ -25,22 +25,16 @@ namespace Apple.GameKit.Sample
 
         public void OnTriggerAccessPoint()
         {
-            if (GKAccessPoint.Shared.IsVisible)
-            {
-                GKAccessPoint.Shared.Trigger();
-            }
+            GKAccessPoint.Shared.Trigger();
         }
 
         public void OnTriggerAccessPointWithState()
         {
-            if (GKAccessPoint.Shared.IsVisible)
+            if (Enum.TryParse<GKGameCenterViewController.GKGameCenterViewControllerState>(
+                _stateDropdown.options[_stateDropdown.value].text,
+                out var state))
             {
-                if (Enum.TryParse<GKGameCenterViewController.GKGameCenterViewControllerState>(
-                    _stateDropdown.options[_stateDropdown.value].text,
-                    out var state))
-                {
-                    GKAccessPoint.Shared.Trigger(state);
-                }
+                GKAccessPoint.Shared.Trigger(state);
             }
         }
     }

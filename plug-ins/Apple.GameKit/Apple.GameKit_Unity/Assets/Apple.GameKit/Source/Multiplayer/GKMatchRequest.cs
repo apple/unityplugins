@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using AOT;
 using Apple.Core;
@@ -129,7 +128,7 @@ namespace Apple.GameKit.Multiplayer
         public NSArray<GKPlayer> Recipients
         {
             get => PointerCast<NSArray<GKPlayer>>(Interop.GKMatchRequest_GetRecipients(Pointer));
-            set => Interop.GKMatchRequest_SetRecipients(Pointer, value.Pointer);
+            set => Interop.GKMatchRequest_SetRecipients(Pointer, value?.Pointer ?? default);
         }
 
         /// <summary>
@@ -149,7 +148,7 @@ namespace Apple.GameKit.Multiplayer
         public GKMatchProperties Properties
         {
             get => PointerCast<GKMatchProperties>(Interop.GKMatchRequest_GetProperties(Pointer));
-            set => Interop.GKMatchRequest_SetProperties(Pointer, value?.Pointer ?? IntPtr.Zero);
+            set => Interop.GKMatchRequest_SetProperties(Pointer, value?.Pointer ?? default);
         }
 
         /// <summary>
@@ -159,7 +158,7 @@ namespace Apple.GameKit.Multiplayer
         public NSDictionary<GKPlayer, GKMatchProperties> RecipientProperties
         {
             get => PointerCast<NSDictionary<GKPlayer, GKMatchProperties>>(Interop.GKMatchRequest_GetRecipientProperties(Pointer));
-            set => Interop.GKMatchRequest_SetRecipientProperties(Pointer, value?.Pointer ?? IntPtr.Zero);
+            set => Interop.GKMatchRequest_SetRecipientProperties(Pointer, value?.Pointer ?? default);
         }
 
         /// <summary>

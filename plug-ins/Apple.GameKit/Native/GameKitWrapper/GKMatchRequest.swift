@@ -128,7 +128,7 @@ public func GKMatchRequest_GetRecipients
 {
     let target = Unmanaged<GKMatchRequest>.fromOpaque(pointer).takeUnretainedValue();
     
-    if(target.recipients != nil) {
+    if (target.recipients != nil) {
         return Unmanaged.passRetained(target.recipients! as NSArray).toOpaque();
     }
     
@@ -139,11 +139,11 @@ public func GKMatchRequest_GetRecipients
 public func GKMatchRequest_SetRecipients
 (
     pointer: UnsafeMutableRawPointer,
-    value: UnsafeMutableRawPointer
+    value: UnsafeMutableRawPointer?
 )
 {
     let target = Unmanaged<GKMatchRequest>.fromOpaque(pointer).takeUnretainedValue();
-    target.recipients = Unmanaged<NSArray>.fromOpaque(value).takeUnretainedValue() as? [GKPlayer];
+    target.recipients = value.map { Unmanaged<NSArray>.fromOpaque($0).takeUnretainedValue() } as? [GKPlayer];
 }
 
 @_cdecl("GKMatchRequest_GetQueueName")

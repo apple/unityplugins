@@ -26,9 +26,8 @@ namespace Apple.GameKit.Editor
 
         public override void OnProcessInfoPlist(AppleBuildProfile appleBuildProfile, BuildTarget buildTarget, string pathToBuiltTarget, PlistDocument infoPlist)
         {
-            if (buildTarget == BuildTarget.iOS)
+            if (!string.IsNullOrWhiteSpace(FriendListUsageDescription))
             {
-                if (!string.IsNullOrWhiteSpace(FriendListUsageDescription))
                 infoPlist.root.SetString("NSGKFriendListUsageDescription", FriendListUsageDescription);
             }
         }

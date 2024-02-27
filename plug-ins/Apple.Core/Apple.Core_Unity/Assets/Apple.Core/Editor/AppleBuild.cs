@@ -154,13 +154,6 @@ namespace Apple.Core
                     }
                 }
 
-                // Set application id if macOS
-                var applicationIdentifier = PlayerSettings.GetApplicationIdentifier(EditorUserBuildSettings.selectedBuildTargetGroup);
-                if (buildTarget == BuildTarget.StandaloneOSX)
-                {
-                    entitlements.root.SetString("com.apple.application-identifier", $"{PlayerSettings.iOS.appleDeveloperTeamID}.{applicationIdentifier}");
-                }
-
                 foreach (var buildStep in appleBuildProfile.buildSteps)
                 {
                     if (buildStep.Value.IsEnabled)

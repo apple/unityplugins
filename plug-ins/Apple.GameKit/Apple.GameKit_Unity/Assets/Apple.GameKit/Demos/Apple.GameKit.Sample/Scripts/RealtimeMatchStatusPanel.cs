@@ -18,6 +18,7 @@ namespace Apple.GameKit.Sample
         [SerializeField] private Text _messageLogText = default;
         [SerializeField] private Text _matchStatusTitleText = default;
         [SerializeField] private GameObject _matchButtonArea = default;
+        [SerializeField] private GameObject _addPlayersButtonArea = default;
         [SerializeField] private GameObject _inviteButtonArea = default;
         [SerializeField] private GameObject _startGameButtonArea = default;
 
@@ -86,6 +87,7 @@ namespace Apple.GameKit.Sample
             _matchStatusTitleText.gameObject.SetActive(Match != null);
             _startGameButtonArea.SetActive(Match != null && showStartGameButton);
             _matchButtonArea.SetActive(Match != null && !showStartGameButton);
+            _addPlayersButtonArea.SetActive(_matchButtonArea.activeSelf && MatchRequest != null);
             _inviteButtonArea.SetActive(MatchRequest != null && MatchedPlayers?.Players?.Count > 0);
         }
 
@@ -237,6 +239,7 @@ namespace Apple.GameKit.Sample
                 GKMatchmaker.Shared?.FinishMatchmaking(Match);
                 _startGameButtonArea.SetActive(false);
                 _matchButtonArea.SetActive(true);
+                _addPlayersButtonArea.SetActive(MatchRequest != null);
             }
         }
 
@@ -244,7 +247,23 @@ namespace Apple.GameKit.Sample
         {
             if (MatchRequest != null && Match != null)
             {
-                await GKMatchmakerViewController.AddPlayersToMatch(MatchRequest, Match);
+                // Create a new match request, copying properties from the original one.
+                var matchRequest = GKMatchRequest.Init();
+                matchRequest.MaxPlayers = MatchRequest.MaxPlayers;
+                matchRequest.MinPlayers = MatchRequest.MinPlayers;
+                matchRequest.PlayerGroup = MatchRequest.PlayerGroup;
+                matchRequest.PlayerAttributes = MatchRequest.PlayerAttributes;
+                matchRequest.InviteMessage = MatchRequest.InviteMessage;
+                matchRequest.QueueName = MatchRequest.QueueName;
+                matchRequest.Properties = MatchRequest.Properties;
+                matchRequest.RecipientProperties = MatchRequest.RecipientProperties;
+                matchRequest.DefaultNumberOfPlayers = MatchRequest.DefaultNumberOfPlayers;
+
+                // When adding new players, we don't want to reuse the previous recipient list, if any.
+                // Doing so would result in the original players receiving another invitation.
+                matchRequest.Recipients = null;
+
+                await GKMatchmakerViewController.AddPlayersToMatch(matchRequest, Match);
             }
         }
     }
