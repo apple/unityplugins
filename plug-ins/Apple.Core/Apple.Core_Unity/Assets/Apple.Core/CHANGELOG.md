@@ -1,6 +1,28 @@
 # CHANGELOG
 All notable changes to this project will be documented in this file.
 
+## [3.0.0] - 2024-2-15
+### Added
+- Support for iPhone simulator and AppleTV Simulator
+- Release builds now generate .dSYM files for enhanced debugging abilities
+- Conditional compilation enabled when building for non-Apple platforms from the Mac Editor
+### Changed
+- Adopts custom native library processing, sidestepping Unity's asset processing for libraries for increased flexibility and feature support
+- Updated folder hierarchy for plug-in library layout
+- Updated plug-in asset importer for simulator and device library support
+- Updated build post-processor to select correct library variants based upon Unity player settings
+- Updated library copy with additional checks to ensure correct libraries are copied
+- Updated native Xcode project to use an xcconfig file to determine where to copy libraries after compile based upon variant (device or simulator)
+
+## [2.0.1] - 2024-02-15
+### Added
+- Add C# wrapper for `NSData`.
+- Add Texture2D extension methods for loading images from `NSData` objects.
+### Changed
+- Improve equality checks between `NSObject` derived objects by using the native `IsEquals` method.
+- Add helper methods to `NSString` C# wrapper for interoperating with `NSData`.
+- Improve handling of exceptions thrown during P/Invoke callbacks.
+
 ## [2.0.0] - 2023-11-09
 ### Added
 - Add C# wrappers for `NSNull`, `NSNumber`, `NSObject`, `NSString`.

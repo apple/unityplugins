@@ -6,26 +6,7 @@
 	objectVersion = 50;
 	objects = {
 
-/* Begin PBXAggregateTarget section */
-		2424738B276BED8C009747F6 /* All */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 2424738E276BED8C009747F6 /* Build configuration list for PBXAggregateTarget "All" */;
-			buildPhases = (
-			);
-			dependencies = (
-				24247390276BEDE4009747F6 /* PBXTargetDependency */,
-				24247392276BEDE4009747F6 /* PBXTargetDependency */,
-				24247394276BEDE4009747F6 /* PBXTargetDependency */,
-			);
-			name = All;
-			productName = All;
-		};
-/* End PBXAggregateTarget section */
-
 /* Begin PBXBuildFile section */
-		2455D2A326FE737A00E7B04B /* GameControllerWrapper.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7A55184624E2FC09004CDB45 /* GameControllerWrapper.framework */; };
-		2455D2A526FE756E00E7B04B /* GameControllerWrapper.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7AE5BB812502C06C00BDBEDA /* GameControllerWrapper.framework */; };
-		2455D2A726FE759300E7B04B /* GameControllerWrapper.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7A55185524E2FF56004CDB45 /* GameControllerWrapper.bundle */; };
 		7A55184B24E2FC09004CDB45 /* GameControllerWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A55184924E2FC09004CDB45 /* GameControllerWrapper.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7A55185D24E6FA61004CDB45 /* Controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A55185C24E6FA61004CDB45 /* Controller.swift */; };
 		7A55185E24E6FA61004CDB45 /* Controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A55185C24E6FA61004CDB45 /* Controller.swift */; };
@@ -49,64 +30,8 @@
 		7AE5BB7B2502C06C00BDBEDA /* ControllerHaptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AB23DF724E72E2300596226 /* ControllerHaptics.swift */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		2424738F276BEDE4009747F6 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 7A55183D24E2FC09004CDB45 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 7A55184524E2FC09004CDB45;
-			remoteInfo = GameControllerWrapper_iOS;
-		};
-		24247391276BEDE4009747F6 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 7A55183D24E2FC09004CDB45 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 7A55185424E2FF56004CDB45;
-			remoteInfo = GameControllerWrapper_macOS;
-		};
-		24247393276BEDE4009747F6 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 7A55183D24E2FC09004CDB45 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 7AE5BB732502C06C00BDBEDA;
-			remoteInfo = GameControllerWrapper_tvOS;
-		};
-/* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		2455D2A226FE735D00E7B04B /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "$(PROJECT_DIR)/../Apple.GameController_Unity/Assets/Apple.GameController/Plugins/iOS";
-			dstSubfolderSpec = 0;
-			files = (
-				2455D2A326FE737A00E7B04B /* GameControllerWrapper.framework in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		2455D2A426FE755900E7B04B /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "$(PROJECT_DIR)/../Apple.GameController_Unity/Assets/Apple.GameController/Plugins/tvOS";
-			dstSubfolderSpec = 0;
-			files = (
-				2455D2A526FE756E00E7B04B /* GameControllerWrapper.framework in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		2455D2A626FE757C00E7B04B /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "$(PROJECT_DIR)/../Apple.GameController_Unity/Assets/Apple.GameController/Plugins/macOS";
-			dstSubfolderSpec = 0;
-			files = (
-				2455D2A726FE759300E7B04B /* GameControllerWrapper.bundle in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXFileReference section */
+		240646142B62D48400246067 /* GameController.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = GameController.xcconfig; sourceTree = "<group>"; };
 		7A55184624E2FC09004CDB45 /* GameControllerWrapper.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = GameControllerWrapper.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7A55184924E2FC09004CDB45 /* GameControllerWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GameControllerWrapper.h; sourceTree = "<group>"; };
 		7A55184A24E2FC09004CDB45 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -149,6 +74,7 @@
 		7A55183C24E2FC09004CDB45 = {
 			isa = PBXGroup;
 			children = (
+				240646142B62D48400246067 /* GameController.xcconfig */,
 				7A55184824E2FC09004CDB45 /* GameControllerWrapper */,
 				7A55184724E2FC09004CDB45 /* Products */,
 			);
@@ -229,7 +155,6 @@
 				7A55184224E2FC09004CDB45 /* Sources */,
 				7A55184324E2FC09004CDB45 /* Frameworks */,
 				7A55184424E2FC09004CDB45 /* Resources */,
-				2455D2A226FE735D00E7B04B /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -248,7 +173,6 @@
 				7A55185124E2FF56004CDB45 /* Sources */,
 				7A55185224E2FF56004CDB45 /* Frameworks */,
 				7A55185324E2FF56004CDB45 /* Resources */,
-				2455D2A626FE757C00E7B04B /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -267,7 +191,6 @@
 				7AE5BB772502C06C00BDBEDA /* Sources */,
 				7AE5BB7C2502C06C00BDBEDA /* Frameworks */,
 				7AE5BB7D2502C06C00BDBEDA /* Resources */,
-				2455D2A426FE755900E7B04B /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -287,9 +210,6 @@
 				LastUpgradeCheck = 1250;
 				ORGANIZATIONNAME = "Apple, Inc.";
 				TargetAttributes = {
-					2424738B276BED8C009747F6 = {
-						CreatedOnToolsVersion = 13.2;
-					};
 					7A55184524E2FC09004CDB45 = {
 						CreatedOnToolsVersion = 11.6;
 						LastSwiftMigration = 1160;
@@ -316,7 +236,6 @@
 				7A55184524E2FC09004CDB45 /* GameControllerWrapper_iOS */,
 				7AE5BB732502C06C00BDBEDA /* GameControllerWrapper_tvOS */,
 				7A55185424E2FF56004CDB45 /* GameControllerWrapper_macOS */,
-				2424738B276BED8C009747F6 /* All */,
 			);
 		};
 /* End PBXProject section */
@@ -384,51 +303,10 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
-/* Begin PBXTargetDependency section */
-		24247390276BEDE4009747F6 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 7A55184524E2FC09004CDB45 /* GameControllerWrapper_iOS */;
-			targetProxy = 2424738F276BEDE4009747F6 /* PBXContainerItemProxy */;
-		};
-		24247392276BEDE4009747F6 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 7A55185424E2FF56004CDB45 /* GameControllerWrapper_macOS */;
-			targetProxy = 24247391276BEDE4009747F6 /* PBXContainerItemProxy */;
-		};
-		24247394276BEDE4009747F6 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 7AE5BB732502C06C00BDBEDA /* GameControllerWrapper_tvOS */;
-			targetProxy = 24247393276BEDE4009747F6 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
 /* Begin XCBuildConfiguration section */
-		2424738C276BED8C009747F6 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ADDITIONAL_SDKS = "macosx appletvos appletvsimulator iphoneos iphonesimulator";
-				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = XPSUQMMH5W;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos macosx appletvos appletvsimulator";
-			};
-			name = Debug;
-		};
-		2424738D276BED8C009747F6 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ADDITIONAL_SDKS = "macosx appletvos appletvsimulator iphoneos iphonesimulator";
-				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = XPSUQMMH5W;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos macosx appletvos appletvsimulator";
-			};
-			name = Release;
-		};
 		7A55184C24E2FC09004CDB45 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 240646142B62D48400246067 /* GameController.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -494,6 +372,7 @@
 		};
 		7A55184D24E2FC09004CDB45 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 240646142B62D48400246067 /* GameController.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -553,6 +432,7 @@
 		};
 		7A55184F24E2FC09004CDB45 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 240646142B62D48400246067 /* GameController.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
@@ -585,6 +465,7 @@
 		};
 		7A55185024E2FC09004CDB45 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 240646142B62D48400246067 /* GameController.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
@@ -616,6 +497,7 @@
 		};
 		7A55185824E2FF56004CDB45 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 240646142B62D48400246067 /* GameController.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "-";
@@ -647,6 +529,7 @@
 		};
 		7A55185924E2FF56004CDB45 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 240646142B62D48400246067 /* GameController.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "-";
@@ -677,6 +560,7 @@
 		};
 		7AE5BB7F2502C06C00BDBEDA /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 240646142B62D48400246067 /* GameController.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
@@ -710,6 +594,7 @@
 		};
 		7AE5BB802502C06C00BDBEDA /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 240646142B62D48400246067 /* GameController.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
@@ -743,15 +628,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		2424738E276BED8C009747F6 /* Build configuration list for PBXAggregateTarget "All" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				2424738C276BED8C009747F6 /* Debug */,
-				2424738D276BED8C009747F6 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		7A55184024E2FC09004CDB45 /* Build configuration list for PBXProject "GameControllerWrapper" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

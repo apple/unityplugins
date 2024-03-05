@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using AOT;
@@ -26,10 +27,7 @@ namespace Apple.GameKit.Multiplayer
         public Task Cancel(string localizableMessageKey, string[] arguments)
         {
             // Arguments...
-            var mutableArguments = new NSMutableArray<NSString>();
-            if(arguments != null)
-                foreach(var argument in arguments)
-                    mutableArguments.Add(new NSString(argument));
+            var mutableArguments = new NSMutableArray<NSString>(arguments?.Select(arg => new NSString(arg)));
 
             var tcs = InteropTasks.Create<bool>(out var taskId);
             Interop.GKTurnBasedExchange_Cancel(Pointer, taskId, localizableMessageKey, mutableArguments.Pointer, OnCancel, OnCancelError);
@@ -119,10 +117,7 @@ namespace Apple.GameKit.Multiplayer
             };
             
             // Arguments...
-            var mutableArguments = new NSMutableArray<NSString>();
-            if(arguments != null)
-                foreach(var argument in arguments)
-                    mutableArguments.Add(new NSString(argument));
+            var mutableArguments = new NSMutableArray<NSString>(arguments?.Select(arg => new NSString(arg)));
 
             // Execute...
             var tcs = InteropTasks.Create<bool>(out var taskId);

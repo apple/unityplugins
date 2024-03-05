@@ -444,6 +444,20 @@ public func GKTurnBasedMatch_SendReminder
     });
 }
 
+@_cdecl("GKTurnBasedMatch_SetLocalizableMessageWithKey")
+public func GKTurnBasedMatch_SetLocalizableMessageWithKey
+(
+    gkTurnBasedMatchPtr: UnsafeMutableRawPointer,
+    key: char_p,
+    argumentsPtr: UnsafeMutableRawPointer?
+)
+{
+    let gkTurnBasedMatch = Unmanaged<GKTurnBasedMatch>.fromOpaque(gkTurnBasedMatchPtr).takeUnretainedValue();
+    let arguments = argumentsPtr.map { Unmanaged<NSArray>.fromOpaque($0).takeUnretainedValue() as! [String] };
+
+    gkTurnBasedMatch.setLocalizableMessageWithKey(key.toString(), arguments: arguments);
+}
+
 @_cdecl("GKTurnBasedMatch_LoadMatches")
 public func GKTurnBasedMatch_LoadMatches
 (

@@ -5,7 +5,7 @@
 
 #import <Foundation/Foundation.h>
 
-void * NSString_StringWithUTF8String(const char * nullTerminatedCString) {
+void * NSString_StringWithUtf8String(const char * nullTerminatedCString) {
     return (void *)CFBridgingRetain([NSString stringWithUTF8String:nullTerminatedCString]);
 }
 
@@ -17,4 +17,13 @@ const char * NSString_Utf8String(void * nsStringPtr) {
 
 void * NSString_string(void) {
     return (void *)CFBridgingRetain([NSString string]);
+}
+
+
+void * NSString_StringWithUtf8Data(void * nsDataPtr) {
+    return (void *)CFBridgingRetain([[NSString alloc] initWithData:(__bridge NSData *)nsDataPtr encoding:NSUTF8StringEncoding]);
+}
+
+void * NSString_Utf8Data(void * nsStringPtr) {
+    return (void *)CFBridgingRetain([(__bridge NSString *)nsStringPtr dataUsingEncoding:NSUTF8StringEncoding]);
 }

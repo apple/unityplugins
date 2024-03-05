@@ -11,7 +11,7 @@ namespace Apple.GameKit.Multiplayer
     /// </summary>
     public class GKVoiceChat : NSObject
     {
-        private static readonly Dictionary<IntPtr, GKVoiceChat> _gkVoiceChats = new Dictionary<IntPtr, GKVoiceChat>();
+        private static readonly InteropWeakMap<GKVoiceChat> _instanceMap = new InteropWeakMap<GKVoiceChat>();
 
         /// <summary>
         /// A method that handles when a player's voice chat changes state.
@@ -20,16 +20,13 @@ namespace Apple.GameKit.Multiplayer
         
         internal GKVoiceChat(IntPtr pointer) : base(pointer)
         {
-            _gkVoiceChats.Add(pointer, this);
-            Interop.GKVoiceChat_PlayerVoiceChatStateDidChangeHandler(Pointer, OnPlayerVoiceChatStateDidChange);
+            _instanceMap.Add(this);
+            Interop.GKVoiceChat_PlayerVoiceChatStateDidChangeHandler(pointer, OnPlayerVoiceChatStateDidChange);
         }
 
         protected override void OnDispose(bool isDisposing)
         {
-            if (Pointer != IntPtr.Zero)
-            {
-                _gkVoiceChats.Remove(Pointer);
-            }
+            _instanceMap.Remove(this);
             base.OnDispose(isDisposing);
         }
         
@@ -71,11 +68,14 @@ namespace Apple.GameKit.Multiplayer
         [MonoPInvokeCallback(typeof(InternalPlayerVoiceChatStateDidChangeHandler))]
         private static void OnPlayerVoiceChatStateDidChange(IntPtr pointer, IntPtr playerPtr, PlayerState state)
         {
-            if (!_gkVoiceChats.TryGetValue(pointer, out var voiceChat))
-                return;
-
-            var player = playerPtr != IntPtr.Zero ? new GKPlayer(playerPtr) : null;
-            voiceChat.PlayerVoiceChatStateDidChange?.Invoke(player, state);
+            InteropPInvokeExceptionHandler.CatchAndLog(() =>
+            {
+                if (_instanceMap.TryGet(pointer, out var gkVoiceChat))
+                {
+                    var player = PointerCast<GKPlayer>(playerPtr);
+                    gkVoiceChat.PlayerVoiceChatStateDidChange?.Invoke(player, state);
+                }
+            });
         }
         #endregion
 

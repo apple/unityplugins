@@ -102,18 +102,15 @@ public func GKLeaderboardSet_LoadImage
     
     #if !os(tvOS)
     target.loadImage(completionHandler: { (image, error) in
-            if(error != nil) {
-                onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
-                return;
-            }
-        
-            let data = image!.pngData()!;
-            onImageLoaded(
-                taskId,
-                Int32(image!.size.width),
-                Int32(image!.size.height),
-                data.toUCharP(),
-                Int32(data.count));
+        if(error != nil) {
+            onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
+            return;
+        }
+
+        let data = image!.pngData()!;
+        onImageLoaded(
+            taskId,
+            Unmanaged.passRetained(data as NSData).toOpaque());
     });
     #else
     let error = NSError(domain: "GameKit", code: GKErrorCodeExtension.unsupportedOperationForOSVersion.rawValue, userInfo: nil);

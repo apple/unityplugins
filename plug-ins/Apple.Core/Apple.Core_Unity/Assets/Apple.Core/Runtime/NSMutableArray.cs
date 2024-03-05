@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using UnityEngine.Scripting;
@@ -17,6 +19,21 @@ namespace Apple.Core.Runtime
         /// Construct an empty NSMutableArray.
         /// </summary>
         public NSMutableArray() : base(NSMutableArrayInterop.NSMutableArray_Init()) { }
+
+        /// <summary>
+        /// Construct a new NSMutableArray from the contents of another collection.
+        /// </summary>
+        /// <param name="collection"></param>
+        public NSMutableArray(IEnumerable<T> collection) : this()
+        {
+            if (collection != null)
+            {
+                foreach (var item in collection)
+                {
+                    Add(item);
+                }
+            }
+        }
 
         /// <summary>
         /// Construct an NSMutableArray wrapper around an existing instance.

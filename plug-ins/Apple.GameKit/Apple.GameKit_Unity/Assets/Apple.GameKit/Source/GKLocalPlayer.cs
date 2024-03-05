@@ -52,10 +52,26 @@ namespace Apple.GameKit
             return tcs.Task;
         }
 
-        [MonoPInvokeCallback(typeof(SuccessTaskCallback<GKIdentityVerificationResponse>))]
-        private static void OnFetchItems(long taskId, GKIdentityVerificationResponse response)
+        internal delegate void InternalOnFetchItemsHandler(long taskId, string publicKeyUrl, IntPtr signaturePtr, IntPtr saltPtr, UInt64 timestamp);
+
+        [MonoPInvokeCallback(typeof(InternalOnFetchItemsHandler))]
+        private static void OnFetchItems(long taskId, string publicKeyUrl, IntPtr signaturePtr, IntPtr saltPtr, UInt64 timestamp)
         {
-            InteropTasks.TrySetResultAndRemove(taskId, response);
+            try
+            {
+                var response = new GKIdentityVerificationResponse
+                {
+                    PublicKeyUrl = publicKeyUrl,
+                    Signature = PointerCast<NSData>(signaturePtr),
+                    Salt = PointerCast<NSData>(saltPtr),
+                    Timestamp = timestamp
+                };
+                InteropTasks.TrySetResultAndRemove(taskId, response);
+            }
+            catch (Exception ex)
+            {
+                InteropTasks.TrySetExceptionAndRemove<GKIdentityVerificationResponse>(taskId, ex);
+            }
         }
 
         [MonoPInvokeCallback(typeof(NSErrorTaskCallback))]
@@ -111,6 +127,21 @@ namespace Apple.GameKit
             return tcs.Task;
         }
 
+        /// <summary>
+        /// Loads the player’s friends list, scoped by the identifiers, if the player and their friends grant access.
+        /// </summary>
+        /// <param name="identifiers"></param>
+        /// <returns>An NSArray of GKPlayer. The player's friends who also grant your game access to their friends.
+        /// The local player and their friends authorization status must be GKFriendsAuthorizationStatus.authorized.
+        /// The local player and their friends must use a version of your game with the same bundle ID.
+        ///</returns>
+        public Task<NSArray<GKPlayer>> LoadFriends(NSArray<NSString> identifiers)
+        {
+            var tcs = InteropTasks.Create<NSArray<GKPlayer>>(out var taskId);
+            Interop.GKLocalPlayer_LoadFriendsWithIdentifiers(Pointer, taskId, identifiers.Pointer, OnLoadFriends, OnLoadFriendsError);
+            return tcs.Task;
+        }
+
         [MonoPInvokeCallback(typeof(SuccessTaskCallback<IntPtr>))]
         private static void OnLoadFriends(long taskId, IntPtr pointer)
         {
@@ -123,7 +154,32 @@ namespace Apple.GameKit
             InteropTasks.TrySetExceptionAndRemove<NSArray<GKPlayer>>(taskId, new GameKitException(errorPointer));
         }
         #endregion
-        
+
+        #region LoadFriendsAuthorizationStatus
+
+        /// <summary>
+        /// Returns whether the player authorizes your game to access their friends list.
+        /// </summary>
+        public Task<GKFriendsAuthorizationStatus> LoadFriendsAuthorizationStatus()
+        {
+            var tcs = InteropTasks.Create<GKFriendsAuthorizationStatus>(out var taskId);
+            Interop.GKLocalPlayer_LoadFriendsAuthorizationStatus(Pointer, taskId, OnLoadFriendsAuthorizationStatus, OnLoadFriendsAuthorizationStatusError);
+            return tcs.Task;
+        }
+
+        [MonoPInvokeCallback(typeof(SuccessTaskCallback<GKFriendsAuthorizationStatus>))]
+        private static void OnLoadFriendsAuthorizationStatus(long taskId, GKFriendsAuthorizationStatus authStatus)
+        {
+            InteropTasks.TrySetResultAndRemove(taskId, authStatus);
+        }
+
+        [MonoPInvokeCallback(typeof(NSErrorTaskCallback))]
+        private static void OnLoadFriendsAuthorizationStatusError(long taskId, IntPtr errorPointer)
+        {
+            InteropTasks.TrySetExceptionAndRemove<GKFriendsAuthorizationStatus>(taskId, new GameKitException(errorPointer));
+        }
+        #endregion
+
         #region LoadChallengableFriends
 
         /// <summary>
@@ -193,11 +249,15 @@ namespace Apple.GameKit
             [DllImport(InteropUtility.DLLName)]
             public static extern IntPtr GKLocalPlayer_GetLocal();
             [DllImport(InteropUtility.DLLName)]
-            public static extern void GKLocalPlayer_FetchItems(IntPtr pointer, long taskId, SuccessTaskCallback<GKIdentityVerificationResponse> onSuccess, NSErrorTaskCallback onError);
+            public static extern void GKLocalPlayer_FetchItems(IntPtr pointer, long taskId, InternalOnFetchItemsHandler onSuccess, NSErrorTaskCallback onError);
             [DllImport(InteropUtility.DLLName)]
             public static extern void GKLocalPlayer_Authenticate(long taskId, SuccessTaskCallback<IntPtr> onSuccess, NSErrorTaskCallback onError);
             [DllImport(InteropUtility.DLLName)]
             public static extern void GKLocalPlayer_LoadFriends(IntPtr pointer, long taskId, SuccessTaskCallback<IntPtr> onCallback, NSErrorTaskCallback onError);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKLocalPlayer_LoadFriendsWithIdentifiers(IntPtr gkLocalPlayerPtr, long taskId, IntPtr identifiersPtr, SuccessTaskCallback<IntPtr> onCallback, NSErrorTaskCallback onError);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKLocalPlayer_LoadFriendsAuthorizationStatus(IntPtr pointer, long taskId, SuccessTaskCallback<GKFriendsAuthorizationStatus> onCallback, NSErrorTaskCallback onError);
             [DllImport(InteropUtility.DLLName)]
             public static extern void GKLocalPlayer_LoadChallengableFriends(IntPtr pointer, long taskId, SuccessTaskCallback<IntPtr> onCallback, NSErrorTaskCallback onError);
             [DllImport(InteropUtility.DLLName)]

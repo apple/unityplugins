@@ -172,3 +172,16 @@ public func GKMatchmakerViewController_GetMatchmakerDelegate
     
     return Unmanaged.passRetained(target.matchmakerDelegate!).toOpaque();
 }
+
+@_cdecl("GKMatchmakerViewController_AddPlayersToMatch")
+public func GKMatchmakerViewController_AddPlayersToMatch
+(
+    gkMatchmakerViewControllerPtr: UnsafeMutableRawPointer,
+    gkMatchPtr: UnsafeMutableRawPointer
+)
+{
+    let gkMatchmakerViewController = Unmanaged<GKMatchmakerViewController>.fromOpaque(gkMatchmakerViewControllerPtr).takeUnretainedValue();
+    let gkMatch = Unmanaged<GKMatch>.fromOpaque(gkMatchPtr).takeUnretainedValue();
+
+    gkMatchmakerViewController.addPlayers(to: gkMatch);
+}

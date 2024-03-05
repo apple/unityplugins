@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
+using AOT;
 using Apple.Core;
 using Apple.Core.Runtime;
 
@@ -61,11 +62,21 @@ namespace Apple.GameKit.Multiplayer
             /// </summary>
             TurnBased = 2
         }
-        
+
+        private static readonly InteropWeakMap<GKMatchRequest> _instanceMap = new InteropWeakMap<GKMatchRequest>();
+
         internal GKMatchRequest(IntPtr pointer) : base(pointer)
         {
+            _instanceMap.Add(this);
+            Interop.GKMatchRequest_SetRecipientResponseHandler(pointer, OnRecipientResponse);
         }
         
+        protected override void OnDispose(bool isDisposing)
+        {
+            _instanceMap.Remove(this);
+            base.OnDispose(isDisposing);
+        }
+
         /// <summary>
         /// The maximum number of players that can join the match.
         /// </summary>
@@ -117,7 +128,7 @@ namespace Apple.GameKit.Multiplayer
         public NSArray<GKPlayer> Recipients
         {
             get => PointerCast<NSArray<GKPlayer>>(Interop.GKMatchRequest_GetRecipients(Pointer));
-            set => Interop.GKMatchRequest_SetRecipients(Pointer, value.Pointer);
+            set => Interop.GKMatchRequest_SetRecipients(Pointer, value?.Pointer ?? default);
         }
 
         /// <summary>
@@ -137,7 +148,7 @@ namespace Apple.GameKit.Multiplayer
         public GKMatchProperties Properties
         {
             get => PointerCast<GKMatchProperties>(Interop.GKMatchRequest_GetProperties(Pointer));
-            set => Interop.GKMatchRequest_SetProperties(Pointer, value?.Pointer ?? IntPtr.Zero);
+            set => Interop.GKMatchRequest_SetProperties(Pointer, value?.Pointer ?? default);
         }
 
         /// <summary>
@@ -147,8 +158,46 @@ namespace Apple.GameKit.Multiplayer
         public NSDictionary<GKPlayer, GKMatchProperties> RecipientProperties
         {
             get => PointerCast<NSDictionary<GKPlayer, GKMatchProperties>>(Interop.GKMatchRequest_GetRecipientProperties(Pointer));
-            set => Interop.GKMatchRequest_SetRecipientProperties(Pointer, value?.Pointer ?? IntPtr.Zero);
+            set => Interop.GKMatchRequest_SetRecipientProperties(Pointer, value?.Pointer ?? default);
         }
+
+        /// <summary>
+        /// A method that handles when a player responds to an invitation to join a match.
+        /// </summary>
+        public event RecipientResponseHandler RecipientResponse;
+
+        public delegate void RecipientResponseHandler(GKPlayer player, GKInviteRecipientResponse response);
+        internal delegate void InternalReceipientResponseHandler(IntPtr gkMatchRequestPtr, IntPtr gkPlayerPtr, GKInviteRecipientResponse response);
+
+        [MonoPInvokeCallback(typeof(InternalReceipientResponseHandler))]
+        private static void OnRecipientResponse(IntPtr gkMatchRequestPtr, IntPtr gkPlayerPtr, GKInviteRecipientResponse response)
+        {
+            InteropPInvokeExceptionHandler.CatchAndLog(() =>
+            {
+                // Rehydrate the weak reference to the original C# GKMatchRequest wrapper that contains the RecipientResponse handler.
+                if (_instanceMap.TryGet(gkMatchRequestPtr, out var gkMatchRequest))
+                {
+                    var gkPlayer = PointerCast<GKPlayer>(gkPlayerPtr);
+                    gkMatchRequest.RecipientResponse?.Invoke(gkPlayer, response);
+                }
+            });
+        }
+
+        /// <summary>
+        /// The default number of players for the match.
+        /// </summary>
+        public long DefaultNumberOfPlayers
+        {
+            get => Interop.GKMatchRequest_GetDefaultNumberOfPlayers(Pointer);
+            set => Interop.GKMatchRequest_SetDefaultNumberOfPlayers(Pointer, value);
+        }
+
+        /// <summary>
+        /// Returns the maximum number of players allowed in the match request for a given match type.
+        /// </summary>
+        /// <param name="matchType">The kind of match.</param>
+        /// <returns>The maximum number of allowed players.</returns>
+        public static long MaxPlayersAllowedForMatch(GKMatchType matchType) => Interop.GKMatchRequest_GetMaxPlayersAllowedForMatchOfType(matchType);
 
         public static GKMatchRequest Init()
         {
@@ -193,6 +242,14 @@ namespace Apple.GameKit.Multiplayer
             public static extern IntPtr GKMatchRequest_GetRecipientProperties(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
             public static extern void GKMatchRequest_SetRecipientProperties(IntPtr pointer, IntPtr value);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern long GKMatchRequest_GetDefaultNumberOfPlayers(IntPtr gkMatchRequestPtr);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKMatchRequest_SetDefaultNumberOfPlayers(IntPtr gkMatchRequestPtr, long value);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern long GKMatchRequest_GetMaxPlayersAllowedForMatchOfType(GKMatchType matchType);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKMatchRequest_SetRecipientResponseHandler(IntPtr gkMatchRequestPtr, InternalReceipientResponseHandler recipientResponseHandler);
             [DllImport(InteropUtility.DLLName)]
             public static extern IntPtr GKMatchRequest_Init();
         }

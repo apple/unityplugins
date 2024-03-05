@@ -1,6 +1,6 @@
 Build/
 TestBuilds/
-scripts/__pycache__/
+scripts/python/__pycache__/
 **/.DS_Store
 **/.idea/*
 **/Temp/*
@@ -9,3 +9,6 @@ plug-ins/**/TestPlayers
 **/xcuserdata
 *.vsconfig
 **/.vscode/*
+**/Apple Plug-In Support/
+**/Apple Plug-In Support.meta
+**/NativeLibraries~/

@@ -13,23 +13,24 @@ namespace Apple.GameKit.Sample
 
     public class RealtimeMatchStatusPanel : MonoBehaviour
     {
-#pragma warning disable 0649
-        [SerializeField] private GameObject _playerStatusPanelPrefab;
-        [SerializeField] private GameObject _playerListContent;
-        [SerializeField] private Text _messageLogText;
-        [SerializeField] private Text _matchStatusTitleText;
-        [SerializeField] private GameObject _matchButtonArea;
-        [SerializeField] private GameObject _inviteButtonArea;
-#pragma warning restore 0649
+        [SerializeField] private GameObject _playerStatusPanelPrefab = default;
+        [SerializeField] private GameObject _playerListContent = default;
+        [SerializeField] private Text _messageLogText = default;
+        [SerializeField] private Text _matchStatusTitleText = default;
+        [SerializeField] private GameObject _matchButtonArea = default;
+        [SerializeField] private GameObject _addPlayersButtonArea = default;
+        [SerializeField] private GameObject _inviteButtonArea = default;
+        [SerializeField] private GameObject _startGameButtonArea = default;
 
         public void Populate(GKMatch match) => Populate(
             GKPlayerConnectionState.Connected,
             match: match);
 
-        public void Populate(GKMatchRequest request, GKMatch match) => Populate(
+        public void Populate(GKMatchRequest request, GKMatch match, bool showStartGameButton) => Populate(
             GKPlayerConnectionState.Connected,
             request: request,
-            match: match);
+            match: match,
+            showStartGameButton: showStartGameButton);
 
         public void Populate(GKMatchRequest request, GKMatchedPlayers matchedPlayers) => Populate(
             GKPlayerConnectionState.Unknown,
@@ -45,6 +46,7 @@ namespace Apple.GameKit.Sample
             GKPlayerConnectionState initialConnectionState,
             GKMatchRequest request = null,
             GKMatch match = null,
+            bool showStartGameButton = false,
             GKMatchedPlayers matchedPlayers = null,
             NSArray<GKPlayer> players = null)
         {
@@ -83,7 +85,9 @@ namespace Apple.GameKit.Sample
             }
 
             _matchStatusTitleText.gameObject.SetActive(Match != null);
-            _matchButtonArea.SetActive(Match != null);
+            _startGameButtonArea.SetActive(Match != null && showStartGameButton);
+            _matchButtonArea.SetActive(Match != null && !showStartGameButton);
+            _addPlayersButtonArea.SetActive(_matchButtonArea.activeSelf && MatchRequest != null);
             _inviteButtonArea.SetActive(MatchRequest != null && MatchedPlayers?.Players?.Count > 0);
         }
 
@@ -99,6 +103,10 @@ namespace Apple.GameKit.Sample
             }
 
             // clear the previous list of players
+            foreach (Transform transform in _playerListContent.transform)
+            {
+                Destroy(transform.gameObject);
+            }            
             _playerListContent.transform.DetachChildren();
             _playerStatusPanels.Clear();
 
@@ -117,9 +125,9 @@ namespace Apple.GameKit.Sample
         public GKMatchedPlayers MatchedPlayers { get; private set; }
         public bool IsRequestingMatch { get; private set; }
 
-        private Dictionary<GKPlayer, PlayerStatusPanel> _playerStatusPanels = new Dictionary<GKPlayer, PlayerStatusPanel>();
+        private Dictionary<GKPlayer, MatchPlayerPanel> _playerStatusPanels = new Dictionary<GKPlayer, MatchPlayerPanel>();
 
-        private PlayerStatusPanel AddOrUpdatePlayerPanel(GKPlayer player, GKPlayerConnectionState connectionState, GKMatchProperties matchProperties = null)
+        private MatchPlayerPanel AddOrUpdatePlayerPanel(GKPlayer player, GKPlayerConnectionState connectionState, GKMatchProperties matchProperties = null)
         {
             if (_playerStatusPanels.TryGetValue(player, out var panel))
             {
@@ -131,7 +139,7 @@ namespace Apple.GameKit.Sample
                 // New player: create new panel.
                 var panelObject = Instantiate(_playerStatusPanelPrefab, _playerListContent.transform, worldPositionStays: false);
 
-                panel = panelObject.GetComponent<PlayerStatusPanel>();
+                panel = panelObject.GetComponent<MatchPlayerPanel>();
                 panel.Player = player;
                 panel.ConnectionState = connectionState;
 
@@ -155,7 +163,7 @@ namespace Apple.GameKit.Sample
             if (connectionState == GKPlayerConnectionState.Connected)
             {
                 // get player properties for this new player
-                Match?.PlayerProperties.TryGetValue(player, out matchProperties);
+                Match?.PlayerProperties?.TryGetValue(player, out matchProperties);
             }
 
             AddOrUpdatePlayerPanel(player, connectionState, matchProperties);
@@ -221,6 +229,41 @@ namespace Apple.GameKit.Sample
             {
                 IsRequestingMatch = true;
                 GameKitSample.PopPanel();
+            }
+        }
+
+        public void FinishMatchmaking()
+        {
+            if (Match != null)
+            {
+                GKMatchmaker.Shared?.FinishMatchmaking(Match);
+                _startGameButtonArea.SetActive(false);
+                _matchButtonArea.SetActive(true);
+                _addPlayersButtonArea.SetActive(MatchRequest != null);
+            }
+        }
+
+        public async void AddPlayers()
+        {
+            if (MatchRequest != null && Match != null)
+            {
+                // Create a new match request, copying properties from the original one.
+                var matchRequest = GKMatchRequest.Init();
+                matchRequest.MaxPlayers = MatchRequest.MaxPlayers;
+                matchRequest.MinPlayers = MatchRequest.MinPlayers;
+                matchRequest.PlayerGroup = MatchRequest.PlayerGroup;
+                matchRequest.PlayerAttributes = MatchRequest.PlayerAttributes;
+                matchRequest.InviteMessage = MatchRequest.InviteMessage;
+                matchRequest.QueueName = MatchRequest.QueueName;
+                matchRequest.Properties = MatchRequest.Properties;
+                matchRequest.RecipientProperties = MatchRequest.RecipientProperties;
+                matchRequest.DefaultNumberOfPlayers = MatchRequest.DefaultNumberOfPlayers;
+
+                // When adding new players, we don't want to reuse the previous recipient list, if any.
+                // Doing so would result in the original players receiving another invitation.
+                matchRequest.Recipients = null;
+
+                await GKMatchmakerViewController.AddPlayersToMatch(matchRequest, Match);
             }
         }
     }

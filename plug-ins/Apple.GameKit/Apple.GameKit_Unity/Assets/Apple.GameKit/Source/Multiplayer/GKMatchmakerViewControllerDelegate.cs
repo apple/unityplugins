@@ -72,55 +72,70 @@ namespace Apple.GameKit.Multiplayer
         [MonoPInvokeCallback(typeof(InteropDidFindMatchHandler))]
         private static void OnDidFindMatch(IntPtr pointer, IntPtr matchmakerViewController, IntPtr match)
         {
-            if (!_delegates.TryGetValue(pointer, out var matchmakerViewControllerDelegate))
-                return;
-            
-            matchmakerViewControllerDelegate?.DidFindMatch?.Invoke(
-                PointerCast<GKMatchmakerViewController>(matchmakerViewController), 
-                PointerCast<GKMatch>(match));
+            InteropPInvokeExceptionHandler.CatchAndLog(() =>
+            {
+                if (!_delegates.TryGetValue(pointer, out var matchmakerViewControllerDelegate))
+                    return;
+                
+                matchmakerViewControllerDelegate?.DidFindMatch?.Invoke(
+                    PointerCast<GKMatchmakerViewController>(matchmakerViewController), 
+                    PointerCast<GKMatch>(match));
+            });
         }
         
         [MonoPInvokeCallback(typeof(InteropDidFindHostedPlayersHandler))]
         private static void OnDidFindHostedPlayers(IntPtr pointer, IntPtr matchmakerViewController, IntPtr hostedPlayers)
         {
-            if (!_delegates.TryGetValue(pointer, out var matchmakerViewControllerDelegate))
-                return;
-            
-            matchmakerViewControllerDelegate?.DidFindHostedPlayers?.Invoke(
-                PointerCast<GKMatchmakerViewController>(matchmakerViewController), 
-                PointerCast<NSArray<GKPlayer>>(hostedPlayers));
+            InteropPInvokeExceptionHandler.CatchAndLog(() =>
+            {
+                if (!_delegates.TryGetValue(pointer, out var matchmakerViewControllerDelegate))
+                    return;
+                
+                matchmakerViewControllerDelegate?.DidFindHostedPlayers?.Invoke(
+                    PointerCast<GKMatchmakerViewController>(matchmakerViewController), 
+                    PointerCast<NSArray<GKPlayer>>(hostedPlayers));
+            });
         }
         
         [MonoPInvokeCallback(typeof(InteropMatchmakingCanceledHandler))]
         private static void OnMatchmakingCanceled(IntPtr pointer, IntPtr matchmakerViewController)
         {
-            if (!_delegates.TryGetValue(pointer, out var matchmakerViewControllerDelegate))
-                return;
-            
-            matchmakerViewControllerDelegate?.MatchmakingCanceled?.Invoke(
-                PointerCast<GKMatchmakerViewController>(matchmakerViewController));
+            InteropPInvokeExceptionHandler.CatchAndLog(() =>
+            {
+                if (!_delegates.TryGetValue(pointer, out var matchmakerViewControllerDelegate))
+                    return;
+                
+                matchmakerViewControllerDelegate?.MatchmakingCanceled?.Invoke(
+                    PointerCast<GKMatchmakerViewController>(matchmakerViewController));
+            });
         }
         
         [MonoPInvokeCallback(typeof(InteropDidFailWithErrorHandler))]
         private static void OnDidFailWithError(IntPtr pointer, IntPtr matchmakerViewController, IntPtr errorPointer)
         {
-            if (!_delegates.TryGetValue(pointer, out var matchmakerViewControllerDelegate))
-                return;
-            
-            matchmakerViewControllerDelegate?.DidFailWithError?.Invoke(
-                PointerCast<GKMatchmakerViewController>(matchmakerViewController), 
-                new GameKitException(errorPointer));
+            InteropPInvokeExceptionHandler.CatchAndLog(() => 
+            {
+                if (!_delegates.TryGetValue(pointer, out var matchmakerViewControllerDelegate))
+                    return;
+                
+                matchmakerViewControllerDelegate?.DidFailWithError?.Invoke(
+                    PointerCast<GKMatchmakerViewController>(matchmakerViewController), 
+                    new GameKitException(errorPointer));
+            });
         }
         
         [MonoPInvokeCallback(typeof(InteropHostedPlayerDidAcceptHandler))]
         private static void OnHostedPlayerDidAccept(IntPtr pointer, IntPtr matchmakerViewController, IntPtr hostedPlayer)
         {
-            if (!_delegates.TryGetValue(pointer, out var matchmakerViewControllerDelegate))
-                return;
-            
-            matchmakerViewControllerDelegate?.HostedPlayerDidAccept?.Invoke(
-                PointerCast<GKMatchmakerViewController>(matchmakerViewController), 
-                PointerCast<GKPlayer>(hostedPlayer));
+            InteropPInvokeExceptionHandler.CatchAndLog(() => 
+            {
+                if (!_delegates.TryGetValue(pointer, out var matchmakerViewControllerDelegate))
+                    return;
+                
+                matchmakerViewControllerDelegate?.HostedPlayerDidAccept?.Invoke(
+                    PointerCast<GKMatchmakerViewController>(matchmakerViewController), 
+                    PointerCast<GKPlayer>(hostedPlayer));
+            });
         }
         #endregion
 
@@ -145,17 +160,20 @@ namespace Apple.GameKit.Multiplayer
         [MonoPInvokeCallback(typeof(InteropGetMatchPropertiesForRecipientHandler))]
         private static async void OnGetMatchPropertiesForRecipient(IntPtr gkMatchmakerViewControllerDelegatePtr, IntPtr gkMatchmakerViewControllerPtr, IntPtr gkPlayerPtr, IntPtr completionHandlerPtr)
         {
-            if (!_delegates.TryGetValue(gkMatchmakerViewControllerDelegatePtr, out var gkMatchmakerViewControllerDelegate))
+            await InteropPInvokeExceptionHandler.CatchAndLog(async () =>
             {
-                return;
-            }
+                if (!_delegates.TryGetValue(gkMatchmakerViewControllerDelegatePtr, out var gkMatchmakerViewControllerDelegate))
+                {
+                    return;
+                }
 
-            var gkMatchProperties = await gkMatchmakerViewControllerDelegate?.GetMatchPropertiesForRecipient?.Invoke(
-                PointerCast<GKMatchmakerViewController>(gkMatchmakerViewControllerPtr),
-                PointerCast<GKPlayer>(gkPlayerPtr));
+                var gkMatchProperties = await gkMatchmakerViewControllerDelegate?.GetMatchPropertiesForRecipient?.Invoke(
+                    PointerCast<GKMatchmakerViewController>(gkMatchmakerViewControllerPtr),
+                    PointerCast<GKPlayer>(gkPlayerPtr));
 
-            // call completion handler
-            Interop.GKMatchmakerViewControllerDelegate_CallGetMatchPropertiesForRecipientCompletionHandler(completionHandlerPtr, gkMatchProperties.Pointer);
+                // call completion handler
+                Interop.GKMatchmakerViewControllerDelegate_CallGetMatchPropertiesForRecipientCompletionHandler(completionHandlerPtr, gkMatchProperties.Pointer);
+            });
         }
         #endregion
 

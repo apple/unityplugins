@@ -128,7 +128,7 @@ public func GKMatchRequest_GetRecipients
 {
     let target = Unmanaged<GKMatchRequest>.fromOpaque(pointer).takeUnretainedValue();
     
-    if(target.recipients != nil) {
+    if (target.recipients != nil) {
         return Unmanaged.passRetained(target.recipients! as NSArray).toOpaque();
     }
     
@@ -139,11 +139,11 @@ public func GKMatchRequest_GetRecipients
 public func GKMatchRequest_SetRecipients
 (
     pointer: UnsafeMutableRawPointer,
-    value: UnsafeMutableRawPointer
+    value: UnsafeMutableRawPointer?
 )
 {
     let target = Unmanaged<GKMatchRequest>.fromOpaque(pointer).takeUnretainedValue();
-    target.recipients = Unmanaged<NSArray>.fromOpaque(value).takeUnretainedValue() as? [GKPlayer];
+    target.recipients = value.map { Unmanaged<NSArray>.fromOpaque($0).takeUnretainedValue() } as? [GKPlayer];
 }
 
 @_cdecl("GKMatchRequest_GetQueueName")
@@ -239,4 +239,58 @@ public func GKMatchRequest_SetRecipientProperties
             gkMatchRequest.recipientProperties = nil;
         }
     }
+}
+
+public typealias GKMatchRequestRecipientResponseHandler = @convention(c) (UnsafeMutableRawPointer /*GKMatchRequest*/, UnsafeMutableRawPointer /*GKPlayer*/, Int /*GKInviteRecipientResponse*/) -> Void;
+
+@_cdecl("GKMatchRequest_SetRecipientResponseHandler")
+public func GKMatchRequest_SetRecipientResponseHandler
+(
+    gkMatchRequestPtr: UnsafeMutableRawPointer,
+    recipientResponseHandler: GKMatchRequestRecipientResponseHandler? // optional func params are @escaping by default
+)
+{
+    let gkMatchRequest = Unmanaged<GKMatchRequest>.fromOpaque(gkMatchRequestPtr).takeUnretainedValue();
+
+    guard let recipientResponseHandler = recipientResponseHandler else {
+        gkMatchRequest.recipientResponseHandler = nil;
+        return;
+    }
+
+    gkMatchRequest.recipientResponseHandler = { gkPlayer, gkInviteRecipientResponse in
+        recipientResponseHandler(
+            gkMatchRequestPtr, // not retained as per notes in InteropWeakMap.cs.
+            Unmanaged.passRetained(gkPlayer).toOpaque(),
+            gkInviteRecipientResponse.rawValue);
+    }
+}
+
+@_cdecl("GKMatchRequest_GetDefaultNumberOfPlayers")
+public func GKMatchRequest_GetDefaultNumberOfPlayers
+(
+    gkMatchRequestPtr: UnsafeMutableRawPointer
+) -> Int
+{
+    let gkMatchRequest = Unmanaged<GKMatchRequest>.fromOpaque(gkMatchRequestPtr).takeUnretainedValue();
+    return gkMatchRequest.defaultNumberOfPlayers;
+}
+
+@_cdecl("GKMatchRequest_SetDefaultNumberOfPlayers")
+public func GKMatchRequest_SetDefaultNumberOfPlayers
+(
+    gkMatchRequestPtr: UnsafeMutableRawPointer,
+    value: Int
+)
+{
+    let gkMatchRequest = Unmanaged<GKMatchRequest>.fromOpaque(gkMatchRequestPtr).takeUnretainedValue();
+    gkMatchRequest.defaultNumberOfPlayers = value;
+}
+
+@_cdecl("GKMatchRequest_GetMaxPlayersAllowedForMatchOfType")
+public func GKMatchRequest_GetMaxPlayersAllowedForMatchOfType
+(
+    matchType: UInt // GKMatchType
+) -> Int
+{
+    return GKMatchRequest.maxPlayersAllowedForMatch(of: GKMatchType(rawValue: matchType)!);
 }

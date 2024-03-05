@@ -18,6 +18,19 @@ public func GKAchievement_Init
     return Unmanaged.passRetained(achievement).toOpaque();
 }
 
+// Initialize the achievement for a specific player. Use to submit participant achievements when ending a turn-based match.
+@_cdecl("GKAchievement_InitForPlayer")
+public func GKAchievement_InitForPlayer
+(
+    identifier: char_p,
+    gkPlayerPtr : UnsafeMutableRawPointer
+) -> UnsafeMutableRawPointer
+{
+    let player = Unmanaged<GKPlayer>.fromOpaque(gkPlayerPtr).takeUnretainedValue();
+    let achievement = GKAchievement.init(identifier: identifier.toString(), player: player);
+    return Unmanaged.passRetained(achievement).toOpaque();
+}
+
 @_cdecl("GKAchievement_GetIdentifier")
 public func GKAchievement_GetIdentifier
 (

@@ -62,7 +62,7 @@ namespace Apple.Core.Runtime
         [MonoPInvokeCallback(typeof(NSExceptionCallback))]
         internal static void ThrowOnExceptionCallback(IntPtr nsExceptionPtr)
         {
-            PointerCast<NSException>(nsExceptionPtr).Throw();
+            InteropPInvokeExceptionHandler.CatchAndLog(() => PointerCast<NSException>(nsExceptionPtr).Throw());
         }
 
         private static class Interop

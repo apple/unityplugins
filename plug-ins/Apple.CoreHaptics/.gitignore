@@ -89,6 +89,7 @@ crashlytics-build.properties
 **/Plugins/**/*.meta
 **/.idea/*
 **/com.apple.unityplugin.corehaptics*.tgz
+**/Apple Plug-In Support.meta
 
 ## User settings
 **xcuserdata/

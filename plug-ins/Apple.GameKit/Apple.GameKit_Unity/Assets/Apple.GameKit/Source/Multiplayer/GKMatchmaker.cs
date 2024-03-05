@@ -13,9 +13,20 @@ namespace Apple.GameKit.Multiplayer
     /// </summary>
     public class GKMatchmaker : NSObject
     {
+        private static readonly InteropWeakMap<GKMatchmaker> _instanceMap = new InteropWeakMap<GKMatchmaker>();
+
         [Preserve]
-        internal GKMatchmaker(IntPtr pointer) : base(pointer) {}
-        
+        internal GKMatchmaker(IntPtr pointer) : base(pointer)
+        {
+            _instanceMap.Add(this);
+        }
+
+        protected override void OnDispose(bool isDisposing)
+        {
+            _instanceMap.Remove(this);
+            base.OnDispose(isDisposing);
+        }
+
         private static GKMatchmaker _shared;
         
         /// <summary>
@@ -76,6 +87,13 @@ namespace Apple.GameKit.Multiplayer
         private static void OnInviteMatchError(long taskId, IntPtr errorPointer)
         {
             InteropTasks.TrySetExceptionAndRemove<GKMatch>(taskId, new GameKitException(errorPointer));
+        }
+        #endregion
+
+        #region FinishMatchmaking
+        public void FinishMatchmaking(GKMatch match)
+        {
+            Interop.GKMatchmaker_FinishMatchmaking(Pointer, match.Pointer);
         }
         #endregion
         
@@ -257,6 +275,88 @@ namespace Apple.GameKit.Multiplayer
         /// <param name="player"></param>
         public void CancelPendingInvite(GKPlayer player) => Interop.GKMatchmaker_CancelPendingInvite(Pointer, player.Pointer);
 
+        /// <summary>
+        /// Finds nearby players through Bluetooth or WiFi on the same subnet.
+        /// Fires the NearbyPlayerReachable event whenever the reachability of a nearby player changes.
+        /// </summary>
+        [Introduced(iOS: "8.0", macOS: "10.10", tvOS: "9.0")]
+        public void StartBrowsingForNearbyPlayers()
+        {
+            Interop.GKMatchmaker_StartBrowsingForNearbyPlayers(Pointer, OnNearbyPlayerReachable);
+        }
+
+        /// <summary>
+        /// Stops finding nearby players.
+        /// </summary>
+        [Introduced(iOS: "6.0", macOS: "10.9", tvOS: "9.0")]
+        public void StopBrowsingForNearbyPlayers()
+        {
+            Interop.GKMatchmaker_StopBrowsingForNearbyPlayers(Pointer);
+        }
+
+        /// <summary>
+        /// Event fired whenever the reachability of a nearby player changes while browsing for nearby players.
+        /// </summary>
+        public event NearbyPlayerReachableHandler NearbyPlayerReachable;
+
+        public delegate void NearbyPlayerReachableHandler(GKPlayer player, bool isReachable);
+        internal delegate void InternalNearbyPlayerReachableHandler(IntPtr gkMatchmakerPtr, IntPtr gkPlayerPtr, bool isReachable);
+
+        [MonoPInvokeCallback(typeof(InternalNearbyPlayerReachableHandler))]
+        private static void OnNearbyPlayerReachable(IntPtr gkMatchmakerPtr, IntPtr gkPlayerPtr, bool isReachable)
+        {
+            InteropPInvokeExceptionHandler.CatchAndLog(() =>
+            {
+                if (_instanceMap.TryGet(gkMatchmakerPtr, out var gkMatchmaker))
+                {
+                    var gkPlayer = PointerCast<GKPlayer>(gkPlayerPtr);
+                    gkMatchmaker.NearbyPlayerReachable?.Invoke(gkPlayer, isReachable);
+                }
+            });
+        }
+
+#if !UNITY_TVOS
+        /// <summary>
+        /// Begins a SharePlay activity for your game when a FaceTime call is active.
+        /// Fires the PlayerJoiningGroupActivity event whenever a player requests to join the group activity.
+        /// </summary>
+        [Introduced(iOS: "16.2", macOS: "13.1")]
+        public void StartGroupActivity()
+        {
+            Interop.GKMatchmaker_StartGroupActivity(Pointer, OnPlayerJoiningGroupActivity);
+        }
+
+        /// <summary>
+        /// Ends a SharePlay activity for the entire group, which the local player activates.
+        /// </summary>
+        [Introduced(iOS: "16.2", macOS: "13.1")]
+        public void StopGroupActivity()
+        {
+            Interop.GKMatchmaker_StopGroupActivity(Pointer);
+        }
+
+        /// <summary>
+        /// Event fired whenever a player requests to join the group activity while the group is active.
+        /// </summary>
+        public event PlayerJoiningGroupActivityHandler PlayerJoiningGroupActivity;
+
+        public delegate void PlayerJoiningGroupActivityHandler(GKPlayer player);
+        internal delegate void InternalPlayerJoiningGroupActivityHandler(IntPtr gkMatchmakerPtr, IntPtr gkPlayerPtr);
+
+        [MonoPInvokeCallback(typeof(InternalPlayerJoiningGroupActivityHandler))]
+        private static void OnPlayerJoiningGroupActivity(IntPtr gkMatchmakerPtr, IntPtr gkPlayerPtr)
+        {
+            InteropPInvokeExceptionHandler.CatchAndLog(() =>
+            {
+                if (_instanceMap.TryGet(gkMatchmakerPtr, out var gkMatchmaker))
+                {
+                    var gkPlayer = PointerCast<GKPlayer>(gkPlayerPtr);
+                    gkMatchmaker.PlayerJoiningGroupActivity?.Invoke(gkPlayer);
+                }
+            });
+        }
+#endif // !UNITY_TVOS
+
         private static class Interop
         {
             [DllImport(InteropUtility.DLLName)]
@@ -265,6 +365,8 @@ namespace Apple.GameKit.Multiplayer
             public static extern void GKMatchmaker_FindMatch(IntPtr pointer, long taskId, IntPtr matchRequest, SuccessTaskCallback<IntPtr> onSuccess, NSErrorTaskCallback onError);
             [DllImport(InteropUtility.DLLName)]
             public static extern void GKMatchmaker_MatchForInvite(IntPtr pointer, long taskId, IntPtr invite, SuccessTaskCallback<IntPtr> onSuccess, NSErrorTaskCallback onError);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKMatchmaker_FinishMatchmaking(IntPtr gkMatchmakerPtr, IntPtr gkMatchPtr);
             [DllImport(InteropUtility.DLLName)]
             public static extern void GKMatchmaker_FindPlayers(IntPtr pointer, long taskId, IntPtr request, SuccessTaskCallback<IntPtr> onSuccess, NSErrorTaskCallback onError);
             [DllImport(InteropUtility.DLLName)]
@@ -281,6 +383,14 @@ namespace Apple.GameKit.Multiplayer
             public static extern void GKMatchmaker_Cancel(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
             public static extern void GKMatchmaker_CancelPendingInvite(IntPtr pointer, IntPtr player);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKMatchmaker_StartBrowsingForNearbyPlayers(IntPtr gkMatchmakerPtr, InternalNearbyPlayerReachableHandler nearbyPlayerReachableHandler);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKMatchmaker_StopBrowsingForNearbyPlayers(IntPtr gkMatchmakerPtr);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKMatchmaker_StartGroupActivity(IntPtr gkMatchmakerPtr, InternalPlayerJoiningGroupActivityHandler playerJoiningGroupActivityHandler);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKMatchmaker_StopGroupActivity(IntPtr gkMatchmakerPtr);
         }
     }
 }

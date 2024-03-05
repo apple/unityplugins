@@ -59,25 +59,25 @@ namespace Apple.GameKit
         [MonoPInvokeCallback(typeof(InteropChallengeReceivedHandler))]
         private static void OnChallengeReceived(IntPtr player, IntPtr challenge)
         {
-            ChallengeReceived?.Invoke(PointerCast<GKPlayer>(player), PointerCast<GKChallenge>(challenge));
+            InteropPInvokeExceptionHandler.CatchAndLog(() => ChallengeReceived?.Invoke(PointerCast<GKPlayer>(player), PointerCast<GKChallenge>(challenge)));
         }
 
         [MonoPInvokeCallback(typeof(InteropChallengeOtherPlayerAcceptedHandler))]
         private static void OnChallengeOtherPlayerAccepted(IntPtr player, IntPtr challenge)
         {
-            ChallengeOtherPlayerAccepted?.Invoke(PointerCast<GKPlayer>(player), PointerCast<GKChallenge>(challenge));
+            InteropPInvokeExceptionHandler.CatchAndLog(() => ChallengeOtherPlayerAccepted?.Invoke(PointerCast<GKPlayer>(player), PointerCast<GKChallenge>(challenge)));
         }
 
         [MonoPInvokeCallback(typeof(InteropChallengeCompletedHandler))]
         private static void OnChallengeCompleted(IntPtr player, IntPtr challenge, IntPtr issuedByFriend)
         {
-            ChallengeCompleted?.Invoke(PointerCast<GKPlayer>(player), PointerCast<GKChallenge>(challenge), PointerCast<GKPlayer>(issuedByFriend));
+            InteropPInvokeExceptionHandler.CatchAndLog(() => ChallengeCompleted?.Invoke(PointerCast<GKPlayer>(player), PointerCast<GKChallenge>(challenge), PointerCast<GKPlayer>(issuedByFriend)));
         }
         
         [MonoPInvokeCallback(typeof(InteropChallengeOtherPlayerCompletedHanlder))]
         private static void OnChallengeOtherPlayerCompleted(IntPtr player, IntPtr challenge, IntPtr issuedByFriend)
         {
-            ChallengeOtherPlayerCompleted?.Invoke(PointerCast<GKPlayer>(player), PointerCast<GKChallenge>(challenge), PointerCast<GKPlayer>(issuedByFriend));
+            InteropPInvokeExceptionHandler.CatchAndLog(() => ChallengeOtherPlayerCompleted?.Invoke(PointerCast<GKPlayer>(player), PointerCast<GKChallenge>(challenge), PointerCast<GKPlayer>(issuedByFriend)));
         }
         #endregion
         

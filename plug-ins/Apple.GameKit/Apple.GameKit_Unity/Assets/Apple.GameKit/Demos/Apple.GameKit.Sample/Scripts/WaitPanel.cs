@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,10 +7,8 @@ namespace Apple.GameKit.Sample
 {
     public class WaitPanel : MonoBehaviour
     {
-#pragma warning disable 0649
-        [SerializeField] private Text _messageText;
-        [SerializeField] private Button _cancelButton;
-#pragma warning restore 0649
+        [SerializeField] private Text _messageText = default;
+        [SerializeField] private Button _cancelButton = default;
 
         public string Message
         {

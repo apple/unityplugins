@@ -53,32 +53,41 @@ namespace Apple.GameKit.Multiplayer
         [MonoPInvokeCallback(typeof(_DidFindMatchHandler))]
         private static void OnDidFindMatch(IntPtr pointer, IntPtr matchmakerViewController, IntPtr match)
         {
-            if (!_delegates.TryGetValue(pointer, out var matchmakerViewControllerDelegate))
-                return;
-            
-            matchmakerViewControllerDelegate?.DidFindMatch?.Invoke(
-                PointerCast<GKTurnBasedMatchmakerViewController>(matchmakerViewController),
-                PointerCast<GKTurnBasedMatch>(match));
+            InteropPInvokeExceptionHandler.CatchAndLog(() =>
+            {
+                if (!_delegates.TryGetValue(pointer, out var matchmakerViewControllerDelegate))
+                    return;
+                
+                matchmakerViewControllerDelegate?.DidFindMatch?.Invoke(
+                    PointerCast<GKTurnBasedMatchmakerViewController>(matchmakerViewController),
+                    PointerCast<GKTurnBasedMatch>(match));
+            });
         }
         
         [MonoPInvokeCallback(typeof(_MatchmakingCanceledHandler))]
         private static void OnMatchmakingCanceled(IntPtr pointer, IntPtr matchmakerViewController)
         {
-            if (!_delegates.TryGetValue(pointer, out var matchmakerViewControllerDelegate))
-                return;
-            
-            matchmakerViewControllerDelegate?.MatchmakingCanceled?.Invoke(PointerCast<GKTurnBasedMatchmakerViewController>(matchmakerViewController));
+            InteropPInvokeExceptionHandler.CatchAndLog(() =>
+            {
+                if (!_delegates.TryGetValue(pointer, out var matchmakerViewControllerDelegate))
+                    return;
+                
+                matchmakerViewControllerDelegate?.MatchmakingCanceled?.Invoke(PointerCast<GKTurnBasedMatchmakerViewController>(matchmakerViewController));
+            });
         }
 
         [MonoPInvokeCallback(typeof(_DidFailWithErrorHandler))]
         private static void OnDidFailWithError(IntPtr pointer, IntPtr matchmakerViewController, IntPtr errorPointer)
         {
-            if (!_delegates.TryGetValue(pointer, out var matchmakerViewControllerDelegate))
-                return;
-            
-            matchmakerViewControllerDelegate?.DidFailWithError?.Invoke(
-                PointerCast<GKTurnBasedMatchmakerViewController>(matchmakerViewController),
-                new GameKitException(errorPointer));
+            InteropPInvokeExceptionHandler.CatchAndLog(() =>
+            {
+                if (!_delegates.TryGetValue(pointer, out var matchmakerViewControllerDelegate))
+                    return;
+                
+                matchmakerViewControllerDelegate?.DidFailWithError?.Invoke(
+                    PointerCast<GKTurnBasedMatchmakerViewController>(matchmakerViewController),
+                    new GameKitException(errorPointer));
+            });
         }
         #endregion
 

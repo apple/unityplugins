@@ -6,26 +6,7 @@
 	objectVersion = 50;
 	objects = {
 
-/* Begin PBXAggregateTarget section */
-		24247395276D22CE009747F6 /* All */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 24247398276D22CE009747F6 /* Build configuration list for PBXAggregateTarget "All" */;
-			buildPhases = (
-			);
-			dependencies = (
-				2424739A276D22D7009747F6 /* PBXTargetDependency */,
-				2424739C276D22D7009747F6 /* PBXTargetDependency */,
-				2424739E276D22D7009747F6 /* PBXTargetDependency */,
-			);
-			name = All;
-			productName = All;
-		};
-/* End PBXAggregateTarget section */
-
 /* Begin PBXBuildFile section */
-		249884252953BCD6003E9DB7 /* GameKitWrapper.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7A9B815324A4FC3800FB2FE8 /* GameKitWrapper.framework */; };
-		249884272953C081003E9DB7 /* GameKitWrapper.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7AE5BBA22502C0DD00BDBEDA /* GameKitWrapper.framework */; };
-		249884292953C09D003E9DB7 /* GameKitWrapper.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7A7E439624B508D40086FB7A /* GameKitWrapper.bundle */; };
 		7A3E81F726F27BD800B102BB /* GKNotificationBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A3E81F626F27BD800B102BB /* GKNotificationBanner.swift */; };
 		7A3E81F826F27BD800B102BB /* GKNotificationBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A3E81F626F27BD800B102BB /* GKNotificationBanner.swift */; };
 		7A3E81F926F27BD800B102BB /* GKNotificationBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A3E81F626F27BD800B102BB /* GKNotificationBanner.swift */; };
@@ -145,64 +126,8 @@
 		FB86944B2AD73AE5009B8676 /* GKMatchedPlayers.m in Sources */ = {isa = PBXBuildFile; fileRef = FB8694482AD73AE5009B8676 /* GKMatchedPlayers.m */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		24247399276D22D7009747F6 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 7A9B814A24A4FC3800FB2FE8 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 7A9B815224A4FC3800FB2FE8;
-			remoteInfo = "GameKitWrapper iOS";
-		};
-		2424739B276D22D7009747F6 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 7A9B814A24A4FC3800FB2FE8 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 7AE5BB832502C0DD00BDBEDA;
-			remoteInfo = "GameKitWrapper tvOS";
-		};
-		2424739D276D22D7009747F6 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 7A9B814A24A4FC3800FB2FE8 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 7A7E439524B508D40086FB7A;
-			remoteInfo = GameKitWrapperMac;
-		};
-/* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		249884242953BCA5003E9DB7 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "$(PROJECT_DIR)/../Apple.GameKit_Unity/Assets/Apple.GameKit/Plugins/iOS";
-			dstSubfolderSpec = 0;
-			files = (
-				249884252953BCD6003E9DB7 /* GameKitWrapper.framework in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		249884262953C066003E9DB7 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "$(PROJECT_DIR)/../Apple.GameKit_Unity/Assets/Apple.GameKit/Plugins/tvOS";
-			dstSubfolderSpec = 0;
-			files = (
-				249884272953C081003E9DB7 /* GameKitWrapper.framework in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		249884282953C08D003E9DB7 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "$(PROJECT_DIR)/../Apple.GameKit_Unity/Assets/Apple.GameKit/Plugins/macOS";
-			dstSubfolderSpec = 0;
-			files = (
-				249884292953C09D003E9DB7 /* GameKitWrapper.bundle in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXFileReference section */
+		240646152B62D61800246067 /* GameKit.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = GameKit.xcconfig; sourceTree = "<group>"; };
 		46531AD89A1A23DEFB9D6429 /* libPods-GameKitWrapperUnitTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-GameKitWrapperUnitTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7A3E81F626F27BD800B102BB /* GKNotificationBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GKNotificationBanner.swift; sourceTree = "<group>"; };
 		7A486BA926A09D7A00255BD5 /* AppleCoreRuntimeShared.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleCoreRuntimeShared.h; sourceTree = "<group>"; };
@@ -278,6 +203,7 @@
 		7A9B814924A4FC3800FB2FE8 = {
 			isa = PBXGroup;
 			children = (
+				240646152B62D61800246067 /* GameKit.xcconfig */,
 				7A9B815524A4FC3800FB2FE8 /* GameKitWrapper */,
 				7A9B815424A4FC3800FB2FE8 /* Products */,
 				D1BF3B94071D16AAD9805635 /* Frameworks */,
@@ -397,7 +323,6 @@
 				7A7E439224B508D40086FB7A /* Sources */,
 				7A7E439324B508D40086FB7A /* Frameworks */,
 				7A7E439424B508D40086FB7A /* Resources */,
-				249884282953C08D003E9DB7 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -416,7 +341,6 @@
 				7A9B814F24A4FC3800FB2FE8 /* Sources */,
 				7A9B815024A4FC3800FB2FE8 /* Frameworks */,
 				7A9B815124A4FC3800FB2FE8 /* Resources */,
-				249884242953BCA5003E9DB7 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -435,7 +359,6 @@
 				7AE5BB8C2502C0DD00BDBEDA /* Sources */,
 				7AE5BB9D2502C0DD00BDBEDA /* Frameworks */,
 				7AE5BB9E2502C0DD00BDBEDA /* Resources */,
-				249884262953C066003E9DB7 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -456,9 +379,6 @@
 				LastUpgradeCheck = 1150;
 				ORGANIZATIONNAME = "Apple, Inc.";
 				TargetAttributes = {
-					24247395276D22CE009747F6 = {
-						CreatedOnToolsVersion = 13.2;
-					};
 					7A7E439524B508D40086FB7A = {
 						CreatedOnToolsVersion = 11.5;
 					};
@@ -484,7 +404,6 @@
 				7A9B815224A4FC3800FB2FE8 /* GameKitWrapper iOS */,
 				7AE5BB832502C0DD00BDBEDA /* GameKitWrapper tvOS */,
 				7A7E439524B508D40086FB7A /* GameKitWrapperMac */,
-				24247395276D22CE009747F6 /* All */,
 			);
 		};
 /* End PBXProject section */
@@ -642,58 +561,16 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
-/* Begin PBXTargetDependency section */
-		2424739A276D22D7009747F6 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 7A9B815224A4FC3800FB2FE8 /* GameKitWrapper iOS */;
-			targetProxy = 24247399276D22D7009747F6 /* PBXContainerItemProxy */;
-		};
-		2424739C276D22D7009747F6 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 7AE5BB832502C0DD00BDBEDA /* GameKitWrapper tvOS */;
-			targetProxy = 2424739B276D22D7009747F6 /* PBXContainerItemProxy */;
-		};
-		2424739E276D22D7009747F6 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 7A7E439524B508D40086FB7A /* GameKitWrapperMac */;
-			targetProxy = 2424739D276D22D7009747F6 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
 /* Begin XCBuildConfiguration section */
-		24247396276D22CE009747F6 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ADDITIONAL_SDKS = "macosx appletvos appletvsimulator iphoneos iphonesimulator";
-				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = XPSUQMMH5W;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SUPPORTED_PLATFORMS = "macosx appletvos appletvsimulator iphoneos iphonesimulator";
-			};
-			name = Debug;
-		};
-		24247397276D22CE009747F6 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ADDITIONAL_SDKS = "macosx appletvos appletvsimulator iphoneos iphonesimulator";
-				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = XPSUQMMH5W;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SUPPORTED_PLATFORMS = "macosx appletvos appletvsimulator iphoneos iphonesimulator";
-			};
-			name = Release;
-		};
 		7A7E439A24B508D40086FB7A /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 240646152B62D61800246067 /* GameKit.xcconfig */;
 			buildSettings = {
 				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = NO;
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = GameKitWrapper/Info.plist;
 				INFOPLIST_OUTPUT_FORMAT = XML;
@@ -715,6 +592,7 @@
 		};
 		7A7E439B24B508D40086FB7A /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 240646152B62D61800246067 /* GameKit.xcconfig */;
 			buildSettings = {
 				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = NO;
@@ -742,6 +620,7 @@
 		};
 		7A9B816524A4FC3800FB2FE8 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 240646152B62D61800246067 /* GameKit.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -805,6 +684,7 @@
 		};
 		7A9B816624A4FC3800FB2FE8 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 240646152B62D61800246067 /* GameKit.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -862,6 +742,7 @@
 		};
 		7A9B816824A4FC3800FB2FE8 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 240646152B62D61800246067 /* GameKit.xcconfig */;
 			buildSettings = {
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
@@ -897,6 +778,7 @@
 		};
 		7A9B816924A4FC3800FB2FE8 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 240646152B62D61800246067 /* GameKit.xcconfig */;
 			buildSettings = {
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
@@ -931,13 +813,13 @@
 		};
 		7AE5BBA02502C0DD00BDBEDA /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 240646152B62D61800246067 /* GameKit.xcconfig */;
 			buildSettings = {
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -968,6 +850,7 @@
 		};
 		7AE5BBA12502C0DD00BDBEDA /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 240646152B62D61800246067 /* GameKit.xcconfig */;
 			buildSettings = {
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
@@ -1004,15 +887,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		24247398276D22CE009747F6 /* Build configuration list for PBXAggregateTarget "All" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				24247396276D22CE009747F6 /* Debug */,
-				24247397276D22CE009747F6 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		7A7E439924B508D40086FB7A /* Build configuration list for PBXNativeTarget "GameKitWrapperMac" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

@@ -1,7 +1,26 @@
 # CHANGELOG
 All notable changes to this project will be documented in this file.
 
-## [2.0.0] - 2023-11-09
+## [2.1.0] - 2023-02-15
+### Updated
+- Adopt Apple.Core 3.0.0
+
+## [2.0.1] - 2024-02-15
+### Added
+- C# wrappers for the following GameKit APIs:
+  - `GKLeaderboard.LoadEntriesForPlayers`
+  - `GKMatchmaker.FinishMatchmaking`, `.Start/StopBrowsingForNearbyPlayers`, and `.Start/StopGroupActivity`
+  - `GKMatchmakerViewController.AddPlayersToMatch`
+  - `GKMatchRequest.RecipientResponse`, `.DefaultNumberOfPlayers`, and `.MaxPlayersAllowedForMatch`
+  - `GKTurnBasedMatch.SetLocalizableMessageWithKey`
+  - `GKAccessPoint.Trigger` (with state)
+  - `GKAchievement.Init` (for player)
+  - `GKAchievementDescription.IncompleteAchievementImage` and `.PlaceholderCompletedAchievementImage`
+  - `GKLocalPlayer.LoadFriends` (with identifiers) and `.LoadFriendsAuthorizationStatus`
+### Changed
+  - Updated the GameKit sample app to demonstrate most of the newly wrapped APIs above.
+
+## [2.0.0] - 2023-12-15
 ### Added
 - Support new rule-based matchmaking APIs available in iOS/tvOS 17.2 and macOS 14.2.
 - New `RarityPercent` property of `GKAchievementDescription`.

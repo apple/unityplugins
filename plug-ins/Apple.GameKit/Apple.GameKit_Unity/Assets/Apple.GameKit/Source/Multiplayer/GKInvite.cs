@@ -26,7 +26,7 @@ namespace Apple.GameKit.Multiplayer
         [MonoPInvokeCallback(typeof(InteropInviteAcceptedHandler))]
         private static void OnInviteAccepted(IntPtr player, IntPtr invite)
         {
-            InviteAccepted?.Invoke(PointerCast<GKPlayer>(player), PointerCast<GKInvite>(invite));
+            InteropPInvokeExceptionHandler.CatchAndLog(() => InviteAccepted?.Invoke(PointerCast<GKPlayer>(player), PointerCast<GKInvite>(invite)));
         }
         
         internal GKInvite(IntPtr pointer) : base(pointer){}

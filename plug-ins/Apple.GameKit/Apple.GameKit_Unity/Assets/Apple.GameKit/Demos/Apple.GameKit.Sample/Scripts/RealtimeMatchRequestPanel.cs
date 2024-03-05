@@ -14,56 +14,53 @@ namespace Apple.GameKit.Sample
 
     public class RealtimeMatchRequestPanel : MonoBehaviour
     {
-#pragma warning disable 0649
-        [SerializeField] private Dropdown _minPlayersDropdown;
-        [SerializeField] private Dropdown _maxPlayersDropdown;
-        [SerializeField] private Dropdown _matchmakingModeDropdown;
+        [SerializeField] private Dropdown _minPlayersDropdown = default;
+        [SerializeField] private Dropdown _maxPlayersDropdown = default;
+        [SerializeField] private Dropdown _matchmakingModeDropdown = default;
 
-        [SerializeField] private Toggle _fastStartToggle;
-        [SerializeField] private Toggle _serverHostedToggle;
+        [SerializeField] private Toggle _fastStartToggle = default;
+        [SerializeField] private Toggle _serverHostedToggle = default;
 
-        [SerializeField] private InputField _queueNameInputField;
+        [SerializeField] private InputField _queueNameInputField = default;
 
-        [SerializeField] private GameObject _queueRelatedItems;
-        [SerializeField] private InputField _propertiesInputField;
-        [SerializeField] private InputField _recipientPropertiesInputField;
-        [SerializeField] private Button _queryQueueActivityButton;
-        [SerializeField] private Text   _queueQueueActivityButtonText;
-        [SerializeField] private string _updateString;
-        [SerializeField] private string _updatingString;
+        [SerializeField] private GameObject _queueRelatedItems = default;
+        [SerializeField] private InputField _propertiesInputField = default;
+        [SerializeField] private InputField _recipientPropertiesInputField = default;
+        [SerializeField] private Button _queryQueueActivityButton = default;
+        [SerializeField] private Text   _queueQueueActivityButtonText = default;
+        [SerializeField] private string _updateString = default;
+        [SerializeField] private string _updatingString = default;
 
-        [SerializeField] private RealtimeMatchStatusPanel _realtimeMatchStatusPanel;
-        [SerializeField] private WaitPanel _waitPanel;
-#pragma warning restore 0649
+        [SerializeField] private RealtimeMatchStatusPanel _realtimeMatchStatusPanel = default;
+        [SerializeField] private WaitPanel _waitPanel = default;
 
         private Color _propertiesTextDefaultColor = Color.black;
         private GKMatchProperties _propertiesDictionary = null;
         private NSDictionary<NSString, GKMatchProperties> _recipientPropertiesDictionary = null;
 
+        private static List<Dropdown.OptionData> CreatePlayerCountDropdownContent(GKMatchRequest.GKMatchType matchType)
+        {
+            int maxPlayers = (int)GKMatchRequest.MaxPlayersAllowedForMatch(matchType);
+            var list = new List<Dropdown.OptionData>(maxPlayers - 1);
+            for (int i = 2; i <= maxPlayers; i++)
+            {
+                list.Add(new Dropdown.OptionData($"{i} Players"));
+            }
+            return list;
+        }
+
+        private List<Dropdown.OptionData> _peerToPeerDropDownOptionData = null;
+        private List<Dropdown.OptionData> _hostedDropDownOptionData = null;
+
         void Start()
         {
             _propertiesTextDefaultColor = _propertiesInputField.textComponent.color;
 
-            _minPlayersDropdown.options = _maxPlayersDropdown.options = new List<Dropdown.OptionData>
-            {
-                new Dropdown.OptionData("2 Players"),
-                new Dropdown.OptionData("3 Players"),
-                new Dropdown.OptionData("4 Players"),
-                new Dropdown.OptionData("5 Players"),
-                new Dropdown.OptionData("6 Players"),
-                new Dropdown.OptionData("7 Players"),
-                new Dropdown.OptionData("8 Players"),
-                new Dropdown.OptionData("9 Players"),
-                new Dropdown.OptionData("10 Players"),
-                new Dropdown.OptionData("11 Players"),
-                new Dropdown.OptionData("12 Players"),
-                new Dropdown.OptionData("13 Players"),
-                new Dropdown.OptionData("14 Players"),
-                new Dropdown.OptionData("15 Players"),
-                new Dropdown.OptionData("16 Players"),
-            };
+        _peerToPeerDropDownOptionData = CreatePlayerCountDropdownContent(GKMatchRequest.GKMatchType.PeerToPeer);
+        _hostedDropDownOptionData = CreatePlayerCountDropdownContent(GKMatchRequest.GKMatchType.Hosted);
 
             LoadSettings();
+            OnServerHostedChanged(_serverHostedToggle.isOn);
         }
 
         static readonly string MinPlayersPrefsKey = "RealtimeMatchRequestPanel.MinPlayers";
@@ -125,6 +122,11 @@ namespace Apple.GameKit.Sample
             }
         }
 
+        public void OnServerHostedChanged(bool isHosted)
+        {
+            _minPlayersDropdown.options = _maxPlayersDropdown.options = isHosted ? _hostedDropDownOptionData : _peerToPeerDropDownOptionData;
+        }
+
         public void OnQueueNameChanged(string queueName)
         {
             var hasValue = !string.IsNullOrWhiteSpace(queueName);
@@ -157,7 +159,10 @@ namespace Apple.GameKit.Sample
                 }
                 _queueQueueActivityButtonText.text = _updateString;
             }
-            _queryQueueActivityButton.interactable = true;
+            finally
+            {
+                _queryQueueActivityButton.interactable = true;
+            }
         }
 
         public void OnPropertiesChanged(string propertiesJson)
@@ -268,7 +273,7 @@ namespace Apple.GameKit.Sample
                         canStartWithMinimumPlayers,
                         (request.QueueName != default) ? GetMatchPropertiesForRecipientHandler : default);
 
-                    _realtimeMatchStatusPanel.Populate(request, match);
+                    _realtimeMatchStatusPanel.Populate(request, match, showStartGameButton: false);
                 }
 
                 GameKitSample.ReplaceActivePanel(_realtimeMatchStatusPanel.gameObject);
@@ -342,27 +347,35 @@ namespace Apple.GameKit.Sample
 
         public async Task InviteMatchedPlayers(GKMatchRequest matchRequest, GKMatchedPlayers matchedPlayers)
         {
-            // Add recipient properties to the match request.
             matchRequest.Recipients = matchedPlayers.Players;
-            var recipientProperties = new NSMutableDictionary<GKPlayer, GKMatchProperties>();
-            foreach (var recipient in matchRequest.Recipients)
+
+            // Add optional recipient properties to the match request.
+            if (_recipientPropertiesDictionary?.Count > 0)
             {
-                if (_recipientPropertiesDictionary.TryGetValue(recipient.DisplayName, out var matchProperties))
+                var recipientProperties = new NSMutableDictionary<GKPlayer, GKMatchProperties>();
+                foreach (var recipient in matchRequest.Recipients)
                 {
-                    recipientProperties.Add(recipient, matchProperties);
+                    if (_recipientPropertiesDictionary.TryGetValue(recipient.DisplayName, out var matchProperties))
+                    {
+                        recipientProperties.Add(recipient, matchProperties);
+                    }
                 }
+                matchRequest.RecipientProperties = recipientProperties;
             }
-            matchRequest.RecipientProperties = recipientProperties;
+
+            matchRequest.InviteMessage = "Please join my match!";
+
+            matchRequest.RecipientResponse += (player, response) =>
+            {
+                Debug.Log($"GKMatchRequest RecipientResponse: player={player.DisplayName} response={response}");
+            };
 
             try
             {
-                var match = await GKMatchmakerViewController.Request(
-                    matchRequest, 
-                    (GKMatchmakingMode)_matchmakingModeDropdown.value, 
-                    _fastStartToggle.isOn,
-                    (matchRequest.QueueName != default) ? GetMatchPropertiesForRecipientHandler : default);
+                // programmatic matchmaking
+                var match = await GKMatchmaker.Shared.FindMatch(matchRequest);
 
-                _realtimeMatchStatusPanel.Populate(matchRequest, match);
+                _realtimeMatchStatusPanel.Populate(matchRequest, match, showStartGameButton: true);
 
                 GameKitSample.ReplaceActivePanel(_realtimeMatchStatusPanel.gameObject);
             }

@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Apple.GameKit
 {
-    public delegate void SuccessTaskImageCallback(long taskId, int width, int height, IntPtr data, int dataLength);
+    public delegate void SuccessTaskImageCallback(long taskId, IntPtr nsDataPtr);
     
     public class GKPlayer : NSObject
     {
@@ -71,20 +71,16 @@ namespace Apple.GameKit
         }
 
         [MonoPInvokeCallback(typeof(SuccessTaskImageCallback))]
-        private static void OnPhotoLoaded(long taskId, int width, int height, IntPtr data, int dataLength)
+        private static void OnPhotoLoaded(long taskId, IntPtr nsDataPtr)
         {
-            Texture2D texture = null;
-
-            if (dataLength > 0)
+            try
             {
-                var image = new byte[dataLength];
-                Marshal.Copy(data, image, 0, dataLength);
-
-                texture = new Texture2D(width, height);
-                texture.LoadImage(image);
+                InteropTasks.TrySetResultAndRemove(taskId, Texture2DExtensions.CreateFromNSDataPtr(nsDataPtr));
             }
-
-            InteropTasks.TrySetResultAndRemove(taskId, texture);
+            catch (Exception ex)
+            {
+                InteropTasks.TrySetExceptionAndRemove<Texture2D>(taskId, ex);
+            }
         }
 
         [MonoPInvokeCallback(typeof(NSErrorTaskCallback))]

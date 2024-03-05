@@ -98,25 +98,21 @@ namespace Apple.GameKit
         public Task<Texture2D> LoadImage()
         {
             var tcs = InteropTasks.Create<Texture2D>(out var taskId);
-            Interop.GKAchievementDescription_LoadImage(Pointer, OnLoadImage, OnLoadImageError);
+            Interop.GKAchievementDescription_LoadImage(Pointer, taskId, OnLoadImage, OnLoadImageError);
             return tcs.Task;
         }
 
         [MonoPInvokeCallback(typeof(SuccessTaskImageCallback))]
-        private static void OnLoadImage(long taskId, int width, int height, IntPtr data, int dataLength)
+        private static void OnLoadImage(long taskId, IntPtr nsDataPtr)
         {
-            Texture2D texture = null;
-
-            if (dataLength > 0)
+            try
             {
-                var image = new byte[dataLength];
-                Marshal.Copy(data, image, 0, dataLength);
-
-                texture = new Texture2D(width, height);
-                texture.LoadImage(image);
+                InteropTasks.TrySetResultAndRemove(taskId, Texture2DExtensions.CreateFromNSDataPtr(nsDataPtr));
             }
-
-            InteropTasks.TrySetResultAndRemove(taskId, texture);
+            catch (Exception ex)
+            {
+                InteropTasks.TrySetExceptionAndRemove<Texture2D>(taskId, ex);
+            }
         }
 
         [MonoPInvokeCallback(typeof(NSErrorTaskCallback))]
@@ -125,6 +121,24 @@ namespace Apple.GameKit
             InteropTasks.TrySetExceptionAndRemove<Texture2D>(taskId, new GameKitException(errorPointer));
         }
         #endregion
+
+        /// <summary>
+        /// A common image that you can display when the player hasn’t completed the achievement.
+        /// </summary>
+        /// <remarks>
+        /// Note: Customization of this symbol image is not supported yet in Unity.
+        /// </remarks>
+        public static Texture2D IncompleteAchievementImage => _incompleteAchievementImage ??= Texture2DExtensions.CreateFromNSDataPtr(Interop.GKAchievementDescription_GetIncompleteAchievementImage());
+        private static Texture2D _incompleteAchievementImage = null;
+
+        /// <summary>
+        /// A placeholder image that you can display when the player completes the achievement.
+        /// </summary>
+        /// <remarks>
+        /// Note: Customization of this symbol image is not supported yet in Unity.
+        /// </remarks>
+        public static Texture2D PlaceholderCompletedAchievementImage => _placeholderCompletedAchievementImage ??= Texture2DExtensions.CreateFromNSDataPtr(Interop.GKAchievementDescription_GetPlaceholderCompletedAchievementImage());
+        private static Texture2D _placeholderCompletedAchievementImage = null;
 
         private static class Interop
         {
@@ -149,7 +163,11 @@ namespace Apple.GameKit
             [DllImport(InteropUtility.DLLName)]
             public static extern void GKAchievementDescription_LoadAchievementDescriptions(long taskId, SuccessTaskCallback<IntPtr> onSuccess, NSErrorTaskCallback onError);
             [DllImport(InteropUtility.DLLName)]
-            public static extern void GKAchievementDescription_LoadImage(IntPtr pointer, SuccessTaskImageCallback onSuccess, NSErrorTaskCallback onError);
+            public static extern void GKAchievementDescription_LoadImage(IntPtr pointer, long taskId, SuccessTaskImageCallback onSuccess, NSErrorTaskCallback onError);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern IntPtr GKAchievementDescription_GetIncompleteAchievementImage();
+            [DllImport(InteropUtility.DLLName)]
+            public static extern IntPtr GKAchievementDescription_GetPlaceholderCompletedAchievementImage();
         }
     }
 }

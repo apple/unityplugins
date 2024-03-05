@@ -101,58 +101,73 @@ namespace Apple.GameKit.Multiplayer
         [MonoPInvokeCallback(typeof(InteropDataReceivedForPlayerHandler))]
         private static void OnDataReceivedForPlayer(IntPtr pointer, IntPtr dataPtr, int dataLength, IntPtr forRecipientPtr, IntPtr fromPlayerPtr)
         {
-            if (!_delegates.TryGetValue(pointer, out var matchDelegate))
-                return;
-            
-            var data = new byte[dataLength];
-            Marshal.Copy(dataPtr, data, 0, dataLength);
+            InteropPInvokeExceptionHandler.CatchAndLog(() =>
+            {
+                if (!_delegates.TryGetValue(pointer, out var matchDelegate))
+                    return;
+                
+                var data = new byte[dataLength];
+                Marshal.Copy(dataPtr, data, 0, dataLength);
 
-            var recipient = forRecipientPtr != IntPtr.Zero ? new GKPlayer(forRecipientPtr) : null;
-            var from = fromPlayerPtr != IntPtr.Zero ? new GKPlayer(fromPlayerPtr) : null;
-            
-            matchDelegate.DataReceivedForPlayer?.Invoke(data, recipient, from);
+                var recipient = forRecipientPtr != IntPtr.Zero ? new GKPlayer(forRecipientPtr) : null;
+                var from = fromPlayerPtr != IntPtr.Zero ? new GKPlayer(fromPlayerPtr) : null;
+                
+                matchDelegate.DataReceivedForPlayer?.Invoke(data, recipient, from);
+            });
         }
         
         [MonoPInvokeCallback(typeof(InteropDataReceivedHandler))]
         private static void OnDataReceived(IntPtr pointer, IntPtr dataPtr, int dataLength, IntPtr fromPlayerPtr)
         {
-            if (!_delegates.TryGetValue(pointer, out var matchDelegate))
-                return;
-            
-            var data = new byte[dataLength];
-            Marshal.Copy(dataPtr, data, 0, dataLength);
-            
-            var from = fromPlayerPtr != IntPtr.Zero ? new GKPlayer(fromPlayerPtr) : null;
-            matchDelegate.DataReceived?.Invoke(data, from);
+            InteropPInvokeExceptionHandler.CatchAndLog(() =>
+            {
+                if (!_delegates.TryGetValue(pointer, out var matchDelegate))
+                    return;
+                
+                var data = new byte[dataLength];
+                Marshal.Copy(dataPtr, data, 0, dataLength);
+                
+                var from = fromPlayerPtr != IntPtr.Zero ? new GKPlayer(fromPlayerPtr) : null;
+                matchDelegate.DataReceived?.Invoke(data, from);
+            });
         }
         
         [MonoPInvokeCallback(typeof(InteropPlayerConnectionDidChangeHandler))]
         private static void OnPlayerConnectionDidChange(IntPtr pointer, IntPtr playerPtr, GKPlayerConnectionState state)
         {
-            if (!_delegates.TryGetValue(pointer, out var matchDelegate))
-                return;
-            
-            var player = playerPtr != IntPtr.Zero ? new GKPlayer(playerPtr) : null;
-            matchDelegate.PlayerConnectionChanged?.Invoke(player, state);
+            InteropPInvokeExceptionHandler.CatchAndLog(() =>
+            {
+                if (!_delegates.TryGetValue(pointer, out var matchDelegate))
+                    return;
+                
+                var player = playerPtr != IntPtr.Zero ? new GKPlayer(playerPtr) : null;
+                matchDelegate.PlayerConnectionChanged?.Invoke(player, state);
+            });
         }
         
         [MonoPInvokeCallback(typeof(InteropDidFailWithErrorHandler))]
         private static void OnDidFailWithError(IntPtr pointer, IntPtr errorPtr)
         {
-            if (!_delegates.TryGetValue(pointer, out var matchDelegate))
-                return;
-            
-            matchDelegate.DidFailWithError?.Invoke(new GameKitException(errorPtr));
+            InteropPInvokeExceptionHandler.CatchAndLog(() =>
+            {
+                if (!_delegates.TryGetValue(pointer, out var matchDelegate))
+                    return;
+                
+                matchDelegate.DidFailWithError?.Invoke(new GameKitException(errorPtr));
+            });
         }
         
         [MonoPInvokeCallback(typeof(InteropShouldReinviteDisconnectedPlayerHandler))]
         private static bool OnShouldReinviteDisconnectedPlayer(IntPtr pointer, IntPtr playerPtr)
         {
-            if (!_delegates.TryGetValue(pointer, out var matchDelegate))
-                return false;
-            
-            var player = playerPtr != IntPtr.Zero ? new GKPlayer(playerPtr) : null;
-            return matchDelegate.ShouldReinviteDisconnectedPlayer?.Invoke(player) ?? false;
+            return InteropPInvokeExceptionHandler.CatchAndLog(() =>
+            {
+                if (!_delegates.TryGetValue(pointer, out var matchDelegate))
+                    return false;
+                
+                var player = playerPtr != IntPtr.Zero ? new GKPlayer(playerPtr) : null;
+                return matchDelegate.ShouldReinviteDisconnectedPlayer?.Invoke(player) ?? false;
+            });
         }
         #endregion
 
