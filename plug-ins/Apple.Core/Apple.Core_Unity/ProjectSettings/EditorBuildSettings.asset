@@ -4,5 +4,8 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Apple.Core/Demos/Apple.Core.AvailabilitySample/Scenes/AvailabilitySample.unity
+    guid: 0c9259f2551cb43e6a6905ba3fa45382
   m_configObjects: {}

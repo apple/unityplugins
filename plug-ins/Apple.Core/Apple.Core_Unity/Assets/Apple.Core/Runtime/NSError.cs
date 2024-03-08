@@ -1,102 +1,83 @@
 using System;
 using System.Runtime.InteropServices;
+using AOT;
 
 namespace Apple.Core.Runtime
 {
-    public class NSError : Exception, IDisposable
+    public class NSError : NSObject
     {
-        #region Init & Dispose
-        [DllImport(InteropUtility.DLLName)]
-        private static extern void NSError_Free(IntPtr pointer);
-        protected IntPtr Pointer { get; set; }
-        
-        public NSError(IntPtr pointer)
+        public NSError(IntPtr pointer) : base(pointer)
         {
-            Pointer = pointer;
         }
 
-        ~NSError()
-        {
-            Dispose(false);
-        }
-        #endregion
+        public long Code => Interop.NSError_GetCode(Pointer);
 
-        #region IDisposable
+        public string Domain => Interop.NSError_GetDomain(Pointer);
 
-        private bool _isDisposed;
-        
-        public void Dispose()
-        {
-            if (!_isDisposed)
-            {
-                Dispose(true);
-                _isDisposed = true;
-                
-                GC.SuppressFinalize(this);
-            }
-        }
+        public string LocalizedDescription => Interop.NSError_GetLocalizedDescription(Pointer);
 
-        protected virtual void Dispose(bool isDisposing)
-        {
-            if (Pointer != IntPtr.Zero)
-            {
-                NSError_Free(Pointer);
-                Pointer = IntPtr.Zero;
-            }
-        }
-        #endregion
-        
-        #region Code    
-        [DllImport(InteropUtility.DLLName)]
-        private static extern long NSError_GetCode(IntPtr pointer);
-        
-        public long Code
-        {
-            get => NSError_GetCode(Pointer);
-        }
-        #endregion
-        
-        #region Domain    
-        [DllImport(InteropUtility.DLLName)]
-        private static extern string NSError_GetDomain(IntPtr pointer);
-        
-        public string Domain
-        {
-            get => NSError_GetDomain(Pointer);
-        }
-        #endregion
-        
-        #region LocalizedDescription    
-        [DllImport(InteropUtility.DLLName)]
-        private static extern string NSError_GetLocalizedDescription(IntPtr pointer);
-        
-        public string LocalizedDescription
-        {
-            get => NSError_GetLocalizedDescription(Pointer);
-        }
-        #endregion
-        
-        #region UserInfo
-        [DllImport(InteropUtility.DLLName)]
-        private static extern IntPtr NSError_GetUserInfo(IntPtr pointer);
+        private NSDictionary<NSString, NSObject> _userInfo;
 
-        private NSDictionary _userInfo;
-
-        public NSDictionary UserInfo
+        public NSDictionary<NSString, NSObject> UserInfo
         {
             get
             {
                 if (_userInfo == null)
                 {
-                    var pointer = NSError_GetUserInfo(Pointer);
+                    var pointer = Interop.NSError_GetUserInfo(Pointer);
                     
-                    if(pointer != IntPtr.Zero)
-                        _userInfo = new NSDictionary(pointer);
+                    if (pointer != IntPtr.Zero)
+                        _userInfo = new NSDictionary<NSString, NSObject>(pointer);
                 }
 
                 return _userInfo;
             }
         }
-        #endregion
+
+        /// <summary>
+        /// C# exception class thrown when an NSError is received from the Objective-C layer.
+        /// </summary>
+        public class Exception : System.Exception
+        {
+            public Exception(NSError nsError)
+            {
+                NSError = nsError;
+            }
+
+            public NSError NSError { get; }
+
+            public override string Message => $"{NSError.Domain} ({NSError.Code}): {NSError.LocalizedDescription}";
+        }
+
+        /// <summary>
+        /// Throw a C# exception containing this NSError.
+        /// </summary>
+        /// <exception cref="Exception"></exception>
+        public void Throw()
+        {
+            throw new Exception(this);
+        }
+
+        /// <summary>
+        /// Implementation of the NSErrorCallback delegate that throws a C# exception passed back from Objective-C.
+        /// </summary>
+        /// <param name="nsExceptionPtr"></param>
+        [MonoPInvokeCallback(typeof(NSErrorCallback))]
+        internal static void ThrowOnErrorCallback(IntPtr nsErrorPtr)
+        {
+            InteropPInvokeExceptionHandler.CatchAndLog(() => PointerCast<NSError>(nsErrorPtr).Throw());
+        }
+
+        private static class Interop
+        {
+            [DllImport(InteropUtility.DLLName)]
+            public static extern long NSError_GetCode(IntPtr pointer);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern string NSError_GetDomain(IntPtr pointer);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern string NSError_GetLocalizedDescription(IntPtr pointer);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern IntPtr NSError_GetUserInfo(IntPtr pointer);
+        }
     }
 }

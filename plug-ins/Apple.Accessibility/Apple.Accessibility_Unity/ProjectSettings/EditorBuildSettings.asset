@@ -4,5 +4,32 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Apple.Accessibility/Demos/Scenes/3D Objects.unity
+    guid: a8f80b6a67e07497a82aecd6bbf8b08d
+  - enabled: 1
+    path: Assets/Apple.Accessibility/Demos/Scenes/AXNotEnabled.unity
+    guid: fcb1e4158749546c398d47b9701c688d
+  - enabled: 1
+    path: Assets/Apple.Accessibility/Demos/Scenes/AXSettings.unity
+    guid: 043fc39492b8646ac908eef5418c430b
+  - enabled: 1
+    path: Assets/Apple.Accessibility/Demos/Scenes/AXTextSizes.unity
+    guid: de6697346d01849adbbbfc502115aac7
+  - enabled: 1
+    path: Assets/Apple.Accessibility/Demos/Scenes/Custom Action.unity
+    guid: c13af241370b14d439c4af6c86e92167
+  - enabled: 1
+    path: Assets/Apple.Accessibility/Demos/Scenes/MainMenu.unity
+    guid: 9569bb35777744e39be6b23a14eb7797
+  - enabled: 1
+    path: Assets/Apple.Accessibility/Demos/Scenes/Modal.unity
+    guid: e71b36d695eda474cbd255dc95a75c83
+  - enabled: 1
+    path: Assets/Apple.Accessibility/Demos/Scenes/Traits.unity
+    guid: 4ba9364e6e93e4804bed1c87cf49e872
+  - enabled: 1
+    path: Assets/Apple.Accessibility/Demos/Scenes/UI Controls.unity
+    guid: 01831248e893245d29ab81f364c885c6
   m_configObjects: {}

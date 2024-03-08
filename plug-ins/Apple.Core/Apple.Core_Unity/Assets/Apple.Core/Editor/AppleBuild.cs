@@ -1,49 +1,58 @@
-using System.IO;
-using System.Text.RegularExpressions;
+#if (UNITY_EDITOR_OSX && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX))
 using UnityEditor;
+using UnityEditor.Build;
+using UnityEditor.Build.Reporting;
 using UnityEditor.Callbacks;
 using UnityEditor.iOS.Xcode;
 using UnityEngine;
+using System.Collections.Generic;
+using System.IO;
+using System.Text.RegularExpressions;
 
 namespace Apple.Core
 {
     public static class AppleBuild
-    {
+    {   
+        // Helper for logging during development.
+        private static void LogDevelopmentMessage(string methodName, string message)
+        {
+            // TODO: Expose as Editor project setting
+            #if DEVELOPMENT_LOGGING_ENABLED
+            Debug.Log($"[AppleBuild.{methodName}] {message}");
+            #endif
+        }
+
         /// <summary>
         /// Executes all post-build AppleBuildSteps as structured in the AppleBuildProfile.
         /// </summary>
         [PostProcessBuild(10)]
-        public static void OnPostProcessBuild(BuildTarget buildTarget, string pathToBuiltProject)
+        public static void OnPostProcessBuild(BuildTarget buildTarget, string generatedProjectPath)
         {
             // TODO: Add management for multiple build profiles.
             var appleBuildProfile = AppleBuildProfile.DefaultProfile();
 
-            // Ensure if we are building an app, that it includes .app at the end...
-            if (buildTarget == BuildTarget.StandaloneOSX && !IsXcodeGeneratedMac() && !pathToBuiltProject.EndsWith(".app"))
-            {
-                pathToBuiltProject += ".app";
-            }
-
             #region Begin Post Process
 
-            Debug.Log($"AppleBuild: OnBeginPostProcess begin");
-            Debug.Log($"AppleBuild: Found {appleBuildProfile.buildSteps.Count} build steps.");
-            Debug.Log($"AppleBuild: Outputting to project at path {pathToBuiltProject}.");
+            LogDevelopmentMessage("OnPostProcessBuild", "OnBeginPostProcess begin");
+            LogDevelopmentMessage("OnPostProcessBuild", $"Found {appleBuildProfile.buildSteps.Count} build steps.");
+            LogDevelopmentMessage("OnPostProcessBuild", $"Outputting to project at path {generatedProjectPath}.");
 
+            var processedBuildSteps = new Dictionary<string, bool>();
             foreach (var buildStep in appleBuildProfile.buildSteps)
             {
                 if (buildStep.Value.IsEnabled)
                 {
-                    Debug.Log($"AppleBuild: OnBeginPostProcess for step: {buildStep.Key}");
-                    buildStep.Value.OnBeginPostProcess(appleBuildProfile, buildTarget, pathToBuiltProject);
+                    LogDevelopmentMessage("OnPostProcessBuild", $"OnBeginPostProcess for step: {buildStep.Key}");
+                    buildStep.Value.OnBeginPostProcess(appleBuildProfile, buildTarget, generatedProjectPath);
+
+                    processedBuildSteps[buildStep.Key] = true;
                 }
                 else
                 {
-                    Debug.Log($"AppleBuild: Build post process disabled for build step: {buildStep.Key}");
+                    LogDevelopmentMessage("OnPostProcessBuild", $"Build post process disabled for build step: {buildStep.Key}");
+                    processedBuildSteps[buildStep.Key] = false;
                 }
             }
-
-            Debug.Log($"AppleBuild: OnBeginPostProcess end.");
 
             #endregion // Begin Post Process
 
@@ -51,10 +60,10 @@ namespace Apple.Core
 
             if (appleBuildProfile.AutomateInfoPlist)
             {
-                Debug.Log($"AppleBuild: OnProcessInfoPlist begin...");
+                LogDevelopmentMessage("OnPostProcessBuild", "OnProcessInfoPlist begin");
 
                 var infoPlist = new PlistDocument();
-                var infoPlistPath = GetInfoPlistPath(buildTarget, pathToBuiltProject);
+                var infoPlistPath = GetInfoPlistPath(buildTarget, generatedProjectPath);
                 infoPlist.ReadFromFile(infoPlistPath);
 
                 // Required property which notifies Apple about 3rd party encryption...
@@ -92,7 +101,7 @@ namespace Apple.Core
 
                     foreach (var pair in defaultPlist.root.values)
                     {
-                        Debug.Log($"AppleBuild: Setting InfoPlist [{pair.Key}] to [{pair.Value}].");
+                        LogDevelopmentMessage("OnPostProcessBuild", $"Setting InfoPlist [{pair.Key}] to [{pair.Value}].");
                         infoPlist.root[pair.Key] = pair.Value;
                     }
                 }
@@ -101,28 +110,26 @@ namespace Apple.Core
                 {
                     if (buildStep.Value.IsEnabled)
                     {
-                        Debug.Log($"AppleBuild: OnProcessInfoPlist for step: {buildStep.Key}");
-                        buildStep.Value.OnProcessInfoPlist(appleBuildProfile, buildTarget, pathToBuiltProject, infoPlist);
+                        LogDevelopmentMessage("OnPostProcessBuild", $"OnProcessInfoPlist for step: {buildStep.Key}");
+                        buildStep.Value.OnProcessInfoPlist(appleBuildProfile, buildTarget, generatedProjectPath, infoPlist);
                     }
                 }
 
                 infoPlist.WriteToFile(infoPlistPath);
-
-                Debug.Log($"AppleBuild: OnProcessInfoPlist end...");
             }
 
             #endregion // Process info.plist
 
             #region Process Entitlements
 
-            var pbxProject = GetPbxProject(buildTarget, pathToBuiltProject);
-            var pbxProjectPath = GetPbxProjectPath(buildTarget, pathToBuiltProject);
+            var pbxProject = GetPbxProject(buildTarget, generatedProjectPath);
+            var pbxProjectPath = GetPbxProjectPath(buildTarget, generatedProjectPath);
 
             if (appleBuildProfile.AutomateEntitlements)
             {
-                Debug.Log($"AppleBuild: OnProcessEntitlements begin...");
+                LogDevelopmentMessage("OnPostProcessBuild", "OnProcessEntitlements begin");
 
-                var entitlementsPath = GetEntitlementsPath(buildTarget, pathToBuiltProject);
+                var entitlementsPath = GetEntitlementsPath(buildTarget, generatedProjectPath);
                 var entitlements = new PlistDocument();
 
                 if (File.Exists(entitlementsPath))
@@ -142,24 +149,17 @@ namespace Apple.Core
 
                     foreach (var pair in defaultPlist.root.values)
                     {
-                        Debug.Log($"AppleBuild: Setting Entitlements [{pair.Key}] to [{pair.Value}].");
+                        LogDevelopmentMessage("OnPostProcessBuild", $"Setting Entitlements [{pair.Key}] to [{pair.Value}].");
                         entitlements.root[pair.Key] = pair.Value;
                     }
-                }
-
-                // Set application id if macOS
-                var applicationIdentifier = PlayerSettings.GetApplicationIdentifier(EditorUserBuildSettings.selectedBuildTargetGroup);
-                if (buildTarget == BuildTarget.StandaloneOSX)
-                {
-                    entitlements.root.SetString("com.apple.application-identifier", $"{PlayerSettings.iOS.appleDeveloperTeamID}.{applicationIdentifier}");
                 }
 
                 foreach (var buildStep in appleBuildProfile.buildSteps)
                 {
                     if (buildStep.Value.IsEnabled)
                     {
-                        Debug.Log($"AppleBuild: OnProcessEntitlements for step: {buildStep.Key}");
-                        buildStep.Value.OnProcessEntitlements(appleBuildProfile, buildTarget, pathToBuiltProject, entitlements);
+                        LogDevelopmentMessage("OnPostProcessBuild", $"OnProcessEntitlements for step: {buildStep.Key}");
+                        buildStep.Value.OnProcessEntitlements(appleBuildProfile, buildTarget, generatedProjectPath, entitlements);
                     }
                 }
 
@@ -167,61 +167,67 @@ namespace Apple.Core
 
                 FixEntitlementFormatting(entitlementsPath);
 
-                // Add CODE_SIGN_ENTITLEMENTS to pbxProject
                 if (pbxProject != null)
                 {
                     var entitlementsXCodePath = buildTarget == BuildTarget.StandaloneOSX ? $"{Application.productName}/{Application.productName}.entitlements" : $"{Application.productName}.entitlements";
                     var targetGuid = buildTarget == BuildTarget.StandaloneOSX ? pbxProject.TargetGuidByName(Application.productName) : pbxProject.GetUnityMainTargetGuid();
                     pbxProject.AddBuildProperty(targetGuid, "CODE_SIGN_ENTITLEMENTS", entitlementsXCodePath);
 
-                    Debug.Log($"AppleBuild: Writing changes to PBXProject {pbxProjectPath}...");
+                    LogDevelopmentMessage("OnPostProcessBuild", $"Writing changes to PBXProject {pbxProjectPath}");
                     pbxProject.WriteToFile(pbxProjectPath);
                 }
-
-                Debug.Log($"AppleBuild: OnProcessEntitlements end.");
             }
 
             #endregion // Process Entitlements
 
             #region Process Frameworks
 
-            Debug.Log($"AppleBuild: OnProcessFrameworks begin...");
+            LogDevelopmentMessage("OnPostProcessBuild", $"OnProcessFrameworks begin");
 
             foreach (var buildStep in appleBuildProfile.buildSteps)
             {
                 if (buildStep.Value.IsEnabled)
                 {
-                    Debug.Log($"AppleBuild: OnProcessFrameworks for step: {buildStep.Key}");
-                    buildStep.Value.OnProcessFrameworks(appleBuildProfile, buildTarget, pathToBuiltProject, pbxProject);
+                    LogDevelopmentMessage("OnPostProcessBuild", $"OnProcessFrameworks for step: {buildStep.Key}");
+                    buildStep.Value.OnProcessFrameworks(appleBuildProfile, buildTarget, generatedProjectPath, pbxProject);
                 }
             }
 
             if (pbxProject != null)
             {
+                string projectRelativeNativeLibraryRoot = AppleNativeLibraryUtility.GetDestinationNativeLibraryFolderRoot(buildTarget);
+                pbxProject.AddShellScriptBuildPhase(pbxProject.GetUnityMainTargetGuid(), "Embed Apple Plug-in Libraries", "/bin/sh", GenerateEmbedNativeLibraryShellScript(projectRelativeNativeLibraryRoot));
                 pbxProject.WriteToFile(pbxProjectPath);
             }
-
-            Debug.Log($"AppleBuild: OnProcessFrameworks end.");
 
             #endregion // Process Frameworks
 
             #region Finalize Post Process
 
-            Debug.Log($"AppleBuild: OnFinalizePostProcess begin...");
+            LogDevelopmentMessage("OnPostProcessBuild", "OnFinalizePostProcess begin");
 
             foreach (var buildStep in appleBuildProfile.buildSteps)
             {
                 if (buildStep.Value.IsEnabled)
                 {
-                    Debug.Log($"AppleBuild: OnFinalizePostProcess for step: {buildStep.Key}");
-                    buildStep.Value.OnFinalizePostProcess(appleBuildProfile, buildTarget, pathToBuiltProject);
+                    LogDevelopmentMessage("OnPostProcessBuild", $"OnFinalizePostProcess for step: {buildStep.Key}");
+                    buildStep.Value.OnFinalizePostProcess(appleBuildProfile, buildTarget, generatedProjectPath);
                 }
             }
-
-            Debug.Log($"AppleBuild: OnFinalizePostProcess end.");
-
             #endregion // Finalize Post Process
 
+            // TODO: (122199654) Enhance build summary
+            string summaryMessage = "[Apple Unity Plug-ins] Build post process complete.\n"
+            + $"Built for config: {(ApplePlugInEnvironment.IsDevelopmentBuild ? "Debug" : "Release")}\n"
+            + "Processed the following:\n";
+
+            foreach (var key in processedBuildSteps.Keys)
+            {
+                string currStatus = processedBuildSteps[key] ? "Enabled" : "Disabled";
+                summaryMessage += $"- {key}: {currStatus}\n";
+            }
+
+            Debug.Log(summaryMessage);
         }
 
         /// <summary>
@@ -233,7 +239,7 @@ namespace Apple.Core
             if (!File.Exists(entitlementsPath))
                 return;
 
-            Debug.Log($"AppleBuild: Fixing entitlements formatting begin...");
+            LogDevelopmentMessage("FixEntitlementFormatting", "Fixing entitlements formatting begin");
 
             var contents = File.ReadAllText(entitlementsPath);
 
@@ -249,18 +255,6 @@ namespace Apple.Core
             }
 
             File.WriteAllText(entitlementsPath, contents);
-
-            Debug.Log($"AppleBuild: Fixing entitlements formatting end.");
-        }
-
-        #region Public Utility Methods
-
-        /// <summary>
-        /// Returns true if the Unity project settings are configured to create an Xcode project for the StandaloneOSX build target
-        /// </summary>
-        public static bool IsXcodeGeneratedMac()
-        {
-            return EditorUserBuildSettings.GetPlatformSettings("OSXUniversal", "CreateXcodeProject") == "true";
         }
 
         /// <summary>
@@ -270,7 +264,7 @@ namespace Apple.Core
         {
             if (buildTarget == BuildTarget.StandaloneOSX)
             {
-                if (IsXcodeGeneratedMac())
+                if (AppleNativeLibraryUtility.IsXcodeProjectGeneratedForMac)
                 {
 #if UNITY_2020_1_OR_NEWER
                     return $"{pathToBuiltProject}/{Application.productName}/Info.plist";
@@ -296,7 +290,7 @@ namespace Apple.Core
         {
             if (buildTarget == BuildTarget.StandaloneOSX)
             {
-                if (IsXcodeGeneratedMac())
+                if (AppleNativeLibraryUtility.IsXcodeProjectGeneratedForMac)
                 {
 #if UNITY_2020_1_OR_NEWER
                     return $"{pathToBuiltProject}/{Application.productName}/{Application.productName}.entitlements";
@@ -316,29 +310,30 @@ namespace Apple.Core
         }
 
         /// <summary>
-        /// Returns the Xcode scheme name for a given BuildTarget
+        /// Unity generates an Xcode project and uses this string for the names of the generated project file, scheme, and Xcode build target.
         /// </summary>
-        public static string GetSchemeName(BuildTarget buildTarget)
+        /// <param name="buildTarget">The Unity build target</param>
+        /// <returns>The string used by Unity for Xcode naming.</returns>
+        public static string GetXcodeUtilityIdentifier(BuildTarget buildTarget)
         {
-            return buildTarget == BuildTarget.StandaloneOSX ? Application.productName : "Unity-iPhone";
+            switch(buildTarget)
+            {
+                case BuildTarget.StandaloneOSX:
+                    return Application.productName;
+                case BuildTarget.iOS:
+                case BuildTarget.tvOS:
+                    return "Unity-iPhone";
+                default:
+                    return string.Empty;
+            }
         }
 
         /// <summary>
-        /// Utility method for getting the SDK name for a given BuildTarget
+        /// Returns the Xcode scheme name for a given BuildTarget
         /// </summary>
-        public static string GetSDKName(BuildTarget buildTarget)
+        public static string GetXcodeSchemeName(BuildTarget buildTarget)
         {
-            switch (buildTarget)
-            {
-                case BuildTarget.iOS:
-                    return "iphoneos";
-                case BuildTarget.tvOS:
-                    return "appletvos";
-                case BuildTarget.StandaloneOSX:
-                    return "macosx";
-                default:
-                    return null;
-            }
+            return GetXcodeUtilityIdentifier(buildTarget);
         }
 
         /// <summary>
@@ -388,7 +383,7 @@ namespace Apple.Core
         /// </summary>
         public static PBXProject GetPbxProject(BuildTarget buildTarget, string pathToBuiltProject)
         {
-            if (buildTarget == BuildTarget.StandaloneOSX && !IsXcodeGeneratedMac())
+            if (buildTarget == BuildTarget.StandaloneOSX && !AppleNativeLibraryUtility.IsXcodeProjectGeneratedForMac)
             {
                 return null;
             }
@@ -405,7 +400,7 @@ namespace Apple.Core
         /// </summary>
         public static void ProcessExportPlistOptions(AppleBuildProfile appleBuildProfile, BuildTarget buildTarget, string pathToBuiltProject, PlistDocument exportPlistOptions)
         {
-            Debug.Log($"AppleBuild: ProcessExportPlistOptions begin...");
+            LogDevelopmentMessage("ProcessExportPlistOptions", "ProcessExportPlistOptions begin");
 
             foreach (var buildStep in appleBuildProfile.buildSteps)
             {
@@ -414,11 +409,110 @@ namespace Apple.Core
                     buildStep.Value.OnProcessExportPlistOptions(appleBuildProfile, buildTarget, pathToBuiltProject, exportPlistOptions);
                 }
             }
-
-            Debug.Log($"AppleBuild: ProcessExportPlistOptions end.");
         }
 
-        #endregion // Public Utility Methods
+        /// <summary>
+        /// Generates a shell script that is added to the trampoline project as a post-build 'Run Script' phase.
+        /// This script embeds linked Apple native plug-in libraries into the final build product.
+        /// </summary>
+        /// <param name="projectRelativeLibraryPath">The target native library path defined relatively to</param>
+        /// <returns></returns>
+        private static string GenerateEmbedNativeLibraryShellScript(string projectRelativeNativeLibraryRoot)
+        {
+            string embedNativeLibraryShellScript = "#  Apple Unity Plug-in Embed libraries shell script\n"
+            + "#  Copyright © 2024 Apple, Inc. All rights reserved.\n"
+            + "#  This script is added to the generated Xcode project by the Apple.Core plug-in.\n"
+            + "#  Please see AppleNativeLibraryUtility.cs in the Apple.Core plug-in for more information.\n"
+            + "dstFrameworkFolder=\"$BUILT_PRODUCTS_DIR/$FRAMEWORKS_FOLDER_PATH\"\n"
+            + "dstBundleFolder=\"$BUILT_PRODUCTS_DIR/$PLUGINS_FOLDER_PATH\"\n"
+            + $"APPLE_PLUGIN_LIBRARY_ROOT=\"$PROJECT_DIR/{projectRelativeNativeLibraryRoot}\"\n"
+            + "if [ -d $APPLE_PLUGIN_LIBRARY_ROOT ]; then\n"
+            + "    for folder in \"$APPLE_PLUGIN_LIBRARY_ROOT\"/*; do\n"
+            + "        if [ -d \"$folder\" ]; then\n"
+            + "            for item in \"$folder\"/*; do\n"
+            + "                if [[ $item = *'.dSYM' ]]; then\n"
+            + "                    continue\n"
+            + "                elif [[ $item = *'.framework' ]]; then\n"
+            + "                    filename=$(basename $item)\n"
+            + "                    echo \"    Embedding Apple plug-in framework $filename\"\n"
+            + "                    echo \"      Source: $item\"\n"
+            + "                    echo \"      Destination: $dstFrameworkFolder/$filename\"\n"
+            + "                    ditto $item \"$dstFrameworkFolder/$filename\"\n"
+            + "                    break\n"
+            + "                elif [[ $item = *'.bundle' ]]; then\n"
+            + "                    filename=$(basename $item)\n"
+            + "                    echo \"    Embedding Apple plug-in bundle $filename\"\n"
+            + "                    echo \"      Source: $item\"\n"
+            + "                    echo \"      Destination: $dstBundleFolder/$filename\"\n"
+            + "                    ditto $item \"$dstBundleFolder/$filename\"\n"
+            + "                    break\n"
+            + "                fi\n"
+            + "            done\n"
+            + "        fi\n"
+            + "    done\n"
+            + "    echo \"Completed search of libraries in the Apple native plug-in folder root.\"\n"
+            + "else\n"
+            + "    echo \"No Apple plug-in library path found at $APPLE_PLUGIN_LIBRARY_ROOT\"\n"
+            + "    echo \"Please build a Development Build in Unity for this script to log more information.\"\n"
+            + "    exit 1\n"
+            + "fi";
 
+            string debugEmbedNativeLibraryShellScript = "#  Apple Unity Plug-in Embed libraries shell script\n"
+            + "#  Copyright © 2024 Apple, Inc. All rights reserved.\n"
+            + "#  This script is added to the generated Xcode project by the Apple.Core plug-in.\n"
+            + "#  Please see AppleNativeLibraryUtility.cs in the Apple.Core plug-in for more information.\n"
+            + "echo \"Debug Apple Unity Plug-in Embed libraries shell script: enhanced output\"\n"
+            + "echo \"***********************************************************************\"\n"
+            + "dstFrameworkFolder=\"$BUILT_PRODUCTS_DIR/$FRAMEWORKS_FOLDER_PATH\"\n"
+            + "dstBundleFolder=\"$BUILT_PRODUCTS_DIR/$PLUGINS_FOLDER_PATH\"\n"
+            + "echo \"Embed framework destination folder: $dstFrameworkFolder\"\n"
+            + "echo \"Embed bundle destination folder: $dstBundleFolder\"\n"
+            + $"APPLE_PLUGIN_LIBRARY_ROOT=\"$PROJECT_DIR/{projectRelativeNativeLibraryRoot}\"\n"
+            + "if [ -d $APPLE_PLUGIN_LIBRARY_ROOT ]; then\n"
+            + "    echo \"Found Apple plug-in native library root: $APPLE_PLUGIN_LIBRARY_ROOT\"\n"
+            + "    echo \"Iterating through contents.\"\n"
+            + "    for folder in \"$APPLE_PLUGIN_LIBRARY_ROOT\"/*; do\n"
+            + "        if [ -d \"$folder\" ]; then\n"
+            + "            echo \"  Discovered potential plug-in library folder: $folder\"\n"
+            + "            echo \"  Iterating through contents.\"\n"
+            + "            for item in \"$folder\"/*; do\n"
+            + "                echo \"    Found item: $item\"\n"
+            + "                echo \"    Checking to see if it's a .framework, if so will embed in destination folder.\"\n"
+            + "                if [[ $item = *'.dSYM' ]]; then\n"
+            + "                    echo \"    Debug symbol (.dSYM) file found. Continuing.\"\n"
+            + "                    continue\n"
+            + "                elif [[ $item = *'.framework' ]]; then\n"
+            + "                    filename=$(basename $item)\n"
+            + "                    echo \"    Embedding Apple plug-in framework $filename\"\n"
+            + "                    echo \"      Source: $item\"\n"
+            + "                    echo \"      Destination: $dstFrameworkFolder/$filename\"\n"
+            + "                    ditto $item \"$dstFrameworkFolder/$filename\"\n"
+            + "                    break\n"
+            + "                elif [[ $item = *'.bundle' ]]; then\n"
+            + "                    filename=$(basename $item)\n"
+            + "                    echo \"    Embedding Apple plug-in bundle $filename\"\n"
+            + "                    echo \"      Source: $item\"\n"
+            + "                    echo \"      Destination: $dstBundleFolder/$filename\"\n"
+            + "                    ditto $item \"$dstBundleFolder/$filename\"\n"
+            + "                    break\n"
+            + "                fi\n"
+            + "            done\n"
+            + "        fi\n"
+            + "    done\n"
+            + "    echo \"Completed search of libraries in the Apple native plug-in folder root.\"\n"
+            + "    echo \"If this processing completed with missing or unexpected libraries, please check the following:\"\n"
+            + "    echo \" - Ensure your Unity project only includes the Apple Unity Plug-ins that are necessary for your project.\"\n"
+            + "    echo \" - Examine Unity console output for build errors.\"\n"
+            + "    echo \" - Check the output of the build script (build.py) if you used the script to build and pack the Apple Unity Plug-ins.\"\n"
+            + "    echo \" - If you built the native libraries with Xcode or xcodebuild, please ensure that the libraries compiled successfully and were copied into the correct plug-in folders.\"\n"
+            + "else\n"
+            + "    echo \"No Apple plug-in library path found at $APPLE_PLUGIN_LIBRARY_ROOT\"\n"
+            + "    echo \"Please check the Unity Editor build output and/or logs for issues and errors.\"\n"
+            + "    exit 1\n"
+            + "fi";
+
+            return ApplePlugInEnvironment.IsDevelopmentBuild ? debugEmbedNativeLibraryShellScript : embedNativeLibraryShellScript;
+        }
     }
 }
+#endif // (UNITY_EDITOR_OSX && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX))

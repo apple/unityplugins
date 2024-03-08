@@ -8,15 +8,6 @@
 import Foundation
 import GameKit
 
-@_cdecl("GKLeaderboard_Free")
-public func GKLeaderboard_Free
-(
-    pointer: UnsafeMutableRawPointer
-)
-{
-    _ = Unmanaged<GKLeaderboard>.fromOpaque(pointer).autorelease();
-}
-
 @_cdecl("GKLeaderboard_GetBaseLeaderboardId")
 public func GKLeaderboard_GetBaseLeaderboardId
 (
@@ -118,24 +109,19 @@ public func GKLeaderboard_LoadPreviousOccurrence
 )
 {
     let target = Unmanaged<GKLeaderboard>.fromOpaque(pointer).takeUnretainedValue();
-    if #available(iOS 14, tvOS 14, macOS 11.0, *) {
-        target.loadPreviousOccurrence(completionHandler: { leaderboard, error in
-            if(error != nil) {
-                onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
-                return;
-            }
-            
-            if(leaderboard != nil) {
-                onSuccess(taskId, Unmanaged.passRetained(leaderboard!).toOpaque());
-            } else {
-                onSuccess(taskId, nil);
-            }
-            
-        })
-    } else {
+    guard #available(iOS 14, tvOS 14, macOS 11.0, *) else {
         // TODO: Handle this fallback?
         onSuccess(taskId, nil);
-    };
+    }
+
+    target.loadPreviousOccurrence(completionHandler: { leaderboard, error in
+        if (error != nil) {
+            onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
+            return;
+        }
+
+        onSuccess(taskId, leaderboard.map { Unmanaged.passRetained($0).toOpaque() });
+    });
 }
 
 public typealias GKLeaderboardLoadEntriesCallback = @convention(c) (Int64, UnsafeMutableRawPointer?, UnsafeMutableRawPointer?, Int) -> Void;
@@ -155,27 +141,64 @@ public func GKLeaderboard_LoadEntries
 {
     let target = Unmanaged<GKLeaderboard>.fromOpaque(pointer).takeUnretainedValue();
     let gkRange = NSMakeRange(rankMin, (rankMax + 1) - rankMin);
-    
-    if #available(iOS 14, tvOS 14, macOS 11.0, *) {
-        target.loadEntries(
-            for: GKLeaderboard.PlayerScope.init(rawValue: playerScope)!,
-               timeScope: GKLeaderboard.TimeScope.init(rawValue: timeScope)!,
-               range: gkRange,
-               completionHandler: { localPlayerEntry, entries, totalPlayerCount, error in
-                   if(error != nil) {
-                       onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
-                       return;
-                   }
-                   
-                   let localPtr = localPlayerEntry != nil ? Unmanaged.passRetained(localPlayerEntry!).toOpaque() : nil;
-                   let entriesPtr = entries != nil ? Unmanaged.passRetained(entries! as NSArray).toOpaque() : nil;
-                   
-                   onSuccess(taskId, localPtr, entriesPtr, totalPlayerCount);
-               })
-    } else {
+
+    guard #available(iOS 14, tvOS 14, macOS 11.0, *) else {
         // TODO: Handle fallback?
         onSuccess(taskId, nil, nil, 0);
-    };
+    }
+
+    target.loadEntries(
+       for: GKLeaderboard.PlayerScope(rawValue: playerScope)!,
+       timeScope: GKLeaderboard.TimeScope(rawValue: timeScope)!,
+       range: gkRange,
+       completionHandler: { localPlayerEntry, entries, totalPlayerCount, error in
+           if (error != nil) {
+               onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
+               return;
+           }
+
+           let localPtr = localPlayerEntry.map { Unmanaged.passRetained($0).toOpaque() }
+           let entriesPtr = entries.map { Unmanaged.passRetained($0 as NSArray).toOpaque() }
+
+           onSuccess(taskId, localPtr, entriesPtr, totalPlayerCount);
+       });
+}
+
+public typealias GKLeaderboardLoadEntriesForPlayersCallback = @convention(c) (Int64, UnsafeMutableRawPointer?, UnsafeMutableRawPointer?) -> Void;
+
+@_cdecl("GKLeaderboard_LoadEntriesForPlayers")
+public func GKLeaderboard_LoadEntriesForPlayers
+(
+    gkLeaderboardPtr: UnsafeMutableRawPointer,
+    taskId: Int64,
+    playersPtr: UnsafeMutableRawPointer, // NSArray<GKPlayer *> *
+    timeScope: Int, // GKLeaderboardTimeScope
+    onSuccess: @escaping GKLeaderboardLoadEntriesForPlayersCallback,
+    onError: @escaping NSErrorCallback
+)
+{
+    let gkLeaderboard = Unmanaged<GKLeaderboard>.fromOpaque(gkLeaderboardPtr).takeUnretainedValue();
+    let players = Unmanaged<NSArray>.fromOpaque(playersPtr).takeUnretainedValue() as! [GKPlayer];
+
+    guard #available(iOS 14, tvOS 14, macOS 11.0, *) else {
+        // TODO: Handle fallback?
+        onSuccess(taskId, nil, nil);
+    }
+
+    gkLeaderboard.loadEntries(
+        for: players,
+        timeScope: GKLeaderboard.TimeScope(rawValue: timeScope)!,
+        completionHandler: { localPlayerEntry, entries, error in
+            if (error != nil) {
+                onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
+                return;
+            }
+
+            let localPtr = localPlayerEntry.map { Unmanaged.passRetained($0).toOpaque() }
+            let entriesPtr = entries.map { Unmanaged.passRetained($0 as NSArray).toOpaque() }
+
+            onSuccess(taskId, localPtr, entriesPtr);
+        });
 }
 
 @_cdecl("GKLeaderboard_LoadImage")
@@ -190,21 +213,18 @@ public func GKLeaderboard_LoadImage
     let target = Unmanaged<GKLeaderboard>.fromOpaque(pointer).takeUnretainedValue();
     #if !os(tvOS)
     target.loadImage(completionHandler: { (image, error) in
-            if(error != nil) {
-                onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
-                return;
-            }
-        
-            let data = image!.pngData()!;
-            onImageLoaded(
-                taskId,
-                Int32(image!.size.width),
-                Int32(image!.size.height),
-                data.toUCharP(),
-                Int32(data.count));
+        if (error != nil) {
+            onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
+            return;
+        }
+
+        let data = image!.pngData()!;
+        onImageLoaded(
+            taskId,
+            Unmanaged.passRetained(data as NSData).toOpaque());
     });
     #else
-    let error = NSError(domain: "GameKit", code: -7, userInfo: nil);
+    let error = NSError(domain: "GameKit", code: GKErrorCodeExtension.unsupportedOperationForOSVersion.rawValue, userInfo: nil);
     onError(taskId, Unmanaged.passRetained(error).toOpaque());
     #endif
 }
@@ -223,48 +243,44 @@ public func GKLeaderboard_SubmitScore
 {
     let player = Unmanaged<GKPlayer>.fromOpaque(player).takeUnretainedValue();
     let target = Unmanaged<GKLeaderboard>.fromOpaque(pointer).takeUnretainedValue();
-    
-    if #available(iOS 14, tvOS 14, macOS 11.0, *) {
-        target.submitScore(score, context: context, player: player, completionHandler: { error in
-            if(error != nil) {
-                onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
-                return;
-            }
-            
-            onSuccess(taskId);
-        })
-    } else {
+
+    guard #available(iOS 14, tvOS 14, macOS 11.0, *) else {
         // TODO: Do we want to suppor this fallback?
         onSuccess(taskId);
-    };
+    }
+
+    target.submitScore(score, context: context, player: player, completionHandler: { error in
+        if (error != nil) {
+            onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
+            return;
+        }
+
+        onSuccess(taskId);
+    });
 }
 
 @_cdecl("GKLeaderboard_LoadLeaderboards")
 public func GKLeaderboard_LoadLeaderboards
 (
-    pointer: UnsafeMutableRawPointer,
+    pointer: UnsafeMutableRawPointer?,
     taskId: Int64,
     onSuccess: @escaping SuccessTaskPtrCallback,
     onError: @escaping NSErrorCallback
 )
 {
-    let ids = Unmanaged<NSArray>.fromOpaque(pointer).takeUnretainedValue() as! [String];
-    
-    if #available(iOS 14, tvOS 14, macOS 11.0, *) {
-        GKLeaderboard.loadLeaderboards(IDs: ids, completionHandler: { leaderboards, error in
-            if(error != nil) {
-                onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
-                return;
-            }
-            
-            if(leaderboards != nil) {
-                onSuccess(taskId, Unmanaged.passRetained(leaderboards! as NSArray).toOpaque());
-            } else {
-                onSuccess(taskId, nil);
-            }
-        });
-    } else {
+    let ids = pointer.map { Unmanaged<NSArray>.fromOpaque($0).takeUnretainedValue() as! [String] };
+
+    guard #available(iOS 14, tvOS 14, macOS 11.0, *) else {
         // TODO: Handle this fallback?
         onSuccess(taskId, nil);
-    };
+    }
+
+    GKLeaderboard.loadLeaderboards(IDs: ids, completionHandler: { leaderboards, error in
+        if (error != nil) {
+            onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
+            return;
+        }
+
+        onSuccess(taskId, leaderboards.map { Unmanaged.passRetained($0 as NSArray).toOpaque() });
+    });
 }

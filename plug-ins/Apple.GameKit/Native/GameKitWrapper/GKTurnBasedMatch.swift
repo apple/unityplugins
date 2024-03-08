@@ -8,15 +8,6 @@
 import Foundation
 import GameKit
 
-@_cdecl("GKTurnBasedMatch_Free")
-public func GKTurnBasedMatch_Free
-(
-    pointer: UnsafeMutableRawPointer
-)
-{
-    _ = Unmanaged<GKTurnBasedMatch>.fromOpaque(pointer).autorelease();
-}
-
 @_cdecl("GKTurnBasedMatch_GetParticipants")
 public func GKTurnBasedMatch_GetParticipants
 (
@@ -451,6 +442,20 @@ public func GKTurnBasedMatch_SendReminder
         
         onSuccess(taskId);
     });
+}
+
+@_cdecl("GKTurnBasedMatch_SetLocalizableMessageWithKey")
+public func GKTurnBasedMatch_SetLocalizableMessageWithKey
+(
+    gkTurnBasedMatchPtr: UnsafeMutableRawPointer,
+    key: char_p,
+    argumentsPtr: UnsafeMutableRawPointer?
+)
+{
+    let gkTurnBasedMatch = Unmanaged<GKTurnBasedMatch>.fromOpaque(gkTurnBasedMatchPtr).takeUnretainedValue();
+    let arguments = argumentsPtr.map { Unmanaged<NSArray>.fromOpaque($0).takeUnretainedValue() as! [String] };
+
+    gkTurnBasedMatch.setLocalizableMessageWithKey(key.toString(), arguments: arguments);
 }
 
 @_cdecl("GKTurnBasedMatch_LoadMatches")

@@ -8,15 +8,6 @@
 import Foundation
 import GameKit
 
-@_cdecl("GKInvite_Free")
-public func GKInvite_Free
-(
-    pointer: UnsafeMutableRawPointer
-)
-{
-    _ = Unmanaged<GKInvite>.fromOpaque(pointer).autorelease();
-}
-
 @_cdecl("GKInvite_GetSender")
 public func GKInvite_GetSender
 (

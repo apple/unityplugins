@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-#if UNITY_EDITOR_OSX
+#if (UNITY_EDITOR_OSX && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX))
 using UnityEditor.iOS.Xcode;
 #endif
 
@@ -12,29 +12,22 @@ namespace Apple.GameController.Editor
 {
     public class AppleGameControllerBuildStep : AppleBuildStep
     {
-        public override string DisplayName => "GameController";
+        public bool GCSupportsControllerUserInteraction => true;
+        public bool SupportsMicroGamePad => true;
+        public bool SupportsExtendedGamePad => true;
 
-        readonly Dictionary<BuildTarget, string> _libraryTable = new Dictionary<BuildTarget, string>
-        {
-            {BuildTarget.iOS, "GameControllerWrapper.framework"},
-            {BuildTarget.tvOS, "GameControllerWrapper.framework"},
-            {BuildTarget.StandaloneOSX, "GameControllerWrapper.bundle"}
-        };
-
-        public bool GCSupportsControllerUserInteraction = true;
-        public bool SupportsMicroGamePad = true;
-        public bool SupportsExtendedGamePad = true;
-
-#if UNITY_EDITOR_OSX
+        public override string DisplayName => "Apple.GameController";
+        public override BuildTarget[] SupportedTargets => new BuildTarget[] {BuildTarget.iOS, BuildTarget.tvOS, BuildTarget.StandaloneOSX};
+#if (UNITY_EDITOR_OSX && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX))
         public override void OnProcessInfoPlist(AppleBuildProfile _, BuildTarget buildTarget, string pathToBuiltTarget, PlistDocument infoPlist)
         {
-            // Notify that we support controllers...
+            // Notify that we support controllers
             infoPlist.root.SetBoolean("GCSupportsControllerUserInteraction", GCSupportsControllerUserInteraction);
 
             if (!GCSupportsControllerUserInteraction)
                 return;
 
-            // Support device profiles...
+            // Support device profiles
             PlistElementArray supportedControllers = null;
 
             if (buildTarget == BuildTarget.iOS || buildTarget == BuildTarget.StandaloneOSX)
@@ -46,7 +39,6 @@ namespace Apple.GameController.Editor
                 supportedControllers = infoPlist.root["GCSupportedGameControllers"].AsArray();
             }
 
-            // MicroGamePad...
             if (SupportsMicroGamePad)
             {
                 var newController = new PlistElementDict();
@@ -54,7 +46,6 @@ namespace Apple.GameController.Editor
                 supportedControllers.values.Add(newController);
             }
 
-            // ExtendedGamepad...
             if (SupportsExtendedGamePad)
             {
                 var newController = new PlistElementDict();
@@ -63,27 +54,18 @@ namespace Apple.GameController.Editor
             }
         }
 
-        public override void OnProcessFrameworks(AppleBuildProfile _, BuildTarget buildTarget, string pathToBuiltTarget, PBXProject pbxProject)
+        public override void OnProcessFrameworks(AppleBuildProfile _, BuildTarget buildTarget, string generatedProjectPath, PBXProject pbxProject)
         {
-            if (_libraryTable.ContainsKey(buildTarget))
+            if (Array.IndexOf(SupportedTargets, buildTarget) > -1)
             {
-                string libraryName = _libraryTable[buildTarget];
-                string libraryPath = AppleFrameworkUtility.GetPluginLibraryPathForBuildTarget(libraryName, buildTarget);
-                if (String.IsNullOrEmpty(libraryPath))
-                {
-                    Debug.Log($"Failed to locate path for library: {libraryName}");
-                }
-                else
-                {
-                    AppleFrameworkUtility.CopyAndEmbed(libraryPath, buildTarget, pathToBuiltTarget, pbxProject);
-                    AppleFrameworkUtility.AddFrameworkToProject("GameController.framework", false, buildTarget, pbxProject);
-                }
+                AppleNativeLibraryUtility.ProcessWrapperLibrary(DisplayName, buildTarget, generatedProjectPath, pbxProject);
+                AppleNativeLibraryUtility.AddPlatformFrameworkDependency("GameController.framework", false, buildTarget, pbxProject);
             }
             else
             {
-                Debug.Log($"Processing {this.DisplayName} frameworks for unsupported platform. Skipping.");
+                Debug.LogWarning($"[{DisplayName}] No native library defined for Unity build target {buildTarget.ToString()}. Skipping.");
             }
         }
-#endif
+#endif // (UNITY_EDITOR_OSX && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX))
     }
 }

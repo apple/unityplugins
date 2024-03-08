@@ -15,15 +15,6 @@ public func GKMatchRequest_Init() -> UnsafeMutableRawPointer
     return Unmanaged.passRetained(request).toOpaque();
 }
 
-@_cdecl("GKMatchRequest_Free")
-public func GKMatchRequest_Free
-(
-    pointer: UnsafeMutableRawPointer
-)
-{
-    _ = Unmanaged<GKMatchRequest>.fromOpaque(pointer).autorelease();
-}
-
 @_cdecl("GKMatchRequest_SetMaxPlayers")
 public func GKMatchRequest_SetMaxPlayers
 (
@@ -122,11 +113,11 @@ public func GKMatchRequest_GetInviteMessage
 public func GKMatchRequest_SetInviteMessage
 (
     pointer: UnsafeMutableRawPointer,
-    value: char_p
+    value: char_p?
 )
 {
     let target = Unmanaged<GKMatchRequest>.fromOpaque(pointer).takeUnretainedValue();
-    target.inviteMessage = value.toString();
+    target.inviteMessage = value?.toString();
 }
 
 @_cdecl("GKMatchRequest_GetRecipients")
@@ -137,7 +128,7 @@ public func GKMatchRequest_GetRecipients
 {
     let target = Unmanaged<GKMatchRequest>.fromOpaque(pointer).takeUnretainedValue();
     
-    if(target.recipients != nil) {
+    if (target.recipients != nil) {
         return Unmanaged.passRetained(target.recipients! as NSArray).toOpaque();
     }
     
@@ -148,9 +139,158 @@ public func GKMatchRequest_GetRecipients
 public func GKMatchRequest_SetRecipients
 (
     pointer: UnsafeMutableRawPointer,
-    value: UnsafeMutableRawPointer
+    value: UnsafeMutableRawPointer?
 )
 {
     let target = Unmanaged<GKMatchRequest>.fromOpaque(pointer).takeUnretainedValue();
-    target.recipients = Unmanaged<NSArray>.fromOpaque(value).takeUnretainedValue() as? [GKPlayer];
+    target.recipients = value.map { Unmanaged<NSArray>.fromOpaque($0).takeUnretainedValue() } as? [GKPlayer];
+}
+
+@_cdecl("GKMatchRequest_GetQueueName")
+public func GKMatchRequest_GetQueueName
+(
+    gkMatchRequestPtr: UnsafeMutableRawPointer
+) -> char_p?
+{
+    if #available(iOS 17.2, tvOS 17.2, macOS 14.2, *) {
+        let gkMatchRequest = Unmanaged<GKMatchRequest>.fromOpaque(gkMatchRequestPtr).takeUnretainedValue();
+        return gkMatchRequest.queueName?.toCharPCopy();
+    }
+
+    return nil;
+}
+
+@_cdecl("GKMatchRequest_SetQueueName")
+public func GKMatchRequest_SetQueueName
+(
+    gkMatchRequestPtr: UnsafeMutableRawPointer,
+    value: char_p?
+)
+{
+    if #available(iOS 17.2, tvOS 17.2, macOS 14.2, *) {
+        let gkMatchRequest = Unmanaged<GKMatchRequest>.fromOpaque(gkMatchRequestPtr).takeUnretainedValue();
+        gkMatchRequest.queueName = value?.toString();
+    }
+}
+
+@_cdecl("GKMatchRequest_GetProperties")
+public func GKMatchRequest_GetProperties
+(
+    gkMatchRequestPtr: UnsafeMutableRawPointer
+) -> UnsafeMutableRawPointer?
+{
+    if #available(iOS 17.2, tvOS 17.2, macOS 14.2, *) {
+        let gkMatchRequest = Unmanaged<GKMatchRequest>.fromOpaque(gkMatchRequestPtr).takeUnretainedValue();
+        if let nsDictionary = gkMatchRequest.properties as NSDictionary? {
+            return Unmanaged.passRetained(nsDictionary).toOpaque();
+        }
+    }
+
+    return nil;
+}
+
+@_cdecl("GKMatchRequest_SetProperties")
+public func GKMatchRequest_SetProperties
+(
+    gkMatchRequestPtr: UnsafeMutableRawPointer,
+    nsDictionaryPtr: UnsafeMutableRawPointer?
+)
+{
+    if #available(iOS 17.2, tvOS 17.2, macOS 14.2, *) {
+        let gkMatchRequest = Unmanaged<GKMatchRequest>.fromOpaque(gkMatchRequestPtr).takeUnretainedValue();
+        if let nonNullDictionaryPtr = nsDictionaryPtr {
+            let nsDictionary = Unmanaged<NSDictionary>.fromOpaque(nonNullDictionaryPtr).takeUnretainedValue();
+            gkMatchRequest.properties = nsDictionary as? [String : Any];
+        } else {
+            gkMatchRequest.properties = nil;
+        }
+    }
+}
+
+@_cdecl("GKMatchRequest_GetRecipientProperties")
+public func GKMatchRequest_GetRecipientProperties
+(
+    gkMatchRequestPtr: UnsafeMutableRawPointer
+) -> UnsafeMutableRawPointer?
+{
+    if #available(iOS 17.2, tvOS 17.2, macOS 14.2, *) {
+        let gkMatchRequest = Unmanaged<GKMatchRequest>.fromOpaque(gkMatchRequestPtr).takeUnretainedValue();
+        if let nsDictionary = gkMatchRequest.recipientProperties as NSDictionary? {
+            return Unmanaged.passRetained(nsDictionary).toOpaque();
+        }
+    }
+
+    return nil;
+}
+
+@_cdecl("GKMatchRequest_SetRecipientProperties")
+public func GKMatchRequest_SetRecipientProperties
+(
+    gkMatchRequestPtr: UnsafeMutableRawPointer,
+    nsDictionaryPtr: UnsafeMutableRawPointer?
+)
+{
+    if #available(iOS 17.2, tvOS 17.2, macOS 14.2, *) {
+        let gkMatchRequest = Unmanaged<GKMatchRequest>.fromOpaque(gkMatchRequestPtr).takeUnretainedValue();
+        if let nonNullDictionaryPtr = nsDictionaryPtr {
+            let nsDictionary = Unmanaged<NSDictionary>.fromOpaque(nonNullDictionaryPtr).takeUnretainedValue();
+            gkMatchRequest.recipientProperties = nsDictionary as? [GKPlayer : [String : Any]];
+        } else {
+            gkMatchRequest.recipientProperties = nil;
+        }
+    }
+}
+
+public typealias GKMatchRequestRecipientResponseHandler = @convention(c) (UnsafeMutableRawPointer /*GKMatchRequest*/, UnsafeMutableRawPointer /*GKPlayer*/, Int /*GKInviteRecipientResponse*/) -> Void;
+
+@_cdecl("GKMatchRequest_SetRecipientResponseHandler")
+public func GKMatchRequest_SetRecipientResponseHandler
+(
+    gkMatchRequestPtr: UnsafeMutableRawPointer,
+    recipientResponseHandler: GKMatchRequestRecipientResponseHandler? // optional func params are @escaping by default
+)
+{
+    let gkMatchRequest = Unmanaged<GKMatchRequest>.fromOpaque(gkMatchRequestPtr).takeUnretainedValue();
+
+    guard let recipientResponseHandler = recipientResponseHandler else {
+        gkMatchRequest.recipientResponseHandler = nil;
+        return;
+    }
+
+    gkMatchRequest.recipientResponseHandler = { gkPlayer, gkInviteRecipientResponse in
+        recipientResponseHandler(
+            gkMatchRequestPtr, // not retained as per notes in InteropWeakMap.cs.
+            Unmanaged.passRetained(gkPlayer).toOpaque(),
+            gkInviteRecipientResponse.rawValue);
+    }
+}
+
+@_cdecl("GKMatchRequest_GetDefaultNumberOfPlayers")
+public func GKMatchRequest_GetDefaultNumberOfPlayers
+(
+    gkMatchRequestPtr: UnsafeMutableRawPointer
+) -> Int
+{
+    let gkMatchRequest = Unmanaged<GKMatchRequest>.fromOpaque(gkMatchRequestPtr).takeUnretainedValue();
+    return gkMatchRequest.defaultNumberOfPlayers;
+}
+
+@_cdecl("GKMatchRequest_SetDefaultNumberOfPlayers")
+public func GKMatchRequest_SetDefaultNumberOfPlayers
+(
+    gkMatchRequestPtr: UnsafeMutableRawPointer,
+    value: Int
+)
+{
+    let gkMatchRequest = Unmanaged<GKMatchRequest>.fromOpaque(gkMatchRequestPtr).takeUnretainedValue();
+    gkMatchRequest.defaultNumberOfPlayers = value;
+}
+
+@_cdecl("GKMatchRequest_GetMaxPlayersAllowedForMatchOfType")
+public func GKMatchRequest_GetMaxPlayersAllowedForMatchOfType
+(
+    matchType: UInt // GKMatchType
+) -> Int
+{
+    return GKMatchRequest.maxPlayersAllowedForMatch(of: GKMatchType(rawValue: matchType)!);
 }

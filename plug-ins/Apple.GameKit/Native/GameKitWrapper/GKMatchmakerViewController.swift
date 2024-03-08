@@ -32,15 +32,6 @@ public func GKMatchmakerViewController_InitWithMatchRequest
     return Unmanaged.passRetained(target!).toOpaque();
 }
 
-@_cdecl("GKMatchmakerViewController_Free")
-public func GKMatchmakerViewController_Free
-(
-    pointer: UnsafeMutableRawPointer
-)
-{
-    _ = Unmanaged<GKMatchmakerViewController>.fromOpaque(pointer).autorelease();
-}
-
 @_cdecl("GKMatchmakerViewController_GetMatchRequest")
 public func GKMatchmakerViewController_GetMatchRequest
 (
@@ -120,6 +111,19 @@ public func GKMatchmakerViewController_SetIsHosted
     target.isHosted = value;
 }
 
+@_cdecl("GKMatchmakerViewController_SetHostedPlayerDidConnect")
+public func GKMatchmakerViewController_SetHostedPlayerDidConnect
+(
+    gkMatchmakerViewControllerPtr: UnsafeMutableRawPointer,
+    gkPlayerPtr: UnsafeMutableRawPointer,
+    didConnect: Bool
+)
+{
+    let gkMatchmakerViewController = Unmanaged<GKMatchmakerViewController>.fromOpaque(gkMatchmakerViewControllerPtr).takeUnretainedValue();
+    let gkPlayer = Unmanaged<GKPlayer>.fromOpaque(gkPlayerPtr).takeUnretainedValue();
+    gkMatchmakerViewController.setHostedPlayer(gkPlayer, didConnect:didConnect);
+}
+
 @_cdecl("GKMatchmakerViewController_Present")
 public func GKMatchmakerViewController_Present
 (
@@ -167,4 +171,17 @@ public func GKMatchmakerViewController_GetMatchmakerDelegate
     }
     
     return Unmanaged.passRetained(target.matchmakerDelegate!).toOpaque();
+}
+
+@_cdecl("GKMatchmakerViewController_AddPlayersToMatch")
+public func GKMatchmakerViewController_AddPlayersToMatch
+(
+    gkMatchmakerViewControllerPtr: UnsafeMutableRawPointer,
+    gkMatchPtr: UnsafeMutableRawPointer
+)
+{
+    let gkMatchmakerViewController = Unmanaged<GKMatchmakerViewController>.fromOpaque(gkMatchmakerViewControllerPtr).takeUnretainedValue();
+    let gkMatch = Unmanaged<GKMatch>.fromOpaque(gkMatchPtr).takeUnretainedValue();
+
+    gkMatchmakerViewController.addPlayers(to: gkMatch);
 }

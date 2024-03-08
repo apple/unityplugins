@@ -9,7 +9,7 @@ namespace Apple.GameKit
     /// <summary>
     /// A challenge issued by the local player to another player.
     /// </summary>
-    public class GKChallenge : InteropReference
+    public class GKChallenge : NSObject
     {
         #region Delegates
         public delegate void ChallengeReceivedHandler(GKPlayer player, GKChallenge challenge);
@@ -48,158 +48,79 @@ namespace Apple.GameKit
         #endregion
         
         #region Static Event Registration
-        [DllImport(InteropUtility.DLLName)]
-        private static extern void GKChallenge_SetChallengeReceivedCallback(InteropChallengeReceivedHandler callback);
-        [DllImport(InteropUtility.DLLName)]
-        private static extern void GKChallenge_SetChallengeOtherPlayerAcceptedCallback(InteropChallengeOtherPlayerAcceptedHandler callback);
-        [DllImport(InteropUtility.DLLName)]
-        private static extern void GKChallenge_SetChallengeCompletedCallback(InteropChallengeCompletedHandler callback);
-        [DllImport(InteropUtility.DLLName)]
-        private static extern void GKChallenge_SetChallengeOtherPlayerCompletedCallback(InteropChallengeOtherPlayerCompletedHanlder callback);
         static GKChallenge()
         {
-            GKChallenge_SetChallengeReceivedCallback(OnChallengeReceived);
-            GKChallenge_SetChallengeCompletedCallback(OnChallengeCompleted);
-            GKChallenge_SetChallengeOtherPlayerAcceptedCallback(OnChallengeOtherPlayerAccepted);
-            GKChallenge_SetChallengeOtherPlayerCompletedCallback(OnChallengeOtherPlayerCompleted);
+            Interop.GKChallenge_SetChallengeReceivedCallback(OnChallengeReceived);
+            Interop.GKChallenge_SetChallengeCompletedCallback(OnChallengeCompleted);
+            Interop.GKChallenge_SetChallengeOtherPlayerAcceptedCallback(OnChallengeOtherPlayerAccepted);
+            Interop.GKChallenge_SetChallengeOtherPlayerCompletedCallback(OnChallengeOtherPlayerCompleted);
         }
 
         [MonoPInvokeCallback(typeof(InteropChallengeReceivedHandler))]
         private static void OnChallengeReceived(IntPtr player, IntPtr challenge)
         {
-            ChallengeReceived?.Invoke(PointerCast<GKPlayer>(player), PointerCast<GKChallenge>(challenge));
+            InteropPInvokeExceptionHandler.CatchAndLog(() => ChallengeReceived?.Invoke(PointerCast<GKPlayer>(player), PointerCast<GKChallenge>(challenge)));
         }
 
         [MonoPInvokeCallback(typeof(InteropChallengeOtherPlayerAcceptedHandler))]
         private static void OnChallengeOtherPlayerAccepted(IntPtr player, IntPtr challenge)
         {
-            ChallengeOtherPlayerAccepted?.Invoke(PointerCast<GKPlayer>(player), PointerCast<GKChallenge>(challenge));
+            InteropPInvokeExceptionHandler.CatchAndLog(() => ChallengeOtherPlayerAccepted?.Invoke(PointerCast<GKPlayer>(player), PointerCast<GKChallenge>(challenge)));
         }
 
         [MonoPInvokeCallback(typeof(InteropChallengeCompletedHandler))]
         private static void OnChallengeCompleted(IntPtr player, IntPtr challenge, IntPtr issuedByFriend)
         {
-            ChallengeCompleted?.Invoke(PointerCast<GKPlayer>(player), PointerCast<GKChallenge>(challenge), PointerCast<GKPlayer>(issuedByFriend));
+            InteropPInvokeExceptionHandler.CatchAndLog(() => ChallengeCompleted?.Invoke(PointerCast<GKPlayer>(player), PointerCast<GKChallenge>(challenge), PointerCast<GKPlayer>(issuedByFriend)));
         }
         
         [MonoPInvokeCallback(typeof(InteropChallengeOtherPlayerCompletedHanlder))]
         private static void OnChallengeOtherPlayerCompleted(IntPtr player, IntPtr challenge, IntPtr issuedByFriend)
         {
-            ChallengeOtherPlayerCompleted?.Invoke(PointerCast<GKPlayer>(player), PointerCast<GKChallenge>(challenge), PointerCast<GKPlayer>(issuedByFriend));
+            InteropPInvokeExceptionHandler.CatchAndLog(() => ChallengeOtherPlayerCompleted?.Invoke(PointerCast<GKPlayer>(player), PointerCast<GKChallenge>(challenge), PointerCast<GKPlayer>(issuedByFriend)));
         }
         #endregion
         
-        #region Init & Dispose
         internal GKChallenge(IntPtr pointer) : base(pointer)
         {
         }
-
-        [DllImport(InteropUtility.DLLName)]
-        private static extern void GKChallenge_Free(IntPtr pointer);
         
-        protected override void OnDispose(bool isDisposing)
-        {
-            if (Pointer != IntPtr.Zero)
-            {
-                GKChallenge_Free(Pointer);
-                Pointer = IntPtr.Zero;
-            }
-        }
-
-        #endregion
-        
-        #region IssuingPlayer
-        [DllImport(InteropUtility.DLLName)]
-        private static extern IntPtr GKChallenge_GetIssuingPlayer(IntPtr pointer);
-
         /// <summary>
         /// The player who issues the challenge.
         /// </summary>
-        public GKPlayer IssuingPlayer => PointerCast<GKPlayer>(GKChallenge_GetIssuingPlayer(Pointer));
-
-        #endregion
+        public GKPlayer IssuingPlayer => PointerCast<GKPlayer>(Interop.GKChallenge_GetIssuingPlayer(Pointer));
         
-        #region ReceivingPlayer
-        [DllImport(InteropUtility.DLLName)]
-        private static extern IntPtr GKChallenge_GetReceivingPlayer(IntPtr pointer);
-
         /// <summary>
         /// The player who receives the challenge.
         /// </summary>
-        public GKPlayer ReceivingPlayer => PointerCast<GKPlayer>(GKChallenge_GetReceivingPlayer(Pointer));
-
-        #endregion
-        
-        #region Message
-        [DllImport(InteropUtility.DLLName)]
-        private static extern string GKChallenge_GetMessage(IntPtr pointer);
+        public GKPlayer ReceivingPlayer => PointerCast<GKPlayer>(Interop.GKChallenge_GetReceivingPlayer(Pointer));
 
         /// <summary>
         /// A text message that describes the challenge.
         /// </summary>
-        public string Message
-        {
-            get => GKChallenge_GetMessage(Pointer);
-        }
-
-        #endregion
+        public string Message => Interop.GKChallenge_GetMessage(Pointer);
         
-        #region State
-        [DllImport(InteropUtility.DLLName)]
-        private static extern GKChallengeState GKChallenge_GetState(IntPtr pointer);
-
         /// <summary>
         /// The current state of the challenge.
         /// </summary>
-        public GKChallengeState State
-        {
-            get => GKChallenge_GetState(Pointer);
-        }
-
-        #endregion
+        public GKChallengeState State => Interop.GKChallenge_GetState(Pointer);
         
-        #region IssueDate
-        [DllImport(InteropUtility.DLLName)]
-        private static extern long GKChallenge_GetIssueDate(IntPtr pointer);
-
         /// <summary>
         /// The date the player issued the challenge.
         /// </summary>
-        public DateTimeOffset IssueDate
-        {
-            get => DateTimeOffset.FromUnixTimeSeconds(GKChallenge_GetIssueDate(Pointer));
-        }
-        #endregion
-        
-        #region CompletionDate
-        [DllImport(InteropUtility.DLLName)]
-        private static extern long GKChallenge_GetCompletionDate(IntPtr pointer);
+        public DateTimeOffset IssueDate => DateTimeOffset.FromUnixTimeSeconds(Interop.GKChallenge_GetIssueDate(Pointer));
 
         /// <summary>
         /// The date the challenged player completed the challenge.
         /// </summary>
-        public DateTimeOffset CompletionDate
-        {
-            get => DateTimeOffset.FromUnixTimeSeconds(GKChallenge_GetCompletionDate(Pointer));
-        }
-        #endregion
+        public DateTimeOffset CompletionDate => DateTimeOffset.FromUnixTimeSeconds(Interop.GKChallenge_GetCompletionDate(Pointer));
         
-        #region Decline
-        [DllImport(InteropUtility.DLLName)]
-        private static extern void GKChallenge_Decline(IntPtr pointer);
-
         /// <summary>
         /// Declines a challenge that another player issues to the local player.
         /// </summary>
-        public void Decline()
-        {
-            GKChallenge_Decline(Pointer);
-        }
-        #endregion
+        public void Decline() => Interop.GKChallenge_Decline(Pointer);
 
         #region LoadReceivedChallenges
-        [DllImport(InteropUtility.DLLName)]
-        private static extern void GKChallenge_LoadReceivedChallenges(long taskId, SuccessTaskCallback<IntPtr> onSuccess, NSErrorTaskCallback onError);
 
         /// <summary>
         /// Loads the list of outstanding challenges.
@@ -208,14 +129,14 @@ namespace Apple.GameKit
         public static Task<NSArray<GKChallenge>> LoadReceivedChallenges()
         {
             var tcs = InteropTasks.Create<NSArray<GKChallenge>>(out var taskId);
-            GKChallenge_LoadReceivedChallenges(taskId, OnLoadReceivedChallenges, OnLoadReceivedChallengesError);
+            Interop.GKChallenge_LoadReceivedChallenges(taskId, OnLoadReceivedChallenges, OnLoadReceivedChallengesError);
             return tcs.Task;
         }
 
         [MonoPInvokeCallback(typeof(SuccessTaskCallback<IntPtr>))]
         private static void OnLoadReceivedChallenges(long taskId, IntPtr nsArrayPtr)
         {
-            InteropTasks.TrySetResultAndRemove(taskId, (NSArray<GKChallenge>)PointerCast<NSArrayGKChallenge>(nsArrayPtr));
+            InteropTasks.TrySetResultAndRemove(taskId, PointerCast<NSArray<GKChallenge>>(nsArrayPtr));
         }
 
         [MonoPInvokeCallback(typeof(NSErrorTaskCallback))]
@@ -225,15 +146,7 @@ namespace Apple.GameKit
         }
         #endregion
         
-        #region ChallengeType
-        [DllImport(InteropUtility.DLLName)]
-        private static extern GKChallengeType GKChallenge_GetChallengeType(IntPtr pointer);
-
-        public GKChallengeType ChallengeType
-        {
-            get => GKChallenge_GetChallengeType(Pointer);
-        }
-        #endregion
+        public GKChallengeType ChallengeType => Interop.GKChallenge_GetChallengeType(Pointer);
 
         public enum GKChallengeType : long
         {
@@ -264,6 +177,35 @@ namespace Apple.GameKit
             /// </summary>
             Declined = 3
         }
-        
+
+        private static class Interop
+        {
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKChallenge_SetChallengeReceivedCallback(InteropChallengeReceivedHandler callback);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKChallenge_SetChallengeOtherPlayerAcceptedCallback(InteropChallengeOtherPlayerAcceptedHandler callback);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKChallenge_SetChallengeCompletedCallback(InteropChallengeCompletedHandler callback);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKChallenge_SetChallengeOtherPlayerCompletedCallback(InteropChallengeOtherPlayerCompletedHanlder callback);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern IntPtr GKChallenge_GetIssuingPlayer(IntPtr pointer);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern IntPtr GKChallenge_GetReceivingPlayer(IntPtr pointer);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern string GKChallenge_GetMessage(IntPtr pointer);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern GKChallengeState GKChallenge_GetState(IntPtr pointer);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern long GKChallenge_GetIssueDate(IntPtr pointer);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern long GKChallenge_GetCompletionDate(IntPtr pointer);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKChallenge_Decline(IntPtr pointer);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKChallenge_LoadReceivedChallenges(long taskId, SuccessTaskCallback<IntPtr> onSuccess, NSErrorTaskCallback onError);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern GKChallengeType GKChallenge_GetChallengeType(IntPtr pointer);
+        }
     }
 }

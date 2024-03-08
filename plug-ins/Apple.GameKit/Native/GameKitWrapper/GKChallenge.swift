@@ -8,15 +8,6 @@
 import Foundation
 import GameKit
 
-@_cdecl("GKChallenge_Free")
-public func GKChallenge_Free
-(
-    pointer: UnsafeMutableRawPointer
-)
-{
-    _ = Unmanaged<GKChallenge>.fromOpaque(pointer).autorelease();
-}
-
 @_cdecl("GKChallenge_GetIssuingPlayer")
 public func GKChallenge_GetIssuingPlayer
 (

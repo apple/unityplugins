@@ -8,57 +8,29 @@ namespace Apple.GameKit.Multiplayer
     /// <summary>
     /// An invitation to join a match sent to the local player from another player.
     /// </summary>
-    public class GKInvite : InteropReference
+    public class GKInvite : NSObject
     {
-        #region Delegates
-        public delegate void InviteAcceptedHandler(GKPlayer invitingPlayer, GKInvite invite);
+        public delegate void InviteAcceptedHandler(GKPlayer invitedPlayer, GKInvite invite);
         private delegate void InteropInviteAcceptedHandler(IntPtr player, IntPtr invite);
-        #endregion
         
-        #region Static Events
         /// <summary>
         /// Handles the event when the local player accepts an invitation from another player.
         /// </summary>
         public static event InviteAcceptedHandler InviteAccepted;
-        #endregion
-        
-        #region Static Event Registration
-        [DllImport(InteropUtility.DLLName)]
-        private static extern void GKInvite_SetInviteAcceptedCallback(InteropInviteAcceptedHandler callback);
 
         static GKInvite()
         {
-            GKInvite_SetInviteAcceptedCallback(OnInviteAccepted);
+            Interop.GKInvite_SetInviteAcceptedCallback(OnInviteAccepted);
         }
 
         [MonoPInvokeCallback(typeof(InteropInviteAcceptedHandler))]
         private static void OnInviteAccepted(IntPtr player, IntPtr invite)
         {
-            InviteAccepted?.Invoke(PointerCast<GKPlayer>(player), PointerCast<GKInvite>(invite));
+            InteropPInvokeExceptionHandler.CatchAndLog(() => InviteAccepted?.Invoke(PointerCast<GKPlayer>(player), PointerCast<GKInvite>(invite)));
         }
-        #endregion
         
-        #region Init & Dipose
         internal GKInvite(IntPtr pointer) : base(pointer){}
         
-        [DllImport(InteropUtility.DLLName)]
-        private static extern void GKInvite_Free(IntPtr pointer);
-
-        protected override void OnDispose(bool isDisposing)
-        {
-            if (Pointer != IntPtr.Zero)
-            {
-                GKInvite_Free(Pointer);
-                Pointer = IntPtr.Zero;
-            }
-        }
-
-        #endregion
-        
-        #region Sender
-        [DllImport(InteropUtility.DLLName)]
-        private static extern IntPtr GKInvite_GetSender(IntPtr pointer);
-
         /// <summary>
         /// The player who sends the invitation.
         /// </summary>
@@ -66,7 +38,7 @@ namespace Apple.GameKit.Multiplayer
         {
             get
             {
-                var pointer = GKInvite_GetSender(Pointer);
+                var pointer = Interop.GKInvite_GetSender(Pointer);
                 
                 if(pointer != IntPtr.Zero)
                     return new GKPlayer(pointer);
@@ -74,45 +46,34 @@ namespace Apple.GameKit.Multiplayer
                 return null;
             }
         }
-        #endregion
-        
-        #region PlayerAttributes
-        [DllImport(InteropUtility.DLLName)]
-        private static extern uint GKInvite_GetPlayerAttributes(IntPtr pointer);
 
         /// <summary>
         /// The player attributes for the match.
         /// </summary>
-        public uint PlayerAttributes
-        {
-            get => GKInvite_GetPlayerAttributes(Pointer);
-        }
-        #endregion
+        public uint PlayerAttributes => Interop.GKInvite_GetPlayerAttributes(Pointer);
         
-        #region PlayerGroup
-        [DllImport(InteropUtility.DLLName)]
-        private static extern long GKInvite_GetPlayerGroup(IntPtr pointer);
-
         /// <summary>
         /// The player group for the match.
         /// </summary>
-        public long PlayerGroup
-        {
-            get => GKInvite_GetPlayerGroup(Pointer);
-        }
-        #endregion
+        public long PlayerGroup => Interop.GKInvite_GetPlayerGroup(Pointer);
         
-        #region IsHosted
-        [DllImport(InteropUtility.DLLName)]
-        private static extern bool GKInvite_GetIsHosted(IntPtr pointer);
-
         /// <summary>
         /// A Boolean value that indicates whether you host the game on your own servers.
         /// </summary>
-        public bool IsHosted
+        public bool IsHosted => Interop.GKInvite_GetIsHosted(Pointer);
+
+        private static class Interop
         {
-            get => GKInvite_GetIsHosted(Pointer);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKInvite_SetInviteAcceptedCallback(InteropInviteAcceptedHandler callback);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern IntPtr GKInvite_GetSender(IntPtr pointer);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern uint GKInvite_GetPlayerAttributes(IntPtr pointer);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern long GKInvite_GetPlayerGroup(IntPtr pointer);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern bool GKInvite_GetIsHosted(IntPtr pointer);
         }
-        #endregion
     }
 }

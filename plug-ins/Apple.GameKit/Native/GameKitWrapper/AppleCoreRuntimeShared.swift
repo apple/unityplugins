@@ -16,7 +16,7 @@ public typealias SuccessCallback = @convention(c) () -> Void;
 public typealias SuccessTaskCallback = @convention(c) (Int64) -> Void;
 public typealias SuccessTaskPtrCallback = @convention(c) (Int64, UnsafeMutableRawPointer?) -> Void;
 public typealias SuccessTaskIntCallback = @convention(c) (Int64, Int) -> Void;
-public typealias SuccessTaskImageCallback = @convention(c) (Int64, Int32, Int32, uchar_p, Int32) -> Void;
+public typealias SuccessTaskImageCallback = @convention(c) (Int64, UnsafeMutableRawPointer) -> Void;
 
 public extension InteropStructArray {
     func toData() -> Data {
@@ -99,8 +99,8 @@ public extension Error {
 public extension Array {
     func toUnsafeMutablePointer() -> UnsafeMutablePointer<Element> {
         let ptr = UnsafeMutablePointer<Element>.allocate(capacity: self.count);
-        ptr.assign(from: self, count: self.count);
-        
+        ptr.update(from: self, count: self.count);
+
         return ptr;
     }
 }
