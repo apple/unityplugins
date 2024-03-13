@@ -220,5 +220,16 @@ public func GKAchievement_ChallengeComposeController
 {
     let target = Unmanaged<GKAchievement>.fromOpaque(pointer).takeUnretainedValue();
     let players = Unmanaged<NSArray>.fromOpaque(playersPtr).takeUnretainedValue() as! [GKPlayer];
-    target.challengeComposeController(withMessage: message.toString(), players: players);
+
+#if os(visionOS)
+    // Avoid including deprecated version of the API in visionOS builds.
+    target.challengeComposeController(withMessage: message.toString(), players: players, completion: nil)
+#else
+    if #available(iOS 17.0, tvOS 17.0, macOS 14.0, *) {
+        target.challengeComposeController(withMessage: message.toString(), players: players, completion: nil)
+    } else {
+        // Explicitly set completionHandler parameter to avoid ambiguous call when building for visionOS
+        target.challengeComposeController(withMessage: message.toString(), players: players)
+    };
+#endif
 }

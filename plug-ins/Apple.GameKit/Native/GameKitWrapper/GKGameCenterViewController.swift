@@ -63,10 +63,11 @@ public func GKGameCenterViewController_Present
     _currentPresentingGameCenterDelegate = GameKitUIDelegateHandler(taskId: taskId, onSuccess: onSuccess);
     target.gameCenterDelegate = _currentPresentingGameCenterDelegate;
     
+    // TODO: (123075676)
 #if os(iOS) || os(tvOS)
     let viewController = UIApplication.shared.windows.first!.rootViewController;
     viewController?.present(target, animated: true);
-#else
+#elseif os(macOS)
     GKDialogController.shared().parentWindow = NSApplication.shared.keyWindow;
     GKDialogController.shared().present(target);
 #endif

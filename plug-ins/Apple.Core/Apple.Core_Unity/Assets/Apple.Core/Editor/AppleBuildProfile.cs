@@ -1,4 +1,4 @@
-#if (UNITY_EDITOR_OSX && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX))
+#if (UNITY_EDITOR_OSX && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX || UNITY_VISIONOS))
 using System;
 using System.IO;
 using System.Linq;
@@ -27,6 +27,7 @@ namespace Apple.Core
         public string MinimumOSVersion_iOS = string.Empty;
         public string MinimumOSVersion_tvOS = string.Empty;
         public string MinimumOSVersion_macOS = string.Empty;
+        public string MinimumOSVersion_visionOS = string.Empty;
 
         public bool AppUsesNonExemptEncryption = false;
 
@@ -110,4 +111,4 @@ namespace Apple.Core
         }
     }
 }
-#endif // (UNITY_EDITOR_OSX && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX))
+#endif // (UNITY_EDITOR_OSX && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX || UNITY_VISIONOS))

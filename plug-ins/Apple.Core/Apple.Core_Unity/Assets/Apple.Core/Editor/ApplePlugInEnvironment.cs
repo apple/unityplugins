@@ -1,4 +1,4 @@
-#if (UNITY_EDITOR_OSX && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX))
+#if (UNITY_EDITOR_OSX && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX || UNITY_VISIONOS))
 using System;
 using System.IO;
 using System.Linq;
@@ -24,15 +24,17 @@ namespace Apple.Core
         public static string iOS => "iOS";
         public static string macOS => "macOS";
         public static string tvOS => "tvOS";
+        public static string visionOS => "visionOS";
         public static string iPhoneSimulator => "iPhoneSimulator";
         public static string AppleTVSimulator => "AppleTVSimulator";
+        public static string VisionSimulator => "VisionSimulator";
         public static string Unknown => "Unknown";
 
         public static string[] ValidPlatforms { get; private set; }
 
         static ApplePlatformID()
         {
-            ValidPlatforms = new string[] {ApplePlatformID.iOS, ApplePlatformID.macOS, ApplePlatformID.tvOS, ApplePlatformID.iPhoneSimulator, ApplePlatformID.AppleTVSimulator};
+            ValidPlatforms = new string[] {ApplePlatformID.iOS, ApplePlatformID.macOS, ApplePlatformID.tvOS, ApplePlatformID.iPhoneSimulator, ApplePlatformID.AppleTVSimulator, ApplePlatformID.visionOS, ApplePlatformID.VisionSimulator};
         } 
     }
 
@@ -179,6 +181,7 @@ namespace Apple.Core
 
         /// <summary>
         /// As soon as the Unity Editor creates the ApplePluginEnvironment, this event handler will be added to initialize the _appleUnityPackages dictionary.
+        /// Once initialization has occured, this method will handle runtime validation for available libraries against selected Unity Editor settings.
         /// </summary>
         private static void OnEditorUpdate()
         {
@@ -317,6 +320,14 @@ namespace Apple.Core
                         default: return ApplePlatformID.Unknown;
                     }
 
+                case BuildTarget.VisionOS:
+                    switch (PlayerSettings.VisionOS.sdkVersion)
+                    {
+                        case VisionOSSdkVersion.Device: return ApplePlatformID.visionOS;
+                        case VisionOSSdkVersion.Simulator: return ApplePlatformID.VisionSimulator;
+                        default: return ApplePlatformID.Unknown;
+                    }
+
                 case BuildTarget.StandaloneOSX: return ApplePlatformID.macOS;
 
                 default: return ApplePlatformID.Unknown;
@@ -341,6 +352,11 @@ namespace Apple.Core
             if (applePlatformId == ApplePlatformID.tvOS || applePlatformId == ApplePlatformID.AppleTVSimulator)
             {
                 return BuildTarget.tvOS;
+            }
+
+            if (applePlatformId == ApplePlatformID.visionOS || applePlatformId == ApplePlatformID.VisionSimulator)
+            {
+                return BuildTarget.VisionOS;
             }
 
             if (applePlatformId == ApplePlatformID.macOS)
@@ -459,7 +475,7 @@ namespace Apple.Core
             bool librariesFound = false;
             foreach (AppleUnityPackage package in _appleUnityPackages.Values)
             {
-                summary += $"<b>{package.DisplayName}</b> [{package.Name}]:\n  Package Source Path: {package.SourcePath}\n";
+                summary += $"\n<b>{package.DisplayName}</b> [{package.Name}]:\n  Package Source Path: {package.SourcePath}\n";
                 var debugLibraries = package.GetLibraries(AppleConfigID.Debug);
                 if (debugLibraries.Length > 0)
                 {
@@ -518,10 +534,10 @@ namespace Apple.Core
         /// Gets the native library root folder for the generated Xcode project.
         /// </summary>
         /// <remarks>
-        /// When building Xcode projects for macOS, Unity puts everything but the project under an additional folder "/{Application.productName}" - we'll honor this folder hierarchy.
+        /// When building Xcode projects for macOS, Unity puts everything but the project under an additional folder "/{Application.productName}" - this script will respect this folder hierarchy.
         /// Output paths will of the following form:
-        ///     iOS/tvOS: <c>[XCODE_PROJECT_DIR]/ApplePluginLibraries/[PLUGIN_NAME]/ApplePluginLibrary.suffix</c>
-        ///        macOS: <c>[XCODE_PROJECT_DIR]/[Application.productName]/ApplePluginLibraries/[PLUGIN_NAME]/ApplePluginLibrary.suffix</c>
+        ///   iOS/tvOS/visionOS: <c>[XCODE_PROJECT_DIR]/ApplePluginLibraries/[PLUGIN_NAME]/ApplePluginLibrary.suffix</c>
+        ///               macOS: <c>[XCODE_PROJECT_DIR]/[Application.productName]/ApplePluginLibraries/[PLUGIN_NAME]/ApplePluginLibrary.suffix</c>
         /// </remarks>
         /// <param name="unityBuildTarget">Current Unity BuildTarget</param>
         /// <returns>A string representing the path to the destination libraries, relative to the generated Xcode project's PROJECT_DIR folder.</returns>
@@ -622,7 +638,7 @@ namespace Apple.Core
             // Destination paths are different depending upon the following scenarios:
             //  1. Building a Mac app directly: [OUTPUT_APP_PATH]/Contents/PlugIns
             //  2. Build an Xcode project which targets macOS: [XCODE_PROJECT_DIR]/[Application.productName]/ApplePluginLibraries/[PLUGIN_NAME]/
-            //  3. Build an Xcode project which targets iOS/tvOS: [XCODE_PROJECT_DIR]/ApplePluginLibraries/[PLUGIN_NAME]/
+            //  3. Build an Xcode project which targets iOS/tvOS/visionOS: [XCODE_PROJECT_DIR]/ApplePluginLibraries/[PLUGIN_NAME]/
             //
             // In the first (1.) case, no linking is necessary. Each library .bundle must be copied to the correct location in the containing .app bundle
             //  The path used in this case corresponds to the Xcode build setting PLUGINS_FOLDER_PATH
@@ -729,4 +745,4 @@ namespace Apple.Core
         }
     }
 }
-#endif // #if (UNITY_EDITOR_OSX && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX))
+#endif // #if (UNITY_EDITOR_OSX && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX || UNITY_VISIONOS))

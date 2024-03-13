@@ -152,11 +152,10 @@ public func GKMatchRequest_GetQueueName
     gkMatchRequestPtr: UnsafeMutableRawPointer
 ) -> char_p?
 {
-    if #available(iOS 17.2, tvOS 17.2, macOS 14.2, *) {
+    if #available(iOS 17.2, tvOS 17.2, macOS 14.2, visionOS 1.1, *) {
         let gkMatchRequest = Unmanaged<GKMatchRequest>.fromOpaque(gkMatchRequestPtr).takeUnretainedValue();
         return gkMatchRequest.queueName?.toCharPCopy();
     }
-
     return nil;
 }
 
@@ -167,7 +166,7 @@ public func GKMatchRequest_SetQueueName
     value: char_p?
 )
 {
-    if #available(iOS 17.2, tvOS 17.2, macOS 14.2, *) {
+    if #available(iOS 17.2, tvOS 17.2, macOS 14.2, visionOS 1.1, *) {
         let gkMatchRequest = Unmanaged<GKMatchRequest>.fromOpaque(gkMatchRequestPtr).takeUnretainedValue();
         gkMatchRequest.queueName = value?.toString();
     }
@@ -179,7 +178,7 @@ public func GKMatchRequest_GetProperties
     gkMatchRequestPtr: UnsafeMutableRawPointer
 ) -> UnsafeMutableRawPointer?
 {
-    if #available(iOS 17.2, tvOS 17.2, macOS 14.2, *) {
+    if #available(iOS 17.2, tvOS 17.2, macOS 14.2, visionOS 1.1, *) {
         let gkMatchRequest = Unmanaged<GKMatchRequest>.fromOpaque(gkMatchRequestPtr).takeUnretainedValue();
         if let nsDictionary = gkMatchRequest.properties as NSDictionary? {
             return Unmanaged.passRetained(nsDictionary).toOpaque();
@@ -196,6 +195,8 @@ public func GKMatchRequest_SetProperties
     nsDictionaryPtr: UnsafeMutableRawPointer?
 )
 {
+    // TODO: (123075676)
+#if !os(visionOS)
     if #available(iOS 17.2, tvOS 17.2, macOS 14.2, *) {
         let gkMatchRequest = Unmanaged<GKMatchRequest>.fromOpaque(gkMatchRequestPtr).takeUnretainedValue();
         if let nonNullDictionaryPtr = nsDictionaryPtr {
@@ -205,6 +206,7 @@ public func GKMatchRequest_SetProperties
             gkMatchRequest.properties = nil;
         }
     }
+#endif
 }
 
 @_cdecl("GKMatchRequest_GetRecipientProperties")
@@ -213,7 +215,7 @@ public func GKMatchRequest_GetRecipientProperties
     gkMatchRequestPtr: UnsafeMutableRawPointer
 ) -> UnsafeMutableRawPointer?
 {
-    if #available(iOS 17.2, tvOS 17.2, macOS 14.2, *) {
+    if #available(iOS 17.2, tvOS 17.2, macOS 14.2, visionOS 1.1, *) {
         let gkMatchRequest = Unmanaged<GKMatchRequest>.fromOpaque(gkMatchRequestPtr).takeUnretainedValue();
         if let nsDictionary = gkMatchRequest.recipientProperties as NSDictionary? {
             return Unmanaged.passRetained(nsDictionary).toOpaque();
@@ -230,7 +232,7 @@ public func GKMatchRequest_SetRecipientProperties
     nsDictionaryPtr: UnsafeMutableRawPointer?
 )
 {
-    if #available(iOS 17.2, tvOS 17.2, macOS 14.2, *) {
+    if #available(iOS 17.2, tvOS 17.2, macOS 14.2, visionOS 1.1, *) {
         let gkMatchRequest = Unmanaged<GKMatchRequest>.fromOpaque(gkMatchRequestPtr).takeUnretainedValue();
         if let nonNullDictionaryPtr = nsDictionaryPtr {
             let nsDictionary = Unmanaged<NSDictionary>.fromOpaque(nonNullDictionaryPtr).takeUnretainedValue();

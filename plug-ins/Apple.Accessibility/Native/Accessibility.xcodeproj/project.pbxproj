@@ -11,11 +11,22 @@
 			isa = PBXAggregateTarget;
 			buildConfigurationList = 241B6AAB2947AC5500EC7B7A /* Build configuration list for PBXAggregateTarget "macOS_sentinel" */;
 			buildPhases = (
-				241B6AAC2947ACF700EC7B7A /* macOS Unsupported Message */,
+				241B6AAC2947ACF700EC7B7A /* ShellScript */,
 			);
 			dependencies = (
 			);
 			name = macOS_sentinel;
+			productName = macOS_sentinel;
+		};
+		24B064172B7EEEC7007ABBB8 /* visionOS_sentinel */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 24B064192B7EEEC7007ABBB8 /* Build configuration list for PBXAggregateTarget "visionOS_sentinel" */;
+			buildPhases = (
+				24B064182B7EEEC7007ABBB8 /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = visionOS_sentinel;
 			productName = macOS_sentinel;
 		};
 /* End PBXAggregateTarget section */
@@ -240,6 +251,7 @@
 				C9729D39274324FC009BB169 /* AppleAccessibility_iOS */,
 				C9729E1127434953009BB169 /* AppleAccessibility_tvOS */,
 				241B6AA82947AC5500EC7B7A /* macOS_sentinel */,
+				24B064172B7EEEC7007ABBB8 /* visionOS_sentinel */,
 			);
 		};
 /* End PBXProject section */
@@ -262,7 +274,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		241B6AAC2947ACF700EC7B7A /* macOS Unsupported Message */ = {
+		241B6AAC2947ACF700EC7B7A /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -272,7 +284,6 @@
 			);
 			inputPaths = (
 			);
-			name = "macOS Unsupported Message";
 			outputFileListPaths = (
 			);
 			outputPaths = (
@@ -280,6 +291,25 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\necho \"\\n[Accessibility] macOS not currently supported by Accessibility plug-in. No native library built.\"\n";
+			showEnvVarsInLog = 0;
+		};
+		24B064182B7EEEC7007ABBB8 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\necho \"\\n[Accessibility] visionOS not currently supported by Accessibility plug-in. No native library built.\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -331,6 +361,26 @@
 				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		24B0641A2B7EEEC7007ABBB8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 240646122B61FC3C00246067 /* Accessibility.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = xros;
+			};
+			name = Debug;
+		};
+		24B0641B2B7EEEC7007ABBB8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 240646122B61FC3C00246067 /* Accessibility.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = xros;
 			};
 			name = Release;
 		};
@@ -552,6 +602,15 @@
 			buildConfigurations = (
 				241B6AA92947AC5500EC7B7A /* Debug */,
 				241B6AAA2947AC5500EC7B7A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		24B064192B7EEEC7007ABBB8 /* Build configuration list for PBXAggregateTarget "visionOS_sentinel" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				24B0641A2B7EEEC7007ABBB8 /* Debug */,
+				24B0641B2B7EEEC7007ABBB8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

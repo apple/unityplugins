@@ -17,12 +17,14 @@ BUILD_INFO_TABLE = {
     PlatformID.TVOS : BuildInfo("tvOS", "generic/platform=tvOS"),
     PlatformID.TVOS_SIMULATOR : BuildInfo("tvOS", "generic/platform=tvOS Simulator"),
     PlatformID.MACOS : BuildInfo("macOS", "generic/platform=macOS"),
+    PlatformID.VISIONOS : BuildInfo("visionOS", "generic/platform=visionOS"),
+    PlatformID.VISIONOS_SIMULATOR : BuildInfo("visionOS", "generic/platform=visionOS Simulator")
 }
 
 # Common context data for building the plug-ins.
 class BuildContext:
-    SIMULATOR_PLATFORMS = [PlatformID.IOS_SIMULATOR, PlatformID.TVOS_SIMULATOR]
-    DEVICE_PLATFORMS = [PlatformID.IOS, PlatformID.TVOS, PlatformID.MACOS]
+    SIMULATOR_PLATFORMS = [PlatformID.IOS_SIMULATOR, PlatformID.TVOS_SIMULATOR, PlatformID.VISIONOS_SIMULATOR]
+    DEVICE_PLATFORMS = [PlatformID.IOS, PlatformID.TVOS, PlatformID.MACOS, PlatformID.VISIONOS]
 
     def __init__(self, root_path : Path) -> None:
         # Required Paths

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-#if (UNITY_EDITOR_OSX && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX))
+#if (UNITY_EDITOR_OSX && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX || UNITY_VISIONOS))
 using UnityEditor.iOS.Xcode;
 #endif
 
@@ -17,8 +17,8 @@ namespace Apple.GameController.Editor
         public bool SupportsExtendedGamePad => true;
 
         public override string DisplayName => "Apple.GameController";
-        public override BuildTarget[] SupportedTargets => new BuildTarget[] {BuildTarget.iOS, BuildTarget.tvOS, BuildTarget.StandaloneOSX};
-#if (UNITY_EDITOR_OSX && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX))
+        public override BuildTarget[] SupportedTargets => new BuildTarget[] {BuildTarget.iOS, BuildTarget.tvOS, BuildTarget.StandaloneOSX, BuildTarget.VisionOS};
+#if (UNITY_EDITOR_OSX && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX || UNITY_VISIONOS))
         public override void OnProcessInfoPlist(AppleBuildProfile _, BuildTarget buildTarget, string pathToBuiltTarget, PlistDocument infoPlist)
         {
             // Notify that we support controllers
@@ -30,7 +30,7 @@ namespace Apple.GameController.Editor
             // Support device profiles
             PlistElementArray supportedControllers = null;
 
-            if (buildTarget == BuildTarget.iOS || buildTarget == BuildTarget.StandaloneOSX)
+            if (buildTarget == BuildTarget.iOS || buildTarget == BuildTarget.StandaloneOSX || buildTarget == BuildTarget.VisionOS)
             {
                 supportedControllers = infoPlist.root.CreateArray("GCSupportedGameControllers");
             }
@@ -66,6 +66,6 @@ namespace Apple.GameController.Editor
                 Debug.LogWarning($"[{DisplayName}] No native library defined for Unity build target {buildTarget.ToString()}. Skipping.");
             }
         }
-#endif // (UNITY_EDITOR_OSX && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX))
+#endif // (UNITY_EDITOR_OSX && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX || UNITY_VISIONOS))
     }
 }

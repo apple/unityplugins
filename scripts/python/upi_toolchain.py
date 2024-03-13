@@ -35,14 +35,25 @@ def GetSupportedPlatformList() -> list[str]:
     for line in output_lines:
         if "iPhoneOS.platform" in line:
             result.add(PlatformID.IOS)
+
         elif "AppleTVOS.platform" in line:
             result.add(PlatformID.TVOS)
+
         elif "MacOSX.platform" in line:
             result.add(PlatformID.MACOS)
+
+        elif "XROS.platform" in line:
+            result.add(PlatformID.VISIONOS)
+
         elif "iPhoneSimulator.platform" in line:
             result.add(PlatformID.IOS_SIMULATOR)
+
         elif "AppleTVSimulator.platform" in line:
             result.add(PlatformID.TVOS_SIMULATOR)
+
+        elif "XRSimulator.platform" in line:
+            result.add(PlatformID.VISIONOS_SIMULATOR)
+            
         else:
             continue
 

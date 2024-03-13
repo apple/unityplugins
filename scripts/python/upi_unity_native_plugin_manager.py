@@ -226,7 +226,9 @@ class NativeUnityPluginManager:
                                      "iPhoneSimulator":("iOS", UnitySdkVariantID.SIMULATOR),
                                      "tvOS":("tvOS", UnitySdkVariantID.DEVICE),
                                      "AppleTVSimulator":("tvOS",UnitySdkVariantID.SIMULATOR),
-                                     "macOS":("StandaloneOSX", UnitySdkVariantID.DEVICE)}
+                                     "macOS":("StandaloneOSX", UnitySdkVariantID.DEVICE),
+                                     "visionOS":("VisionOS", UnitySdkVariantID.DEVICE),
+                                     "VisionSimulator":("VisionOS", UnitySdkVariantID.SIMULATOR)}
         
         native_plugin.unity_project.supported_platforms.clear()
         

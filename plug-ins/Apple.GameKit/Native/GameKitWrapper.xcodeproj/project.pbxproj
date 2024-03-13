@@ -7,6 +7,45 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		24B0645A2B7F29E1007ABBB8 /* GameKitWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A9B815624A4FC3800FB2FE8 /* GameKitWrapper.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		24B0645B2B7F29E1007ABBB8 /* GKErrorCodeExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = FB7384C92ADE05A200616362 /* GKErrorCodeExtension.h */; };
+		24B0645C2B7F29E1007ABBB8 /* AppleCoreRuntimeShared.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A486BA926A09D7A00255BD5 /* AppleCoreRuntimeShared.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		24B0645D2B7F29E1007ABBB8 /* AccessPoint_BridgingHeader.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A7D6B7F25D6E7650072DB37 /* AccessPoint_BridgingHeader.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		24B0645F2B7F29E1007ABBB8 /* GKAchievementDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AA8AD602729F3D100D3F909 /* GKAchievementDescription.swift */; };
+		24B064602B7F29E1007ABBB8 /* GKMatchedPlayers.m in Sources */ = {isa = PBXBuildFile; fileRef = FB8694482AD73AE5009B8676 /* GKMatchedPlayers.m */; };
+		24B064612B7F29E1007ABBB8 /* GKLeaderboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AA8AD6F2729F9E200D3F909 /* GKLeaderboard.swift */; };
+		24B064622B7F29E1007ABBB8 /* GKTurnBasedMatchmakerViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AA8ADBF272B0A3900D3F909 /* GKTurnBasedMatchmakerViewControllerDelegate.swift */; };
+		24B064632B7F29E1007ABBB8 /* GKChallengeDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AA8ADC4272B0EE900D3F909 /* GKChallengeDelegate.swift */; };
+		24B064642B7F29E1007ABBB8 /* GKMatchDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AA8AD83272A0E0800D3F909 /* GKMatchDelegate.swift */; };
+		24B064652B7F29E1007ABBB8 /* GKMatchmakerViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AA8AD92272A41DC00D3F909 /* GKMatchmakerViewControllerDelegate.swift */; };
+		24B064662B7F29E1007ABBB8 /* GKInvite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AA8AD6A2729F86D00D3F909 /* GKInvite.swift */; };
+		24B064672B7F29E1007ABBB8 /* GKChallenge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AA8AD652729F5D600D3F909 /* GKChallenge.swift */; };
+		24B064682B7F29E1007ABBB8 /* GKTurnBasedParticipant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AA8AD97272A458400D3F909 /* GKTurnBasedParticipant.swift */; };
+		24B064692B7F29E1007ABBB8 /* GKLocalPlayerListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AA8ADB5272B02E500D3F909 /* GKLocalPlayerListener.swift */; };
+		24B0646A2B7F29E1007ABBB8 /* GKGameCenterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A894465272F2C7D0008D820 /* GKGameCenterViewController.swift */; };
+		24B0646B2B7F29E1007ABBB8 /* AccessPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A4ADFE924DDF23400664BD3 /* AccessPoint.swift */; };
+		24B0646C2B7F29E1007ABBB8 /* GKBasePlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A630054271F30EC00C40BC1 /* GKBasePlayer.swift */; };
+		24B0646D2B7F29E1007ABBB8 /* GKAchievementChallenge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A89445D272DECBA0008D820 /* GKAchievementChallenge.swift */; };
+		24B0646E2B7F29E1007ABBB8 /* GKLeaderboardEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AA8ADCE272B2D0A00D3F909 /* GKLeaderboardEntry.swift */; };
+		24B0646F2B7F29E1007ABBB8 /* GKTurnBasedExchangeReply.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AA8ADA6272AF66300D3F909 /* GKTurnBasedExchangeReply.swift */; };
+		24B064702B7F29E1007ABBB8 /* GKTurnBasedMatchmakerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AA8ADBA272B077C00D3F909 /* GKTurnBasedMatchmakerViewController.swift */; };
+		24B064712B7F29E1007ABBB8 /* AppleCoreRuntimeShared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A486BAE26A09E7A00255BD5 /* AppleCoreRuntimeShared.swift */; };
+		24B064722B7F29E1007ABBB8 /* GKMatchmaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A63004F271F25BE00C40BC1 /* GKMatchmaker.swift */; };
+		24B064732B7F29E1007ABBB8 /* GKTurnBasedExchange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AA8ADA1272AF2B100D3F909 /* GKTurnBasedExchange.swift */; };
+		24B064742B7F29E1007ABBB8 /* GKNotificationBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A3E81F626F27BD800B102BB /* GKNotificationBanner.swift */; };
+		24B064752B7F29E1007ABBB8 /* GKScoreChallenge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A894459272DEC460008D820 /* GKScoreChallenge.swift */; };
+		24B064762B7F29E1007ABBB8 /* GKLocalPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A63005E271F336800C40BC1 /* GKLocalPlayer.swift */; };
+		24B064772B7F29E1007ABBB8 /* GKLeaderboardSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AA8AD74272A00FA00D3F909 /* GKLeaderboardSet.swift */; };
+		24B064782B7F29E1007ABBB8 /* GKMatchRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AA8AD88272A3A6E00D3F909 /* GKMatchRequest.swift */; };
+		24B064792B7F29E1007ABBB8 /* GKMatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AA8AD7E272A0B2100D3F909 /* GKMatch.swift */; };
+		24B0647A2B7F29E1007ABBB8 /* GKAchievement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AA8AD5B2729EF5500D3F909 /* GKAchievement.swift */; };
+		24B0647B2B7F29E1007ABBB8 /* GKVoiceChat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AA8AD9C272A46AF00D3F909 /* GKVoiceChat.swift */; };
+		24B0647C2B7F29E1007ABBB8 /* GKTurnBasedMatchDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AA8ADB0272B02AF00D3F909 /* GKTurnBasedMatchDelegate.swift */; };
+		24B0647D2B7F29E1007ABBB8 /* GKTurnBasedMatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AA8ADAB272AF7A000D3F909 /* GKTurnBasedMatch.swift */; };
+		24B0647E2B7F29E1007ABBB8 /* GKMatchmakerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AA8AD8D272A3EE600D3F909 /* GKMatchmakerViewController.swift */; };
+		24B0647F2B7F29E1007ABBB8 /* GameKitUIDelegateHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A50579224ABD01000477507 /* GameKitUIDelegateHandler.swift */; };
+		24B064802B7F29E1007ABBB8 /* GKPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A630059271F315500C40BC1 /* GKPlayer.swift */; };
+		24B064812B7F29E1007ABBB8 /* GKInviteDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AA8ADC9272B10F500D3F909 /* GKInviteDelegate.swift */; };
 		7A3E81F726F27BD800B102BB /* GKNotificationBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A3E81F626F27BD800B102BB /* GKNotificationBanner.swift */; };
 		7A3E81F826F27BD800B102BB /* GKNotificationBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A3E81F626F27BD800B102BB /* GKNotificationBanner.swift */; };
 		7A3E81F926F27BD800B102BB /* GKNotificationBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A3E81F626F27BD800B102BB /* GKNotificationBanner.swift */; };
@@ -128,6 +167,7 @@
 
 /* Begin PBXFileReference section */
 		240646152B62D61800246067 /* GameKit.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = GameKit.xcconfig; sourceTree = "<group>"; };
+		24B064882B7F29E1007ABBB8 /* GameKitWrapper.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = GameKitWrapper.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		46531AD89A1A23DEFB9D6429 /* libPods-GameKitWrapperUnitTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-GameKitWrapperUnitTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7A3E81F626F27BD800B102BB /* GKNotificationBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GKNotificationBanner.swift; sourceTree = "<group>"; };
 		7A486BA926A09D7A00255BD5 /* AppleCoreRuntimeShared.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleCoreRuntimeShared.h; sourceTree = "<group>"; };
@@ -176,6 +216,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		24B064822B7F29E1007ABBB8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		7A7E439324B508D40086FB7A /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -216,6 +263,7 @@
 				7A9B815324A4FC3800FB2FE8 /* GameKitWrapper.framework */,
 				7A7E439624B508D40086FB7A /* GameKitWrapper.bundle */,
 				7AE5BBA22502C0DD00BDBEDA /* GameKitWrapper.framework */,
+				24B064882B7F29E1007ABBB8 /* GameKitWrapper.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -279,6 +327,17 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		24B064592B7F29E1007ABBB8 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				24B0645A2B7F29E1007ABBB8 /* GameKitWrapper.h in Headers */,
+				24B0645B2B7F29E1007ABBB8 /* GKErrorCodeExtension.h in Headers */,
+				24B0645C2B7F29E1007ABBB8 /* AppleCoreRuntimeShared.h in Headers */,
+				24B0645D2B7F29E1007ABBB8 /* AccessPoint_BridgingHeader.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		7A7E439C24B508E70086FB7A /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -315,6 +374,24 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		24B064582B7F29E1007ABBB8 /* GameKitWrapper visionOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 24B064852B7F29E1007ABBB8 /* Build configuration list for PBXNativeTarget "GameKitWrapper visionOS" */;
+			buildPhases = (
+				24B064592B7F29E1007ABBB8 /* Headers */,
+				24B0645E2B7F29E1007ABBB8 /* Sources */,
+				24B064822B7F29E1007ABBB8 /* Frameworks */,
+				24B064832B7F29E1007ABBB8 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "GameKitWrapper visionOS";
+			productName = GameKitWrapper;
+			productReference = 24B064882B7F29E1007ABBB8 /* GameKitWrapper.framework */;
+			productType = "com.apple.product-type.framework";
+		};
 		7A7E439524B508D40086FB7A /* GameKitWrapperMac */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 7A7E439924B508D40086FB7A /* Build configuration list for PBXNativeTarget "GameKitWrapperMac" */;
@@ -403,12 +480,20 @@
 			targets = (
 				7A9B815224A4FC3800FB2FE8 /* GameKitWrapper iOS */,
 				7AE5BB832502C0DD00BDBEDA /* GameKitWrapper tvOS */,
+				24B064582B7F29E1007ABBB8 /* GameKitWrapper visionOS */,
 				7A7E439524B508D40086FB7A /* GameKitWrapperMac */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		24B064832B7F29E1007ABBB8 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		7A7E439424B508D40086FB7A /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -433,6 +518,48 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		24B0645E2B7F29E1007ABBB8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				24B0645F2B7F29E1007ABBB8 /* GKAchievementDescription.swift in Sources */,
+				24B064602B7F29E1007ABBB8 /* GKMatchedPlayers.m in Sources */,
+				24B064612B7F29E1007ABBB8 /* GKLeaderboard.swift in Sources */,
+				24B064622B7F29E1007ABBB8 /* GKTurnBasedMatchmakerViewControllerDelegate.swift in Sources */,
+				24B064632B7F29E1007ABBB8 /* GKChallengeDelegate.swift in Sources */,
+				24B064642B7F29E1007ABBB8 /* GKMatchDelegate.swift in Sources */,
+				24B064652B7F29E1007ABBB8 /* GKMatchmakerViewControllerDelegate.swift in Sources */,
+				24B064662B7F29E1007ABBB8 /* GKInvite.swift in Sources */,
+				24B064672B7F29E1007ABBB8 /* GKChallenge.swift in Sources */,
+				24B064682B7F29E1007ABBB8 /* GKTurnBasedParticipant.swift in Sources */,
+				24B064692B7F29E1007ABBB8 /* GKLocalPlayerListener.swift in Sources */,
+				24B0646A2B7F29E1007ABBB8 /* GKGameCenterViewController.swift in Sources */,
+				24B0646B2B7F29E1007ABBB8 /* AccessPoint.swift in Sources */,
+				24B0646C2B7F29E1007ABBB8 /* GKBasePlayer.swift in Sources */,
+				24B0646D2B7F29E1007ABBB8 /* GKAchievementChallenge.swift in Sources */,
+				24B0646E2B7F29E1007ABBB8 /* GKLeaderboardEntry.swift in Sources */,
+				24B0646F2B7F29E1007ABBB8 /* GKTurnBasedExchangeReply.swift in Sources */,
+				24B064702B7F29E1007ABBB8 /* GKTurnBasedMatchmakerViewController.swift in Sources */,
+				24B064712B7F29E1007ABBB8 /* AppleCoreRuntimeShared.swift in Sources */,
+				24B064722B7F29E1007ABBB8 /* GKMatchmaker.swift in Sources */,
+				24B064732B7F29E1007ABBB8 /* GKTurnBasedExchange.swift in Sources */,
+				24B064742B7F29E1007ABBB8 /* GKNotificationBanner.swift in Sources */,
+				24B064752B7F29E1007ABBB8 /* GKScoreChallenge.swift in Sources */,
+				24B064762B7F29E1007ABBB8 /* GKLocalPlayer.swift in Sources */,
+				24B064772B7F29E1007ABBB8 /* GKLeaderboardSet.swift in Sources */,
+				24B064782B7F29E1007ABBB8 /* GKMatchRequest.swift in Sources */,
+				24B064792B7F29E1007ABBB8 /* GKMatch.swift in Sources */,
+				24B0647A2B7F29E1007ABBB8 /* GKAchievement.swift in Sources */,
+				24B0647B2B7F29E1007ABBB8 /* GKVoiceChat.swift in Sources */,
+				24B0647C2B7F29E1007ABBB8 /* GKTurnBasedMatchDelegate.swift in Sources */,
+				24B0647D2B7F29E1007ABBB8 /* GKTurnBasedMatch.swift in Sources */,
+				24B0647E2B7F29E1007ABBB8 /* GKMatchmakerViewController.swift in Sources */,
+				24B0647F2B7F29E1007ABBB8 /* GameKitUIDelegateHandler.swift in Sources */,
+				24B064802B7F29E1007ABBB8 /* GKPlayer.swift in Sources */,
+				24B064812B7F29E1007ABBB8 /* GKInviteDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		7A7E439224B508D40086FB7A /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -562,6 +689,79 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
+		24B064862B7F29E1007ABBB8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 240646152B62D61800246067 /* GameKit.xcconfig */;
+			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Manual;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.apple-plugins.GameKitWrapper-visionOS";
+				PRODUCT_NAME = GameKitWrapper;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = xros;
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TVOS_DEPLOYMENT_TARGET = 13.0;
+				WATCHOS_DEPLOYMENT_TARGET = "";
+			};
+			name = Debug;
+		};
+		24B064872B7F29E1007ABBB8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 240646152B62D61800246067 /* GameKit.xcconfig */;
+			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Manual;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.apple-plugins.GameKitWrapper-visionOS";
+				PRODUCT_NAME = GameKitWrapper;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = xros;
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_VERSION = 5.0;
+				TVOS_DEPLOYMENT_TARGET = 13.0;
+				WATCHOS_DEPLOYMENT_TARGET = "";
+			};
+			name = Release;
+		};
 		7A7E439A24B508D40086FB7A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 240646152B62D61800246067 /* GameKit.xcconfig */;
@@ -572,8 +772,6 @@
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = "";
-				INFOPLIST_FILE = GameKitWrapper/Info.plist;
-				INFOPLIST_OUTPUT_FORMAT = XML;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				OTHER_SWIFT_FLAGS = "";
@@ -600,8 +798,6 @@
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = "";
-				INFOPLIST_FILE = GameKitWrapper/Info.plist;
-				INFOPLIST_OUTPUT_FORMAT = XML;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				OTHER_SWIFT_FLAGS = "";
@@ -670,6 +866,9 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = GameKitWrapper/Info.plist;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "\"Copyright © 2021 - 2024 Apple, Inc. All rights reserved.\"";
+				INFOPLIST_OUTPUT_FORMAT = XML;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.2;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -728,6 +927,9 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = GameKitWrapper/Info.plist;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "\"Copyright © 2021 - 2024 Apple, Inc. All rights reserved.\"";
+				INFOPLIST_OUTPUT_FORMAT = XML;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.2;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -754,8 +956,6 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = GameKitWrapper/Info.plist;
-				INFOPLIST_OUTPUT_FORMAT = XML;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -790,8 +990,6 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = GameKitWrapper/Info.plist;
-				INFOPLIST_OUTPUT_FORMAT = XML;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -825,8 +1023,6 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = GameKitWrapper/Info.plist;
-				INFOPLIST_OUTPUT_FORMAT = XML;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -862,8 +1058,6 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = GameKitWrapper/Info.plist;
-				INFOPLIST_OUTPUT_FORMAT = XML;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -887,6 +1081,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		24B064852B7F29E1007ABBB8 /* Build configuration list for PBXNativeTarget "GameKitWrapper visionOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				24B064862B7F29E1007ABBB8 /* Debug */,
+				24B064872B7F29E1007ABBB8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		7A7E439924B508D40086FB7A /* Build configuration list for PBXNativeTarget "GameKitWrapperMac" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
