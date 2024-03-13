@@ -1,6 +1,10 @@
 # CHANGELOG
 All notable changes to this project will be documented in this file.
 
+## [3.1.0] - 2024-2-23
+### Added
+Support for visionOS
+
 ## [3.0.0] - 2024-2-15
 ### Added
 - Support for iPhone simulator and AppleTV Simulator

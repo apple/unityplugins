@@ -165,17 +165,22 @@ public func GKAccessPoint_GetFrameInUnitCoordinates
 ) -> GKWAccessPointFrameInScreenCoordinates
 {
     let target = Unmanaged<GKAccessPoint>.fromOpaque(pointer).takeUnretainedValue();
+    let rect = target.frameInScreenCoordinates;
     
+    // TODO: (123075676)
+#if os(visionOS)
+    return GKWAccessPointFrameInScreenCoordinates(x: Float(rect.minX), y: Float(rect.minY), width: Float(rect.width), height: Float(rect.height))
+#else
     #if os(macOS)
     let screenSize = NSScreen.main!.frame;
     #else
     let screenSize = UIScreen.main.bounds;
     #endif
-    let rect = target.frameInScreenCoordinates;
 
     return GKWAccessPointFrameInScreenCoordinates(
         x: Float(rect.minX / screenSize.width),
         y: Float(rect.minY / screenSize.height),
         width: Float(rect.width / screenSize.width),
         height: Float(rect.height / screenSize.height));
+#endif
 }

@@ -1,4 +1,4 @@
-#if (UNITY_EDITOR_OSX && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX))
+#if (UNITY_EDITOR_OSX && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX || UNITY_VISIONOS))
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +21,7 @@ namespace Apple.Core
         private SerializedProperty _serializedMinimumOSVersion_iOS;
         private SerializedProperty _serializedMinimumOSVersion_tvOS;
         private SerializedProperty _serializedMinimumOSVersion_macOS;
+        private SerializedProperty _serializedMinimumOSVersion_visionOS;
         private SerializedProperty _serializedAutomateEntitlements;
         private SerializedProperty _serializedDefaultEntitlements;
 
@@ -49,6 +50,7 @@ namespace Apple.Core
             public const string MinimumOSVersionFieldLabelText_iOS = "Minimum iOS Version";
             public const string MinimumOSVersionFieldLabelText_tvOS = "Minimum tvOS Version";
             public const string MinimumOSVersionFieldLabelText_macOS = "Minimum macOS Version";
+            public const string MinimumOSVersionFieldLabelText_visionOS = "Minimum visionOS Version";
 
             public const string AutomateEntitlementsToggleLabelText = "Automate Entitlements";
             public const string AutomateEntitlementsTooltip = "Automatically add an entitlements file to your Xcode project.";
@@ -57,10 +59,9 @@ namespace Apple.Core
             public const string DefaultEntitlementsTooltip = "(Optional) An Entitlements file to incorporate into your Xcode app.";
 
             public const string iOSBuildTargetName = "iOS";
-
             public const string tvOSBuildTargetName = "tvOS";
-
             public const string macOSBuildTargetName = "macOS";
+            public const string visionOSBuildTargetName = "visionOS";
         }
 
         public void OnEnable()
@@ -71,8 +72,9 @@ namespace Apple.Core
             _serializedNonExemptEncryption = serializedObject.FindProperty("AppUsesNonExemptEncryption");
 
             _serializedMinimumOSVersion_iOS = serializedObject.FindProperty("MinimumOSVersion_iOS");
-            _serializedMinimumOSVersion_macOS = serializedObject.FindProperty("MinimumOSVersion_macOS");
             _serializedMinimumOSVersion_tvOS = serializedObject.FindProperty("MinimumOSVersion_tvOS");
+            _serializedMinimumOSVersion_macOS = serializedObject.FindProperty("MinimumOSVersion_macOS");
+            _serializedMinimumOSVersion_visionOS = serializedObject.FindProperty("MinimumOSVersion_visionOS");
 
             _serializedAutomateEntitlements = serializedObject.FindProperty("AutomateEntitlements");
             _serializedDefaultEntitlements = serializedObject.FindProperty("DefaultEntitlements");
@@ -128,6 +130,12 @@ namespace Apple.Core
             if (_serializedMinimumOSVersion_macOS.stringValue == string.Empty)
             {
                 _serializedMinimumOSVersion_macOS.stringValue = UIStrings.DefaultMinimumMacOSVersionText;
+                serializedObject.ApplyModifiedProperties();
+            }
+
+            if (_serializedMinimumOSVersion_visionOS.stringValue == string.Empty)
+            {
+                _serializedMinimumOSVersion_visionOS.stringValue = PlayerSettings.VisionOS.targetOSVersionString;
                 serializedObject.ApplyModifiedProperties();
             }
 
@@ -195,6 +203,14 @@ namespace Apple.Core
                 if (EditorGUI.EndChangeCheck() && _serializedMinimumOSVersion_tvOS.stringValue != string.Empty)
                 {
                     PlayerSettings.tvOS.targetOSVersionString = _serializedMinimumOSVersion_tvOS.stringValue;
+                }
+
+                var minimumOSVersionLabel_visionOS = new GUIContent(UIStrings.MinimumOSVersionFieldLabelText_visionOS);
+                EditorGUI.BeginChangeCheck();
+                EditorGUILayout.PropertyField(_serializedMinimumOSVersion_visionOS, minimumOSVersionLabel_visionOS, GUILayout.MinWidth(_minLabelWidth));
+                if (EditorGUI.EndChangeCheck() && _serializedMinimumOSVersion_visionOS.stringValue != string.Empty)
+                {
+                    PlayerSettings.VisionOS.targetOSVersionString = _serializedMinimumOSVersion_visionOS.stringValue;
                 }
 
                 var minimumOSVersionLabel_macOS = new GUIContent(UIStrings.MinimumOSVersionFieldLabelText_macOS);
@@ -297,4 +313,4 @@ namespace Apple.Core
         }
     }
 }
-#endif // (UNITY_EDITOR_OSX && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX))
+#endif // (UNITY_EDITOR_OSX && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX || UNITY_VISIONOS))

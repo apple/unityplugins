@@ -128,7 +128,7 @@ public func GKMatchMaker_FindMatchedPlayers
     onError: @escaping NSErrorCallback
 )
 {
-    if #available(iOS 17.2, tvOS 17.2, macOS 14.2, *) {
+    if #available(iOS 17.2, tvOS 17.2, macOS 14.2, visionOS 1.1,  *) {
         let gkMatchMaker = Unmanaged<GKMatchmaker>.fromOpaque(gkMatchmakerPtr).takeUnretainedValue()
         let gkMatchRequest = Unmanaged<GKMatchRequest>.fromOpaque(gkMatchRequestPtr).takeUnretainedValue()
 
@@ -205,7 +205,7 @@ public func GKMatchmaker_QueryQueueActivity
     onError: @escaping NSErrorCallback
 )
 {
-    if #available(iOS 17.2, tvOS 17.2, macOS 14.2, *) {
+    if #available(iOS 17.2, tvOS 17.2, macOS 14.2, visionOS 1.1, *) {
         let gkMatchmaker = Unmanaged<GKMatchmaker>.fromOpaque(gkMatchmakerPtr).takeUnretainedValue();
         gkMatchmaker.queryQueueActivity(queueName.toString(), withCompletionHandler: { numPlayers, error in
             if (error != nil) {

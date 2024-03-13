@@ -100,23 +100,26 @@ public func GKTurnBasedMatchmakerViewController_Present
     let target = Unmanaged<GKTurnBasedMatchmakerViewController>.fromOpaque(pointer).takeUnretainedValue();
     _presentingTurnBasedMatchmakerViewController = target;
     
+    // TODO: (123075676)
 #if os(iOS) || os(tvOS)
     let viewController = UIApplication.shared.windows.first!.rootViewController;
     viewController?.present(target, animated: true);
-#else
+#elseif os(macOS)
     GKDialogController.shared().parentWindow = NSApplication.shared.keyWindow;
     GKDialogController.shared().present(target);
 #endif
 }
 
+@_cdecl("GKTurnBasedMatchmakerViewController_Dismiss")
 public func GKTurnBasedMatchmakerViewController_Dismiss
 (
     viewController: GKTurnBasedMatchmakerViewController
 )
 {
+    // TODO: (123075676)
     #if os(iOS) || os(tvOS)
         viewController.dismiss(animated: true);
-    #else
+    #elseif os(macOS)
         GKDialogController.shared().dismiss(viewController);
     #endif
     

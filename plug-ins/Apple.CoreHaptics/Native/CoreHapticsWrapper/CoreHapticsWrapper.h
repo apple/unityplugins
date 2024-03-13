@@ -14,7 +14,7 @@ FOUNDATION_EXPORT double CoreHapticsWrapperVersionNumber;
 FOUNDATION_EXPORT const unsigned char CoreHapticsWrapperVersionString[];
 
 //! iOS & tvOS Frameworks do not support bridging headers...
-#if TARGET_OS_IOS || TARGET_OS_TV
+#if TARGET_OS_IOS || TARGET_OS_TV || TARGET_OS_VISION
     #include <stdbool.h>
 
     typedef struct {

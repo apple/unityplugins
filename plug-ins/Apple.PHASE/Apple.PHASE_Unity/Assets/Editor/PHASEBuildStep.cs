@@ -5,7 +5,7 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 
-#if (UNITY_EDITOR_OSX && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX))
+#if (UNITY_EDITOR_OSX && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX || UNITY_VISIONOS))
 using UnityEditor.iOS.Xcode;
 #endif
 
@@ -14,14 +14,14 @@ namespace Apple.PHASE.Editor
     public class PHASEBuildStep : AppleBuildStep
     {
         public override string DisplayName => "Apple.PHASE";
-        public override BuildTarget[] SupportedTargets => new BuildTarget[] {BuildTarget.iOS, BuildTarget.tvOS, BuildTarget.StandaloneOSX};
+        public override BuildTarget[] SupportedTargets => new BuildTarget[] {BuildTarget.iOS, BuildTarget.tvOS, BuildTarget.StandaloneOSX, BuildTarget.VisionOS};
         
-#if (UNITY_EDITOR_OSX && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX))
+#if (UNITY_EDITOR_OSX && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX || UNITY_VISIONOS))
         public override void OnBeginPostProcess(AppleBuildProfile appleBuildProfile, BuildTarget buildTarget, string pathToBuiltProject)
         {
             if (buildTarget == BuildTarget.iOS || buildTarget == BuildTarget.tvOS)
             {
-                var projectPath = PBXProject.GetPBXProjectPath(pathToBuiltProject);
+                var projectPath = AppleBuild.GetPbxProjectPath(buildTarget, pathToBuiltProject);
                 PBXProject project = new PBXProject();
                 if (File.Exists(projectPath))
                 {
@@ -56,7 +56,7 @@ namespace Apple.PHASE.Editor
             {
                 AppleNativeLibraryUtility.ProcessWrapperLibrary(DisplayName, buildTarget, generatedProjectPath, pbxProject);
 
-                if (buildTarget == BuildTarget.iOS || buildTarget == BuildTarget.tvOS)
+                if (buildTarget == BuildTarget.iOS || buildTarget == BuildTarget.tvOS || buildTarget == BuildTarget.VisionOS)
                 {
                     pbxProject.AddFrameworkToProject(pbxProject.GetUnityFrameworkTargetGuid(), "PHASE.framework", false);
                     pbxProject.AddFrameworkToProject(pbxProject.GetUnityFrameworkTargetGuid(), "ModelIO.framework", false);
@@ -73,6 +73,6 @@ namespace Apple.PHASE.Editor
                 Debug.LogWarning($"[{DisplayName}] No native library defined for Unity build target {buildTarget.ToString()}. Skipping.");
             }
         }
-#endif // (UNITY_EDITOR_OSX && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX))
+#endif // (UNITY_EDITOR_OSX && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX || UNITY_VISIONOS))
     }
 }

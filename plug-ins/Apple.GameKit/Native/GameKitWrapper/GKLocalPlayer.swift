@@ -26,7 +26,8 @@ public func GKLocalPlayer_Authenticate
             onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
             return;
         }
-        
+        // TODO: (123075676)
+#if !os(visionOS)
         // Always show the viewController if provided...
         if gcAuthVC != nil {
             #if os(iOS) || os(tvOS)
@@ -40,6 +41,7 @@ public func GKLocalPlayer_Authenticate
             GKLocalPlayer.local.register(_localPlayerListener);
             onSuccess(taskId, GKLocalPlayer_GetLocal());
         }
+#endif
     };
 }
 

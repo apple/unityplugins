@@ -31,6 +31,10 @@ elif [[ $SDKROOT = *'iphonesimulator'* ]]; then
     PLATFORM="iPhoneSimulator"
 elif [[ $SDKROOT = *'appletvsimulator'* ]]; then
     PLATFORM="AppleTVSimulator"
+elif [[ $SDKROOT = *'xros'* ]]; then
+    PLATFORM="visionOS"
+elif [[ $SDKROOT = *'xrsimulator'* ]]; then
+    PLATFORM="VisionSimulator"
 fi
 
 if [[ $PLATFORM == "Unknown" ]]; then

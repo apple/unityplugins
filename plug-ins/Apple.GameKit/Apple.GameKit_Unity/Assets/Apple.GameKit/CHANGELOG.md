@@ -1,6 +1,10 @@
 # CHANGELOG
 All notable changes to this project will be documented in this file.
 
+## [2.2.0] - 2023-02-23
+### Added
+- Support for visionOS
+
 ## [2.1.0] - 2023-02-15
 ### Updated
 - Adopt Apple.Core 3.0.0

@@ -9,34 +9,25 @@
 #import <GameKit/GKMatchmaker.h>
 
 void * GKMatchedPlayers_Properties(void * gkMatchedPlayersPtr) {
-#if !TARGET_OS_WATCH
-    if (@available(ios 17.2, macos 14.2, tvos 17.2, *)) {
+    if (@available(ios 17.2, macos 14.2, tvos 17.2, visionOS 1.1, *)) {
         return (void *)CFBridgingRetain([(__bridge GKMatchedPlayers *)gkMatchedPlayersPtr properties]);
-    } else 
-#endif
-    {
+    } else {
         return NULL;
     }
 }
 
 void * GKMatchedPlayers_Players(void * gkMatchedPlayersPtr) {
-#if !TARGET_OS_WATCH
-    if (@available(ios 17.2, macos 14.2, tvos 17.2, *)) {
+    if (@available(ios 17.2, macos 14.2, tvos 17.2, visionOS 1.1, *)) {
         return (void *)CFBridgingRetain([(__bridge GKMatchedPlayers *)gkMatchedPlayersPtr players]);
-    } else
-#endif
-    {
+    } else {
         return NULL;
     }
 }
 
 void * GKMatchedPlayers_PlayerProperties(void * gkMatchedPlayersPtr) {
-#if !TARGET_OS_WATCH
-    if (@available(ios 17.2, macos 14.2, tvos 17.2, *)) {
+    if (@available(ios 17.2, macos 14.2, tvos 17.2, visionOS 1.1, *)) {
         return (void *)CFBridgingRetain([(__bridge GKMatchedPlayers *)gkMatchedPlayersPtr playerProperties]);
-    } else
-#endif
-    {
+    } else {
         return NULL;
     }
 }

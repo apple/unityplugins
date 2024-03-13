@@ -18,8 +18,10 @@ class PlatformID:
     IOS = "iOS"
     TVOS = "tvOS"
     MACOS = "macOS"
+    VISIONOS = "visionOS"
     IOS_SIMULATOR = "iPhoneSimulator"
     TVOS_SIMULATOR = "AppleTVSimulator"
+    VISIONOS_SIMULATOR = "VisionSimulator"
 
     # Just simulator platforms: iOS-simulator, tvOS-simulator
     SIMULATORS = "simulators"

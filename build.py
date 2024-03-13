@@ -71,12 +71,12 @@ CTX.printer = Printer(prompt_theme)
 
 argument_parser = argparse.ArgumentParser(description="Builds all native libraries, packages plug-ins, and moves packages to build folder.")
 argument_parser.add_argument("-p", "--plugin-list", dest="plugin_list", nargs='*', default=[PluginID.ALL], help=f"Selects the plug-ins to process. Possible values are: {PluginID.ACCESSIBILITY}, {PluginID.CORE}, {PluginID.CORE_HAPTICS}, {PluginID.GAME_CONTROLLER}, {PluginID.GAME_KIT}, {PluginID.PHASE}, or {PluginID.ALL}. Default is: {PluginID.ALL}")
-argument_parser.add_argument("-m", "--platforms", dest="platform_list", nargs='*', default=[PlatformID.ALL], help=f"Selects the desired platforms to target when building native libraries. Possible values are: {PlatformID.IOS}, {PlatformID.IOS_SIMULATOR}, {PlatformID.MACOS}, {PlatformID.TVOS}, {PlatformID.TVOS_SIMULATOR}, {PlatformID.SIMULATORS}, {PlatformID.DEVICES} or {PlatformID.ALL}. Default is: {PlatformID.ALL}")
+argument_parser.add_argument("-m", "--platforms", dest="platform_list", nargs='*', default=[PlatformID.ALL], help=f"Selects the desired platforms to target when building native libraries. Possible values are: {PlatformID.IOS}, {PlatformID.IOS_SIMULATOR}, {PlatformID.MACOS}, {PlatformID.TVOS}, {PlatformID.TVOS_SIMULATOR}, {PlatformID.VISIONOS}, {PlatformID.VISIONOS_SIMULATOR}, {PlatformID.SIMULATORS}, {PlatformID.DEVICES} or {PlatformID.ALL}. Default is: {PlatformID.ALL}")
 argument_parser.add_argument("-b", "--build-action", dest="build_actions", nargs='*', default=[BuildActionID.BUILD, BuildActionID.PACK], help=f"Sets the build actions for the selected plug-ins. Possible values are: {BuildActionID.BUILD}, {BuildActionID.PACK}, {BuildActionID.NONE} or {BuildActionID.ALL}. Defaults are: {BuildActionID.BUILD}, {BuildActionID.PACK}")
 argument_parser.add_argument("-bc","--build-config", dest="build_config", default=ConfigID.ALL, help=f"Sets the build configuration to compile. Possible values are: {ConfigID.RELEASE}, {ConfigID.DEBUG}, or {ConfigID.ALL} which builds all other configs. Default is: {ConfigID.ALL}")
 argument_parser.add_argument("-c", "--codesign-identity", dest="codesign_identity", default=str(), help=f"String which uniquely identifies your codesign identity, typically represented by a hash. Only applied if build actions include {BuildActionID.BUILD}")
 argument_parser.add_argument("-sc", "--skip-codesign", dest="skip_codesign", action="store_true", help=f"Skips codesign and all user prompts.")
-argument_parser.add_argument("-u", "--unity-installation-root", dest="unity_installation_root", default="/Applications/Unity", help="Root path to search for Unity installations when building tests. Note: performs a full recursive search of the given directory.")
+argument_parser.add_argument("-u", "--unity-installation-root", dest="unity_installation_root", default="", help="Root path to search for Unity installations when building tests. Note: performs a full recursive search of the given directory.")
 argument_parser.add_argument("-o", "--output-path", dest="output_path", default=CTX.build_output_path, help=f"Build result path for final packages. Default: {CTX.build_output_path}")
 argument_parser.add_argument("-k", "--clean-action", dest="clean_actions", nargs='*', default=[CleanActionID.NONE], help=f"Sets the clean actions for the selected plug-ins. Possible values are: {CleanActionID.NATIVE}, {CleanActionID.PACKAGES}, {CleanActionID.TESTS}, {CleanActionID.NONE}, or {CleanActionID.ALL}. Defaults to no clean action.")
 argument_parser.add_argument("-f", "--force", dest="force_clean", action="store_true", help="Setting this option will not prompt user on file deletion during clean operations.")
@@ -110,16 +110,18 @@ def Main():
     CTX.printer.SectionHeading("Command Line Option Summary")
     
     print(f"\n            Build Actions({Printer.Bold('-b')}): {CTX.printer.Context(' '.join(build_args.build_actions))}"
-          f"\n       Selected Platforms({Printer.Bold('-m')}): {CTX.printer.Context(' '.join(filtered_user_platforms))} [Build System Support: {Printer.MultiDecorate(', '.join(supported_platforms), prompt_theme.info_bg_color, prompt_theme.info_color)}]"
+          f"\n       Selected Platforms({Printer.Bold('-m')}): {CTX.printer.Context(' '.join(filtered_user_platforms))} (Build System Support: {Printer.MultiDecorate(', '.join(supported_platforms), prompt_theme.info_bg_color, prompt_theme.info_color)})"
           f"\n            Build Config({Printer.Bold('-bc')}): {CTX.printer.Context(build_args.build_config)}"
           f"\n      Package Output Path({Printer.Bold('-o')}): {CTX.printer.Context(build_args.output_path)}"
           f"\n        Selected Plug-Ins({Printer.Bold('-p')}): {CTX.printer.Context(' '.join(build_args.plugin_list))}"
           f"\n            Clean Actions({Printer.Bold('-k')}): {CTX.printer.Context(' '.join(build_args.clean_actions))}"
           f"\n              Force Clean({Printer.Bold('-f')}): {CTX.printer.Context('Yes (-f set)' if build_args.force_clean else 'No (-f not set)')}"
-          f"\n  Unity Installation Root({Printer.Bold('-u')}): {CTX.printer.Context(build_args.unity_installation_root)}"
           f"\n              Build Tests({Printer.Bold('-t')}): {CTX.printer.Context('Yes (-t set)' if build_args.build_tests else 'No (-t not set)')}"
           f"\n           Skip Codesign({Printer.Bold('-sc')}): {CTX.printer.Context('Yes (-sc set)' if build_args.skip_codesign else 'No (-sc not set)')}")
     
+    if len(build_args.unity_installation_root) > 0:
+        print(f"  Unity Installation Root({Printer.Bold('-u')}): {CTX.printer.Context(build_args.unity_installation_root)}")
+
     if not build_args.skip_codesign:
         print(f"     Codesigning Identity({Printer.Bold('-c')}): {CTX.printer.Context(build_args.codesign_identity if len(build_args.codesign_identity) > 0 else 'None supplied.')}")
 
@@ -165,16 +167,21 @@ def Main():
         PlatformID.IOS_SIMULATOR: False,
         PlatformID.TVOS: False,
         PlatformID.TVOS_SIMULATOR : False,
-        PlatformID.MACOS: False
+        PlatformID.MACOS: False,
+        PlatformID.VISIONOS: False,
+        PlatformID.VISIONOS_SIMULATOR: False
     }
 
     valid_platform_found = False
     for platform_id in filtered_user_platforms:
         if platform_id == PlatformID.ALL:
+            CTX.printer.Message(f"Platform '{PlatformID.ALL}' selected to build for all supported platforms and overrides all other platform ({Printer.Bold('-m')}) arguments.")
+            CTX.printer.InfoMessage(f"Unity lacks full support for {PlatformID.IOS_SIMULATOR} and {PlatformID.TVOS_SIMULATOR}; these platforms are skipped unless explicitly set as platform ({Printer.Bold('-m')}) arguments.")
             valid_platform_found = True
-            for selected_platform_key in CTX.platforms.keys():
+            for selected_platform_key in CTX.platforms:
                 if selected_platform_key in supported_platforms:
-                    CTX.platforms[selected_platform_key] = True
+                    if selected_platform_key != PlatformID.IOS_SIMULATOR and selected_platform_key != PlatformID.TVOS_SIMULATOR:
+                        CTX.platforms[selected_platform_key] = True
             break
         elif platform_id in CTX.platforms:
             if platform_id in supported_platforms:
@@ -185,13 +192,14 @@ def Main():
                 if not utility.BooleanPrompt(CTX.printer, f"Would you like to continue building without {platform_id} support?"):
                     exit()
         else:
-            CTX.printer.WarningMessage(f"Ignoring unknown platform '{platform_id}'. Valid options are {PlatformID.IOS}, {PlatformID.IOS_SIMULATOR}, {PlatformID.MACOS}, {PlatformID.TVOS}, {PlatformID.TVOS_SIMULATOR}, {PlatformID.SIMULATORS}, {PlatformID.DEVICES}, or {PlatformID.ALL} (default).")
+            CTX.printer.WarningMessage(f"Ignoring unknown platform '{platform_id}'. Valid options are {PlatformID.IOS}, {PlatformID.IOS_SIMULATOR}, {PlatformID.MACOS}, {PlatformID.TVOS}, {PlatformID.TVOS_SIMULATOR}, {PlatformID.VISIONOS}, {PlatformID.VISIONOS_SIMULATOR}, {PlatformID.SIMULATORS}, {PlatformID.DEVICES}, or {PlatformID.ALL} (default).")
 
     if not valid_platform_found:
         CTX.printer.WarningMessage(f"No valid platform passed to build script. Using default argument: {PlatformID.ALL}")
-        for selected_platform_key in CTX.platforms.keys():
-            if platform_id in supported_platforms:
-                CTX.platforms[selected_platform_key] = True
+        for selected_platform_key in CTX.platforms:
+            if selected_platform_key in supported_platforms:
+                if selected_platform_key != PlatformID.IOS_SIMULATOR and selected_platform_key != PlatformID.TVOS_SIMULATOR:
+                    CTX.platforms[selected_platform_key] = True
 
     if not CTX.platforms[PlatformID.MACOS]:
         CTX.printer.WarningMessage(f"User selected to skip building for {PlatformID.MACOS}. Play mode (the play button) in the Unity Editor will not be supported by the plug-ins.")

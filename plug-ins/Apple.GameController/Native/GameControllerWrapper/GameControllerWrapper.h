@@ -16,7 +16,7 @@ FOUNDATION_EXPORT const unsigned char GameControllerWrapperVersionString[];
 // In this header, you should import all the public headers of your framework using statements like #import <GameControllerWrapper/PublicHeader.h>
 
 //! iOS & tvOS Frameworks do not support bridging headers...
-#if TARGET_OS_IOS || TARGET_OS_TV
+#if TARGET_OS_IOS || TARGET_OS_TV || TARGET_OS_VISION
     #include <stdbool.h>
 
     typedef struct {

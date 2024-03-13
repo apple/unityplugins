@@ -1,4 +1,4 @@
-#if (UNITY_EDITOR_OSX && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX))
+#if (UNITY_EDITOR_OSX && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX || UNITY_VISIONOS))
 using UnityEditor;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
@@ -16,7 +16,6 @@ namespace Apple.Core
         // Helper for logging during development.
         private static void LogDevelopmentMessage(string methodName, string message)
         {
-            // TODO: Expose as Editor project setting
             #if DEVELOPMENT_LOGGING_ENABLED
             Debug.Log($"[AppleBuild.{methodName}] {message}");
             #endif
@@ -35,7 +34,7 @@ namespace Apple.Core
 
             LogDevelopmentMessage("OnPostProcessBuild", "OnBeginPostProcess begin");
             LogDevelopmentMessage("OnPostProcessBuild", $"Found {appleBuildProfile.buildSteps.Count} build steps.");
-            LogDevelopmentMessage("OnPostProcessBuild", $"Outputting to project at path {generatedProjectPath}.");
+            LogDevelopmentMessage("OnPostProcessBuild", $"Outputting to project at path {generatedProjectPath}");
 
             var processedBuildSteps = new Dictionary<string, bool>();
             foreach (var buildStep in appleBuildProfile.buildSteps)
@@ -82,6 +81,10 @@ namespace Apple.Core
 
                     case BuildTarget.StandaloneOSX:
                         minOSVersionString = appleBuildProfile.MinimumOSVersion_macOS;
+                        break;
+
+                    case BuildTarget.VisionOS:
+                        minOSVersionString = appleBuildProfile.MinimumOSVersion_visionOS;
                         break;
 
                     default:
@@ -310,54 +313,6 @@ namespace Apple.Core
         }
 
         /// <summary>
-        /// Unity generates an Xcode project and uses this string for the names of the generated project file, scheme, and Xcode build target.
-        /// </summary>
-        /// <param name="buildTarget">The Unity build target</param>
-        /// <returns>The string used by Unity for Xcode naming.</returns>
-        public static string GetXcodeUtilityIdentifier(BuildTarget buildTarget)
-        {
-            switch(buildTarget)
-            {
-                case BuildTarget.StandaloneOSX:
-                    return Application.productName;
-                case BuildTarget.iOS:
-                case BuildTarget.tvOS:
-                    return "Unity-iPhone";
-                default:
-                    return string.Empty;
-            }
-        }
-
-        /// <summary>
-        /// Returns the Xcode scheme name for a given BuildTarget
-        /// </summary>
-        public static string GetXcodeSchemeName(BuildTarget buildTarget)
-        {
-            return GetXcodeUtilityIdentifier(buildTarget);
-        }
-
-        /// <summary>
-        /// Utility method for getting the .xcodeproj path for a built project
-        /// </summary>
-        public static string GetXcodeProjectPath(BuildTarget buildTarget, string pathToBuiltProject)
-        {
-            switch (buildTarget)
-            {
-                case BuildTarget.iOS:
-                case BuildTarget.tvOS:
-                    return $"{pathToBuiltProject}/Unity-iPhone.xcodeproj";
-                case BuildTarget.StandaloneOSX:
-#if UNITY_2020_1_OR_NEWER
-                    return $"{pathToBuiltProject}/{new DirectoryInfo(pathToBuiltProject).Name}.xcodeproj";
-#else
-                    return pathToBuiltProject;
-#endif
-                default:
-                    return null;
-            }
-        }
-
-        /// <summary>
         /// Utility method for getting the .pbxproj path for a built project
         /// </summary>
         public static string GetPbxProjectPath(BuildTarget buildTarget, string pathToBuiltProject)
@@ -366,10 +321,12 @@ namespace Apple.Core
             {
                 case BuildTarget.iOS:
                 case BuildTarget.tvOS:
-                    return PBXProject.GetPBXProjectPath(pathToBuiltProject);
+                    return $"{pathToBuiltProject}/Unity-iPhone.xcodeproj/project.pbxproj";
+                case BuildTarget.VisionOS:
+                    return $"{pathToBuiltProject}/Unity-VisionOS.xcodeproj/project.pbxproj";
                 case BuildTarget.StandaloneOSX:
 #if UNITY_2020_1_OR_NEWER
-                    return $"{GetXcodeProjectPath(buildTarget, pathToBuiltProject)}/project.pbxproj";
+                    return $"{pathToBuiltProject}/{new DirectoryInfo(pathToBuiltProject).Name}.xcodeproj/project.pbxproj";
 #else
                     return $"{pathToBuiltProject}/project.pbxproj";
 #endif
@@ -388,7 +345,6 @@ namespace Apple.Core
                 return null;
             }
 
-            // Load the project...
             var proj = new PBXProject();
             proj.ReadFromFile(GetPbxProjectPath(buildTarget, pathToBuiltProject));
 
@@ -515,4 +471,4 @@ namespace Apple.Core
         }
     }
 }
-#endif // (UNITY_EDITOR_OSX && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX))
+#endif // (UNITY_EDITOR_OSX && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX || UNITY_VISIONOS))
