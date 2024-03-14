@@ -387,10 +387,12 @@ namespace Apple.GameKit.Multiplayer
             public static extern void GKMatchmaker_StartBrowsingForNearbyPlayers(IntPtr gkMatchmakerPtr, InternalNearbyPlayerReachableHandler nearbyPlayerReachableHandler);
             [DllImport(InteropUtility.DLLName)]
             public static extern void GKMatchmaker_StopBrowsingForNearbyPlayers(IntPtr gkMatchmakerPtr);
+#if !UNITY_TVOS
             [DllImport(InteropUtility.DLLName)]
             public static extern void GKMatchmaker_StartGroupActivity(IntPtr gkMatchmakerPtr, InternalPlayerJoiningGroupActivityHandler playerJoiningGroupActivityHandler);
             [DllImport(InteropUtility.DLLName)]
             public static extern void GKMatchmaker_StopGroupActivity(IntPtr gkMatchmakerPtr);
+#endif
         }
     }
 }

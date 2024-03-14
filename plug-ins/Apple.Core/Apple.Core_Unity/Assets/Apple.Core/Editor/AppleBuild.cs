@@ -8,6 +8,7 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Apple.Core
@@ -25,6 +26,7 @@ namespace Apple.Core
         {
             OnBeginPostProcess,
             OnProcessInfoPlist,
+            OnProcessEntitlements,
             OnProcessFrameworks,
             OnFinalizePostProcess
         }
@@ -73,10 +75,10 @@ namespace Apple.Core
                     try {
                         buildStep.Value.OnBeginPostProcess(appleBuildProfile, buildTarget, generatedProjectPath);
                         processedBuildSteps[buildStep.Key] = "Enabled";
-                        SetBuildStepResult(buildStep.Key, BuildStepPhases.OnBeginPostProcess, BuildStepResult.Enabled, processedBuildSteps);
+                        SetBuildStepResult(buildStep.Key, BuildStepPhases.OnBeginPostProcess, BuildStepResult.Enabled);
                     } catch (Exception e) {
                         Debug.LogException(new Exception($"AppleBuild: Build post process failed for step ${buildStep.Key}",e));
-                        SetBuildStepResult(buildStep.Key, BuildStepPhases.OnBeginPostProcess, BuildStepResult.Exception, processedBuildSteps);
+                        SetBuildStepResult(buildStep.Key, BuildStepPhases.OnBeginPostProcess, BuildStepResult.Exception);
                     }
                 }
                 else
@@ -153,6 +155,7 @@ namespace Apple.Core
                         } catch (Exception e)
                         {
                             Debug.LogException(new Exception($"AppleBuild: OnProcessInfoPlist for step ${buildStep.Key} failed.",e));
+                            SetBuildStepResult(buildStep.Key,BuildStepPhases.OnProcessInfoPlist, BuildStepResult.Exception);
                         }
                     }
                 }
@@ -201,7 +204,16 @@ namespace Apple.Core
                     if (buildStep.Value.IsEnabled)
                     {
                         LogDevelopmentMessage("OnPostProcessBuild", $"OnProcessEntitlements for step: {buildStep.Key}");
-                        buildStep.Value.OnProcessEntitlements(appleBuildProfile, buildTarget, generatedProjectPath, entitlements);
+                        try
+                        {
+                            buildStep.Value.OnProcessEntitlements(appleBuildProfile, buildTarget, generatedProjectPath,
+                                entitlements);
+                        }
+                        catch (Exception e)
+                        {
+                            Debug.LogException(new Exception($"AppleBuild: OnProcessEntitlements for step ${buildStep.Key} failed.",e));
+                            SetBuildStepResult(buildStep.Key,BuildStepPhases.OnProcessEntitlements, BuildStepResult.Exception);
+                        }
                     }
                 }
 
@@ -237,6 +249,7 @@ namespace Apple.Core
                     } catch (Exception e)
                     {
                         Debug.LogException(new Exception($"AppleBuild: OnProcessFrameworks for step: {buildStep.Key} failed",e));
+                        SetBuildStepResult(buildStep.Key, BuildStepPhases.OnProcessFrameworks, BuildStepResult.Exception);
                     }
                 }
 
@@ -266,6 +279,7 @@ namespace Apple.Core
                     } catch (Exception e)
                     {
                         Debug.LogException(new Exception($"AppleBuild: OnFinalizePostProcess for step: {buildStep.Key}",e));
+                        SetBuildStepResult(buildStep.Key,BuildStepPhases.OnFinalizePostProcess, BuildStepResult.Exception);
                     }
                 }
             }
@@ -276,15 +290,12 @@ namespace Apple.Core
             + $"Built for config: {(ApplePlugInEnvironment.IsDevelopmentBuild ? "Debug" : "Release")}\n"
             + "Processed the following:\n";
 
-            foreach (var key in processedBuildSteps.Keys)
+            List<string> buildStepsSorted = processedBuildSteps.Keys.ToList();
+            buildStepsSorted.Sort();
+            foreach (var key in buildStepsSorted)
             {
-                string currStatus = processedBuildSteps[key] ? "Enabled" : "Disabled";
+                string currStatus = processedBuildSteps[key];
                 summaryMessage += $"- {key}: {currStatus}\n";
-            }
-
-            foreach (var key in erroredBuildSteps.Keys)
-            {
-                summaryMessage += $"- {key}: Error";
             }
 
             Debug.Log(summaryMessage);
