@@ -5,6 +5,7 @@ using UnityEditor.Build.Reporting;
 using UnityEditor.Callbacks;
 using UnityEditor.iOS.Xcode;
 using UnityEngine;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -12,7 +13,33 @@ using System.Text.RegularExpressions;
 namespace Apple.Core
 {
     public static class AppleBuild
-    {   
+    {
+        enum BuildStepResult
+        {
+            Enabled,
+            Disabled,
+            Exception
+        }
+
+        enum BuildStepPhases
+        {
+            OnBeginPostProcess,
+            OnProcessInfoPlist,
+            OnProcessFrameworks,
+            OnFinalizePostProcess
+        }
+
+        private static Dictionary<string, string> _buildStepResults = null;
+
+        private static void ClearBuildStepResults()
+        {
+            _buildStepResults = new Dictionary<string, string>();
+        }
+        private static void SetBuildStepResult(String step, BuildStepPhases phase, BuildStepResult result)
+        {
+            _buildStepResults[step + ":" + phase] = result.ToString();
+        }
+
         // Helper for logging during development.
         private static void LogDevelopmentMessage(string methodName, string message)
         {
@@ -36,20 +63,26 @@ namespace Apple.Core
             LogDevelopmentMessage("OnPostProcessBuild", $"Found {appleBuildProfile.buildSteps.Count} build steps.");
             LogDevelopmentMessage("OnPostProcessBuild", $"Outputting to project at path {generatedProjectPath}");
 
-            var processedBuildSteps = new Dictionary<string, bool>();
+            var processedBuildSteps = new Dictionary<string, string>();
             foreach (var buildStep in appleBuildProfile.buildSteps)
             {
                 if (buildStep.Value.IsEnabled)
                 {
                     LogDevelopmentMessage("OnPostProcessBuild", $"OnBeginPostProcess for step: {buildStep.Key}");
-                    buildStep.Value.OnBeginPostProcess(appleBuildProfile, buildTarget, generatedProjectPath);
 
-                    processedBuildSteps[buildStep.Key] = true;
+                    try {
+                        buildStep.Value.OnBeginPostProcess(appleBuildProfile, buildTarget, generatedProjectPath);
+                        processedBuildSteps[buildStep.Key] = "Enabled";
+                        SetBuildStepResult(buildStep.Key, BuildStepPhases.OnBeginPostProcess, BuildStepResult.Enabled, processedBuildSteps);
+                    } catch (Exception e) {
+                        Debug.LogException(new Exception($"AppleBuild: Build post process failed for step ${buildStep.Key}",e));
+                        SetBuildStepResult(buildStep.Key, BuildStepPhases.OnBeginPostProcess, BuildStepResult.Exception, processedBuildSteps);
+                    }
                 }
                 else
                 {
                     LogDevelopmentMessage("OnPostProcessBuild", $"Build post process disabled for build step: {buildStep.Key}");
-                    processedBuildSteps[buildStep.Key] = false;
+                    SetBuildStepResult(buildStep.Key, BuildStepPhases.OnBeginPostProcess, BuildStepResult.Disabled);
                 }
             }
 
@@ -114,7 +147,13 @@ namespace Apple.Core
                     if (buildStep.Value.IsEnabled)
                     {
                         LogDevelopmentMessage("OnPostProcessBuild", $"OnProcessInfoPlist for step: {buildStep.Key}");
-                        buildStep.Value.OnProcessInfoPlist(appleBuildProfile, buildTarget, generatedProjectPath, infoPlist);
+                        try
+                        {
+                            buildStep.Value.OnProcessInfoPlist(appleBuildProfile, buildTarget, generatedProjectPath, infoPlist);
+                        } catch (Exception e)
+                        {
+                            Debug.LogException(new Exception($"AppleBuild: OnProcessInfoPlist for step ${buildStep.Key} failed.",e));
+                        }
                     }
                 }
 
@@ -192,8 +231,15 @@ namespace Apple.Core
                 if (buildStep.Value.IsEnabled)
                 {
                     LogDevelopmentMessage("OnPostProcessBuild", $"OnProcessFrameworks for step: {buildStep.Key}");
-                    buildStep.Value.OnProcessFrameworks(appleBuildProfile, buildTarget, generatedProjectPath, pbxProject);
+                    try
+                    {
+                        buildStep.Value.OnProcessFrameworks(appleBuildProfile, buildTarget, generatedProjectPath, pbxProject);
+                    } catch (Exception e)
+                    {
+                        Debug.LogException(new Exception($"AppleBuild: OnProcessFrameworks for step: {buildStep.Key} failed",e));
+                    }
                 }
+
             }
 
             if (pbxProject != null)
@@ -214,7 +260,13 @@ namespace Apple.Core
                 if (buildStep.Value.IsEnabled)
                 {
                     LogDevelopmentMessage("OnPostProcessBuild", $"OnFinalizePostProcess for step: {buildStep.Key}");
-                    buildStep.Value.OnFinalizePostProcess(appleBuildProfile, buildTarget, generatedProjectPath);
+                    try
+                    {
+                        buildStep.Value.OnFinalizePostProcess(appleBuildProfile, buildTarget, generatedProjectPath);
+                    } catch (Exception e)
+                    {
+                        Debug.LogException(new Exception($"AppleBuild: OnFinalizePostProcess for step: {buildStep.Key}",e));
+                    }
                 }
             }
             #endregion // Finalize Post Process
@@ -228,6 +280,11 @@ namespace Apple.Core
             {
                 string currStatus = processedBuildSteps[key] ? "Enabled" : "Disabled";
                 summaryMessage += $"- {key}: {currStatus}\n";
+            }
+
+            foreach (var key in erroredBuildSteps.Keys)
+            {
+                summaryMessage += $"- {key}: Error";
             }
 
             Debug.Log(summaryMessage);
