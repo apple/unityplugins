@@ -65,7 +65,7 @@ namespace Apple.Core
             LogDevelopmentMessage("OnPostProcessBuild", $"Found {appleBuildProfile.buildSteps.Count} build steps.");
             LogDevelopmentMessage("OnPostProcessBuild", $"Outputting to project at path {generatedProjectPath}");
 
-            var processedBuildSteps = new Dictionary<string, string>();
+            ClearBuildStepResults();
             foreach (var buildStep in appleBuildProfile.buildSteps)
             {
                 if (buildStep.Value.IsEnabled)
@@ -74,7 +74,6 @@ namespace Apple.Core
 
                     try {
                         buildStep.Value.OnBeginPostProcess(appleBuildProfile, buildTarget, generatedProjectPath);
-                        processedBuildSteps[buildStep.Key] = "Enabled";
                         SetBuildStepResult(buildStep.Key, BuildStepPhases.OnBeginPostProcess, BuildStepResult.Enabled);
                     } catch (Exception e) {
                         Debug.LogException(new Exception($"AppleBuild: Build post process failed for step ${buildStep.Key}",e));
@@ -290,11 +289,11 @@ namespace Apple.Core
             + $"Built for config: {(ApplePlugInEnvironment.IsDevelopmentBuild ? "Debug" : "Release")}\n"
             + "Processed the following:\n";
 
-            List<string> buildStepsSorted = processedBuildSteps.Keys.ToList();
+            List<string> buildStepsSorted = _buildStepResults.Keys.ToList();
             buildStepsSorted.Sort();
             foreach (var key in buildStepsSorted)
             {
-                string currStatus = processedBuildSteps[key];
+                string currStatus = _buildStepResults[key];
                 summaryMessage += $"- {key}: {currStatus}\n";
             }
 
