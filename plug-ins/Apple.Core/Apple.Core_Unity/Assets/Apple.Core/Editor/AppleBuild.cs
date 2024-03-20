@@ -5,14 +5,43 @@ using UnityEditor.Build.Reporting;
 using UnityEditor.Callbacks;
 using UnityEditor.iOS.Xcode;
 using UnityEngine;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Apple.Core
 {
     public static class AppleBuild
-    {   
+    {
+        enum BuildStepResult
+        {
+            Enabled,
+            Disabled,
+            Exception
+        }
+
+        enum BuildStepPhases
+        {
+            OnBeginPostProcess,
+            OnProcessInfoPlist,
+            OnProcessEntitlements,
+            OnProcessFrameworks,
+            OnFinalizePostProcess
+        }
+
+        private static Dictionary<string, string> _buildStepResults = null;
+
+        private static void ClearBuildStepResults()
+        {
+            _buildStepResults = new Dictionary<string, string>();
+        }
+        private static void SetBuildStepResult(String step, BuildStepPhases phase, BuildStepResult result)
+        {
+            _buildStepResults[step + ":" + phase] = result.ToString();
+        }
+
         // Helper for logging during development.
         private static void LogDevelopmentMessage(string methodName, string message)
         {
@@ -36,20 +65,25 @@ namespace Apple.Core
             LogDevelopmentMessage("OnPostProcessBuild", $"Found {appleBuildProfile.buildSteps.Count} build steps.");
             LogDevelopmentMessage("OnPostProcessBuild", $"Outputting to project at path {generatedProjectPath}");
 
-            var processedBuildSteps = new Dictionary<string, bool>();
+            ClearBuildStepResults();
             foreach (var buildStep in appleBuildProfile.buildSteps)
             {
                 if (buildStep.Value.IsEnabled)
                 {
                     LogDevelopmentMessage("OnPostProcessBuild", $"OnBeginPostProcess for step: {buildStep.Key}");
-                    buildStep.Value.OnBeginPostProcess(appleBuildProfile, buildTarget, generatedProjectPath);
 
-                    processedBuildSteps[buildStep.Key] = true;
+                    try {
+                        buildStep.Value.OnBeginPostProcess(appleBuildProfile, buildTarget, generatedProjectPath);
+                        SetBuildStepResult(buildStep.Key, BuildStepPhases.OnBeginPostProcess, BuildStepResult.Enabled);
+                    } catch (Exception e) {
+                        Debug.LogException(new Exception($"AppleBuild: Build post process failed for step ${buildStep.Key}",e));
+                        SetBuildStepResult(buildStep.Key, BuildStepPhases.OnBeginPostProcess, BuildStepResult.Exception);
+                    }
                 }
                 else
                 {
                     LogDevelopmentMessage("OnPostProcessBuild", $"Build post process disabled for build step: {buildStep.Key}");
-                    processedBuildSteps[buildStep.Key] = false;
+                    SetBuildStepResult(buildStep.Key, BuildStepPhases.OnBeginPostProcess, BuildStepResult.Disabled);
                 }
             }
 
@@ -114,7 +148,14 @@ namespace Apple.Core
                     if (buildStep.Value.IsEnabled)
                     {
                         LogDevelopmentMessage("OnPostProcessBuild", $"OnProcessInfoPlist for step: {buildStep.Key}");
-                        buildStep.Value.OnProcessInfoPlist(appleBuildProfile, buildTarget, generatedProjectPath, infoPlist);
+                        try
+                        {
+                            buildStep.Value.OnProcessInfoPlist(appleBuildProfile, buildTarget, generatedProjectPath, infoPlist);
+                        } catch (Exception e)
+                        {
+                            Debug.LogException(new Exception($"AppleBuild: OnProcessInfoPlist for step ${buildStep.Key} failed.",e));
+                            SetBuildStepResult(buildStep.Key,BuildStepPhases.OnProcessInfoPlist, BuildStepResult.Exception);
+                        }
                     }
                 }
 
@@ -162,7 +203,16 @@ namespace Apple.Core
                     if (buildStep.Value.IsEnabled)
                     {
                         LogDevelopmentMessage("OnPostProcessBuild", $"OnProcessEntitlements for step: {buildStep.Key}");
-                        buildStep.Value.OnProcessEntitlements(appleBuildProfile, buildTarget, generatedProjectPath, entitlements);
+                        try
+                        {
+                            buildStep.Value.OnProcessEntitlements(appleBuildProfile, buildTarget, generatedProjectPath,
+                                entitlements);
+                        }
+                        catch (Exception e)
+                        {
+                            Debug.LogException(new Exception($"AppleBuild: OnProcessEntitlements for step ${buildStep.Key} failed.",e));
+                            SetBuildStepResult(buildStep.Key,BuildStepPhases.OnProcessEntitlements, BuildStepResult.Exception);
+                        }
                     }
                 }
 
@@ -192,8 +242,16 @@ namespace Apple.Core
                 if (buildStep.Value.IsEnabled)
                 {
                     LogDevelopmentMessage("OnPostProcessBuild", $"OnProcessFrameworks for step: {buildStep.Key}");
-                    buildStep.Value.OnProcessFrameworks(appleBuildProfile, buildTarget, generatedProjectPath, pbxProject);
+                    try
+                    {
+                        buildStep.Value.OnProcessFrameworks(appleBuildProfile, buildTarget, generatedProjectPath, pbxProject);
+                    } catch (Exception e)
+                    {
+                        Debug.LogException(new Exception($"AppleBuild: OnProcessFrameworks for step: {buildStep.Key} failed",e));
+                        SetBuildStepResult(buildStep.Key, BuildStepPhases.OnProcessFrameworks, BuildStepResult.Exception);
+                    }
                 }
+
             }
 
             if (pbxProject != null)
@@ -214,7 +272,14 @@ namespace Apple.Core
                 if (buildStep.Value.IsEnabled)
                 {
                     LogDevelopmentMessage("OnPostProcessBuild", $"OnFinalizePostProcess for step: {buildStep.Key}");
-                    buildStep.Value.OnFinalizePostProcess(appleBuildProfile, buildTarget, generatedProjectPath);
+                    try
+                    {
+                        buildStep.Value.OnFinalizePostProcess(appleBuildProfile, buildTarget, generatedProjectPath);
+                    } catch (Exception e)
+                    {
+                        Debug.LogException(new Exception($"AppleBuild: OnFinalizePostProcess for step: {buildStep.Key}",e));
+                        SetBuildStepResult(buildStep.Key,BuildStepPhases.OnFinalizePostProcess, BuildStepResult.Exception);
+                    }
                 }
             }
             #endregion // Finalize Post Process
@@ -224,9 +289,11 @@ namespace Apple.Core
             + $"Built for config: {(ApplePlugInEnvironment.IsDevelopmentBuild ? "Debug" : "Release")}\n"
             + "Processed the following:\n";
 
-            foreach (var key in processedBuildSteps.Keys)
+            List<string> buildStepsSorted = _buildStepResults.Keys.ToList();
+            buildStepsSorted.Sort();
+            foreach (var key in buildStepsSorted)
             {
-                string currStatus = processedBuildSteps[key] ? "Enabled" : "Disabled";
+                string currStatus = _buildStepResults[key];
                 summaryMessage += $"- {key}: {currStatus}\n";
             }
 
@@ -382,25 +449,31 @@ namespace Apple.Core
             + "dstFrameworkFolder=\"$BUILT_PRODUCTS_DIR/$FRAMEWORKS_FOLDER_PATH\"\n"
             + "dstBundleFolder=\"$BUILT_PRODUCTS_DIR/$PLUGINS_FOLDER_PATH\"\n"
             + $"APPLE_PLUGIN_LIBRARY_ROOT=\"$PROJECT_DIR/{projectRelativeNativeLibraryRoot}\"\n"
-            + "if [ -d $APPLE_PLUGIN_LIBRARY_ROOT ]; then\n"
-            + "    for folder in \"$APPLE_PLUGIN_LIBRARY_ROOT\"/*; do\n"
+            + "if [ -d \"$APPLE_PLUGIN_LIBRARY_ROOT\" ]; then\n"
+            + "    for folder in \"$APPLE_PLUGIN_LIBRARY_ROOT\"/*/; do\n"
             + "        if [ -d \"$folder\" ]; then\n"
             + "            for item in \"$folder\"/*; do\n"
-            + "                if [[ $item = *'.dSYM' ]]; then\n"
+            + "                if [[ \"$item\" = *'.dSYM' ]]; then\n"
             + "                    continue\n"
-            + "                elif [[ $item = *'.framework' ]]; then\n"
-            + "                    filename=$(basename $item)\n"
+            + "                elif [[ \"$item\" = *'.framework' ]]; then\n"
+            + "                    filename=$(basename \"$item\")\n"
             + "                    echo \"    Embedding Apple plug-in framework $filename\"\n"
             + "                    echo \"      Source: $item\"\n"
             + "                    echo \"      Destination: $dstFrameworkFolder/$filename\"\n"
-            + "                    ditto $item \"$dstFrameworkFolder/$filename\"\n"
+            + "                    ditto \"$item\" \"$dstFrameworkFolder/$filename\"\n"
+#if UNITY_TVOS
+            //The build process isn't necessarily signing this framework correctly for
+            //tvos. So force it in here (we have the correct sign identity at this point
+            //but we make that happen here.)
+            + "                    /usr/bin/codesign --force --sign $EXPANDED_CODE_SIGN_IDENTITY --timestamp=none --preserve-metadata=identifier,entitlements,flags --generate-entitlement-der \"$dstFrameworkFolder/$filename\""
+#endif
             + "                    break\n"
-            + "                elif [[ $item = *'.bundle' ]]; then\n"
-            + "                    filename=$(basename $item)\n"
+            + "                elif [[ \"$item\" = *'.bundle' ]]; then\n"
+            + "                    filename=$(basename \"$item\")\n"
             + "                    echo \"    Embedding Apple plug-in bundle $filename\"\n"
             + "                    echo \"      Source: $item\"\n"
             + "                    echo \"      Destination: $dstBundleFolder/$filename\"\n"
-            + "                    ditto $item \"$dstBundleFolder/$filename\"\n"
+            + "                    ditto \"$item\" \"$dstBundleFolder/$filename\"\n"
             + "                    break\n"
             + "                fi\n"
             + "            done\n"
@@ -424,32 +497,38 @@ namespace Apple.Core
             + "echo \"Embed framework destination folder: $dstFrameworkFolder\"\n"
             + "echo \"Embed bundle destination folder: $dstBundleFolder\"\n"
             + $"APPLE_PLUGIN_LIBRARY_ROOT=\"$PROJECT_DIR/{projectRelativeNativeLibraryRoot}\"\n"
-            + "if [ -d $APPLE_PLUGIN_LIBRARY_ROOT ]; then\n"
+            + "if [ -d \"$APPLE_PLUGIN_LIBRARY_ROOT\" ]; then\n"
             + "    echo \"Found Apple plug-in native library root: $APPLE_PLUGIN_LIBRARY_ROOT\"\n"
             + "    echo \"Iterating through contents.\"\n"
-            + "    for folder in \"$APPLE_PLUGIN_LIBRARY_ROOT\"/*; do\n"
+            + "    for folder in \"$APPLE_PLUGIN_LIBRARY_ROOT\"/*/; do\n"
             + "        if [ -d \"$folder\" ]; then\n"
             + "            echo \"  Discovered potential plug-in library folder: $folder\"\n"
             + "            echo \"  Iterating through contents.\"\n"
             + "            for item in \"$folder\"/*; do\n"
             + "                echo \"    Found item: $item\"\n"
             + "                echo \"    Checking to see if it's a .framework, if so will embed in destination folder.\"\n"
-            + "                if [[ $item = *'.dSYM' ]]; then\n"
+            + "                if [[ \"$item\" = *'.dSYM' ]]; then\n"
             + "                    echo \"    Debug symbol (.dSYM) file found. Continuing.\"\n"
             + "                    continue\n"
-            + "                elif [[ $item = *'.framework' ]]; then\n"
-            + "                    filename=$(basename $item)\n"
+            + "                elif [[ \"$item\" = *'.framework' ]]; then\n"
+            + "                    filename=$(basename \"$item\")\n"
             + "                    echo \"    Embedding Apple plug-in framework $filename\"\n"
             + "                    echo \"      Source: $item\"\n"
             + "                    echo \"      Destination: $dstFrameworkFolder/$filename\"\n"
             + "                    ditto $item \"$dstFrameworkFolder/$filename\"\n"
+#if UNITY_TVOS
+            //The build process isn't necessarily signing this framework correctly for
+            //tvos. So force it in here (we have the correct sign identity at this point
+            //but we make that happen here.)
+            + "                    /usr/bin/codesign --force --sign $EXPANDED_CODE_SIGN_IDENTITY --timestamp=none --preserve-metadata=identifier,entitlements,flags --generate-entitlement-der \"$dstFrameworkFolder/$filename\""
+#endif
             + "                    break\n"
-            + "                elif [[ $item = *'.bundle' ]]; then\n"
-            + "                    filename=$(basename $item)\n"
+            + "                elif [[ \"$item\" = *'.bundle' ]]; then\n"
+            + "                    filename=$(basename \"$item\")\n"
             + "                    echo \"    Embedding Apple plug-in bundle $filename\"\n"
             + "                    echo \"      Source: $item\"\n"
             + "                    echo \"      Destination: $dstBundleFolder/$filename\"\n"
-            + "                    ditto $item \"$dstBundleFolder/$filename\"\n"
+            + "                    ditto \"$item\" \"$dstBundleFolder/$filename\"\n"
             + "                    break\n"
             + "                fi\n"
             + "            done\n"
