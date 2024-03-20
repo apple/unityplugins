@@ -461,6 +461,12 @@ namespace Apple.Core
             + "                    echo \"      Source: $item\"\n"
             + "                    echo \"      Destination: $dstFrameworkFolder/$filename\"\n"
             + "                    ditto \"$item\" \"$dstFrameworkFolder/$filename\"\n"
+#if UNITY_TVOS
+            //The build process isn't necessarily signing this framework correctly for
+            //tvos. So force it in here (we have the correct sign identity at this point
+            //but we make that happen here.)
+            + "                    /usr/bin/codesign --force --sign $EXPANDED_CODE_SIGN_IDENTITY --timestamp\=none --preserve-metadata\=identifier,entitlements,flags --generate-entitlement-der \"$dstFrameworkFolder/$filename\""
+#endif
             + "                    break\n"
             + "                elif [[ \"$item\" = *'.bundle' ]]; then\n"
             + "                    filename=$(basename \"$item\")\n"
@@ -510,6 +516,12 @@ namespace Apple.Core
             + "                    echo \"      Source: $item\"\n"
             + "                    echo \"      Destination: $dstFrameworkFolder/$filename\"\n"
             + "                    ditto $item \"$dstFrameworkFolder/$filename\"\n"
+#if UNITY_TVOS
+            //The build process isn't necessarily signing this framework correctly for
+            //tvos. So force it in here (we have the correct sign identity at this point
+            //but we make that happen here.)
+            + "                    /usr/bin/codesign --force --sign $EXPANDED_CODE_SIGN_IDENTITY --timestamp\=none --preserve-metadata\=identifier,entitlements,flags --generate-entitlement-der \"$dstFrameworkFolder/$filename\""
+#endif
             + "                    break\n"
             + "                elif [[ \"$item\" = *'.bundle' ]]; then\n"
             + "                    filename=$(basename \"$item\")\n"
