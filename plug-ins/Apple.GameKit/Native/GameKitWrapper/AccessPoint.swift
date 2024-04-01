@@ -139,6 +139,11 @@ public func GKAccessPoint_SetIsActive
 )
 {
     let target = Unmanaged<GKAccessPoint>.fromOpaque(pointer).takeUnretainedValue();
+
+    if value {
+        target.parentWindow = UiUtilities.defaultWindow()
+    }
+
     target.isActive = value;
 }
 

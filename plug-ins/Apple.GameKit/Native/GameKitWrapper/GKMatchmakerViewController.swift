@@ -131,15 +131,7 @@ public func GKMatchmakerViewController_Present
 )
 {
     let target = Unmanaged<GKMatchmakerViewController>.fromOpaque(pointer).takeUnretainedValue();
-    
-    // TODO: (123075676)
-#if os(iOS) || os(tvOS)
-    let viewController = UIApplication.shared.windows.first!.rootViewController;
-    viewController?.present(target, animated: true);
-#elseif os(macOS)
-    GKDialogController.shared().parentWindow = NSApplication.shared.keyWindow;
-    GKDialogController.shared().present(target);
-#endif
+    UiUtilities.presentViewController(viewController: target)
 }
 
 public func GKMatchmakerViewController_Dismiss
@@ -147,13 +139,7 @@ public func GKMatchmakerViewController_Dismiss
     viewController: GKMatchmakerViewController
 )
 {
-    // TODO: (123075676)
-    #if os(iOS) || os(tvOS)
-        viewController.dismiss(animated: true);
-    #elseif os(macOS)
-        GKDialogController.shared().dismiss(viewController);
-    #endif
-    
+    UiUtilities.dismissViewController(viewController: viewController)
     _activeRealtimeMatchmakerDelegate = nil;
 }
 

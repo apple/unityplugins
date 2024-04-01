@@ -10,14 +10,6 @@ namespace Apple.GameKit.Sample
     {
         [SerializeField] Dropdown _stateDropdown = default;
 
-        // Start is called before the first frame update
-        void Start()
-        {
-            GKAccessPoint.Shared.Location = GKAccessPoint.GKAccessPointLocation.TopLeading;
-            GKAccessPoint.Shared.ShowHighlights = false;
-            GKAccessPoint.Shared.IsActive = true;
-        }
-
         public void OnToggleAccessPoint()
         {
             GKAccessPoint.Shared.IsActive = !GKAccessPoint.Shared.IsActive;
