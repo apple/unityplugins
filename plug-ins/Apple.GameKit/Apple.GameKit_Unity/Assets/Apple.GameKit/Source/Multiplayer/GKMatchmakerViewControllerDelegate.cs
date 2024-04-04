@@ -147,14 +147,14 @@ namespace Apple.GameKit.Multiplayer
         /// <param name="matchmakerViewController">The view controller that finds players for the match.</param>
         /// <param name="invitedPlayer">A player to invite to the match.</param>
         /// <returns>The properties for recipient that the local player invites to the match.</returns>
-        [Introduced(iOS: "17.2", macOS: "14.2", tvOS: "17.2")]
+        [Introduced(iOS: "17.2", macOS: "14.2", tvOS: "17.2", visionOS: "1.1")]
         public delegate Task<GKMatchProperties> GetMatchPropertiesForRecipientHandler(GKMatchmakerViewController matchmakerViewController, GKPlayer invitedPlayer);
         private delegate void InteropGetMatchPropertiesForRecipientHandler(IntPtr gkMatchmakerViewControllerDelegatePtr, IntPtr gkMatchmakerViewControllerPtr, IntPtr gkPlayerPtr, IntPtr completionHandlerPtr);
 
         /// <summary>
         /// Dispatches GetMatchPropertiesForRecipient events.
         /// </summary>
-        [Introduced(iOS: "17.2", macOS: "14.2", tvOS: "17.2")]
+        [Introduced(iOS: "17.2", macOS: "14.2", tvOS: "17.2", visionOS: "1.1")]
         public event GetMatchPropertiesForRecipientHandler GetMatchPropertiesForRecipient;
 
         [MonoPInvokeCallback(typeof(InteropGetMatchPropertiesForRecipientHandler))]

@@ -1,6 +1,9 @@
 # CHANGELOG
 All notable changes to this project will be documented in this file.
 
+## [2.2.1] - 2023-04-01
+- Fix some issues with how view controllers are handled on visionOS.
+
 ## [2.2.0] - 2023-02-23
 ### Added
 - Support for visionOS

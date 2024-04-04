@@ -20,28 +20,20 @@ public func GKLocalPlayer_Authenticate
         onSuccess(taskId, GKLocalPlayer_GetLocal());
         return;
     }
-    
+
     GKLocalPlayer.local.authenticateHandler = { gcAuthVC, error in
-        if (error != nil) {
-            onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
+        // Always show the viewController if provided...
+        if let gcAuthVC = gcAuthVC {
+            UiUtilities.presentViewController(viewController: gcAuthVC);
+        }
+
+        if let error = error {
+            onError(taskId, Unmanaged.passRetained(error as NSError).toOpaque());
             return;
         }
-        // TODO: (123075676)
-#if !os(visionOS)
-        // Always show the viewController if provided...
-        if gcAuthVC != nil {
-            #if os(iOS) || os(tvOS)
-                let viewController = UIApplication.shared.windows.first!.rootViewController;
-                viewController?.present(gcAuthVC!, animated: true)
-            #else
-                let viewController = NSApplication.shared.keyWindow?.contentViewController;
-                viewController?.presentAsModalWindow(gcAuthVC!)
-            #endif
-        } else {
-            GKLocalPlayer.local.register(_localPlayerListener);
-            onSuccess(taskId, GKLocalPlayer_GetLocal());
-        }
-#endif
+
+        GKLocalPlayer.local.register(_localPlayerListener);
+        onSuccess(taskId, GKLocalPlayer_GetLocal());
     };
 }
 

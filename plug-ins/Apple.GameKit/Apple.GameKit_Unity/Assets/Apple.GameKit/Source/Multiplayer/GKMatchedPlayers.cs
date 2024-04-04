@@ -10,7 +10,7 @@ namespace Apple.GameKit.Multiplayer
     /// <summary>
     /// An object that represents matchmaking results, including the players that join the match and their properties that matchmaking rules uses.
     /// </summary>
-    [Introduced(iOS: "17.2", macOS: "14.2", tvOS: "17.2")]
+    [Introduced(iOS: "17.2", macOS: "14.2", tvOS: "17.2", visionOS: "1.1")]
     public class GKMatchedPlayers : NSObject
     {
         /// <summary>

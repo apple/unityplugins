@@ -64,13 +64,13 @@ namespace Apple.GameKit.Multiplayer
         /// <summary>
         /// The local player's properties that matchmaking rules used to find the players with some additions.
         /// </summary>
-        [Introduced(iOS: "17.2", macOS: "14.2", tvOS: "17.2")]
+        [Introduced(iOS: "17.2", macOS: "14.2", tvOS: "17.2", visionOS: "1.1")]
         public GKMatchProperties Properties => PointerCast<GKMatchProperties>(Interop.GKMatch_GetProperties(Pointer));
 
         /// <summary>
         /// The properties for other players that matchmaking rules uses to find players, with some additions.
         /// </summary>
-        [Introduced(iOS: "17.2", macOS: "14.2", tvOS: "17.2")]
+        [Introduced(iOS: "17.2", macOS: "14.2", tvOS: "17.2", visionOS: "1.1")]
         public NSDictionary<GKPlayer, GKMatchProperties> PlayerProperties => PointerCast<NSDictionary<GKPlayer, GKMatchProperties>>(Interop.GKMatch_GetPlayerProperties(Pointer));
 
         /// <summary>
