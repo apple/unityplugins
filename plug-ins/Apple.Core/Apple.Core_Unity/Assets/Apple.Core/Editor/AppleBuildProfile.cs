@@ -109,6 +109,24 @@ namespace Apple.Core
                 }
             }
         }
+
+        /// <summary>
+        /// Find a build step based upon it's DisplayName property.
+        /// </summary>
+        /// <param name="displayName">A string which corresponds to a given build step's DisplayName property.</param>
+        /// <returns></returns>
+        public AppleBuildStep FindBuildStep(string displayName)
+        {
+            foreach (var buildStep in buildSteps.Values)
+            {
+                if (buildStep.DisplayName == displayName)
+                {
+                    return buildStep;
+                }
+            }
+
+            return null;
+        }
     }
 }
 #endif // (UNITY_EDITOR_OSX && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX || UNITY_VISIONOS))

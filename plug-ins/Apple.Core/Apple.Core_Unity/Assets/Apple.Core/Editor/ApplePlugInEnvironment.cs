@@ -196,11 +196,18 @@ namespace Apple.Core
                         // If this is one of the development Apple plug-in Unity projects, it needs to be handled as a special case because 
                         //  it isn't loaded/managed by the package manager; all of the assets are local under Assets/
                         // All Apple plug-ins will have an AppleBuildStep implementation, so check for build steps that haven't been added already
-                        foreach (var buildStepEntry in _defaultProfile.buildSteps)
+                        foreach (var buildStep in _defaultProfile.buildSteps.Values)
                         {
-                            if (buildStepEntry.Value.SupportedTargets.Length > 0 && !_appleUnityPackages.ContainsKey(buildStepEntry.Value.DisplayName))
+                            if (!_appleUnityPackages.ContainsKey(buildStep.DisplayName))
                             {
-                                _appleUnityPackages[buildStepEntry.Value.DisplayName] = new AppleUnityPackage("Local Project", buildStepEntry.Value.DisplayName, Application.dataPath);
+                                if (buildStep.IsNativePlugIn)
+                                {
+                                    _appleUnityPackages[buildStep.DisplayName] = new AppleUnityPackage("Local Project", buildStep.DisplayName, Application.dataPath);
+                                }
+                                else
+                                {
+                                    _appleUnityPackages[buildStep.DisplayName] = new AppleUnityPackage("Local Project", buildStep.DisplayName);
+                                }
                             }
                         }
 
@@ -244,41 +251,29 @@ namespace Apple.Core
         {
             foreach (var applePackage in _appleUnityPackages.Values)
             {
-                bool isCurrentPlatformSupported = false;
-                bool isBuildStepEnabled = false;
-                foreach(var buildStep in _defaultProfile.buildSteps.Values)
+                AppleBuildStep buildStep = _defaultProfile.FindBuildStep(applePackage.DisplayName);
+                if (buildStep != null && buildStep.IsNativePlugIn)
                 {
-                    if (buildStep.DisplayName == applePackage.DisplayName)
+                    if (Array.IndexOf(buildStep.SupportedTargets, GetUnityBuildTarget(_trackedApplePlatform)) > -1)
                     {
-                        isBuildStepEnabled = buildStep.IsEnabled;
-                        BuildTarget unityBuildTarget = GetUnityBuildTarget(_trackedApplePlatform);
-                        if (Array.IndexOf(buildStep.SupportedTargets, unityBuildTarget) > -1)
+                        AppleNativeLibrary currLibrary = GetLibrary(applePackage.DisplayName, _trackedAppleConfig.Principal, _trackedApplePlatform);
+                        if (!currLibrary.IsValid)
                         {
-                            isCurrentPlatformSupported = true;
-                            break;
+                            string warningMessage = $"[Apple Unity Plug-Ins] Missing {_trackedAppleConfig.Principal} {applePackage.DisplayName} native library for {_trackedApplePlatform}\n"
+                            + $"  {_trackedAppleConfig.Fallback} {applePackage.DisplayName} native library for {_trackedApplePlatform} will be used as a fallback.\n"
+                            + $"  To generate the {_trackedAppleConfig.Principal} native library for {applePackage.DisplayName}, try re-building the {applePackage.DisplayName} plug-in with the following command line (assuming the working directory is the Apple Unity Plug-In project root folder):\n\n"
+                            + $"  <b><color=orange>$> python3 ./build.py -p {applePackage.ShortName}</color></b>\n";
+
+                            Debug.LogWarning(warningMessage);
                         }
                     }
-                }
-
-                if (isCurrentPlatformSupported)
-                {
-                    AppleNativeLibrary currLibrary = GetLibrary(applePackage.DisplayName, _trackedAppleConfig.Principal, _trackedApplePlatform);
-                    if (!currLibrary.IsValid)
+                    else if (buildStep.IsEnabled)
                     {
-                        string warningMessage = $"[Apple Unity Plug-Ins] Missing {_trackedAppleConfig.Principal} {applePackage.DisplayName} native library for {_trackedApplePlatform}\n"
-                        + $"  {_trackedAppleConfig.Fallback} {applePackage.DisplayName} native library for {_trackedApplePlatform} will be used as a fallback.\n"
-                        + $"  To generate the {_trackedAppleConfig.Principal} native library for {applePackage.DisplayName}, try re-building the {applePackage.DisplayName} plug-in with the following command line (assuming the working directory is the Apple Unity Plug-In project root folder):\n\n"
-                        + $"  <b><color=orange>$> python3 ./build.py -p {applePackage.ShortName}</color></b>\n";
+                        string warningMessage = $"[Apple Unity Plug-Ins] Targeting unsupported platform '{_trackedApplePlatform}' for Apple plug-in package {applePackage.DisplayName}.\n"
+                        + $"  To continue building for the current platform, please disable {applePackage.DisplayName} in the Apple Build Settings window.";
 
                         Debug.LogWarning(warningMessage);
                     }
-                }
-                else if (isBuildStepEnabled)
-                {
-                    string warningMessage = $"[Apple Unity Plug-Ins] Targeting unsupported platform '{_trackedApplePlatform}' for Apple plug-in package {applePackage.DisplayName}.\n"
-                    + $"  To continue building for the current platform, please disable {applePackage.DisplayName} in the Apple Build Settings window.";
-
-                    Debug.LogWarning(warningMessage);
                 }
             }
         }
@@ -391,10 +386,16 @@ namespace Apple.Core
         /// <param name="packageCollection">An iterable collection of PackageInfo structs</param>
         private static void AddPackagesFromCollection(IEnumerable<UnityEditor.PackageManager.PackageInfo> packageCollection, bool logPackagesAfterUpdate = true)
         {
+            // Ensure collection of build steps is current; package names will be validated against build step names.
+            _defaultProfile.ResolveBuildSteps();
+
             bool packagesAdded = false;
             foreach (var unityPackage in packageCollection)
             {
-                if (unityPackage.name.StartsWith(AppleUnityPackageNamePrefix) && unityPackage.author.name == AppleUnityPackageAuthorName && !_appleUnityPackages.ContainsKey(unityPackage.displayName))
+                AppleBuildStep buildStep = _defaultProfile.FindBuildStep(unityPackage.displayName);
+
+                // Apple packages with native libraries will always have a build step defined for handling those libraries, so validate here.
+                if (buildStep != null && buildStep.IsNativePlugIn && buildStep.DisplayName == unityPackage.displayName && unityPackage.author.name == AppleUnityPackageAuthorName && !_appleUnityPackages.ContainsKey(unityPackage.displayName))
                 {
                     AppleUnityPackage applePackage = new AppleUnityPackage(unityPackage.name, unityPackage.displayName, unityPackage.resolvedPath);
                     if (!applePackage.PlayModeSupportLibrary.IsValid)
@@ -407,6 +408,14 @@ namespace Apple.Core
                     _appleUnityPackages[applePackage.DisplayName] = applePackage;
                     packagesAdded = true;
                 }
+                // If there's no build step or the build step isn't associated with a native plug-in track the library-free (C# only) package.
+                else if (unityPackage.name.StartsWith(AppleUnityPackageNamePrefix) && unityPackage.author.name == AppleUnityPackageAuthorName && !_appleUnityPackages.ContainsKey(unityPackage.displayName))
+                {
+                    AppleUnityPackage applePackage = new AppleUnityPackage(unityPackage.name, unityPackage.displayName);
+                    _appleUnityPackages[applePackage.DisplayName] = applePackage;
+                    packagesAdded = true;
+                }
+
             }
 
             if (packagesAdded && logPackagesAfterUpdate)
@@ -471,35 +480,42 @@ namespace Apple.Core
         /// </summary>
         private static void LogLibrarySummary()
         {
-            string summary = "[Apple Unity Plug-ins] Apple native plug-ins updated.\nTracking the following plug-in packages and native libraries:\n\n";
+            string summary = "[Apple Unity Plug-ins] Apple native plug-ins updated.\nTracking the following plug-in packages and native libraries:\n";
             bool librariesFound = false;
             foreach (AppleUnityPackage package in _appleUnityPackages.Values)
             {
-                summary += $"\n<b>{package.DisplayName}</b> [{package.Name}]:\n  Package Source Path: {package.SourcePath}\n";
-                var debugLibraries = package.GetLibraries(AppleConfigID.Debug);
-                if (debugLibraries.Length > 0)
+                if (package.IsNativePackage)
                 {
-                    summary += "  Debug Libraries (file name - platform):\n";
-                    foreach (var debugLibrary in debugLibraries)
+                    summary += $"\n<b>{package.DisplayName}</b> [{package.Name}]:\n  Package Source Path: {package.SourcePath}\n";
+                    var debugLibraries = package.GetLibraries(AppleConfigID.Debug);
+                    if (debugLibraries.Length > 0)
                     {
-                        summary += $"    {debugLibrary.FileName} - {debugLibrary.Platform}\n";
-                    }
-                    librariesFound = true;
-                }
-
-                var releaseLibraries = package.GetLibraries(AppleConfigID.Release);
-                if (releaseLibraries.Length > 0)
-                {
-                    summary += "  Release Libraries (file name - platform):\n";
-                    foreach (var releaseLibrary in releaseLibraries)
-                    {
-                        summary += $"    {releaseLibrary.FileName} - {releaseLibrary.Platform}\n";
-                        if (releaseLibrary.DebugSymbolsFileName != string.Empty)
+                        summary += "  Debug Libraries (file name - platform):\n";
+                        foreach (var debugLibrary in debugLibraries)
                         {
-                            summary += $"    {releaseLibrary.DebugSymbolsFileName} - {releaseLibrary.Platform}\n";
+                            summary += $"    {debugLibrary.FileName} - {debugLibrary.Platform}\n";
                         }
+                        librariesFound = true;
                     }
-                    librariesFound = true;
+
+                    var releaseLibraries = package.GetLibraries(AppleConfigID.Release);
+                    if (releaseLibraries.Length > 0)
+                    {
+                        summary += "  Release Libraries (file name - platform):\n";
+                        foreach (var releaseLibrary in releaseLibraries)
+                        {
+                            summary += $"    {releaseLibrary.FileName} - {releaseLibrary.Platform}\n";
+                            if (releaseLibrary.DebugSymbolsFileName != string.Empty)
+                            {
+                                summary += $"    {releaseLibrary.DebugSymbolsFileName} - {releaseLibrary.Platform}\n";
+                            }
+                        }
+                        librariesFound = true;
+                    }
+                }
+                else
+                {
+                    summary += $"\n<b>{package.DisplayName}</b> [{package.Name}]:\n  Non-native (C# Script or asset only) plug-in/extension.\n  <b>No libraries to list.</b>\n";
                 }
             }
 

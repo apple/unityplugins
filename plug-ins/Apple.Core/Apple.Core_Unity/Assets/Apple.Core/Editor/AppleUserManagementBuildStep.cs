@@ -9,7 +9,7 @@ namespace Apple.Core
 {
     public class AppleUserManagementBuildStep : AppleBuildStep
     {
-        public override string DisplayName => "tvOS User Management";
+        public override string DisplayName => "Apple.Core.UserManagementForAppleTV";
 
         [Tooltip("The value that grants access to TVUserManager, so you can map your own profiles to users in the system.")]
         public bool AllowGetCurrentUser = false;

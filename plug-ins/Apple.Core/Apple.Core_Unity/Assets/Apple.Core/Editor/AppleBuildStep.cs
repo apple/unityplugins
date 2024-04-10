@@ -29,6 +29,11 @@ namespace Apple.Core
         public virtual BuildTarget[] SupportedTargets => Array.Empty<BuildTarget>();
 
         /// <summary>
+        /// Convenience property to determine if the plug-in has associated native libraries.
+        /// </summary>
+        public bool IsNativePlugIn => SupportedTargets.Length > 0;
+
+        /// <summary>
         /// Returns an enumerable collection of all objects in the project which derive from AppleBuildStep
         /// </summary>
         public static IEnumerable<Type> ProjectAppleBuildStepTypes()
