@@ -9,7 +9,7 @@ namespace Apple.Core
 {
     public class AppleSecurityBuildStep : AppleBuildStep
     {
-        public override string DisplayName => "Security";
+        public override string DisplayName => "Apple.Core.Security";
         
         [Tooltip("If true, will add the com.apple.security.app-sandbox entitlement.")]
         public bool AppSandboxEntitlement = true;

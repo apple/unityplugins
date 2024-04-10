@@ -1,11 +1,15 @@
 # CHANGELOG
 All notable changes to this project will be documented in this file.
 
-## [3.1.0] - 2024-2-23
+## [3.1.1] - 2024-04-08
+### Added
+- Adding support for tracking of Apple Unity plug-ins without native libraries.
+
+## [3.1.0] - 2024-02-23
 ### Added
 Support for visionOS
 
-## [3.0.0] - 2024-2-15
+## [3.0.0] - 2024-02-15
 ### Added
 - Support for iPhone simulator and AppleTV Simulator
 - Release builds now generate .dSYM files for enhanced debugging abilities
