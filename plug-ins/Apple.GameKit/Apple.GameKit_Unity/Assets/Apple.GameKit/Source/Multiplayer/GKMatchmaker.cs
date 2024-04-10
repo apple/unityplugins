@@ -393,6 +393,7 @@ namespace Apple.GameKit.Multiplayer
 #endif            
             [DllImport(InteropUtility.DLLName)]
             public static extern void GKMatchmaker_StopGroupActivity(IntPtr gkMatchmakerPtr);
+#endif
         }
     }
 }
