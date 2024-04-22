@@ -1,6 +1,11 @@
 # CHANGELOG
 All notable changes to this project will be documented in this file.
 
+## [3.1.2] - 2024-04-11
+### Added
+- *Embed Apple Plug-In Libraries* script injected into the Unity-generated Xcode project will now sign native libraries using the same codesign identity configured for that Xcode project.
+  - This simplifies the codesign workflow substantially, now libraries won't need to be signed when running the build script.
+
 ## [3.1.1] - 2024-04-08
 ### Added
 - Adding support for tracking of Apple Unity plug-ins without native libraries.

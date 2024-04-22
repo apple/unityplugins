@@ -71,3 +71,8 @@ class CleanActionID:
 
     # Performs all clean actions for the selected plug-ins
     ALL = "all"
+
+# Code sign options (-c, --codesign-identity)
+class CodeSignActionID:
+    # In general the -c flag takes a codesign identity hash as an argument, but when this argument is provided the script will enable the code signing identity selection workflow
+    PROMPT = "prompt"
