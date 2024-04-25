@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEditor;
 using UnityEditor.Build;
 using UnityEditor.iOS.Xcode;
@@ -133,6 +134,7 @@ namespace Apple.Core
         /// </summary>
         static ApplePlugInEnvironment()
         {
+            Debug.Log("[Apple Unity Plug-ins] ApplePlugInEnvironment");
             // Ensure that the necessary Apple Unity Plug-In support folders exist and let user know if any have been created.
             string createFolderMessage = "[Apple Unity Plug-ins] Creating support folders:\n";
             bool foldersCreated = false;
@@ -170,13 +172,30 @@ namespace Apple.Core
             _appleUnityPackages = new Dictionary<string, AppleUnityPackage>();
             _packageManagerListRequest = Client.List();
 
-            // Initialize state tracking
-            _updateState = UpdateState.Initializing;
             _trackedAppleConfig = GetAppleBuildConfig();
             _trackedApplePlatform = GetApplePlatformID(EditorUserBuildSettings.activeBuildTarget);
-
-            EditorApplication.update += OnEditorUpdate;
+            _updateState = UpdateState.Initializing;
             Events.registeringPackages += OnPackageManagerRegistrationUpdate;
+
+            // If running headless in batch mode, this will never actually get a chance
+            // run an update before doing a build. So we need to force it in here.
+            if (Application.isBatchMode)
+            {
+                Debug.Log("[Apple Unity Plug-ins] Batch Mode Build. Waiting for registry.");
+                
+                while (_updateState != UpdateState.Updating)
+                {
+                    OnEditorUpdate();
+                    Thread.Sleep(100);
+                }
+
+                Debug.Log("[Apple Unity Plug-ins] Finished updating our registry");
+            }
+            else
+            {
+                // Initialize state tracking
+                EditorApplication.update += OnEditorUpdate;
+            }
         }
 
         /// <summary>
