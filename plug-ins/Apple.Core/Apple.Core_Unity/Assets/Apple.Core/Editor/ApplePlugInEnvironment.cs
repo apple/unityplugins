@@ -39,7 +39,22 @@ namespace Apple.Core
         } 
     }
 
+    /// <summary>
+    /// ApplePlugInEnvironmentInitializer will initialize ApplePlugInEnvironment after all assets have been loaded by the editor
+    /// to prevent race conditions when the ApplePlugInsEnvironment attempts to create or load assets.
+    /// </summary>
     [InitializeOnLoad]
+    public class ApplePlugInEnvironmentInitializer : AssetPostprocessor
+    {
+        static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths, bool didDomainReload)
+        {
+            if (didDomainReload) 
+            {
+                ApplePlugInEnvironment.CheckApplePlugInEnvironment();
+            }
+        }
+    }
+
     public static class ApplePlugInEnvironment
     {
         /// <summary>
@@ -132,7 +147,7 @@ namespace Apple.Core
         /// <summary>
         /// Static constructor used by Unity for initialization of the ApplePlugInEnvironment.
         /// </summary>
-        static ApplePlugInEnvironment()
+        public static void CheckApplePlugInEnvironment()
         {
             Debug.Log("[Apple Unity Plug-ins] ApplePlugInEnvironment");
             // Ensure that the necessary Apple Unity Plug-In support folders exist and let user know if any have been created.
