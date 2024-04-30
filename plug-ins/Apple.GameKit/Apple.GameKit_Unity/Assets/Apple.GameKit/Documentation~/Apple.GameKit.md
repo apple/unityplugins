@@ -506,7 +506,7 @@ private void Update()
 #### 7.2 Show & Hide
 **Note:** This call is not asynchronous.
 ```csharp
-GKAccessPoint.Shared.Location = GKAcessPoint.GKAccessPointLocation.TopLeading;
+GKAccessPoint.Shared.Location = GKAccessPoint.GKAccessPointLocation.TopLeading;
 GKAccessPoint.Shared.ShowHighlights = true; 
 GKAccessPoint.Shared.IsActive = true; // or false to hide.
 ```
