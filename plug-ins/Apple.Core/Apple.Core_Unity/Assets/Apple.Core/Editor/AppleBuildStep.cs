@@ -19,9 +19,14 @@ namespace Apple.Core
         public bool IsEnabled = true;
         
         /// <summary>
-        /// Name used for display of a plug-in in Editor UI. This should be the same string used for the <c>displayName</c> field of a given plug-in's <c>package.json</c>
+        /// Returns the PackageInfo for the package that inherits from this class.
         /// </summary>
-        public virtual string DisplayName => GetType().Name;
+        public UnityEditor.PackageManager.PackageInfo PackageInfo => UnityEditor.PackageManager.PackageInfo.FindForAssembly(this.GetType().Assembly);
+
+        /// <summary>
+        /// Name used for display of a plug-in in Editor UI. This returns the <c>displayName</c> field of a given plug-in's <c>package.json</c>
+        /// </summary>
+        public virtual string DisplayName => PackageInfo.displayName;
 
         /// <summary>
         /// Each build step may reference a plug-in with a set of per-BuiltTarget native libraries. 
