@@ -432,7 +432,8 @@ namespace Apple.Core
                 if (buildStep != null && buildStep.IsNativePlugIn && buildStep.DisplayName == unityPackage.displayName && unityPackage.author.name == AppleUnityPackageAuthorName && !_appleUnityPackages.ContainsKey(unityPackage.displayName))
                 {
                     AppleUnityPackage applePackage = new AppleUnityPackage(unityPackage.name, unityPackage.displayName, unityPackage.resolvedPath);
-                    if (!applePackage.PlayModeSupportLibrary.IsValid)
+                    string[] nativeLibraryRootPaths = Directory.GetDirectories(unityPackage.resolvedPath, AppleNativeLibraryUtility.SourceNativeLibraryFolderName, SearchOption.AllDirectories);
+                    if (nativeLibraryRootPaths.Length >= 1 && !applePackage.PlayModeSupportLibrary.IsValid)
                     {
                         string warningMessage = $"[Apple Unity Plug-ins] Unable to locate a macOS native library for {applePackage.DisplayName}\n"
                         + $"  Play mode support for {applePackage.DisplayName} in the Unity Editor won't function without this library.\n"
