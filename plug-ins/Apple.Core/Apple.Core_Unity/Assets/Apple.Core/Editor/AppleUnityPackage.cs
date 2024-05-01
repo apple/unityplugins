@@ -44,7 +44,7 @@ namespace Apple.Core
                                 // Verified a valid config, create an inner dictionary for this config
                                 _nativeLibraryCollection[configFolderName] = new Dictionary<string, AppleNativeLibrary>();
                                 string[] platformPaths = Directory.GetDirectories(currConfigPath);
-                                if (platformPaths.Length > 1)
+                                if (platformPaths.Length >= 1)
                                 {
                                     foreach (string currPlatformPath in platformPaths)
                                     {
