@@ -1,6 +1,14 @@
 # CHANGELOG
 All notable changes to this project will be documented in this file.
 
+## [3.1.3] - 2024-04-23
+### Updated
+- Updating how Info.plist files are generated for native libraries.
+  - Info.plist files are now each generated when libraries are built
+  - Settings for the Info.plist file are configured in Core.xcconfig
+  - Updated projet to generate XML (human readable) for debug and binary for release when generating Info.plist
+  - Encoded version(s) in the xcconfig and generated Info.plist should align with the plug-in version reported in `package.json`
+
 ## [3.1.2] - 2024-04-11
 ### Added
 - *Embed Apple Plug-In Libraries* script injected into the Unity-generated Xcode project will now sign native libraries using the same codesign identity configured for that Xcode project.

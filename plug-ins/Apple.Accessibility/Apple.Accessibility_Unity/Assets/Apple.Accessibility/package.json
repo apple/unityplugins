@@ -1,6 +1,6 @@
 {
     "name": "com.apple.unityplugin.accessibility",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "displayName": "Apple.Accessibility",
     "description": "A Unity-port of Apple's UIAccessibility protocol from UIKit.framework",
     "unity": "2022.3",
