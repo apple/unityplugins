@@ -1,6 +1,6 @@
 {
     "name": "com.apple.unityplugin.corehaptics",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "displayName": "Apple.CoreHaptics",
     "description": "Apple's CoreHaptics.framework ported to Unity",
     "unity": "2022.3",

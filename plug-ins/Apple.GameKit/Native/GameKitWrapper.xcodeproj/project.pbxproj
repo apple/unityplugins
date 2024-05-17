@@ -189,7 +189,6 @@
 		7A894465272F2C7D0008D820 /* GKGameCenterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GKGameCenterViewController.swift; sourceTree = "<group>"; };
 		7A9B815324A4FC3800FB2FE8 /* GameKitWrapper.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = GameKitWrapper.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7A9B815624A4FC3800FB2FE8 /* GameKitWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GameKitWrapper.h; sourceTree = "<group>"; };
-		7A9B815724A4FC3800FB2FE8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7AA8AD5B2729EF5500D3F909 /* GKAchievement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GKAchievement.swift; sourceTree = "<group>"; };
 		7AA8AD602729F3D100D3F909 /* GKAchievementDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GKAchievementDescription.swift; sourceTree = "<group>"; };
 		7AA8AD652729F5D600D3F909 /* GKChallenge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GKChallenge.swift; sourceTree = "<group>"; };
@@ -317,7 +316,6 @@
 				7AA8ADBF272B0A3900D3F909 /* GKTurnBasedMatchmakerViewControllerDelegate.swift */,
 				7AA8AD97272A458400D3F909 /* GKTurnBasedParticipant.swift */,
 				7AA8AD9C272A46AF00D3F909 /* GKVoiceChat.swift */,
-				7A9B815724A4FC3800FB2FE8 /* Info.plist */,
 			);
 			path = GameKitWrapper;
 			sourceTree = "<group>";
@@ -858,7 +856,6 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -876,9 +873,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				INFOPLIST_FILE = GameKitWrapper/Info.plist;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "\"Copyright © 2021 - 2024 Apple, Inc. All rights reserved.\"";
-				INFOPLIST_OUTPUT_FORMAT = XML;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.2;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -886,7 +880,6 @@
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
 			name = Debug;
@@ -925,7 +918,6 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -937,9 +929,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				INFOPLIST_FILE = GameKitWrapper/Info.plist;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "\"Copyright © 2021 - 2024 Apple, Inc. All rights reserved.\"";
-				INFOPLIST_OUTPUT_FORMAT = XML;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.2;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -947,7 +936,6 @@
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
 			name = Release;

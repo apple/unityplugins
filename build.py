@@ -9,12 +9,12 @@ import scripts.python.upi_toolchain as toolchain
 from datetime import datetime
 from pathlib import Path
 
-from scripts.python.upi_cli_argument_options import PluginID, PlatformID, ConfigID, BuildActionID, CleanActionID
+from scripts.python.upi_cli_argument_options import PluginID, PlatformID, ConfigID, BuildActionID, CleanActionID, CodeSignActionID
 from scripts.python.upi_build_context import BuildContext
 from scripts.python.upi_utility import PromptColor, Printer
 
 # Set a script version to track evolution
-build_script_version = "2.2.0"
+build_script_version = "2.2.1"
 
 # -----------------
 # Prompt Formatting
@@ -74,8 +74,7 @@ argument_parser.add_argument("-p", "--plugin-list", dest="plugin_list", nargs='*
 argument_parser.add_argument("-m", "--platforms", dest="platform_list", nargs='*', default=[PlatformID.ALL], help=f"Selects the desired platforms to target when building native libraries. Possible values are: {PlatformID.IOS}, {PlatformID.IOS_SIMULATOR}, {PlatformID.MACOS}, {PlatformID.TVOS}, {PlatformID.TVOS_SIMULATOR}, {PlatformID.VISIONOS}, {PlatformID.VISIONOS_SIMULATOR}, {PlatformID.SIMULATORS}, {PlatformID.DEVICES} or {PlatformID.ALL}. Default is: {PlatformID.ALL}")
 argument_parser.add_argument("-b", "--build-action", dest="build_actions", nargs='*', default=[BuildActionID.BUILD, BuildActionID.PACK], help=f"Sets the build actions for the selected plug-ins. Possible values are: {BuildActionID.BUILD}, {BuildActionID.PACK}, {BuildActionID.NONE} or {BuildActionID.ALL}. Defaults are: {BuildActionID.BUILD}, {BuildActionID.PACK}")
 argument_parser.add_argument("-bc","--build-config", dest="build_config", default=ConfigID.ALL, help=f"Sets the build configuration to compile. Possible values are: {ConfigID.RELEASE}, {ConfigID.DEBUG}, or {ConfigID.ALL} which builds all other configs. Default is: {ConfigID.ALL}")
-argument_parser.add_argument("-c", "--codesign-identity", dest="codesign_identity", default=str(), help=f"String which uniquely identifies your codesign identity, typically represented by a hash. Only applied if build actions include {BuildActionID.BUILD}")
-argument_parser.add_argument("-sc", "--skip-codesign", dest="skip_codesign", action="store_true", help=f"Skips codesign and all user prompts.")
+argument_parser.add_argument("-c", "--codesign-identity", dest="codesign_identity", default=str(), help=f"Signs compiled native libraries with provided code signing identity hash or prompts the user to select from a list of identities on the system when {CodeSignActionID.PROMPT} is passed.")
 argument_parser.add_argument("-u", "--unity-installation-root", dest="unity_installation_root", default="", help="Root path to search for Unity installations when building tests. Note: performs a full recursive search of the given directory.")
 argument_parser.add_argument("-o", "--output-path", dest="output_path", default=CTX.build_output_path, help=f"Build result path for final packages. Default: {CTX.build_output_path}")
 argument_parser.add_argument("-k", "--clean-action", dest="clean_actions", nargs='*', default=[CleanActionID.NONE], help=f"Sets the clean actions for the selected plug-ins. Possible values are: {CleanActionID.NATIVE}, {CleanActionID.PACKAGES}, {CleanActionID.TESTS}, {CleanActionID.NONE}, or {CleanActionID.ALL}. Defaults to no clean action.")
@@ -117,13 +116,10 @@ def Main():
           f"\n            Clean Actions({Printer.Bold('-k')}): {CTX.printer.Context(' '.join(build_args.clean_actions))}"
           f"\n              Force Clean({Printer.Bold('-f')}): {CTX.printer.Context('Yes (-f set)' if build_args.force_clean else 'No (-f not set)')}"
           f"\n              Build Tests({Printer.Bold('-t')}): {CTX.printer.Context('Yes (-t set)' if build_args.build_tests else 'No (-t not set)')}"
-          f"\n           Skip Codesign({Printer.Bold('-sc')}): {CTX.printer.Context('Yes (-sc set)' if build_args.skip_codesign else 'No (-sc not set)')}")
+          f"\n     Codesigning Identity({Printer.Bold('-c')}): {CTX.printer.Context(build_args.codesign_identity if len(build_args.codesign_identity) > 0 else 'None supplied.')}")
     
     if len(build_args.unity_installation_root) > 0:
         print(f"  Unity Installation Root({Printer.Bold('-u')}): {CTX.printer.Context(build_args.unity_installation_root)}")
-
-    if not build_args.skip_codesign:
-        print(f"     Codesigning Identity({Printer.Bold('-c')}): {CTX.printer.Context(build_args.codesign_identity if len(build_args.codesign_identity) > 0 else 'None supplied.')}")
 
     if build_args.build_tests:
         print(f"        Test Output Path({Printer.Bold('-to')}): {CTX.printer.Context(build_args.test_output_path)}")
@@ -358,10 +354,11 @@ def Main():
         CTX.printer.MessageWithContext("Native library build using: ", f"Xcode {xcode_version} ({xcode_build_number})", "\n")
         CTX.printer.InfoMessage(f"If this is incorrect, please update your environment with {Printer.Bold('xcode-select')}. (Call \'{Printer.Bold('xcode-select -h')}\' from the command line for more info.)")
 
-        if build_args.skip_codesign:
-            CTX.codesign_hash = ""
-        else:
-            CTX.codesign_hash = build_args.codesign_identity if len(build_args.codesign_identity) > 0 else toolchain.PromptForCodesignIdentity(CTX.printer)
+        if len(build_args.codesign_identity) > 0:
+            if build_args.codesign_identity == CodeSignActionID.PROMPT:
+                CTX.codesign_hash = toolchain.PromptForCodesignIdentity(CTX.printer)
+            else:
+                CTX.codesign_hash = build_args.codesign_identity
 
         CTX.printer.SectionHeading("Gather Unity Installation Info")
 

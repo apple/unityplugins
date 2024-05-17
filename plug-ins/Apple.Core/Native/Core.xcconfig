@@ -20,3 +20,14 @@ UNITY_PROJECT_FOLDER_NAME=Apple.Core_Unity
 // (Required for copy_native_libraries.sh)
 // Name of the folder under the plug-in Unity project's /Assets folder where native libraries should be copied.
 NATIVE_LIBRARY_ROOT_FOLDER_NAME=Apple.Core
+
+// Info.plist Options
+// ------------------
+
+GENERATE_INFOPLIST_FILE = YES
+CURRENT_PROJECT_VERSION = 3.1.3
+MARKETING_VERSION = $CURRENT_PROJECT_VERSION
+VERSIONING_SYSTEM = apple-generic
+INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2021 - 2024 Apple, Inc. All rights reserved."
+INFOPLIST_OUTPUT_FORMAT[config=Debug] = XML
+INFOPLIST_OUTPUT_FORMAT[config=Release] = binary
