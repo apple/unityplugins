@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using UnityEngine;
 using System.Runtime.InteropServices;
 using System;
+using UnityEngine;
 using XNode;
 
 namespace Apple.PHASE
@@ -44,7 +44,7 @@ namespace Apple.PHASE
                 bool result = node.Create();
                 if (result == false)
                 {
-                    Debug.LogError("Failed to create subnodes of random action tree node.");
+                    Debug.LogError("Failed to create subnodes of random sound event node.");
                     return false;
                 }
 

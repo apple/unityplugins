@@ -4,13 +4,18 @@
 
 # Apple Unity Plug-In Build Script Usage
 
-## Requirements
-* Python3
-* npm
-* Xcode
-* Unity 2020.3.33f1
+## Overview
+These instructions are for the Apple Unity Plug-in Build Script, build.py, version 2.0.0. This updated version of the build script allows for increased flexibility by adding a few key features:
+* Easily configure or disable prompt output colors. (See the section 'Prompt Formatting' beginning at line 19 in build.py)
+* Enable a codesign workflow to sign compiled libraries, a requirement for recent Unity builds
+* Allow for upgrade of the Unity plug-in projects, removing the strict requirement of Unity 2020.3.33f1 to build (Though 2020.3.33f1 *or newer* is necessary)
 
-:exclamation: Once the plug-ins have been built, they can be used with any newer Unity version. However, it is recommended to first build plug-ins with the suggested Unity version.
+## Requirements
+* Python3 - To run `build.py`
+* npm - When packing into .tgz files
+* Xcode - For compilation of native libraries
+* Unity 2020.3.33f1 or newer when building tests.
+  * See: [Test Builds](#test-builds)
 
 ## Basic Usage
 
@@ -25,28 +30,46 @@ This command will build each plug-in's native libraries and `npm pack` the entir
 ## Advanced Usage
 
 Running `python3 build.py --help` will show the list of flags available for customizing the build process. What follows is a description of what each flag does and some example use cases.
-* [Plug-in Selection](#Plug-in-Selection)
-* [Build Actions](#Build-Actions)
-* [Unity Installation Path](#Unity-Installation-Path)
-* [Debug Builds](#Debug-Builds)
-* [Output Path](#Output-Path)
-* [Clean Actions](#Clean-Actions)
-* [Force Clean](#Force-Clean)
-* [Test Builds](#Test-Builds)
-* [Test Output Path](#Test-Output-Path)
-
+* [Plug-in Selection](#plug-in-selection)
+* [Platform Selection](#platform-selection)
+* [Build Actions](#build-actions)
+* [Code Signing](#code-signing)
+* [Skip Code Sign](#skip-code-sign)
+* [Unity Installation Path](#unity-installation-path)
+* [Debug Builds](#debug-builds)
+* [Output Path](#output-path)
+* [Clean Actions](#clean-actions)
+* [Force Clean](#force-clean)
+* [Test Builds](#test-builds)
+* [Test Output Path](#test-builds)
 
 ### Plug-in Selection
 - **Flag:** `--plugin-list`
 - **Short version:** `-p`
 - **Possible values:** `all`, `Core`, `Accessibility`, `CoreHaptics`, `GameController`, `GameKit`, `PHASE`
 - **Default value:** `all`
-- **Description:** Selects a subset of plug-ins to perform the [build](#Build-Actions), [clean](#Clean-Actions), or [test](#Test-Builds) action or actions selected. For example, you may want to perform the default actions on only a subset of plug-ins, such as Apple.Core, Apple.GameKit, and Apple.GameController. This can be done by running:
+- **Description:** Selects a subset of plug-ins to perform the [build](#build-actions), [clean](#clean-actions), or [test](#test-builds) action or actions selected. For example, you may want to perform the default actions on only a subset of plug-ins, such as Apple.Core, Apple.GameKit, and Apple.GameController. This can be done by running:
 
 ```bash
 python3 build.py -p Core GameKit GameController
 ```
 
+### Platform Selection
+- **Flag:** `--platforms`
+- **Short version:** `-m`
+- **Possible values:** `all`, `iOS`, `macOS`, `tvOS`, `iPhoneSimulator`, `AppleTVSimulator`, `simulators`, `devices`
+- **Default value:** `all`
+- **Description:** Selects the desired platforms that the plug-ins will target, which also limits which native libraries will be compiled. Platforms are validated against the build machine's installed set of Apple platform SDKs. Choosing the option `simulators` will build all simulator platforms while the option `devices` builds all device platforms. 
+
+:new: Build option `all` now only builds for platforms supported by the build machine. If no tvOS SDK is installed, `all` will no longer select tvOS support.
+:new: Explicitly choosing an unsupported SDK will prompt the user to install the missing SDK.
+
+Example: Build all plug-ins but only target the iPhone simulator, AppleTV simulator, and macOS:
+
+```bash
+python3 build.py -m simulators macOS
+```
+:warning: **Note:** Not building with `macOS` support will result in losing play mode functionality in the Editor. It's recommended to always include `macOS` support.
 
 ### Build Actions
 - **Flag:** `--build-action`
@@ -59,31 +82,44 @@ python3 build.py -p Core GameKit GameController
 python3 build.py -b build
 ```
 
+### Build Configs
+- **Flag:** `--build-config`
+- **Short version:** `-bc`
+- **Possible values:** `all`, `Release`, `Debug`
+- **Default value:** `all`
+- **Description:** This option allows for the build of both `Release` and `Debug` variants of the underlying native libraries for all plug-ins. When available, the plug-in build processing pipeline will use `Debug` libraries for **Development** builds in the Editor and `Release` otherwise. If no variants are available, the plug-in build processing pipeline will use whichever configuration is available. For example, to build release plug-ins for all selected platforms run:
+
+```bash
+python3 build.py -bc Release
+```
+:no_entry_sign: **Important:** The debug build flag `--debug` (`-d`) has been obsoleted and is now replaced by `--build-config` (`-bc`)
+
+### Code Signing
+- **Flag:** `--codesign-identity`
+- **Short version:** `-c`
+- **Possible values:** Any (case sensitive) substring of the code signing certificate's common name attribute, as long as the substring is unique throughout your keychains.
+- **Default value:** None
+- **Description:** Determines the codesign identity to be used when compiling native libraries. Note that this step is not strictly necessary, but recent versions of Unity require native plug-in libraries to be signed to load. For more information on codesigning, please see the Apple Developer Documentation article [Code Signin Guide: Signing Code Manually](https://developer.apple.com/library/archive/documentation/Security/Conceptual/CodeSigningGuide/Procedures/Procedures.html#//apple_ref/doc/uid/TP40005929-CH4-SW4).
+- **Note:** If no codesign identity is provided, user will be prompted. To decline codesign and skip user prompt, please see [Skip Code Sign](#skip-code-sign)
+
+### Skip Code Sign
+- **Flag:** `--skip-codesign`
+- **Short version:** `-sc`
+- **Default value:** Off
+- **Description:** Setting this flag skips both code signing and user prompt
 
 ### Unity Installation Path
 - **Flag:** `--unity-installation-root`
 - **Short version:** `-u`
 - **Possible values:** Any system directory
 - **Default value:** `/Applications/Unity`
-- **Description:** The build actions above require a valid Unity installation in order to properly resolve the native library references within the Unity package. This flag is used to provide a path to use for searching for Unity installations. Most users will likely have their Unity installations installed in the `/Applications/Unity/` path. However, if your Unity settings are custom, you may have elected to use an alternate location, such as `~/Desktop/UnityInstalls/`. In that case, tell the build script where to find your Unity installations by running:
+- **Description:** The build actions above require a valid Unity installation in order to select the correct version of Unity when building tests. This flag is used to provide a path to use for searching for Unity installations. Most users will likely have their Unity installations installed in the `/Applications/Unity/` path. However, if your Unity settings are custom, you may have elected to use an alternate location, such as `~/Desktop/UnityInstalls/`. In that case, tell the build script where to find your Unity installations by running:
 
 ```bash
 python3 build.py -u ~/Desktop/UnityInstalls
 ```
-
 :warning: The path provided is used as the basis for a full-depth recursive search. Providing a system path such as `/` or `/Users/` could result in very long build times.
-
-
-### Debug Builds
-- **Flag:** `--debug`
-- **Short version:** `-d`
-- **Default value:** Off
-- **Description:** If you are making changes to the native code as part of an open source contribution, or if for any other reason you'd like to a debug build with more verbose native library logging, add this flag to your build command. For example:
-
-```bash
-python3 build.py -d
-```
-
+:new::exclamation: This argument now only applies when building tests. Unity is no longer needed for verification during non-test builds.
 
 ### Output Path
 - **Flag:** `--output-path`
@@ -95,7 +131,6 @@ python3 build.py -d
 ```bash
 python3 build.py -o ~/Desktop/
 ```
-
 
 ### Clean Actions
 - **Flag:** `--clean-action`
@@ -110,7 +145,6 @@ python3 build.py -k packages native
 
 :exclamation: Note that this attempts to clean files only at the specified output path, not at paths used by previous uses of the script.
 
-
 ### Force Clean
 - **Flag:** `--force`
 - **Short version:** `-f`
@@ -121,7 +155,6 @@ python3 build.py -k packages native
 python3 build.py -k all -f
 ```
 
-
 ### Test Builds
 - **Flag:** `--test`
 - **Short version:** `-t`
@@ -131,9 +164,8 @@ python3 build.py -k all -f
 ```bash
 python3 build.py -p CoreHaptics -t -b build
 ```
-
 :exclamation: Note that this command elects only to `build`, and not `pack` the plug-in. If you are iterating only on the Unity code and not making any changes to the native code, you might opt for `-b none` here to reduce test building time.
-
+:warning: Adding this option will verify your Unity installation against the verion(s) of the plug-ins for which you are building tests. The script will prompt for attempted upgrade, but best practice is to match your Unity installation to the project version(s).
 
 ### Test Output Path
 - **Flag:** `--test-output-path`

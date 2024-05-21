@@ -1,12 +1,15 @@
 using UnityEditor;
-using UnityEditor.iOS.Xcode;
 using UnityEngine;
+
+#if (UNITY_EDITOR_OSX && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX || UNITY_VISIONOS))
+using UnityEditor.iOS.Xcode;
+#endif
 
 namespace Apple.Core
 {
     public class AppleUserManagementBuildStep : AppleBuildStep
     {
-        public override string DisplayName => "tvOS User Management";
+        public override string DisplayName => "Apple.Core.UserManagementForAppleTV";
 
         [Tooltip("The value that grants access to TVUserManager, so you can map your own profiles to users in the system.")]
         public bool AllowGetCurrentUser = false;
@@ -18,7 +21,7 @@ namespace Apple.Core
             IsEnabled = false;
         }
 
-#if UNITY_EDITOR_OSX
+#if (UNITY_EDITOR_OSX && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX || UNITY_VISIONOS))
         public override void OnProcessEntitlements(AppleBuildProfile appleBuildProfile, BuildTarget buildTarget, string pathToBuiltTarget, PlistDocument entitlements)
         {
             if (buildTarget == BuildTarget.tvOS)

@@ -6,121 +6,106 @@
 	objectVersion = 50;
 	objects = {
 
-/* Begin PBXAggregateTarget section */
-		CFE533D1263B6E6E00078448 /* All */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = CFE533D2263B6E6E00078448 /* Build configuration list for PBXAggregateTarget "All" */;
-			buildPhases = (
-			);
-			dependencies = (
-				CFE533DE263B6E7400078448 /* PBXTargetDependency */,
-				CFE533DC263B6E7300078448 /* PBXTargetDependency */,
-				CFE533DA263B6E7200078448 /* PBXTargetDependency */,
-			);
-			name = All;
-			productName = AllFrameworks;
-		};
-/* End PBXAggregateTarget section */
-
 /* Begin PBXBuildFile section */
+		244F33532A6F0A2B005099AE /* AppleCore_BridgingHeader.h in Headers */ = {isa = PBXBuildFile; fileRef = 244F33522A6F0A2B005099AE /* AppleCore_BridgingHeader.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		244F33542A6F0A2B005099AE /* AppleCore_BridgingHeader.h in Headers */ = {isa = PBXBuildFile; fileRef = 244F33522A6F0A2B005099AE /* AppleCore_BridgingHeader.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		244F33552A6F0A2B005099AE /* AppleCore_BridgingHeader.h in Headers */ = {isa = PBXBuildFile; fileRef = 244F33522A6F0A2B005099AE /* AppleCore_BridgingHeader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		245B212327DEA517007479CE /* AppleCoreRuntimeShared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 245B212227DEA517007479CE /* AppleCoreRuntimeShared.swift */; };
 		245B212427DEA517007479CE /* AppleCoreRuntimeShared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 245B212227DEA517007479CE /* AppleCoreRuntimeShared.swift */; };
 		245B212527DEA517007479CE /* AppleCoreRuntimeShared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 245B212227DEA517007479CE /* AppleCoreRuntimeShared.swift */; };
 		245B212A27DEA521007479CE /* NSError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 245B212627DEA521007479CE /* NSError.swift */; };
 		245B212B27DEA521007479CE /* NSError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 245B212627DEA521007479CE /* NSError.swift */; };
 		245B212C27DEA521007479CE /* NSError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 245B212627DEA521007479CE /* NSError.swift */; };
-		245B212D27DEA521007479CE /* NSArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = 245B212727DEA521007479CE /* NSArray.swift */; };
-		245B212E27DEA521007479CE /* NSArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = 245B212727DEA521007479CE /* NSArray.swift */; };
-		245B212F27DEA521007479CE /* NSArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = 245B212727DEA521007479CE /* NSArray.swift */; };
-		245B213027DEA521007479CE /* NSDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 245B212827DEA521007479CE /* NSDictionary.swift */; };
-		245B213127DEA521007479CE /* NSDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 245B212827DEA521007479CE /* NSDictionary.swift */; };
-		245B213227DEA521007479CE /* NSDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 245B212827DEA521007479CE /* NSDictionary.swift */; };
-		245B213327DEA521007479CE /* NSMutableArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = 245B212927DEA521007479CE /* NSMutableArray.swift */; };
-		245B213427DEA521007479CE /* NSMutableArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = 245B212927DEA521007479CE /* NSMutableArray.swift */; };
-		245B213527DEA521007479CE /* NSMutableArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = 245B212927DEA521007479CE /* NSMutableArray.swift */; };
+		24B064032B7EDFE5007ABBB8 /* ACRuntimeEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24B8F1882A73397C00914A67 /* ACRuntimeEnvironment.swift */; };
+		24B064042B7EDFEE007ABBB8 /* AppleCore_BridgingHeader.h in Headers */ = {isa = PBXBuildFile; fileRef = 244F33522A6F0A2B005099AE /* AppleCore_BridgingHeader.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		24B064052B7EDFF3007ABBB8 /* AppleCoreNative.h in Headers */ = {isa = PBXBuildFile; fileRef = CFE5338F263B6CCC00078448 /* AppleCoreNative.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		24B064062B7EDFFA007ABBB8 /* AppleCoreRuntimeShared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 245B212227DEA517007479CE /* AppleCoreRuntimeShared.swift */; };
+		24B064072B7EDFFD007ABBB8 /* CoreUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFE53398263B6D1400078448 /* CoreUtilities.swift */; };
+		24B064082B7EE010007ABBB8 /* NSArray.m in Sources */ = {isa = PBXBuildFile; fileRef = FB32D8782AF96000006A8FE4 /* NSArray.m */; };
+		24B064092B7EE012007ABBB8 /* NSData.m in Sources */ = {isa = PBXBuildFile; fileRef = FB8FF4912B338A110058B918 /* NSData.m */; };
+		24B0640A2B7EE016007ABBB8 /* NSDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = FB32D8802AFAADAA006A8FE4 /* NSDictionary.m */; };
+		24B0640B2B7EE019007ABBB8 /* NSError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 245B212627DEA521007479CE /* NSError.swift */; };
+		24B0640C2B7EE01C007ABBB8 /* NSException.m in Sources */ = {isa = PBXBuildFile; fileRef = FB6C73C22AFDA7800077714C /* NSException.m */; };
+		24B0640D2B7EE01F007ABBB8 /* NSMutableArray.m in Sources */ = {isa = PBXBuildFile; fileRef = FB32D87C2AF97A09006A8FE4 /* NSMutableArray.m */; };
+		24B0640E2B7EE028007ABBB8 /* NSMutableDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = FB32D8842AFADF1A006A8FE4 /* NSMutableDictionary.m */; };
+		24B0640F2B7EE02B007ABBB8 /* NSNull.m in Sources */ = {isa = PBXBuildFile; fileRef = FB8694402AD47FFA009B8676 /* NSNull.m */; };
+		24B064102B7EE02E007ABBB8 /* NSNumber.m in Sources */ = {isa = PBXBuildFile; fileRef = FBB2BEBF2AC77D160040E5E0 /* NSNumber.m */; };
+		24B064112B7EE031007ABBB8 /* NSObject.m in Sources */ = {isa = PBXBuildFile; fileRef = FB86943C2ACF32FB009B8676 /* NSObject.m */; };
+		24B064122B7EE034007ABBB8 /* NSString.m in Sources */ = {isa = PBXBuildFile; fileRef = FBB2BEC32ACB2FDE0040E5E0 /* NSString.m */; };
+		24B8F1892A73397C00914A67 /* ACRuntimeEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24B8F1882A73397C00914A67 /* ACRuntimeEnvironment.swift */; };
+		24B8F18A2A73397C00914A67 /* ACRuntimeEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24B8F1882A73397C00914A67 /* ACRuntimeEnvironment.swift */; };
+		24B8F18B2A73397C00914A67 /* ACRuntimeEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24B8F1882A73397C00914A67 /* ACRuntimeEnvironment.swift */; };
 		CFE53391263B6CCC00078448 /* AppleCoreNative.h in Headers */ = {isa = PBXBuildFile; fileRef = CFE5338F263B6CCC00078448 /* AppleCoreNative.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		CFE53399263B6D1400078448 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFE53398263B6D1400078448 /* Logger.swift */; };
+		CFE53399263B6D1400078448 /* CoreUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFE53398263B6D1400078448 /* CoreUtilities.swift */; };
 		CFE533A1263B6E2200078448 /* AppleCoreNative.h in Headers */ = {isa = PBXBuildFile; fileRef = CFE5338F263B6CCC00078448 /* AppleCoreNative.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		CFE533A3263B6E2200078448 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFE53398263B6D1400078448 /* Logger.swift */; };
-		CFE5340C263B700A00078448 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFE53398263B6D1400078448 /* Logger.swift */; };
+		CFE533A3263B6E2200078448 /* CoreUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFE53398263B6D1400078448 /* CoreUtilities.swift */; };
+		CFE5340C263B700A00078448 /* CoreUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFE53398263B6D1400078448 /* CoreUtilities.swift */; };
 		CFE5341B263B702100078448 /* AppleCoreNative.h in Headers */ = {isa = PBXBuildFile; fileRef = CFE5338F263B6CCC00078448 /* AppleCoreNative.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		CFE53435263B77BB00078448 /* AppleCoreNative.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = CFE5338C263B6CCC00078448 /* AppleCoreNative.framework */; };
-		CFE53437263B77E300078448 /* AppleCoreNative.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = CFE533AA263B6E2200078448 /* AppleCoreNative.framework */; };
-		CFE53439263B77ED00078448 /* AppleCoreNativeMac.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = CFE533C5263B6E4800078448 /* AppleCoreNativeMac.bundle */; };
+		FB32D8792AF96000006A8FE4 /* NSArray.m in Sources */ = {isa = PBXBuildFile; fileRef = FB32D8782AF96000006A8FE4 /* NSArray.m */; };
+		FB32D87A2AF96000006A8FE4 /* NSArray.m in Sources */ = {isa = PBXBuildFile; fileRef = FB32D8782AF96000006A8FE4 /* NSArray.m */; };
+		FB32D87B2AF96000006A8FE4 /* NSArray.m in Sources */ = {isa = PBXBuildFile; fileRef = FB32D8782AF96000006A8FE4 /* NSArray.m */; };
+		FB32D87D2AF97A09006A8FE4 /* NSMutableArray.m in Sources */ = {isa = PBXBuildFile; fileRef = FB32D87C2AF97A09006A8FE4 /* NSMutableArray.m */; };
+		FB32D87E2AF97A09006A8FE4 /* NSMutableArray.m in Sources */ = {isa = PBXBuildFile; fileRef = FB32D87C2AF97A09006A8FE4 /* NSMutableArray.m */; };
+		FB32D87F2AF97A09006A8FE4 /* NSMutableArray.m in Sources */ = {isa = PBXBuildFile; fileRef = FB32D87C2AF97A09006A8FE4 /* NSMutableArray.m */; };
+		FB32D8812AFAADAA006A8FE4 /* NSDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = FB32D8802AFAADAA006A8FE4 /* NSDictionary.m */; };
+		FB32D8822AFAADAA006A8FE4 /* NSDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = FB32D8802AFAADAA006A8FE4 /* NSDictionary.m */; };
+		FB32D8832AFAADAA006A8FE4 /* NSDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = FB32D8802AFAADAA006A8FE4 /* NSDictionary.m */; };
+		FB32D8852AFADF1A006A8FE4 /* NSMutableDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = FB32D8842AFADF1A006A8FE4 /* NSMutableDictionary.m */; };
+		FB32D8862AFADF1A006A8FE4 /* NSMutableDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = FB32D8842AFADF1A006A8FE4 /* NSMutableDictionary.m */; };
+		FB32D8872AFADF1A006A8FE4 /* NSMutableDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = FB32D8842AFADF1A006A8FE4 /* NSMutableDictionary.m */; };
+		FB6C73C32AFDA7800077714C /* NSException.m in Sources */ = {isa = PBXBuildFile; fileRef = FB6C73C22AFDA7800077714C /* NSException.m */; };
+		FB6C73C42AFDA7800077714C /* NSException.m in Sources */ = {isa = PBXBuildFile; fileRef = FB6C73C22AFDA7800077714C /* NSException.m */; };
+		FB6C73C52AFDA7800077714C /* NSException.m in Sources */ = {isa = PBXBuildFile; fileRef = FB6C73C22AFDA7800077714C /* NSException.m */; };
+		FB86943D2ACF32FB009B8676 /* NSObject.m in Sources */ = {isa = PBXBuildFile; fileRef = FB86943C2ACF32FB009B8676 /* NSObject.m */; };
+		FB86943E2ACF32FB009B8676 /* NSObject.m in Sources */ = {isa = PBXBuildFile; fileRef = FB86943C2ACF32FB009B8676 /* NSObject.m */; };
+		FB86943F2ACF32FB009B8676 /* NSObject.m in Sources */ = {isa = PBXBuildFile; fileRef = FB86943C2ACF32FB009B8676 /* NSObject.m */; };
+		FB8694412AD47FFA009B8676 /* NSNull.m in Sources */ = {isa = PBXBuildFile; fileRef = FB8694402AD47FFA009B8676 /* NSNull.m */; };
+		FB8694422AD47FFA009B8676 /* NSNull.m in Sources */ = {isa = PBXBuildFile; fileRef = FB8694402AD47FFA009B8676 /* NSNull.m */; };
+		FB8694432AD47FFA009B8676 /* NSNull.m in Sources */ = {isa = PBXBuildFile; fileRef = FB8694402AD47FFA009B8676 /* NSNull.m */; };
+		FB8FF4922B338A1A0058B918 /* NSData.m in Sources */ = {isa = PBXBuildFile; fileRef = FB8FF4912B338A110058B918 /* NSData.m */; };
+		FB8FF4932B338A1A0058B918 /* NSData.m in Sources */ = {isa = PBXBuildFile; fileRef = FB8FF4912B338A110058B918 /* NSData.m */; };
+		FB8FF4942B338A1A0058B918 /* NSData.m in Sources */ = {isa = PBXBuildFile; fileRef = FB8FF4912B338A110058B918 /* NSData.m */; };
+		FBB2BEC02AC77D160040E5E0 /* NSNumber.m in Sources */ = {isa = PBXBuildFile; fileRef = FBB2BEBF2AC77D160040E5E0 /* NSNumber.m */; };
+		FBB2BEC12AC77D160040E5E0 /* NSNumber.m in Sources */ = {isa = PBXBuildFile; fileRef = FBB2BEBF2AC77D160040E5E0 /* NSNumber.m */; };
+		FBB2BEC22AC77D160040E5E0 /* NSNumber.m in Sources */ = {isa = PBXBuildFile; fileRef = FBB2BEBF2AC77D160040E5E0 /* NSNumber.m */; };
+		FBB2BEC42ACB2FDE0040E5E0 /* NSString.m in Sources */ = {isa = PBXBuildFile; fileRef = FBB2BEC32ACB2FDE0040E5E0 /* NSString.m */; };
+		FBB2BEC52ACB2FDE0040E5E0 /* NSString.m in Sources */ = {isa = PBXBuildFile; fileRef = FBB2BEC32ACB2FDE0040E5E0 /* NSString.m */; };
+		FBB2BEC62ACB2FDE0040E5E0 /* NSString.m in Sources */ = {isa = PBXBuildFile; fileRef = FBB2BEC32ACB2FDE0040E5E0 /* NSString.m */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		CFE533D9263B6E7200078448 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CFE53383263B6CCC00078448 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = CFE533C4263B6E4800078448;
-			remoteInfo = AppleCoreNativeWrapperMac;
-		};
-		CFE533DB263B6E7300078448 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CFE53383263B6CCC00078448 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = CFE5339F263B6E2200078448;
-			remoteInfo = "AppleCoreNativeWrapper tvOS";
-		};
-		CFE533DD263B6E7400078448 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CFE53383263B6CCC00078448 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = CFE5338B263B6CCC00078448;
-			remoteInfo = "AppleCoreNativeWrapper iOS";
-		};
-/* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		CFE53434263B779700078448 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "$(PROJECT_DIR)/../Apple.Core_Unity/Assets/Apple.Core/Plugins/iOS";
-			dstSubfolderSpec = 0;
-			files = (
-				CFE53435263B77BB00078448 /* AppleCoreNative.framework in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		CFE53436263B77C500078448 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 12;
-			dstPath = "$(PROJECT_DIR)/../Apple.Core_Unity/Assets/Apple.Core/Plugins/tvOS";
-			dstSubfolderSpec = 0;
-			files = (
-				CFE53437263B77E300078448 /* AppleCoreNative.framework in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		CFE53438263B77E900078448 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "$(PROJECT_DIR)/../Apple.Core_Unity/Assets/Apple.Core/Plugins/macOS";
-			dstSubfolderSpec = 0;
-			files = (
-				CFE53439263B77ED00078448 /* AppleCoreNativeMac.bundle in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXFileReference section */
+		240646112B61F5F000246067 /* Core.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Core.xcconfig; sourceTree = "<group>"; };
+		240646262B6759CC00246067 /* copy_native_libraries.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = copy_native_libraries.sh; path = ../../../scripts/shell/copy_native_libraries.sh; sourceTree = "<group>"; };
+		244F33522A6F0A2B005099AE /* AppleCore_BridgingHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleCore_BridgingHeader.h; sourceTree = "<group>"; };
 		245B212227DEA517007479CE /* AppleCoreRuntimeShared.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppleCoreRuntimeShared.swift; sourceTree = "<group>"; };
 		245B212627DEA521007479CE /* NSError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSError.swift; sourceTree = "<group>"; };
-		245B212727DEA521007479CE /* NSArray.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSArray.swift; sourceTree = "<group>"; };
-		245B212827DEA521007479CE /* NSDictionary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSDictionary.swift; sourceTree = "<group>"; };
-		245B212927DEA521007479CE /* NSMutableArray.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSMutableArray.swift; sourceTree = "<group>"; };
+		24B063FC2B7EDC73007ABBB8 /* AppleCoreNative.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AppleCoreNative.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		24B8F1882A73397C00914A67 /* ACRuntimeEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ACRuntimeEnvironment.swift; sourceTree = "<group>"; };
 		CFE5338C263B6CCC00078448 /* AppleCoreNative.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AppleCoreNative.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFE5338F263B6CCC00078448 /* AppleCoreNative.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleCoreNative.h; sourceTree = "<group>"; };
-		CFE53398263B6D1400078448 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
+		CFE53398263B6D1400078448 /* CoreUtilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreUtilities.swift; sourceTree = "<group>"; };
 		CFE533AA263B6E2200078448 /* AppleCoreNative.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AppleCoreNative.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFE533C5263B6E4800078448 /* AppleCoreNativeMac.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AppleCoreNativeMac.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
-		CFE53442263B7A2A00078448 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		FB32D8782AF96000006A8FE4 /* NSArray.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NSArray.m; sourceTree = "<group>"; };
+		FB32D87C2AF97A09006A8FE4 /* NSMutableArray.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NSMutableArray.m; sourceTree = "<group>"; };
+		FB32D8802AFAADAA006A8FE4 /* NSDictionary.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NSDictionary.m; sourceTree = "<group>"; };
+		FB32D8842AFADF1A006A8FE4 /* NSMutableDictionary.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NSMutableDictionary.m; sourceTree = "<group>"; };
+		FB6C73C22AFDA7800077714C /* NSException.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NSException.m; sourceTree = "<group>"; };
+		FB86943C2ACF32FB009B8676 /* NSObject.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NSObject.m; sourceTree = "<group>"; };
+		FB8694402AD47FFA009B8676 /* NSNull.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NSNull.m; sourceTree = "<group>"; };
+		FB8FF4912B338A110058B918 /* NSData.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NSData.m; sourceTree = "<group>"; };
+		FBB2BEBF2AC77D160040E5E0 /* NSNumber.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NSNumber.m; sourceTree = "<group>"; };
+		FBB2BEC32ACB2FDE0040E5E0 /* NSString.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NSString.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		24B063F92B7EDC73007ABBB8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CFE53389263B6CCC00078448 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -148,6 +133,8 @@
 		CFE53382263B6CCC00078448 = {
 			isa = PBXGroup;
 			children = (
+				240646262B6759CC00246067 /* copy_native_libraries.sh */,
+				240646112B61F5F000246067 /* Core.xcconfig */,
 				CFE5338E263B6CCC00078448 /* AppleCoreNative */,
 				CFE5338D263B6CCC00078448 /* Products */,
 			);
@@ -159,6 +146,7 @@
 				CFE5338C263B6CCC00078448 /* AppleCoreNative.framework */,
 				CFE533AA263B6E2200078448 /* AppleCoreNative.framework */,
 				CFE533C5263B6E4800078448 /* AppleCoreNativeMac.bundle */,
+				24B063FC2B7EDC73007ABBB8 /* AppleCoreNative.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -166,14 +154,22 @@
 		CFE5338E263B6CCC00078448 /* AppleCoreNative */ = {
 			isa = PBXGroup;
 			children = (
-				245B212727DEA521007479CE /* NSArray.swift */,
-				245B212827DEA521007479CE /* NSDictionary.swift */,
-				245B212627DEA521007479CE /* NSError.swift */,
-				245B212927DEA521007479CE /* NSMutableArray.swift */,
-				245B212227DEA517007479CE /* AppleCoreRuntimeShared.swift */,
+				24B8F1882A73397C00914A67 /* ACRuntimeEnvironment.swift */,
+				244F33522A6F0A2B005099AE /* AppleCore_BridgingHeader.h */,
 				CFE5338F263B6CCC00078448 /* AppleCoreNative.h */,
-				CFE53398263B6D1400078448 /* Logger.swift */,
-				CFE53442263B7A2A00078448 /* Info.plist */,
+				245B212227DEA517007479CE /* AppleCoreRuntimeShared.swift */,
+				CFE53398263B6D1400078448 /* CoreUtilities.swift */,
+				FB32D8782AF96000006A8FE4 /* NSArray.m */,
+				FB8FF4912B338A110058B918 /* NSData.m */,
+				FB32D8802AFAADAA006A8FE4 /* NSDictionary.m */,
+				245B212627DEA521007479CE /* NSError.swift */,
+				FB6C73C22AFDA7800077714C /* NSException.m */,
+				FB32D87C2AF97A09006A8FE4 /* NSMutableArray.m */,
+				FB32D8842AFADF1A006A8FE4 /* NSMutableDictionary.m */,
+				FB8694402AD47FFA009B8676 /* NSNull.m */,
+				FBB2BEBF2AC77D160040E5E0 /* NSNumber.m */,
+				FB86943C2ACF32FB009B8676 /* NSObject.m */,
+				FBB2BEC32ACB2FDE0040E5E0 /* NSString.m */,
 			);
 			path = AppleCoreNative;
 			sourceTree = "<group>";
@@ -181,11 +177,21 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		24B063F72B7EDC73007ABBB8 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				24B064042B7EDFEE007ABBB8 /* AppleCore_BridgingHeader.h in Headers */,
+				24B064052B7EDFF3007ABBB8 /* AppleCoreNative.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CFE53387263B6CCC00078448 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				CFE53391263B6CCC00078448 /* AppleCoreNative.h in Headers */,
+				244F33532A6F0A2B005099AE /* AppleCore_BridgingHeader.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -194,6 +200,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CFE533A1263B6E2200078448 /* AppleCoreNative.h in Headers */,
+				244F33542A6F0A2B005099AE /* AppleCore_BridgingHeader.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -202,12 +209,31 @@
 			buildActionMask = 2147483647;
 			files = (
 				CFE5341B263B702100078448 /* AppleCoreNative.h in Headers */,
+				244F33552A6F0A2B005099AE /* AppleCore_BridgingHeader.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		24B063FB2B7EDC73007ABBB8 /* AppleCoreNative_visionOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 24B064022B7EDC73007ABBB8 /* Build configuration list for PBXNativeTarget "AppleCoreNative_visionOS" */;
+			buildPhases = (
+				24B063F72B7EDC73007ABBB8 /* Headers */,
+				24B063F82B7EDC73007ABBB8 /* Sources */,
+				24B063F92B7EDC73007ABBB8 /* Frameworks */,
+				24B063FA2B7EDC73007ABBB8 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = AppleCoreNative_visionOS;
+			productName = AppleCoreNative_visionOS;
+			productReference = 24B063FC2B7EDC73007ABBB8 /* AppleCoreNative.framework */;
+			productType = "com.apple.product-type.framework";
+		};
 		CFE5338B263B6CCC00078448 /* AppleCoreNative_iOS */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = CFE53394263B6CCC00078448 /* Build configuration list for PBXNativeTarget "AppleCoreNative_iOS" */;
@@ -216,7 +242,6 @@
 				CFE53388263B6CCC00078448 /* Sources */,
 				CFE53389263B6CCC00078448 /* Frameworks */,
 				CFE5338A263B6CCC00078448 /* Resources */,
-				CFE53434263B779700078448 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -235,7 +260,6 @@
 				CFE533A2263B6E2200078448 /* Sources */,
 				CFE533A5263B6E2200078448 /* Frameworks */,
 				CFE533A6263B6E2200078448 /* Resources */,
-				CFE53436263B77C500078448 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -254,7 +278,6 @@
 				CFE533C1263B6E4800078448 /* Sources */,
 				CFE533C2263B6E4800078448 /* Frameworks */,
 				CFE533C3263B6E4800078448 /* Resources */,
-				CFE53438263B77E900078448 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -273,14 +296,17 @@
 			attributes = {
 				LastUpgradeCheck = 1220;
 				TargetAttributes = {
+					24B063FB2B7EDC73007ABBB8 = {
+						CreatedOnToolsVersion = 15.2;
+					};
 					CFE5338B263B6CCC00078448 = {
 						CreatedOnToolsVersion = 12.2;
-						LastSwiftMigration = 1220;
+						LastSwiftMigration = 1500;
+					};
+					CFE5339F263B6E2200078448 = {
+						LastSwiftMigration = 1500;
 					};
 					CFE533C4263B6E4800078448 = {
-						CreatedOnToolsVersion = 12.2;
-					};
-					CFE533D1263B6E6E00078448 = {
 						CreatedOnToolsVersion = 12.2;
 					};
 				};
@@ -300,13 +326,20 @@
 			targets = (
 				CFE5338B263B6CCC00078448 /* AppleCoreNative_iOS */,
 				CFE5339F263B6E2200078448 /* AppleCoreNative_tvOS */,
+				24B063FB2B7EDC73007ABBB8 /* AppleCoreNative_visionOS */,
 				CFE533C4263B6E4800078448 /* AppleCoreNative_Mac */,
-				CFE533D1263B6E6E00078448 /* All */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		24B063FA2B7EDC73007ABBB8 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CFE5338A263B6CCC00078448 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -331,16 +364,45 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		24B063F82B7EDC73007ABBB8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				24B0640C2B7EE01C007ABBB8 /* NSException.m in Sources */,
+				24B064082B7EE010007ABBB8 /* NSArray.m in Sources */,
+				24B064032B7EDFE5007ABBB8 /* ACRuntimeEnvironment.swift in Sources */,
+				24B0640E2B7EE028007ABBB8 /* NSMutableDictionary.m in Sources */,
+				24B0640B2B7EE019007ABBB8 /* NSError.swift in Sources */,
+				24B0640A2B7EE016007ABBB8 /* NSDictionary.m in Sources */,
+				24B0640D2B7EE01F007ABBB8 /* NSMutableArray.m in Sources */,
+				24B064102B7EE02E007ABBB8 /* NSNumber.m in Sources */,
+				24B0640F2B7EE02B007ABBB8 /* NSNull.m in Sources */,
+				24B064122B7EE034007ABBB8 /* NSString.m in Sources */,
+				24B064112B7EE031007ABBB8 /* NSObject.m in Sources */,
+				24B064062B7EDFFA007ABBB8 /* AppleCoreRuntimeShared.swift in Sources */,
+				24B064092B7EE012007ABBB8 /* NSData.m in Sources */,
+				24B064072B7EDFFD007ABBB8 /* CoreUtilities.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CFE53388263B6CCC00078448 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				245B212D27DEA521007479CE /* NSArray.swift in Sources */,
-				CFE53399263B6D1400078448 /* Logger.swift in Sources */,
-				245B213027DEA521007479CE /* NSDictionary.swift in Sources */,
+				CFE53399263B6D1400078448 /* CoreUtilities.swift in Sources */,
+				24B8F1892A73397C00914A67 /* ACRuntimeEnvironment.swift in Sources */,
+				FBB2BEC02AC77D160040E5E0 /* NSNumber.m in Sources */,
+				FBB2BEC42ACB2FDE0040E5E0 /* NSString.m in Sources */,
+				FB32D87D2AF97A09006A8FE4 /* NSMutableArray.m in Sources */,
 				245B212327DEA517007479CE /* AppleCoreRuntimeShared.swift in Sources */,
+				FB8FF4922B338A1A0058B918 /* NSData.m in Sources */,
+				FB8694412AD47FFA009B8676 /* NSNull.m in Sources */,
+				FB32D8812AFAADAA006A8FE4 /* NSDictionary.m in Sources */,
+				FB6C73C32AFDA7800077714C /* NSException.m in Sources */,
+				FB32D8792AF96000006A8FE4 /* NSArray.m in Sources */,
+				FB32D8852AFADF1A006A8FE4 /* NSMutableDictionary.m in Sources */,
 				245B212A27DEA521007479CE /* NSError.swift in Sources */,
-				245B213327DEA521007479CE /* NSMutableArray.swift in Sources */,
+				FB86943D2ACF32FB009B8676 /* NSObject.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -348,12 +410,20 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				245B212E27DEA521007479CE /* NSArray.swift in Sources */,
-				CFE533A3263B6E2200078448 /* Logger.swift in Sources */,
-				245B213127DEA521007479CE /* NSDictionary.swift in Sources */,
+				CFE533A3263B6E2200078448 /* CoreUtilities.swift in Sources */,
+				24B8F18A2A73397C00914A67 /* ACRuntimeEnvironment.swift in Sources */,
+				FBB2BEC12AC77D160040E5E0 /* NSNumber.m in Sources */,
+				FBB2BEC52ACB2FDE0040E5E0 /* NSString.m in Sources */,
+				FB32D87E2AF97A09006A8FE4 /* NSMutableArray.m in Sources */,
 				245B212427DEA517007479CE /* AppleCoreRuntimeShared.swift in Sources */,
+				FB8FF4932B338A1A0058B918 /* NSData.m in Sources */,
+				FB8694422AD47FFA009B8676 /* NSNull.m in Sources */,
+				FB32D8822AFAADAA006A8FE4 /* NSDictionary.m in Sources */,
+				FB6C73C42AFDA7800077714C /* NSException.m in Sources */,
+				FB32D87A2AF96000006A8FE4 /* NSArray.m in Sources */,
+				FB32D8862AFADF1A006A8FE4 /* NSMutableDictionary.m in Sources */,
 				245B212B27DEA521007479CE /* NSError.swift in Sources */,
-				245B213427DEA521007479CE /* NSMutableArray.swift in Sources */,
+				FB86943E2ACF32FB009B8676 /* NSObject.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -361,38 +431,100 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				245B212F27DEA521007479CE /* NSArray.swift in Sources */,
-				245B213227DEA521007479CE /* NSDictionary.swift in Sources */,
-				CFE5340C263B700A00078448 /* Logger.swift in Sources */,
+				24B8F18B2A73397C00914A67 /* ACRuntimeEnvironment.swift in Sources */,
+				FBB2BEC22AC77D160040E5E0 /* NSNumber.m in Sources */,
+				FBB2BEC62ACB2FDE0040E5E0 /* NSString.m in Sources */,
+				CFE5340C263B700A00078448 /* CoreUtilities.swift in Sources */,
+				FB32D87F2AF97A09006A8FE4 /* NSMutableArray.m in Sources */,
 				245B212527DEA517007479CE /* AppleCoreRuntimeShared.swift in Sources */,
+				FB8FF4942B338A1A0058B918 /* NSData.m in Sources */,
+				FB8694432AD47FFA009B8676 /* NSNull.m in Sources */,
+				FB32D8832AFAADAA006A8FE4 /* NSDictionary.m in Sources */,
+				FB6C73C52AFDA7800077714C /* NSException.m in Sources */,
+				FB32D87B2AF96000006A8FE4 /* NSArray.m in Sources */,
+				FB32D8872AFADF1A006A8FE4 /* NSMutableDictionary.m in Sources */,
 				245B212C27DEA521007479CE /* NSError.swift in Sources */,
-				245B213527DEA521007479CE /* NSMutableArray.swift in Sources */,
+				FB86943F2ACF32FB009B8676 /* NSObject.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
-/* Begin PBXTargetDependency section */
-		CFE533DA263B6E7200078448 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = CFE533C4263B6E4800078448 /* AppleCoreNative_Mac */;
-			targetProxy = CFE533D9263B6E7200078448 /* PBXContainerItemProxy */;
-		};
-		CFE533DC263B6E7300078448 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = CFE5339F263B6E2200078448 /* AppleCoreNative_tvOS */;
-			targetProxy = CFE533DB263B6E7300078448 /* PBXContainerItemProxy */;
-		};
-		CFE533DE263B6E7400078448 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = CFE5338B263B6CCC00078448 /* AppleCoreNative_iOS */;
-			targetProxy = CFE533DD263B6E7400078448 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
 /* Begin XCBuildConfiguration section */
+		24B064002B7EDC73007ABBB8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 240646112B61F5F000246067 /* Core.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "\"Copyright © 2021 - 2024 Apple, Inc. All rights reserved.\"";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.apple-plugins.AppleCoreNative-visionOS";
+				PRODUCT_NAME = AppleCoreNative;
+				SDKROOT = xros;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "xros xrsimulator";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 7;
+				TVOS_DEPLOYMENT_TARGET = 13.0;
+				WATCHOS_DEPLOYMENT_TARGET = "";
+				XROS_DEPLOYMENT_TARGET = 1.0;
+			};
+			name = Debug;
+		};
+		24B064012B7EDC73007ABBB8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 240646112B61F5F000246067 /* Core.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "\"Copyright © 2021 - 2024 Apple, Inc. All rights reserved.\"";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.apple-plugins.AppleCoreNative-visionOS";
+				PRODUCT_NAME = AppleCoreNative;
+				SDKROOT = xros;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "xros xrsimulator";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 7;
+				TVOS_DEPLOYMENT_TARGET = 13.0;
+				VALIDATE_PRODUCT = YES;
+				WATCHOS_DEPLOYMENT_TARGET = "";
+				XROS_DEPLOYMENT_TARGET = 1.0;
+			};
+			name = Release;
+		};
 		CFE53392263B6CCC00078448 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 240646112B61F5F000246067 /* Core.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -425,7 +557,6 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -450,13 +581,13 @@
 				SDKROOT = macosx;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
 			name = Debug;
 		};
 		CFE53393263B6CCC00078448 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 240646112B61F5F000246067 /* Core.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -489,7 +620,6 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -507,13 +637,13 @@
 				SDKROOT = macosx;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
-				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
 			name = Release;
 		};
 		CFE53395263B6CCC00078448 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 240646112B61F5F000246067 /* Core.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -522,8 +652,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = AppleCoreNative/Info.plist;
-				INFOPLIST_OUTPUT_FORMAT = XML;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "\"Copyright © 2021 - 2024 Apple, Inc. All rights reserved.\"";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -547,6 +676,7 @@
 		};
 		CFE53396263B6CCC00078448 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 240646112B61F5F000246067 /* Core.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -555,8 +685,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = AppleCoreNative/Info.plist;
-				INFOPLIST_OUTPUT_FORMAT = XML;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "\"Copyright © 2021 - 2024 Apple, Inc. All rights reserved.\"";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -579,6 +708,7 @@
 		};
 		CFE533A8263B6E2200078448 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 240646112B61F5F000246067 /* Core.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -587,8 +717,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = AppleCoreNative/Info.plist;
-				INFOPLIST_OUTPUT_FORMAT = XML;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "\"Copyright © 2021 - 2024 Apple, Inc. All rights reserved.\"";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -611,6 +740,7 @@
 		};
 		CFE533A9263B6E2200078448 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 240646112B61F5F000246067 /* Core.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -619,8 +749,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = AppleCoreNative/Info.plist;
-				INFOPLIST_OUTPUT_FORMAT = XML;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "\"Copyright © 2021 - 2024 Apple, Inc. All rights reserved.\"";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -642,17 +771,18 @@
 		};
 		CFE533C9263B6E4800078448 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 240646112B61F5F000246067 /* Core.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = AppleCoreNative/Info.plist;
-				INFOPLIST_OUTPUT_FORMAT = XML;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "\"Copyright © 2021 - 2024 Apple, Inc. All rights reserved.\"";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.apple-plugins.AppleCoreNative-macOS";
 				PRODUCT_NAME = AppleCoreNativeMac;
 				SKIP_INSTALL = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = AppleCoreNative/AppleCore_BridgingHeader.h;
 				SWIFT_VERSION = 5.0;
 				TVOS_DEPLOYMENT_TARGET = 13.0;
 				WATCHOS_DEPLOYMENT_TARGET = "";
@@ -662,17 +792,18 @@
 		};
 		CFE533CA263B6E4800078448 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 240646112B61F5F000246067 /* Core.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = AppleCoreNative/Info.plist;
-				INFOPLIST_OUTPUT_FORMAT = XML;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "\"Copyright © 2021 - 2024 Apple, Inc. All rights reserved.\"";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.apple-plugins.AppleCoreNative-macOS";
 				PRODUCT_NAME = AppleCoreNativeMac;
 				SKIP_INSTALL = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = AppleCoreNative/AppleCore_BridgingHeader.h;
 				SWIFT_VERSION = 5.0;
 				TVOS_DEPLOYMENT_TARGET = 13.0;
 				WATCHOS_DEPLOYMENT_TARGET = "";
@@ -680,31 +811,18 @@
 			};
 			name = Release;
 		};
-		CFE533D3263B6E6E00078448 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ADDITIONAL_SDKS = "macosx appletvos appletvsimulator iphoneos iphonesimulator";
-				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				CODE_SIGN_STYLE = Automatic;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SUPPORTED_PLATFORMS = "macosx appletvos appletvsimulator iphoneos iphonesimulator";
-			};
-			name = Debug;
-		};
-		CFE533D4263B6E6E00078448 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ADDITIONAL_SDKS = "macosx appletvos appletvsimulator iphoneos iphonesimulator";
-				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				CODE_SIGN_STYLE = Automatic;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SUPPORTED_PLATFORMS = "macosx appletvos appletvsimulator iphoneos iphonesimulator";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		24B064022B7EDC73007ABBB8 /* Build configuration list for PBXNativeTarget "AppleCoreNative_visionOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				24B064002B7EDC73007ABBB8 /* Debug */,
+				24B064012B7EDC73007ABBB8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		CFE53386263B6CCC00078448 /* Build configuration list for PBXProject "AppleCoreNative" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -737,15 +855,6 @@
 			buildConfigurations = (
 				CFE533C9263B6E4800078448 /* Debug */,
 				CFE533CA263B6E4800078448 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		CFE533D2263B6E6E00078448 /* Build configuration list for PBXAggregateTarget "All" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				CFE533D3263B6E6E00078448 /* Debug */,
-				CFE533D4263B6E6E00078448 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -5,15 +5,6 @@
 
 import Foundation
 
-@_cdecl("NSError_Free")
-public func NSError_Free
-(
-    pointer: UnsafeMutableRawPointer
-)
-{
-    _ = Unmanaged<NSError>.fromOpaque(pointer).autorelease();
-}
-
 @_cdecl("NSError_GetCode")
 public func NSError_GetCode
 (

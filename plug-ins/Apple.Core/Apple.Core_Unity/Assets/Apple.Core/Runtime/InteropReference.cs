@@ -56,6 +56,7 @@ namespace Apple.Core.Runtime
         #region IDisposable
 
         private bool _isDisposed;
+        internal bool IsDisposed => _isDisposed;
         private void Dispose(bool isDisposing)
         {
             if (_isDisposed)
@@ -90,6 +91,20 @@ namespace Apple.Core.Runtime
         {
             return ReflectionUtility.CreateInstanceOrDefault<T>(pointer);
         }
+
+        /// <summary>
+        /// Non-generic version of PointerCast that takes a Type argument.
+        /// Throws if the provided type is not a subclass of InteropReference.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="pointer"></param>
+        /// <returns>InteropReference to the created subclass type.
+        /// The caller is responsible for downcasting to the desired subclass.</returns>
+        public static InteropReference PointerCast(Type type, IntPtr pointer)
+        {
+            return ReflectionUtility.CreateInstanceOrDefault(type, pointer);
+        }
+
         #endregion
     }
 }

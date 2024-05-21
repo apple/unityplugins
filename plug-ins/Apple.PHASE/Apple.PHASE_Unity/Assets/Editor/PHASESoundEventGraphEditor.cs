@@ -1,6 +1,6 @@
-﻿using XNodeEditor;
-using Apple.PHASE;
+﻿using Apple.PHASE;
 using System;
+using XNodeEditor;
 
 [CustomNodeGraphEditor(typeof(PHASESoundEventNodeGraph))]
 public class PHASESoundEventGraphEditor : NodeGraphEditor

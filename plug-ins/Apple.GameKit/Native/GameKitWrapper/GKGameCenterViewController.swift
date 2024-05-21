@@ -10,15 +10,6 @@ import GameKit
 
 var _currentPresentingGameCenterDelegate : GameKitUIDelegateHandler? = nil;
 
-@_cdecl("GKGameCenterViewController_Free")
-public func GKGameCenterViewController_Free
-(
-    pointer: UnsafeMutableRawPointer
-)
-{
-    _ =  Unmanaged<GKGameCenterViewController>.fromOpaque(pointer).autorelease();
-}
-
 @_cdecl("GKGameCenterViewController_InitWithState")
 public func GKGameCenterViewController_InitWithState
 (
@@ -71,12 +62,8 @@ public func GKGameCenterViewController_Present
     let target = Unmanaged<GKGameCenterViewController>.fromOpaque(pointer).takeUnretainedValue();
     _currentPresentingGameCenterDelegate = GameKitUIDelegateHandler(taskId: taskId, onSuccess: onSuccess);
     target.gameCenterDelegate = _currentPresentingGameCenterDelegate;
-    
-#if os(iOS) || os(tvOS)
-    let viewController = UIApplication.shared.windows.first!.rootViewController;
-    viewController?.present(target, animated: true);
-#else
-    GKDialogController.shared().parentWindow = NSApplication.shared.keyWindow;
-    GKDialogController.shared().present(target);
-#endif
+
+    if let defaultWindow = UiUtilities.defaultWindow() {
+        UiUtilities.presentViewController(viewController: target)
+    }
 }

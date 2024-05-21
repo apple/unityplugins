@@ -8,15 +8,6 @@
 import Foundation
 import GameKit
 
-@_cdecl("GKTurnBasedExchangeReply_Free")
-public func GKTurnBasedExchangeReply_Free
-(
-    pointer: UnsafeMutableRawPointer
-)
-{
-    _ = Unmanaged<GKTurnBasedExchangeReply>.fromOpaque(pointer).autorelease();
-}
-
 @_cdecl("GKTurnBasedExchangeReply_GetData")
 public func GKTurnBasedExchangeReply_GetData
 (

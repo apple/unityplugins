@@ -7,77 +7,42 @@ namespace Apple.GameKit.Multiplayer
     /// <summary>
     /// The player's response to an exchange.
     /// </summary>
-    public class GKTurnBasedExchangeReply : InteropReference
+    public class GKTurnBasedExchangeReply : NSObject
     {
-        #region Init & Dispose
         public GKTurnBasedExchangeReply(IntPtr pointer) : base(pointer)
         {
         }
 
-        [DllImport(InteropUtility.DLLName)]
-        private static extern void GKTurnBasedExchangeReply_Free(IntPtr pointer);
-
-        protected override void OnDispose(bool isDisposing)
-        {
-            if (Pointer != IntPtr.Zero)
-            {
-                GKTurnBasedExchangeReply_Free(Pointer);
-                Pointer = IntPtr.Zero;
-            }
-        }
-        #endregion
-        
-        #region Data
-        [DllImport(InteropUtility.DLLName)]
-        private static extern InteropData GKTurnBasedExchangeReply_GetData(IntPtr pointer);
-
         /// <summary>
         /// Exchange data sent by the recipient.
         /// </summary>
-        public byte[] Data
-        {
-            get => GKTurnBasedExchangeReply_GetData(Pointer).ToBytes();
-        }
-        #endregion
-        
-        #region Message
-        [DllImport(InteropUtility.DLLName)]
-        private static extern string GKTurnBasedExchangeReply_GetMessage(IntPtr pointer);
+        public byte[] Data => Interop.GKTurnBasedExchangeReply_GetData(Pointer).ToBytes();
 
         /// <summary>
         /// Localizable message for the push notification
         /// </summary>
-        public string Message
-        {
-            get => GKTurnBasedExchangeReply_GetMessage(Pointer);
-        }
-        #endregion
-        
-        #region Recipient
-        [DllImport(InteropUtility.DLLName)]
-        private static extern IntPtr GKTurnBasedExchangeReply_GetRecipient(IntPtr pointer);
+        public string Message => Interop.GKTurnBasedExchangeReply_GetMessage(Pointer);
 
         /// <summary>
         /// The player that is replying to the exchange.
         /// </summary>
-        public GKTurnBasedParticipant Recipient
-        {
-            get => PointerCast<GKTurnBasedParticipant>(GKTurnBasedExchangeReply_GetRecipient(Pointer));
-        }
-        #endregion
+        public GKTurnBasedParticipant Recipient => PointerCast<GKTurnBasedParticipant>(Interop.GKTurnBasedExchangeReply_GetRecipient(Pointer));
         
-        #region ReplyDate
-        [DllImport(InteropUtility.DLLName)]
-        private static extern long GKTurnBasedExchangeReply_GetReplyDate(IntPtr pointer);
-
         /// <summary>
         /// The date the reply exchange was sent.
         /// </summary>
-        public DateTimeOffset ReplyDate
-        {
-            get => DateTimeOffset.FromUnixTimeSeconds(GKTurnBasedExchangeReply_GetReplyDate(Pointer));
-        }
+        public DateTimeOffset ReplyDate => DateTimeOffset.FromUnixTimeSeconds(Interop.GKTurnBasedExchangeReply_GetReplyDate(Pointer));
 
-        #endregion
+        private static class Interop
+        {
+            [DllImport(InteropUtility.DLLName)]
+            public static extern InteropData GKTurnBasedExchangeReply_GetData(IntPtr pointer);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern string GKTurnBasedExchangeReply_GetMessage(IntPtr pointer);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern IntPtr GKTurnBasedExchangeReply_GetRecipient(IntPtr pointer);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern long GKTurnBasedExchangeReply_GetReplyDate(IntPtr pointer);
+        }
     }
 }

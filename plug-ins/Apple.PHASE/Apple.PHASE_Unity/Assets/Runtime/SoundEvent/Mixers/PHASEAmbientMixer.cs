@@ -49,7 +49,11 @@ namespace Apple.PHASE
                 _mixerId = Helpers.PHASECreateAmbientMixer(name, _channelLayout, phaseOrientation);
                 if (_mixerId == Helpers.InvalidId)
                 {
-                    Debug.LogError("Failed to create PHASE channel mixer.");
+                    Debug.LogError("Failed to create PHASE ambient mixer.");
+                }
+                else
+                {
+                    CreateGainMetaParameter();
                 }
             }
             return _mixerId;

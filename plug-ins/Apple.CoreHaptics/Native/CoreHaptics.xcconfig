@@ -1,0 +1,33 @@
+//
+//  CoreHaptics.xcconfig
+//  CoreHapticsWrapper
+//
+//  Copyright © 2024 Apple, Inc. All rights reserved.
+//
+//  This file defines custom build settings for the Apple.CoreHaptics plug-in's native libraries
+//
+
+// Path to shell scripts
+AUP_SHELL_SCRIPT_PATH=$(PROJECT_DIR)/../../../scripts/shell
+
+// Build output paths
+// ------------------
+
+// (Required for copy_native_libraries.sh)
+// Name of the folder which contains the plug-in Unity project
+UNITY_PROJECT_FOLDER_NAME=Apple.CoreHaptics_Unity
+
+// (Required for copy_native_libraries.sh)
+// Name of the folder under the plug-in Unity project's /Assets folder where native libraries should be copied.
+NATIVE_LIBRARY_ROOT_FOLDER_NAME=Apple.CoreHaptics
+
+// Info.plist Options
+// ------------------
+
+GENERATE_INFOPLIST_FILE = YES
+CURRENT_PROJECT_VERSION = 1.2.1
+MARKETING_VERSION = $CURRENT_PROJECT_VERSION
+VERSIONING_SYSTEM = apple-generic
+INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2021 - 2024 Apple, Inc. All rights reserved."
+INFOPLIST_OUTPUT_FORMAT[config=Debug] = XML
+INFOPLIST_OUTPUT_FORMAT[config=Release] = binary

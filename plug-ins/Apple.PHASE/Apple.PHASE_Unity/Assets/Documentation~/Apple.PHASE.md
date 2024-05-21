@@ -8,6 +8,18 @@
 ### 2. Install the Package
 See the [Quick-Start Guide](../../../../../Documentation/Quickstart.md) for general installation instructions.
 
+## Samples
+This plug-in includes a sample scene with SoundEvents, scripts, prefabs and audio assets.
+The sample can be imported via the `Window > Package Manager`. In the packages list view, select `Apple.PHASE` and in the Samples section cilck the Import button.
+
+DemoScene.unity contains a PHASESource that rotates around a PHASEListener and PHASEOccluder.
+Additional example SoundEvents can be used by setting the SoundEvent field on the PHASESource.
+
+The Crowd and Footsteps SoundEvents have accompanying scripts (AmbienceBlender.cs and FootstepTrigger.cs respectively) to control MetaParameter values.
+These are most easily used by dragging the Crowd or Footsteps prefab into the active scene. They may then be controlled via the exposed UI elements in the Inspector.
+
+Please note that in order to use the StereoPopcorn SoundEvent, the `Popcorn_Panned.wav` file must be copied manually from the source repository into your project. It can be found at `plug-ins/Apple.PHASE/Apple.PHASE_Unity/Assets/StreamingAssets`.
+
 ## Usage
 Please find an introduction to using the PHASE Unity Plug-in below. For an overview of the PHASE.framework, please see [PHASE Developer Documentation](https://developer.apple.com/documentation/phase/)
 
@@ -36,6 +48,9 @@ For documentation of PHASE's C# API see [PHASEHelpers](../Runtime/PHASEHelpers.c
 * [1. Spatial Mixer](#1-Spatial-Mixer)  
 * [2. Channel Mixer](#2-Channel-Mixer)  
 * [3. Ambient Mixer](#3-Ambient-Mixer)  
+
+[Sample Project](#Sample-Project)
+* [1. Sample Project](#1-Sample-Project)
 
 ## PHASE
 

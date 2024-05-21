@@ -8,15 +8,6 @@
 import Foundation
 import GameKit
 
-@_cdecl("GKVoiceChat_Free")
-public func GKVoiceChat_Free
-(
-    pointer : UnsafeMutableRawPointer
-)
-{
-    _ = Unmanaged<GKVoiceChat>.fromOpaque(pointer).autorelease();
-}
-
 @_cdecl("GKVoiceChat_GetIsVoIPAllowed")
 public func GKVoiceChat_GetIsVoIPAllowed
 (

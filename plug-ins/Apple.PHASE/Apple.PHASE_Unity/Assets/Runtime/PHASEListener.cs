@@ -1,9 +1,8 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
-
+﻿using System.Collections.Generic;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
+using UnityEngine;
 
 namespace Apple.PHASE
 {
@@ -19,6 +18,13 @@ namespace Apple.PHASE
 
         // List of mixers.
         private List<PHASEMixer> _mixers = new List<PHASEMixer>();
+
+        /// <summary>
+        /// Dynamically controlled gain scalar value of the listener
+        /// </summary>
+        [Range(0.0f, 1.0f)]
+        [SerializeField] private double _gain = 1.0f;
+        private double _lastGain;
 
         /// <summary>
         /// Global default reverb setting.
@@ -71,6 +77,9 @@ namespace Apple.PHASE
                         Debug.LogError("Failed to set transform on listener");
                     }
                 }
+
+                UpdateGain();
+
                 PHASESource.UpdateSources();
 
                 Helpers.PHASEUpdate();
@@ -131,6 +140,43 @@ namespace Apple.PHASE
             // Set the reverb preset in the scene.
             _lastReverb = _reverbPreset;
             Helpers.PHASESetSceneReverbPreset((int)_reverbPreset);
+        }
+
+        private void UpdateGain()
+        {
+            if (_lastGain != _gain)
+            {
+                _lastGain = _gain;
+                bool result = Helpers.PHASESetListenerGain(_gain);
+                if (result == false)
+                {
+                    Debug.LogError("Failed to set gain on listener");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Get the gain scalar value.
+        /// </summary>
+        /// <returns> A <c>double</c> representing the gain scalar value </returns>
+        public double GetGain()
+        {
+            return Helpers.PHASEGetListenerGain();
+        }
+
+        /// <summary>
+        /// Set the gain scalar value.
+        /// </summary>
+        /// <param name="gain"> The value of the new gain. </param>
+        public void SetGain(double gain)
+        {
+            if (_gain < 0.0f || _gain > 1.0f)
+            {
+                Debug.LogWarning("Listener gain {_gain} is not within [0, 1], value will be clamped to valid range in PHASE Engine.");
+            }
+            _gain = gain;
+
+            UpdateGain();
         }
 
         /// <summary>

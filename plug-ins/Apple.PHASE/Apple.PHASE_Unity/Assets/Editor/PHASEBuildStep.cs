@@ -5,7 +5,7 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 
-#if UNITY_EDITOR_OSX
+#if (UNITY_EDITOR_OSX && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX || UNITY_VISIONOS))
 using UnityEditor.iOS.Xcode;
 #endif
 
@@ -13,52 +13,15 @@ namespace Apple.PHASE.Editor
 {
     public class PHASEBuildStep : AppleBuildStep
     {
-        public override string DisplayName => "PHASE";
-
-        readonly Dictionary<BuildTarget, string> _libraryTable = new Dictionary<BuildTarget, string>
-        {
-            {BuildTarget.iOS, "AudioPluginPHASE"},
-            {BuildTarget.StandaloneOSX, "AudioPluginPHASE.bundle"}
-        };
-
-#if UNITY_EDITOR_OSX
-        public override void OnProcessFrameworks(AppleBuildProfile _, BuildTarget buildTarget, string pathToBuiltTarget, PBXProject pbxProject)
-        {
-            if (_libraryTable.ContainsKey(buildTarget))
-            {
-                string libraryName = _libraryTable[buildTarget];
-                string libraryPath = AppleFrameworkUtility.GetPluginLibraryPathForBuildTarget(libraryName, buildTarget);
-                if (String.IsNullOrEmpty(libraryPath))
-                {
-                    Debug.Log($"Failed to locate path for library: {libraryName}");
-                }
-                else
-                {
-                    AppleFrameworkUtility.CopyAndEmbed(libraryPath, buildTarget, pathToBuiltTarget, pbxProject);
-                    if (buildTarget == BuildTarget.iOS)
-                    {
-                        pbxProject.AddFrameworkToProject(pbxProject.GetUnityFrameworkTargetGuid(), "PHASE.framework", false);
-                        pbxProject.AddFrameworkToProject(pbxProject.GetUnityFrameworkTargetGuid(), "ModelIO.framework", false);
-                        pbxProject.AddFrameworkToProject(pbxProject.GetUnityFrameworkTargetGuid(), "AVFoundation.framework", false);
-                    }
-                    else
-                    {
-                        AppleFrameworkUtility.AddFrameworkToProject("PHASE.framework", false, buildTarget, pbxProject);
-                        AppleFrameworkUtility.AddFrameworkToProject("ModelIO.framework", false, buildTarget, pbxProject);
-                    }
-                }
-            }
-            else
-            {
-                Debug.Log($"Processing {this.DisplayName} frameworks for unsupported platform. Skipping.");
-            }
-        }
-
+        public override string DisplayName => "Apple.PHASE";
+        public override BuildTarget[] SupportedTargets => new BuildTarget[] {BuildTarget.iOS, BuildTarget.tvOS, BuildTarget.StandaloneOSX, BuildTarget.VisionOS};
+        
+#if (UNITY_EDITOR_OSX && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX || UNITY_VISIONOS))
         public override void OnBeginPostProcess(AppleBuildProfile appleBuildProfile, BuildTarget buildTarget, string pathToBuiltProject)
         {
-            if (buildTarget == BuildTarget.iOS)
+            if (buildTarget == BuildTarget.iOS || buildTarget == BuildTarget.tvOS)
             {
-                var projectPath = PBXProject.GetPBXProjectPath(pathToBuiltProject);
+                var projectPath = AppleBuild.GetPbxProjectPath(buildTarget, pathToBuiltProject);
                 PBXProject project = new PBXProject();
                 if (File.Exists(projectPath))
                 {
@@ -86,6 +49,30 @@ namespace Apple.PHASE.Editor
                 }
             }
         }
-#endif
+
+        public override void OnProcessFrameworks(AppleBuildProfile _, BuildTarget buildTarget, string generatedProjectPath, PBXProject pbxProject)
+        {
+            if (Array.IndexOf(SupportedTargets, buildTarget) > -1)
+            {
+                AppleNativeLibraryUtility.ProcessWrapperLibrary(DisplayName, buildTarget, generatedProjectPath, pbxProject);
+
+                if (buildTarget == BuildTarget.iOS || buildTarget == BuildTarget.tvOS || buildTarget == BuildTarget.VisionOS)
+                {
+                    pbxProject.AddFrameworkToProject(pbxProject.GetUnityFrameworkTargetGuid(), "PHASE.framework", false);
+                    pbxProject.AddFrameworkToProject(pbxProject.GetUnityFrameworkTargetGuid(), "ModelIO.framework", false);
+                    pbxProject.AddFrameworkToProject(pbxProject.GetUnityFrameworkTargetGuid(), "AVFoundation.framework", false);
+                }
+                else
+                {
+                    AppleNativeLibraryUtility.AddPlatformFrameworkDependency("PHASE.framework", false, buildTarget, pbxProject);
+                    AppleNativeLibraryUtility.AddPlatformFrameworkDependency("ModelIO.framework", false, buildTarget, pbxProject);
+                }
+            }
+            else
+            {
+                Debug.LogWarning($"[{DisplayName}] No native library defined for Unity build target {buildTarget.ToString()}. Skipping.");
+            }
+        }
+#endif // (UNITY_EDITOR_OSX && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX || UNITY_VISIONOS))
     }
 }

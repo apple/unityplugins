@@ -1,12 +1,15 @@
 {
     "name": "Apple.PHASE",
+    "rootNamespace": "",
     "references": [
         "GUID:b8e24fd1eb19b4226afebb2810e3c19b"
     ],
     "includePlatforms": [
         "Editor",
         "iOS",
-        "macOSStandalone"
+        "macOSStandalone",
+        "tvOS",
+        "VisionOS"
     ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

@@ -1,7 +1,7 @@
-﻿using UnityEngine;
+﻿using Apple.Core.Tests;
 using NUnit.Framework.Interfaces;
 using UnityEngine.TestRunner;
-using Apple.Core.Tests;
+using UnityEngine;
 
 [assembly: TestRunCallback(typeof(PHASETestRunner))]
 public class PHASETestRunner : AppleTestRunner

@@ -2,8 +2,8 @@
     "name": "com.apple.unityplugin.core",
     "displayName": "Apple.Core",
     "description": "Provides project settings, post-build automation tools, and other shared functionality for Apple Unity Plug-ins.",
-    "version": "1.0.3",
-    "unity": "2019.4",
+    "version": "3.1.3",
+    "unity": "2022.3",
     "keywords": [
         "apple"
     ],
@@ -11,5 +11,12 @@
         "name": "Apple, Inc",
         "email": "developer@apple.com",
         "url": "https://developer.apple.com"
-    }
+    },
+    "samples": [
+        {
+            "displayName": "API Availability Demo",
+            "description": "Demo for API Availability Checking",
+            "path": "Demos~/Apple.Core.AvailabilitySample"
+        }
+    ]
 }

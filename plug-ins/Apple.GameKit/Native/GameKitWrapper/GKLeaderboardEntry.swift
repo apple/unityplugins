@@ -8,15 +8,6 @@
 import Foundation
 import GameKit
 
-@_cdecl("GKLeaderboardEntry_Free")
-public func GKLeaderboardEntry_Free
-(
-    pointer: UnsafeMutableRawPointer
-)
-{
-    _ = Unmanaged<GKLeaderboard.Entry>.fromOpaque(pointer).autorelease();
-}
-
 @_cdecl("GKLeaderboardEntry_GetRank")
 public func GKLeaderboardEntry_GetRank
 (

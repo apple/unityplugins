@@ -2,14 +2,17 @@ using System;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using AOT;
+using Apple.Core;
 using Apple.Core.Runtime;
 
 namespace Apple.GameKit.Multiplayer
 {
+    using GKMatchProperties = NSDictionary<NSString, NSObject>;
+
     /// <summary>
     /// A peer-to-peer network between a group of players that sign into Game Center.
     /// </summary>
-    public class GKMatch : InteropReference
+    public class GKMatch : NSObject
     {
         /// <summary>
         /// The mechanism used to transmit data to other peers.
@@ -26,38 +29,16 @@ namespace Apple.GameKit.Multiplayer
             Unreliable = 1
         }
 
-        #region Delegate
-        [DllImport(InteropUtility.DLLName)]
-        private static extern IntPtr GKMatch_GetDelegate(IntPtr matchPointer);
-
         private GKMatchDelegate _delegate;
-        
+
         /// <summary>
         /// The delegate that handles communication between players in a match.
         /// </summary>
-        public GKMatchDelegate Delegate
-        {
-            get
-            {
-                if (_delegate == null)
-                {
-                    _delegate = PointerCast<GKMatchDelegate>(GKMatch_GetDelegate(Pointer));
-                }
+        public GKMatchDelegate Delegate => _delegate ??= PointerCast<GKMatchDelegate>(Interop.GKMatch_GetDelegate(Pointer));
 
-                return _delegate;
-            }
-        }
-
-        #endregion
-
-        #region Init & Dispose
         internal GKMatch(IntPtr pointer) : base(pointer)
         {
-
         }
-        
-        [DllImport(InteropUtility.DLLName)]
-        private static extern void GKMatch_Free(IntPtr pointer);
 
         protected override void OnDispose(bool isDisposing)
         {
@@ -65,44 +46,32 @@ namespace Apple.GameKit.Multiplayer
             {
                 // Dispose any delegates...
                 Delegate?.Dispose();
-                
-                // Free the match...
-                GKMatch_Free(Pointer);
-                Pointer = IntPtr.Zero;
             }
-        }
 
-        #endregion
-        
-        #region ExpectedPlayerCount
-        [DllImport(InteropUtility.DLLName)]
-        private static extern long GKMatch_GetExpectedPlayerCount(IntPtr pointer);
+            base.OnDispose(isDisposing);
+        }
 
         /// <summary>
         /// The remaining number of players invited but not yet connected to the match.
         /// </summary>
-        public long ExpectedPlayerCount
-        {
-            get => GKMatch_GetExpectedPlayerCount(Pointer);
-        }
-        #endregion
-        
-        #region Players
-        [DllImport(InteropUtility.DLLName)]
-        private static extern IntPtr GKMatch_GetPlayers(IntPtr pointer);
+        public long ExpectedPlayerCount => Interop.GKMatch_GetExpectedPlayerCount(Pointer);
 
         /// <summary>
         /// The players that join the match.
         /// </summary>
-        public NSArray<GKPlayer> Players => PointerCast<NSArrayGKPlayer>(GKMatch_GetPlayers(Pointer));
+        public NSArray<GKPlayer> Players => PointerCast<NSArray<GKPlayer>>(Interop.GKMatch_GetPlayers(Pointer));
 
-        #endregion
-        
-        #region Send
-        [DllImport(InteropUtility.DLLName)]
-        private static extern IntPtr GKMatch_SendTo(IntPtr pointer, IntPtr data, int dataLength, IntPtr players, GKSendDataMode sendDataMode);
-        [DllImport(InteropUtility.DLLName)]
-        private static extern IntPtr GKMatch_SendToAll(IntPtr pointer, IntPtr data, int dataLength, GKSendDataMode sendDataMode);
+        /// <summary>
+        /// The local player's properties that matchmaking rules used to find the players with some additions.
+        /// </summary>
+        [Introduced(iOS: "17.2", macOS: "14.2", tvOS: "17.2", visionOS: "1.1")]
+        public GKMatchProperties Properties => PointerCast<GKMatchProperties>(Interop.GKMatch_GetProperties(Pointer));
+
+        /// <summary>
+        /// The properties for other players that matchmaking rules uses to find players, with some additions.
+        /// </summary>
+        [Introduced(iOS: "17.2", macOS: "14.2", tvOS: "17.2", visionOS: "1.1")]
+        public NSDictionary<GKPlayer, GKMatchProperties> PlayerProperties => PointerCast<NSDictionary<GKPlayer, GKMatchProperties>>(Interop.GKMatch_GetPlayerProperties(Pointer));
 
         /// <summary>
         /// Transmits data to one or more players connected to the match.
@@ -113,7 +82,7 @@ namespace Apple.GameKit.Multiplayer
         public void Send(byte[] data, NSArray<GKPlayer> players, GKSendDataMode sendDataMode)
         {
             var handle = GCHandle.Alloc(data, GCHandleType.Pinned);
-            var errorPointer = GKMatch_SendTo(Pointer, handle.AddrOfPinnedObject(), data.Length, players.Pointer, sendDataMode);
+            var errorPointer = Interop.GKMatch_SendTo(Pointer, handle.AddrOfPinnedObject(), data.Length, players.Pointer, sendDataMode);
             handle.Free();
             
             if(errorPointer != IntPtr.Zero)
@@ -128,30 +97,19 @@ namespace Apple.GameKit.Multiplayer
         public void Send(byte[] data, GKSendDataMode sendDataMode)
         {
             var handle = GCHandle.Alloc(data, GCHandleType.Pinned);
-            var errorPointer = GKMatch_SendToAll(Pointer, handle.AddrOfPinnedObject(), data.Length, sendDataMode);
+            var errorPointer = Interop.GKMatch_SendToAll(Pointer, handle.AddrOfPinnedObject(), data.Length, sendDataMode);
             handle.Free();
             
             if(errorPointer != IntPtr.Zero)
                 throw new GameKitException(errorPointer);
         }
-        #endregion
         
-        #region Disconnect
-        [DllImport(InteropUtility.DLLName)]
-        private static extern void GKMatch_Disconnect(IntPtr pointer);
-
         /// <summary>
         /// Disconnects the local player from the match.
         /// </summary>
-        public void Disconnect()
-        {
-            GKMatch_Disconnect(Pointer);
-        }
-        #endregion
+        public void Disconnect() => Interop.GKMatch_Disconnect(Pointer);
         
         #region ChooseBestHostingPlayer
-        [DllImport(InteropUtility.DLLName)]
-        private static extern void GKMatch_ChooseBestHostingPlayer(IntPtr pointer, long taskId, SuccessTaskCallback<IntPtr> onSuccess, NSErrorTaskCallback onError);
 
         /// <summary>
         /// Determines the best player in the game to act as the server for a client-server topology.
@@ -160,7 +118,7 @@ namespace Apple.GameKit.Multiplayer
         public Task<GKPlayer> ChooseBestHostingPlayer()
         {
             var tcs = InteropTasks.Create<GKPlayer>(out var taskId);
-            GKMatch_ChooseBestHostingPlayer(Pointer, taskId, OnChooseBestHostingPlayerSuccess, OnChooseBestHostingPlayerError);
+            Interop.GKMatch_ChooseBestHostingPlayer(Pointer, taskId, OnChooseBestHostingPlayerSuccess, OnChooseBestHostingPlayerError);
             return tcs.Task;
         }
 
@@ -178,10 +136,6 @@ namespace Apple.GameKit.Multiplayer
         }
         #endregion
         
-        #region VoiceChat
-        [DllImport(InteropUtility.DLLName)]
-        private static extern IntPtr GKMatch_VoiceChat(IntPtr pointer, string channel);
-        
         /// <summary>
         /// Joins the local player to a voice channel.
         /// </summary>
@@ -189,14 +143,11 @@ namespace Apple.GameKit.Multiplayer
         /// <returns>A voice chat object for the channel, or nil if an error occurs or parental controls restrict the player from joining a voice chat.</returns>
         public GKVoiceChat VoiceChat(string channel)
         {
-            var pointer = GKMatch_VoiceChat(Pointer, channel);
+            var pointer = Interop.GKMatch_VoiceChat(Pointer, channel);
             return pointer != IntPtr.Zero ? new GKVoiceChat(pointer) : null;
         }
-        #endregion
         
         #region Rematch
-        [DllImport(InteropUtility.DLLName)]
-        private static extern void GKMatch_Rematch(IntPtr pointer, long taskId, SuccessTaskCallback<IntPtr> onSuccess, NSErrorTaskCallback onError);
 
         /// <summary>
         /// Creates a new match with the players from an existing match.
@@ -205,7 +156,7 @@ namespace Apple.GameKit.Multiplayer
         public Task<GKMatch> Rematch()
         {
             var tcs = InteropTasks.Create<GKMatch>(out var taskId);
-            GKMatch_Rematch(Pointer, taskId, OnRematch, OnRematchError);
+            Interop.GKMatch_Rematch(Pointer, taskId, OnRematch, OnRematchError);
             return tcs.Task;
         }
 
@@ -222,5 +173,31 @@ namespace Apple.GameKit.Multiplayer
             InteropTasks.TrySetExceptionAndRemove<GKMatch>(taskId, new GameKitException(errorPtr));
         }
         #endregion
+
+        private static class Interop
+        {
+            [DllImport(InteropUtility.DLLName)]
+            public static extern IntPtr GKMatch_GetDelegate(IntPtr matchPointer);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern long GKMatch_GetExpectedPlayerCount(IntPtr pointer);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern IntPtr GKMatch_GetPlayers(IntPtr pointer);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern IntPtr GKMatch_GetProperties(IntPtr pointer);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern IntPtr GKMatch_GetPlayerProperties(IntPtr pointer);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern IntPtr GKMatch_SendTo(IntPtr pointer, IntPtr data, int dataLength, IntPtr players, GKSendDataMode sendDataMode);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern IntPtr GKMatch_SendToAll(IntPtr pointer, IntPtr data, int dataLength, GKSendDataMode sendDataMode);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKMatch_Disconnect(IntPtr pointer);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKMatch_ChooseBestHostingPlayer(IntPtr pointer, long taskId, SuccessTaskCallback<IntPtr> onSuccess, NSErrorTaskCallback onError);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern IntPtr GKMatch_VoiceChat(IntPtr pointer, string channel);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKMatch_Rematch(IntPtr pointer, long taskId, SuccessTaskCallback<IntPtr> onSuccess, NSErrorTaskCallback onError);
+        }
     }
 }

@@ -1,11 +1,10 @@
-﻿using UnityEngine;
-using System.Runtime.InteropServices;
+﻿using AOT;
 using System.Collections.Generic;
-using AOT;
-
+using System.Runtime.InteropServices;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
+using UnityEngine;
 
 namespace Apple.PHASE
 {
@@ -51,11 +50,18 @@ namespace Apple.PHASE
         public float LateReverbSend = 0.2f;
 
         /// <summary>
+        /// Dynamically controlled gain scalar value of the source
+        /// </summary>
+        [Range(0.0f, 1.0f)]
+        [SerializeField] private double _gain = 1.0f;
+        private double _lastGain;
+
+        /// <summary>
         /// When true, this source will play when Awake() is called.
         /// </summary>
         [SerializeField] private bool _playOnAwake = true;
 
-        // Active action tree instance on this source.
+        // Active sound event instance on this source.
         private List<long> _soundEventInstance = new List<long>();
 
         // Source id to store.
@@ -184,6 +190,7 @@ namespace Apple.PHASE
             {
                 _soundEventInstance.Add(instanceId);
                 SetSendParameters(instanceId);
+                SetMixerGainParameters(instanceId);
             }
         }
 
@@ -243,6 +250,8 @@ namespace Apple.PHASE
                 {
                     Debug.LogError("Failed to set transform on source " + _sourceId);
                 }
+
+                UpdateGain();
             }
 
             foreach (long instanceId in _soundEventInstance)
@@ -256,6 +265,56 @@ namespace Apple.PHASE
             foreach (KeyValuePair<long, PHASESource> entry in _registeredSources)
             {
                 entry.Value.ManualUpdate();
+            }
+        }
+        private void UpdateGain()
+        {
+            if (_lastGain != _gain)
+            {
+                _lastGain = _gain;
+                bool result = Helpers.PHASESetSourceGain(_sourceId, _gain);
+                if (result == false)
+                {
+                    Debug.LogError("Failed to set gain on source");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Get the gain scalar value.
+        /// </summary>
+        /// <param name="sourceId"> The id of the given source. </param>
+        /// <returns> A <c>double</c> representing the gain scalar value </returns>
+        public double GetGain()
+        {
+            return Helpers.PHASEGetSourceGain(_sourceId);
+        }
+
+        /// <summary>
+        /// Set the gain scalar value.
+        /// </summary>
+        /// <param name="gain"> The value of the new gain. </param>
+        /// <param name="instanceId"> The id of the given source. </param>
+        public void SetGain(double gain)
+        {
+            if (_gain < 0.0f || _gain > 1.0f)
+            {
+                Debug.LogWarning("Source gain {_gain} is not within [0, 1], value will be clamped to valid range in PHASE Engine.");
+            }
+            _gain = gain;
+
+            UpdateGain();
+        }
+
+        // Set Initial Mixer Gain Meta Parameter value for each mixer associated to this Source
+        void SetMixerGainParameters(long instanceId)
+        {
+            if (_mixers != null)
+            {
+                foreach (PHASEMixer entry in _mixers)
+                {
+                    entry.SetGainMetaParameter(instanceId);
+                }
             }
         }
 
@@ -398,7 +457,7 @@ namespace Apple.PHASE
                 return;
             }
 
-            // The listener doesn't know about action trees or mixers,
+            // The listener doesn't know about sound events or mixers,
             // So we need to send it the info it needs to draw the visualization.
             if (_listener == null)
             {

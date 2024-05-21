@@ -36,3 +36,7 @@ typedef struct {
     float bottom;
     float right;
 } InteropEdgeInset;
+
+#if TARGET_OS_IOS || TARGET_OS_TV || TARGET_OS_VISION
+    #import "AppleCore_BridgingHeader.h"
+#endif

@@ -18,13 +18,17 @@ public func GKAchievement_Init
     return Unmanaged.passRetained(achievement).toOpaque();
 }
 
-@_cdecl("GKAchievement_Free")
-public func GKAchievement_Free
+// Initialize the achievement for a specific player. Use to submit participant achievements when ending a turn-based match.
+@_cdecl("GKAchievement_InitForPlayer")
+public func GKAchievement_InitForPlayer
 (
-    pointer : UnsafeMutableRawPointer
-)
+    identifier: char_p,
+    gkPlayerPtr : UnsafeMutableRawPointer
+) -> UnsafeMutableRawPointer
 {
-    _ = Unmanaged<GKAchievement>.fromOpaque(pointer).autorelease();
+    let player = Unmanaged<GKPlayer>.fromOpaque(gkPlayerPtr).takeUnretainedValue();
+    let achievement = GKAchievement.init(identifier: identifier.toString(), player: player);
+    return Unmanaged.passRetained(achievement).toOpaque();
 }
 
 @_cdecl("GKAchievement_GetIdentifier")
@@ -216,5 +220,16 @@ public func GKAchievement_ChallengeComposeController
 {
     let target = Unmanaged<GKAchievement>.fromOpaque(pointer).takeUnretainedValue();
     let players = Unmanaged<NSArray>.fromOpaque(playersPtr).takeUnretainedValue() as! [GKPlayer];
-    target.challengeComposeController(withMessage: message.toString(), players: players);
+
+#if os(visionOS)
+    // Avoid including deprecated version of the API in visionOS builds.
+    target.challengeComposeController(withMessage: message.toString(), players: players, completion: nil)
+#else
+    if #available(iOS 17.0, tvOS 17.0, macOS 14.0, *) {
+        target.challengeComposeController(withMessage: message.toString(), players: players, completion: nil)
+    } else {
+        // Explicitly set completionHandler parameter to avoid ambiguous call when building for visionOS
+        target.challengeComposeController(withMessage: message.toString(), players: players)
+    };
+#endif
 }

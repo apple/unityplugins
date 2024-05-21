@@ -18,12 +18,13 @@
     NSMutableDictionary<NSNumber*, PHASEOccluder*>* mOccluders;
     NSMutableDictionary<NSNumber*, PHASESoundEvent*>* mSoundEvents;
     NSMutableDictionary<NSString*, PHASEMaterial*>* mMaterials;
+    
 
-    // Keep track of the number of sound events playing an action tree asset
+    // Keep track of the number of sound events playing an sound event asset
     // For destruction purposes
     NSMutableDictionary<NSString*, NSNumber*>* mActiveSoundEventAssets;
 
-    // For action tree programatic creation
+    // For sound event programatic creation
     NSMutableDictionary* mSoundEventNodeDefinitions;
     NSMutableDictionary* mSoundEventMixerDefinitions;
     NSMutableDictionary* mSoundEventMetaParameterDefinitions;
@@ -57,17 +58,17 @@
 
         // Create sound events dictionary
         mSoundEvents = [[NSMutableDictionary<NSNumber*, PHASESoundEvent*> alloc] init];
-
+        
         // Create materials dictionary
         mMaterials = [[NSMutableDictionary<NSString*, PHASEMaterial*> alloc] init];
 
-        // Creeate active action tree assets tracker dictionary
+        // Creeate active sound event assets tracker dictionary
         mActiveSoundEventAssets = [[NSMutableDictionary<NSString*, NSNumber*> alloc] init];
 
-        // Create action tree nodes dictionary
+        // Create sound event nodes dictionary
         mSoundEventNodeDefinitions = [[NSMutableDictionary alloc] init];
 
-        // Create action tree meta parameters dictionary
+        // Create sound event meta parameters dictionary
         mSoundEventMetaParameterDefinitions = [[NSMutableDictionary alloc] init];
 
         // Create mapped meta parameters dictionary
@@ -118,11 +119,35 @@
 {
     if (mListener == nil)
     {
+        NSLog(@"Listener does not exist.");
         return NO;
     }
 
     mListener.transform = listenerTransform;
     return YES;
+}
+
+- (BOOL)setListenerGain:(double)listenerGain
+{
+    if (mListener == nil)
+    {
+        NSLog(@"Listener does not exist.");
+        return NO;
+    }
+
+    mListener.gain = listenerGain;
+    return YES;
+}
+
+- (double)getListenerGain
+{
+    if (mListener == nil)
+    {
+        NSLog(@"Listener does not exist.");
+        return 0.f;
+    }
+
+    return mListener.gain;
 }
 
 - (BOOL)destroyListener
@@ -197,11 +222,37 @@
     PHASESource* source = [mSources objectForKey:[NSNumber numberWithLongLong:sourceId]];
     if (source == nil)
     {
+        NSLog(@"Failed to find PHASE Source to set transform on.");
         return NO;
     }
 
     source.transform = transform;
     return YES;
+}
+
+- (BOOL)setSourceGainWithId:(int64_t)sourceId sourceGain:(double)sourceGain
+{
+    PHASESource* source = [mSources objectForKey:[NSNumber numberWithLongLong:sourceId]];
+    if (source == nil)
+    {
+        NSLog(@"Failed to find PHASE Source to set gain on.");
+        return NO;
+    }
+    
+    source.gain = sourceGain;
+    return YES;
+}
+
+- (double)getSourceGainWithId:(int64_t)sourceId
+{
+    PHASESource* source = [mSources objectForKey:[NSNumber numberWithLongLong:sourceId]];
+    if (source == nil)
+    {
+        NSLog(@"Failed to find PHASE Source to get gain for.");
+        return 0.f;
+    }
+    
+    return source.gain;
 }
 
 - (void)destroySourceWithId:(int64_t)sourceId
@@ -347,7 +398,11 @@
                                     normalizationMode:PHASENormalizationModeDynamic
                                                 error:&error];
 
-    if (error)
+    // If we get PHASEAssetErrorAlreadyExists, just return YES.
+    if (error && error.code == PHASEAssetErrorAlreadyExists)
+    {
+        NSLog(@"Asset %@ already registered with PHASE.", uid);
+    } else if (error)
     {
         NSLog(@"Failed to register audio buffer with error %@.", error);
         return NO;
@@ -606,13 +661,45 @@
     [mSoundEventMixerDefinitions removeObjectForKey:[NSNumber numberWithLongLong:mixerId]];
 }
 
-- (int64_t)createMetaParameterWithName:(NSString*)name defaultIntValue:(int)defaultIntValue
+- (int64_t)createMetaParameterWithName:(NSString*)name defaultIntValue:(int)defaultIntValue minimumValue:(int)minimumValue maximumValue:(int)maximumValue
 {
-    PHASENumberMetaParameterDefinition* param = [[PHASENumberMetaParameterDefinition alloc] initWithValue:defaultIntValue identifier:name];
+    PHASENumberMetaParameterDefinition* param = [[PHASENumberMetaParameterDefinition alloc] initWithValue:defaultIntValue minimum:minimumValue maximum:maximumValue identifier:name];
 
-    const int64_t paramId = reinterpret_cast<int64_t>(param);
-    [mSoundEventMetaParameterDefinitions setObject:param forKey:[NSNumber numberWithLongLong:paramId]];
-    return paramId;
+    if (param != nil)
+    {
+        const int64_t paramId = reinterpret_cast<int64_t>(param);
+        [mSoundEventMetaParameterDefinitions setObject:param forKey:[NSNumber numberWithLongLong:paramId]];
+        return paramId;
+    }
+    
+    return PHASEInvalidInstanceHandle;
+}
+
+- (int)getMetaParameterIntValueWithId:(int64_t)instanceId parameterName:(NSString*)parameterName
+{
+    PHASESoundEvent* soundEvent = mSoundEvents[[NSNumber numberWithLongLong:instanceId]];
+    if (soundEvent == nil)
+    {
+        NSLog(@"Error: Failed to retrieve sound event associated with instance %@. Unable to get value for parameter %@", [NSNumber numberWithLongLong: instanceId], parameterName);
+        return 0;
+    }
+    
+    if (soundEvent.metaParameters[parameterName] == nil)
+    {
+        NSLog(@"Error: Failed to retrieve meta parameter from sound event associated with instance %@. Unable to get value for parameter %@.", [NSNumber numberWithLongLong: instanceId], parameterName);
+        return 0;
+    }
+    
+    if ([soundEvent.metaParameters[parameterName] isKindOfClass:[PHASENumberMetaParameter class]])
+    {
+        return [soundEvent.metaParameters[parameterName].value intValue];
+    }
+    else
+    {
+        NSLog(@"Warning: PHASE API misuse, cannot get class %@ with value of type int.",
+              [soundEvent.metaParameters[parameterName] class]);
+        return 0;
+    }
 }
 
 - (BOOL)setMetaParameterWithId:(int64_t)instanceId parameterName:(NSString*)parameterName intValue:(int)intValue
@@ -625,12 +712,19 @@
     
     if ([soundEvent.metaParameters[parameterName] isKindOfClass:[PHASENumberMetaParameter class]])
     {
-        soundEvent.metaParameters[parameterName].value = [NSNumber numberWithInt:intValue];
+        PHASENumberMetaParameter* param = (PHASENumberMetaParameter*)soundEvent.metaParameters[parameterName];
+        if (intValue < param.minimum || intValue > param.maximum)
+        {
+            NSLog(@"Warning: Failed to set value of meta parameter %@ to %@. Value is out of its min/max range of [%@,%@] and will be clamped", parameterName, [NSNumber numberWithInt:intValue], [NSNumber numberWithInt:param.minimum],
+                  [NSNumber numberWithInt:param.maximum]);
+        }
+        
+        param.value = [NSNumber numberWithInt:intValue];
         return YES;
     }
     else
     {
-        NSLog(@"Warning: PHASE API missuse, cannot set class %@ with value of type int.",
+        NSLog(@"Warning: PHASE API misuse, cannot set class %@ with value of type int.",
               [soundEvent.metaParameters[parameterName] class]);
         return NO;
     }
@@ -638,13 +732,45 @@
 
 }
 
-- (int64_t)createMetaParameterWithName:(NSString*)name defaultDblValue:(double)defaultDblValue
+- (int64_t)createMetaParameterWithName:(NSString*)name defaultDblValue:(double)defaultDblValue minimumValue:(double)minimumValue maximumValue:(double)maximumValue
 {
-    PHASENumberMetaParameterDefinition* param = [[PHASENumberMetaParameterDefinition alloc] initWithValue:defaultDblValue identifier:name];
+    PHASENumberMetaParameterDefinition* param = [[PHASENumberMetaParameterDefinition alloc] initWithValue:defaultDblValue minimum:minimumValue maximum:maximumValue identifier:name];
 
-    const int64_t paramId = reinterpret_cast<int64_t>(param);
-    [mSoundEventMetaParameterDefinitions setObject:param forKey:[NSNumber numberWithLongLong:paramId]];
-    return paramId;
+    if (param != nil)
+    {
+        const int64_t paramId = reinterpret_cast<int64_t>(param);
+        [mSoundEventMetaParameterDefinitions setObject:param forKey:[NSNumber numberWithLongLong:paramId]];
+        return paramId;
+    }
+    
+    return PHASEInvalidInstanceHandle;
+}
+
+- (double)getMetaParameterDblValueWithId:(int64_t)instanceId parameterName:(NSString*)parameterName
+{
+    PHASESoundEvent* soundEvent = mSoundEvents[[NSNumber numberWithLongLong:instanceId]];
+    if (soundEvent == nil)
+    {
+        NSLog(@"Error: Failed to retrieve sound event associated with instance %@. Unable to get value for parameter %@", [NSNumber numberWithLongLong: instanceId], parameterName);
+        return 0;
+    }
+    
+    if (soundEvent.metaParameters[parameterName] == nil)
+    {
+        NSLog(@"Error: Failed to retrieve meta parameter from sound event associated with instance %@. Unable to get value for parameter %@.", [NSNumber numberWithLongLong: instanceId], parameterName);
+        return 0;
+    }
+    
+    if ([soundEvent.metaParameters[parameterName] isKindOfClass:[PHASENumberMetaParameter class]])
+    {
+        return [soundEvent.metaParameters[parameterName].value doubleValue];
+    }
+    else
+    {
+        NSLog(@"Warning: PHASE API misuse, cannot get class %@ with value of type int.",
+              [soundEvent.metaParameters[parameterName] class]);
+        return 0;
+    }
 }
 
 - (BOOL)setMetaParameterWithId:(int64_t)instanceId parameterName:(NSString*)parameterName doubleValue:(double)doubleValue
@@ -657,12 +783,19 @@
 
     if ([soundEvent.metaParameters[parameterName] isKindOfClass:[PHASENumberMetaParameter class]])
     {
-        soundEvent.metaParameters[parameterName].value = [NSNumber numberWithDouble:doubleValue];
+        PHASENumberMetaParameter* param = (PHASENumberMetaParameter*)soundEvent.metaParameters[parameterName];
+        if (doubleValue < param.minimum || doubleValue > param.maximum)
+        {
+            NSLog(@"Warning: Failed to set value of meta parameter %@ to %@. Value is out of its min/max range of [%@,%@] and will be clamped.", parameterName, [NSNumber numberWithDouble:doubleValue], [NSNumber numberWithDouble: param.minimum],
+                  [NSNumber numberWithDouble:param.maximum]);
+        }
+        
+        param.value = [NSNumber numberWithDouble:doubleValue];
         return YES;
     }
     else
     {
-        NSLog(@"Warning: PHASE API missuse, cannot set class %@ with value of type double.",
+        NSLog(@"Warning: PHASE API misuse, cannot set class %@ with value of type double.",
               [soundEvent.metaParameters[parameterName] class]);
         return NO;
     }
@@ -672,9 +805,41 @@
 {
     PHASEStringMetaParameterDefinition* param = [[PHASEStringMetaParameterDefinition alloc] initWithValue:defaultStrValue identifier:name];
 
-    const int64_t paramId = reinterpret_cast<int64_t>(param);
-    [mSoundEventMetaParameterDefinitions setObject:param forKey:[NSNumber numberWithLongLong:paramId]];
-    return paramId;
+    if (param != nil)
+    {
+        const int64_t paramId = reinterpret_cast<int64_t>(param);
+        [mSoundEventMetaParameterDefinitions setObject:param forKey:[NSNumber numberWithLongLong:paramId]];
+        return paramId;
+    }
+    
+    return PHASEInvalidInstanceHandle;
+}
+
+- (NSString*)getMetaParameterStrValueWithId:(int64_t)instanceId parameterName:(NSString*)parameterName
+{
+    PHASESoundEvent* soundEvent = mSoundEvents[[NSNumber numberWithLongLong:instanceId]];
+    if (soundEvent == nil)
+    {
+        NSLog(@"Error: Failed to retrieve sound event associated with instance %@. Unable to get value for parameter %@", [NSNumber numberWithLongLong: instanceId], parameterName);
+        return nil;
+    }
+    
+    if (soundEvent.metaParameters[parameterName] == nil)
+    {
+        NSLog(@"Error: Failed to retrieve meta parameter from sound event associated with instance %@. Unable to get value for parameter %@.", [NSNumber numberWithLongLong: instanceId], parameterName);
+        return nil;
+    }
+    
+    if ([soundEvent.metaParameters[parameterName] isKindOfClass:[PHASEStringMetaParameter class]])
+    {
+        return soundEvent.metaParameters[parameterName].value;
+    }
+    else
+    {
+        NSLog(@"Warning: PHASE API misuse, cannot get class %@ with value of type string.",
+              [soundEvent.metaParameters[parameterName] class]);
+        return nil;
+    }
 }
 
 - (BOOL)setMetaParameterWithId:(int64_t)instanceId parameterName:(NSString*)parameterName stringValue:(NSString*)stringValue;
@@ -692,7 +857,7 @@
     }
     else
     {
-        NSLog(@"Warning: PHASE API missuse, cannot set class %@ with value of type string.",
+        NSLog(@"Warning: PHASE API misuse, cannot set class %@ with value of type string.",
               [soundEvent.metaParameters[parameterName] class]);
         return NO;
     }
@@ -701,6 +866,31 @@
 - (void)destroyMetaParameterWithId:(int64_t)parameterId
 {
     [mSoundEventMetaParameterDefinitions removeObjectForKey:[NSNumber numberWithLongLong:parameterId]];
+}
+
+- (BOOL)setMixerGainParameterOnMixerWithId:(int64_t)parameterId mixerId:(int64_t)mixerId
+{
+    PHASENumberMetaParameterDefinition* gainMetaParameter =
+      [mSoundEventMetaParameterDefinitions objectForKey:[NSNumber numberWithLongLong:parameterId]];
+    
+    if (gainMetaParameter == nil)
+    {
+        NSLog(@"Error: Failed to retrieve parameter with id %@, unable to set the parameter on the mixer with id %@.",
+              [NSNumber numberWithLongLong:parameterId], [NSNumber numberWithLongLong:mixerId]);
+        return NO;
+    }
+    
+    // Find the mixer
+    PHASEMixerDefinition* mixer = [mSoundEventMixerDefinitions objectForKey:[NSNumber numberWithLongLong:mixerId]];
+    if (mixer == nil)
+    {
+        NSLog(@"Error: Failed to retrieve mixer with id %@, unable to set parameter with id %@ on the mixer.",
+              [NSNumber numberWithLongLong:mixerId], [NSNumber numberWithLongLong:parameterId]);
+        return NO;
+    }
+        
+    mixer.gainMetaParameterDefinition = gainMetaParameter;
+    return YES;
 }
 
 - (int64_t)createMappedMetaParameterWithParameterId:(int64_t)parameterId envelopeParameters:(EnvelopeParameters)envelopeParameters
@@ -765,6 +955,7 @@
 
 - (int64_t)createSoundEventSamplerNodeWithAsset:(NSString*)assetName
                                         mixerId:(int64_t)mixerId
+                                rateParameterId:(int64_t)rateParameterId
                                         looping:(BOOL)looping
                                 calibrationMode:(CalibrationMode)calibrationMode
                                           level:(double)level
@@ -799,6 +990,22 @@
     [sampler setCalibrationMode:outCalibrationMode level:level];
 
     const int64_t samplerId = reinterpret_cast<int64_t>(sampler);
+    if (rateParameterId != PHASEInvalidInstanceHandle)
+    {
+        PHASENumberMetaParameterDefinition* rateMetaParameter =
+          [mSoundEventMetaParameterDefinitions objectForKey:[NSNumber numberWithLongLong:rateParameterId]];
+        if (rateMetaParameter == nil)
+        {
+            NSLog(@"Error: Failed to retrieve rate parameter with id %@, unable to set the parameter on the sampler with id %@.",
+                  [NSNumber numberWithLongLong:rateParameterId], [NSNumber numberWithLongLong: samplerId]);
+        }
+        else
+        {
+            sampler.rate = [rateMetaParameter.value floatValue];
+            sampler.rateMetaParameterDefinition = rateMetaParameter;
+        }
+    }
+    
     [mSoundEventNodeDefinitions setObject:sampler forKey:[NSNumber numberWithLongLong:samplerId]];
     return samplerId;
 }
@@ -937,22 +1144,22 @@
     return blendId;
 }
 
-- (int64_t)createSoundEventContainerNodeWithSubtree:(int64_t*)subtreeIds numSubtrees:(uint32_t)numSubtrees
+- (int64_t)createSoundEventContainerNodeWithChild:(int64_t*)childIds numChildren:(uint32_t)numChildren
 {
-    if (subtreeIds == nil)
+    if (childIds == nil)
     {
-        [NSException raise:@"subtree invalid" format:@"Failed to create Container Node with nil subtreeIds."];
+        [NSException raise:@"child invalid" format:@"Failed to create Container Node with nil childIds."];
     }
-    if (numSubtrees <= 0)
+    if (numChildren <= 0)
     {
-        [NSException raise:@"number of subtrees invalid" format:@"Failed to create Container Node with invalid numSubtrees."];
+        [NSException raise:@"number of children invalid" format:@"Failed to create Container Node with invalid numChildren."];
     }
     PHASEContainerNodeDefinition* containerNode = [[PHASEContainerNodeDefinition alloc] init];
-    for (int i = 0; i < numSubtrees; i++)
+    for (int i = 0; i < numChildren; i++)
     {
-        NSNumber* nodeId = [NSNumber numberWithLongLong:subtreeIds[i]];
-        PHASESoundEventNodeDefinition* subtree = [mSoundEventNodeDefinitions objectForKey:nodeId];
-        [containerNode addSubtree:subtree];
+        NSNumber* nodeId = [NSNumber numberWithLongLong:childIds[i]];
+        PHASESoundEventNodeDefinition* child = [mSoundEventNodeDefinitions objectForKey:nodeId];
+        [containerNode addSubtree:child];
     }
     const int64_t containerId = reinterpret_cast<int64_t>(containerNode);
     [mSoundEventNodeDefinitions setObject:containerNode forKey:[NSNumber numberWithLongLong:containerId]];
@@ -966,7 +1173,7 @@
 
 - (BOOL)registerSoundEventWithName:(NSString*)name rootNodeId:(int64_t)rootNodeId
 {
-    // Create a tree builder with the sampler node
+    // Create a sound event definition with the sampler node
     PHASESoundEventNodeDefinition* rootNode = [mSoundEventNodeDefinitions objectForKey:[NSNumber numberWithLongLong:rootNodeId]];
     if (rootNode == nil)
     {
@@ -974,12 +1181,12 @@
         return NO;
     }
 
-    // Register action tree
+    // Register sound event
     NSError* error = nil;
     [mEngine.assetRegistry registerSoundEventAssetWithRootNode:rootNode identifier:name error:&error];
     if (error)
     {
-        NSLog(@"Failed to register action tree with error %@.", error);
+        NSLog(@"Failed to register sound event with error %@.", error);
         return NO;
     }
 
@@ -1002,12 +1209,12 @@
                          mixerIds:(int64_t*)mixerIds
                         numMixers:(uint64_t)numMixers
                 completionHandler:
-                  (void (*)(PHASESoundEventStartHandlerReason reason, int64_t sourceId, int64_t soundEventId))completionHandler
+                  (void (*)(StartHandlerReason reason, int64_t sourceId, int64_t soundEventId))completionHandler
 {
     PHASESource* source = [mSources objectForKey:[NSNumber numberWithLongLong:sourceId]];
     if (source == nil)
     {
-        [NSException raise:@"Source invalid" format:@"Failed to find PHASE Source to play action tree on."];
+        [NSException raise:@"Source invalid" format:@"Failed to find PHASE Source to play sound event on."];
     }
 
     PHASEMixerParameters* outMixerParameters = [[PHASEMixerParameters alloc] init];
@@ -1043,20 +1250,33 @@
     }
     if (soundEvent == nil)
     {
-        [NSException raise:@"Sound event invalid." format:@"Failed to create sound event from action tree."];
+        [NSException raise:@"Sound event invalid." format:@"Failed to create sound event from sound event."];
     }
     const int64_t soundEventId = reinterpret_cast<int64_t>(soundEvent);
-
+    
     [soundEvent startWithCompletion:^(PHASESoundEventStartHandlerReason reason) {
       @synchronized(self->mSoundEvents)
       {
+          StartHandlerReason handlerReason;
+          switch (reason)
+          {
+              case PHASESoundEventStartHandlerReasonFailure:
+                  handlerReason = StartHandlerReasonFailure;
+                  break;
+              case PHASESoundEventStartHandlerReasonTerminated:
+                  handlerReason = StartHandlerReasonTerminated;
+                  break;
+              case PHASESoundEventStartHandlerReasonFinishedPlaying:
+                  handlerReason = StartHandlerReasonFinishedPlaying;
+                  break;
+          }
           if (completionHandler != nil)
           {
-              completionHandler(reason, sourceId, soundEventId);
+              completionHandler(handlerReason, sourceId, soundEventId);
           }
           [self->mSoundEvents removeObjectForKey:[NSNumber numberWithLongLong:soundEventId]];
 
-          // Decrement the number of events referencing the tree asset
+          // Decrement the number of events referencing the sound event asset
           self->mActiveSoundEventAssets[name] = [NSNumber numberWithInt:self->mActiveSoundEventAssets[name].intValue - 1];
       }
     }];
@@ -1064,7 +1284,7 @@
     {
         [mSoundEvents setObject:soundEvent forKey:[NSNumber numberWithLongLong:soundEventId]];
 
-        // Increment the number of events referencing the tree asset
+        // Increment the number of events referencing the sound event asset
         mActiveSoundEventAssets[name] = [NSNumber numberWithInt:mActiveSoundEventAssets[name].intValue + 1];
     }
 
