@@ -130,8 +130,10 @@ namespace Apple.Core
         /// <summary>
         /// Initialize the ApplePlugInEnvironment after all assets finished processing, so we can alter our own.
         /// </summary>
-        static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths, bool didDomainReload)
+        private static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths, bool didDomainReload)
         {
+            if (_updateState != UpdateState.Initializing) { return; }
+            
             // Ensure that the necessary Apple Unity Plug-In support folders exist and let user know if any have been created.
             string createFolderMessage = "[Apple Unity Plug-ins] Creating support folders:\n";
             bool foldersCreated = false;
