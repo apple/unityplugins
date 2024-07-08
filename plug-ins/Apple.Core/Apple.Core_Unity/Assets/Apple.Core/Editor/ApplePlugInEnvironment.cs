@@ -10,6 +10,7 @@ using UnityEditor.iOS.Xcode.Extensions;
 using UnityEditor.PackageManager;
 using UnityEditor.PackageManager.Requests;
 using UnityEngine;
+using System.Threading;
 
 namespace Apple.Core
 {
@@ -180,6 +181,18 @@ namespace Apple.Core
 
             EditorApplication.update += OnEditorUpdate;
             Events.registeringPackages += OnPackageManagerRegistrationUpdate;
+            
+            if (Application.isBatchMode) {
+                // when in -batchmode -quit, EditorUpdate is not called, so we have to
+                // lock the main thread until the packages are downloaded
+                static long nowMilis() => DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                long start = nowMilis();
+                const long timeout = 10000;
+                while (_updateState != UpdateState.Updating && nowMilis() - start < timeout) {
+                    Thread.Sleep(100);
+                    OnEditorUpdate();
+                }
+            }
         }
 
         /// <summary>
