@@ -12,5 +12,6 @@
 
 #import "AppleCoreRuntimeShared.h"
 #import "AccessPoint_BridgingHeader.h"
+#import "GKErrorCodeExtension.h"
 
 #endif /* BridgingHeader_macOS_h */

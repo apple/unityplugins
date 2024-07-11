@@ -8,15 +8,6 @@
 import Foundation
 import GameKit
 
-@_cdecl("GKTurnBasedMatchmakerViewController_Free")
-public func GKTurnBasedMatchmakerViewController_Free
-(
-    pointer: UnsafeMutableRawPointer
-)
-{
-    _ = Unmanaged<GKTurnBasedMatchmakerViewController>.fromOpaque(pointer).autorelease();
-}
-
 @_cdecl("GKTurnBasedMatchmakerViewController_InitWithMatchRequest")
 public func GKTurnBasedMatchmakerViewController_InitWithMatchRequest
 (
@@ -108,27 +99,16 @@ public func GKTurnBasedMatchmakerViewController_Present
 {
     let target = Unmanaged<GKTurnBasedMatchmakerViewController>.fromOpaque(pointer).takeUnretainedValue();
     _presentingTurnBasedMatchmakerViewController = target;
-    
-#if os(iOS) || os(tvOS)
-    let viewController = UIApplication.shared.windows.first!.rootViewController;
-    viewController?.present(target, animated: true);
-#else
-    GKDialogController.shared().parentWindow = NSApplication.shared.keyWindow;
-    GKDialogController.shared().present(target);
-#endif
+    UiUtilities.presentViewController(viewController: target)
 }
 
+@_cdecl("GKTurnBasedMatchmakerViewController_Dismiss")
 public func GKTurnBasedMatchmakerViewController_Dismiss
 (
     viewController: GKTurnBasedMatchmakerViewController
 )
 {
-    #if os(iOS) || os(tvOS)
-        viewController.dismiss(animated: true);
-    #else
-        GKDialogController.shared().dismiss(viewController);
-    #endif
-    
+    UiUtilities.dismissViewController(viewController: viewController)
     _presentingTurnBasedMatchmakerViewController = nil;
     _activeTurnBasedMatchmakerDelegate = nil;
 }

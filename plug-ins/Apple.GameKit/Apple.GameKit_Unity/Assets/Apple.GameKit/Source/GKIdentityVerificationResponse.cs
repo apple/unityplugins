@@ -1,46 +1,31 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using Apple.Core.Runtime;
 
 namespace Apple.GameKit.Players
 {
-    [StructLayout(LayoutKind.Sequential)]
-    public struct GKIdentityVerificationResponse
+    public class GKIdentityVerificationResponse
     {
         /// <summary>
         /// The URL for the public encryption key.
         /// </summary>
-        public string PublicKeyUrl;
-        internal IntPtr Signature;
-        internal int SignatureLength;
-        internal IntPtr Salt;
-        internal int SaltLength;
-        /// <summary>
-        /// The signatureâ€™s creation date and time.
-        /// </summary>
-        public ulong Timestamp;
+        public string PublicKeyUrl { get; set; }
 
         /// <summary>
         /// The verification signature data that GameKit generates.
         /// </summary>
-        /// <returns></returns>
-        public byte[] GetSignature()
-        {
-            var signature = new byte[SignatureLength];
-            Marshal.Copy(Signature, signature, 0, SignatureLength);
-
-            return signature;
-        }
+        public NSData Signature { get; set; }
+        public byte[] GetSignature() => Signature.Bytes;
 
         /// <summary>
         /// A random NSString that GameKit uses to compute the hash and randomize it.
         /// </summary>
-        /// <returns></returns>
-        public byte[] GetSalt()
-        {
-            var salt = new byte[SaltLength];
-            Marshal.Copy(Salt, salt, 0, SaltLength);
+        public NSData Salt { get; set; }
+        public byte[] GetSalt() => Salt.Bytes;
 
-            return salt;
-        }
+        /// <summary>
+        /// The signature's creation date and time.
+        /// </summary>
+        public UInt64 Timestamp;
     }
 }

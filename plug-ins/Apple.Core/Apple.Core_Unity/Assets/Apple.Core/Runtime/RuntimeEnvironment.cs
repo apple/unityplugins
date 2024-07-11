@@ -11,6 +11,7 @@ namespace Apple.Core
         iOS = 1,
         macOS = 2,
         tvOS = 3,
+        visionOS = 4,
 
         // New operating systems should be added above this line.
         RuntimeOperatingSystemCount

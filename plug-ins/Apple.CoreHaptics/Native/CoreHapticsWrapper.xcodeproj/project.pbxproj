@@ -6,23 +6,34 @@
 	objectVersion = 50;
 	objects = {
 
-/* Begin PBXAggregateTarget section */
-		CFF6B9F02628C9630002CEEB /* all */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = CFF6B9F32628C9630002CEEB /* Build configuration list for PBXAggregateTarget "all" */;
-			buildPhases = (
-			);
-			dependencies = (
-				CFF6B9F92628C9670002CEEB /* PBXTargetDependency */,
-				CFF6B9FB2628C9680002CEEB /* PBXTargetDependency */,
-				CFF6B9FD2628C96A0002CEEB /* PBXTargetDependency */,
-			);
-			name = all;
-			productName = AllFrameworks;
-		};
-/* End PBXAggregateTarget section */
-
 /* Begin PBXBuildFile section */
+		24B0641E2B7F0323007ABBB8 /* CoreHapticsWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A55184924E2FC09004CDB45 /* CoreHapticsWrapper.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		24B0641F2B7F0323007ABBB8 /* CHHapticPatternPlayer_BridgingHeader.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A443C722603D68D0048A408 /* CHHapticPatternPlayer_BridgingHeader.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		24B064212B7F0323007ABBB8 /* UIFBG_Protocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFFA16EB2756FFA000C62383 /* UIFBG_Protocol.swift */; };
+		24B064222B7F0323007ABBB8 /* General_CallbackTypeDefinitions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A55186124E6FBA0004CDB45 /* General_CallbackTypeDefinitions.swift */; };
+		24B064232B7F0323007ABBB8 /* CHHapticAdvancedPatternPlayer_Protocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A33210F26015D1A00B447CD /* CHHapticAdvancedPatternPlayer_Protocol.swift */; };
+		24B064242B7F0323007ABBB8 /* CHHapticPatternPlayer_Protocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A3320FA26015A3000B447CD /* CHHapticPatternPlayer_Protocol.swift */; };
+		24B064252B7F0323007ABBB8 /* CHHapticAdvancedPatternPlayer_Unsupported.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A33211D26015EB700B447CD /* CHHapticAdvancedPatternPlayer_Unsupported.swift */; };
+		24B064262B7F0323007ABBB8 /* CHHapticPatternPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 948088BA25D7052A00D7DAF0 /* CHHapticPatternPlayer.swift */; };
+		24B064272B7F0323007ABBB8 /* CHHapticEngine_Unsupported.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A3320F326014BF500B447CD /* CHHapticEngine_Unsupported.swift */; };
+		24B064282B7F0323007ABBB8 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2E64B0272C76D000F63529 /* Utilities.swift */; };
+		24B064292B7F0323007ABBB8 /* UIFBG_Supported.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFFA16F12756FFC000C62383 /* UIFBG_Supported.swift */; };
+		24B0642A2B7F0323007ABBB8 /* CHHapticEngine_Supported.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A3320E526014AD100B447CD /* CHHapticEngine_Supported.swift */; };
+		24B0642B2B7F0323007ABBB8 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A55186624E70042004CDB45 /* Extensions.swift */; };
+		24B0642C2B7F0323007ABBB8 /* CHCapabilities_Supported.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2E64B8272C7DF300F63529 /* CHCapabilities_Supported.swift */; };
+		24B0642D2B7F0323007ABBB8 /* UIFBG_Unsupported.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFFA16F52756FFCB00C62383 /* UIFBG_Unsupported.swift */; };
+		24B0642E2B7F0323007ABBB8 /* CHHapticPatternPlayer_Supported.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A33210126015AA100B447CD /* CHHapticPatternPlayer_Supported.swift */; };
+		24B0642F2B7F0323007ABBB8 /* CHHapticEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A7D6B9B25DC56FD0072DB37 /* CHHapticEngine.swift */; };
+		24B064302B7F0323007ABBB8 /* CHHapticPatternPlayer_Unsupported.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A33210826015B1000B447CD /* CHHapticPatternPlayer_Unsupported.swift */; };
+		24B064312B7F0323007ABBB8 /* CHHapticAdvancedPatternPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9473E3B925DEF3F600B4AD36 /* CHHapticAdvancedPatternPlayer.swift */; };
+		24B064322B7F0323007ABBB8 /* CHCapabilities_Unsupported.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2E64BC272C7E4900F63529 /* CHCapabilities_Unsupported.swift */; };
+		24B064332B7F0323007ABBB8 /* UIFBG.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFFA16E52756EA9700C62383 /* UIFBG.swift */; };
+		24B064342B7F0323007ABBB8 /* CHCapabilities_Protocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2E64AC272C74FE00F63529 /* CHCapabilities_Protocol.swift */; };
+		24B064352B7F0323007ABBB8 /* CHHapticAdvancedPatternPlayer_Supported.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A33211626015D7F00B447CD /* CHHapticAdvancedPatternPlayer_Supported.swift */; };
+		24B064362B7F0323007ABBB8 /* CHHapticEngine_Protocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A3320EC26014B2E00B447CD /* CHHapticEngine_Protocol.swift */; };
+		24B064372B7F0323007ABBB8 /* CHCapabilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2E64B4272C78F800F63529 /* CHCapabilities.swift */; };
+		24B064392B7F0323007ABBB8 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 948088A325D6DF1B00D7DAF0 /* AVFoundation.framework */; };
+		24B0643A2B7F0323007ABBB8 /* CoreHaptics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 948088A125D6DF1200D7DAF0 /* CoreHaptics.framework */; };
 		7A3320E626014AD100B447CD /* CHHapticEngine_Supported.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A3320E526014AD100B447CD /* CHHapticEngine_Supported.swift */; };
 		7A3320E726014AD100B447CD /* CHHapticEngine_Supported.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A3320E526014AD100B447CD /* CHHapticEngine_Supported.swift */; };
 		7A3320E826014AD100B447CD /* CHHapticEngine_Supported.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A3320E526014AD100B447CD /* CHHapticEngine_Supported.swift */; };
@@ -85,11 +96,8 @@
 		CF2E64BD272C7E4900F63529 /* CHCapabilities_Unsupported.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2E64BC272C7E4900F63529 /* CHCapabilities_Unsupported.swift */; };
 		CF2E64BE272C7E4900F63529 /* CHCapabilities_Unsupported.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2E64BC272C7E4900F63529 /* CHCapabilities_Unsupported.swift */; };
 		CF2E64BF272C7E4900F63529 /* CHCapabilities_Unsupported.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2E64BC272C7E4900F63529 /* CHCapabilities_Unsupported.swift */; };
-		CF6841BE261C0A43007B3BA2 /* CoreHapticsWrapper.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7A55184624E2FC09004CDB45 /* CoreHapticsWrapper.framework */; };
 		CFE05ED2261CFCE500311DFC /* CHHapticPatternPlayer_BridgingHeader.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A443C722603D68D0048A408 /* CHHapticPatternPlayer_BridgingHeader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CFE05ED3261CFCE500311DFC /* CoreHapticsWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A55184924E2FC09004CDB45 /* CoreHapticsWrapper.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		CFF6B9FF2628C9900002CEEB /* CoreHapticsWrapper.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7AE5BB812502C06C00BDBEDA /* CoreHapticsWrapper.framework */; };
-		CFF6BA012628C9A60002CEEB /* CoreHapticsWrapper.bundle in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7A55185524E2FF56004CDB45 /* CoreHapticsWrapper.bundle */; };
 		CFF6BA0A2628C9CE0002CEEB /* CHHapticPatternPlayer_BridgingHeader.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A443C722603D68D0048A408 /* CHHapticPatternPlayer_BridgingHeader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CFFA16E62756EA9700C62383 /* UIFBG.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFFA16E52756EA9700C62383 /* UIFBG.swift */; };
 		CFFA16EC2756FFA000C62383 /* UIFBG_Protocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFFA16EB2756FFA000C62383 /* UIFBG_Protocol.swift */; };
@@ -105,64 +113,9 @@
 		CFFA16F82756FFCB00C62383 /* UIFBG_Unsupported.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFFA16F52756FFCB00C62383 /* UIFBG_Unsupported.swift */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		CFF6B9F82628C9670002CEEB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 7A55183D24E2FC09004CDB45 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 7A55184524E2FC09004CDB45;
-			remoteInfo = "CoreHapticsWrapper iOS";
-		};
-		CFF6B9FA2628C9680002CEEB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 7A55183D24E2FC09004CDB45 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 7AE5BB732502C06C00BDBEDA;
-			remoteInfo = "CoreHapticsWrapper tvOS";
-		};
-		CFF6B9FC2628C96A0002CEEB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 7A55183D24E2FC09004CDB45 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 7A55185424E2FF56004CDB45;
-			remoteInfo = CoreHapticsWrapperMac;
-		};
-/* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		CF6841BD261C0A3A007B3BA2 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "$(PROJECT_DIR)/../Apple.CoreHaptics_Unity/Assets/Apple.CoreHaptics/Plugins/iOS";
-			dstSubfolderSpec = 0;
-			files = (
-				CF6841BE261C0A43007B3BA2 /* CoreHapticsWrapper.framework in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		CFF6B9FE2628C9800002CEEB /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "$(PROJECT_DIR)/../Apple.CoreHaptics_Unity/Assets/Apple.CoreHaptics/Plugins/tvOS";
-			dstSubfolderSpec = 0;
-			files = (
-				CFF6B9FF2628C9900002CEEB /* CoreHapticsWrapper.framework in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		CFF6BA002628C9950002CEEB /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "$(PROJECT_DIR)/../Apple.CoreHaptics_Unity/Assets/Apple.CoreHaptics/Plugins/macOS";
-			dstSubfolderSpec = 0;
-			files = (
-				CFF6BA012628C9A60002CEEB /* CoreHapticsWrapper.bundle in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXFileReference section */
+		240646132B61FFCD00246067 /* CoreHaptics.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = CoreHaptics.xcconfig; sourceTree = "<group>"; };
+		24B064402B7F0323007ABBB8 /* CoreHapticsWrapper.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CoreHapticsWrapper.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7A3320E526014AD100B447CD /* CHHapticEngine_Supported.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CHHapticEngine_Supported.swift; sourceTree = "<group>"; };
 		7A3320EC26014B2E00B447CD /* CHHapticEngine_Protocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CHHapticEngine_Protocol.swift; path = CoreHapticsWrapper/Haptics/HapticEngine/CHHapticEngine_Protocol.swift; sourceTree = SOURCE_ROOT; };
 		7A3320F326014BF500B447CD /* CHHapticEngine_Unsupported.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CHHapticEngine_Unsupported.swift; sourceTree = "<group>"; };
@@ -175,7 +128,6 @@
 		7A443C722603D68D0048A408 /* CHHapticPatternPlayer_BridgingHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CHHapticPatternPlayer_BridgingHeader.h; sourceTree = "<group>"; };
 		7A55184624E2FC09004CDB45 /* CoreHapticsWrapper.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CoreHapticsWrapper.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7A55184924E2FC09004CDB45 /* CoreHapticsWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreHapticsWrapper.h; sourceTree = "<group>"; };
-		7A55184A24E2FC09004CDB45 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7A55185524E2FF56004CDB45 /* CoreHapticsWrapper.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CoreHapticsWrapper.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		7A55186124E6FBA0004CDB45 /* General_CallbackTypeDefinitions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = General_CallbackTypeDefinitions.swift; sourceTree = "<group>"; };
 		7A55186624E70042004CDB45 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
@@ -198,6 +150,15 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		24B064382B7F0323007ABBB8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				24B064392B7F0323007ABBB8 /* AVFoundation.framework in Frameworks */,
+				24B0643A2B7F0323007ABBB8 /* CoreHaptics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		7A55184324E2FC09004CDB45 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -227,6 +188,7 @@
 		7A55183C24E2FC09004CDB45 = {
 			isa = PBXGroup;
 			children = (
+				240646132B61FFCD00246067 /* CoreHaptics.xcconfig */,
 				7A55184824E2FC09004CDB45 /* CoreHapticsWrapper */,
 				7A55184724E2FC09004CDB45 /* Products */,
 				948088A025D6DF1100D7DAF0 /* Frameworks */,
@@ -239,6 +201,7 @@
 				7A55184624E2FC09004CDB45 /* CoreHapticsWrapper.framework */,
 				7A55185524E2FF56004CDB45 /* CoreHapticsWrapper.bundle */,
 				7AE5BB812502C06C00BDBEDA /* CoreHapticsWrapper.framework */,
+				24B064402B7F0323007ABBB8 /* CoreHapticsWrapper.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -248,7 +211,6 @@
 			children = (
 				7A55185B24E6FA35004CDB45 /* Haptics */,
 				7A55184924E2FC09004CDB45 /* CoreHapticsWrapper.h */,
-				7A55184A24E2FC09004CDB45 /* Info.plist */,
 				7A55186124E6FBA0004CDB45 /* General_CallbackTypeDefinitions.swift */,
 				7A55186624E70042004CDB45 /* Extensions.swift */,
 				7A55186924E70D49004CDB45 /* BridgingHeader-macOS.h */,
@@ -337,6 +299,15 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		24B0641D2B7F0323007ABBB8 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				24B0641E2B7F0323007ABBB8 /* CoreHapticsWrapper.h in Headers */,
+				24B0641F2B7F0323007ABBB8 /* CHHapticPatternPlayer_BridgingHeader.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		7A55184124E2FC09004CDB45 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -367,6 +338,24 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		24B0641C2B7F0323007ABBB8 /* CoreHapticsWrapper visionOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 24B0643D2B7F0323007ABBB8 /* Build configuration list for PBXNativeTarget "CoreHapticsWrapper visionOS" */;
+			buildPhases = (
+				24B0641D2B7F0323007ABBB8 /* Headers */,
+				24B064202B7F0323007ABBB8 /* Sources */,
+				24B064382B7F0323007ABBB8 /* Frameworks */,
+				24B0643B2B7F0323007ABBB8 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "CoreHapticsWrapper visionOS";
+			productName = GameControllerWrapper;
+			productReference = 24B064402B7F0323007ABBB8 /* CoreHapticsWrapper.framework */;
+			productType = "com.apple.product-type.framework";
+		};
 		7A55184524E2FC09004CDB45 /* CoreHapticsWrapper iOS */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 7A55184E24E2FC09004CDB45 /* Build configuration list for PBXNativeTarget "CoreHapticsWrapper iOS" */;
@@ -375,7 +364,6 @@
 				7A55184224E2FC09004CDB45 /* Sources */,
 				7A55184324E2FC09004CDB45 /* Frameworks */,
 				7A55184424E2FC09004CDB45 /* Resources */,
-				CF6841BD261C0A3A007B3BA2 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -394,7 +382,6 @@
 				7A55185124E2FF56004CDB45 /* Sources */,
 				7A55185224E2FF56004CDB45 /* Frameworks */,
 				7A55185324E2FF56004CDB45 /* Resources */,
-				CFF6BA002628C9950002CEEB /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -413,7 +400,6 @@
 				7AE5BB772502C06C00BDBEDA /* Sources */,
 				7AE5BB7C2502C06C00BDBEDA /* Frameworks */,
 				7AE5BB7D2502C06C00BDBEDA /* Resources */,
-				CFF6B9FE2628C9800002CEEB /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -441,9 +427,6 @@
 						CreatedOnToolsVersion = 11.6;
 						LastSwiftMigration = 1160;
 					};
-					CFF6B9F02628C9630002CEEB = {
-						CreatedOnToolsVersion = 12.2;
-					};
 				};
 			};
 			buildConfigurationList = 7A55184024E2FC09004CDB45 /* Build configuration list for PBXProject "CoreHapticsWrapper" */;
@@ -461,13 +444,20 @@
 			targets = (
 				7A55184524E2FC09004CDB45 /* CoreHapticsWrapper iOS */,
 				7AE5BB732502C06C00BDBEDA /* CoreHapticsWrapper tvOS */,
+				24B0641C2B7F0323007ABBB8 /* CoreHapticsWrapper visionOS */,
 				7A55185424E2FF56004CDB45 /* CoreHapticsWrapperMac */,
-				CFF6B9F02628C9630002CEEB /* all */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		24B0643B2B7F0323007ABBB8 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		7A55184424E2FC09004CDB45 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -492,6 +482,36 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		24B064202B7F0323007ABBB8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				24B064212B7F0323007ABBB8 /* UIFBG_Protocol.swift in Sources */,
+				24B064222B7F0323007ABBB8 /* General_CallbackTypeDefinitions.swift in Sources */,
+				24B064232B7F0323007ABBB8 /* CHHapticAdvancedPatternPlayer_Protocol.swift in Sources */,
+				24B064242B7F0323007ABBB8 /* CHHapticPatternPlayer_Protocol.swift in Sources */,
+				24B064252B7F0323007ABBB8 /* CHHapticAdvancedPatternPlayer_Unsupported.swift in Sources */,
+				24B064262B7F0323007ABBB8 /* CHHapticPatternPlayer.swift in Sources */,
+				24B064272B7F0323007ABBB8 /* CHHapticEngine_Unsupported.swift in Sources */,
+				24B064282B7F0323007ABBB8 /* Utilities.swift in Sources */,
+				24B064292B7F0323007ABBB8 /* UIFBG_Supported.swift in Sources */,
+				24B0642A2B7F0323007ABBB8 /* CHHapticEngine_Supported.swift in Sources */,
+				24B0642B2B7F0323007ABBB8 /* Extensions.swift in Sources */,
+				24B0642C2B7F0323007ABBB8 /* CHCapabilities_Supported.swift in Sources */,
+				24B0642D2B7F0323007ABBB8 /* UIFBG_Unsupported.swift in Sources */,
+				24B0642E2B7F0323007ABBB8 /* CHHapticPatternPlayer_Supported.swift in Sources */,
+				24B0642F2B7F0323007ABBB8 /* CHHapticEngine.swift in Sources */,
+				24B064302B7F0323007ABBB8 /* CHHapticPatternPlayer_Unsupported.swift in Sources */,
+				24B064312B7F0323007ABBB8 /* CHHapticAdvancedPatternPlayer.swift in Sources */,
+				24B064322B7F0323007ABBB8 /* CHCapabilities_Unsupported.swift in Sources */,
+				24B064332B7F0323007ABBB8 /* UIFBG.swift in Sources */,
+				24B064342B7F0323007ABBB8 /* CHCapabilities_Protocol.swift in Sources */,
+				24B064352B7F0323007ABBB8 /* CHHapticAdvancedPatternPlayer_Supported.swift in Sources */,
+				24B064362B7F0323007ABBB8 /* CHHapticEngine_Protocol.swift in Sources */,
+				24B064372B7F0323007ABBB8 /* CHCapabilities.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		7A55184224E2FC09004CDB45 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -584,27 +604,75 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
-/* Begin PBXTargetDependency section */
-		CFF6B9F92628C9670002CEEB /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 7A55184524E2FC09004CDB45 /* CoreHapticsWrapper iOS */;
-			targetProxy = CFF6B9F82628C9670002CEEB /* PBXContainerItemProxy */;
-		};
-		CFF6B9FB2628C9680002CEEB /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 7AE5BB732502C06C00BDBEDA /* CoreHapticsWrapper tvOS */;
-			targetProxy = CFF6B9FA2628C9680002CEEB /* PBXContainerItemProxy */;
-		};
-		CFF6B9FD2628C96A0002CEEB /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 7A55185424E2FF56004CDB45 /* CoreHapticsWrapperMac */;
-			targetProxy = CFF6B9FC2628C96A0002CEEB /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
 /* Begin XCBuildConfiguration section */
+		24B0643E2B7F0323007ABBB8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 240646132B61FFCD00246067 /* CoreHaptics.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Manual;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.apple-plugins.CoreHapticsWrapper-visionOS";
+				PRODUCT_NAME = CoreHapticsWrapper;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = xros;
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 7;
+				TVOS_DEPLOYMENT_TARGET = 13.0;
+			};
+			name = Debug;
+		};
+		24B0643F2B7F0323007ABBB8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 240646132B61FFCD00246067 /* CoreHaptics.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Manual;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.apple-plugins.CoreHapticsWrapper-visionOS";
+				PRODUCT_NAME = CoreHapticsWrapper;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = xros;
+				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 7;
+				TVOS_DEPLOYMENT_TARGET = 13.0;
+			};
+			name = Release;
+		};
 		7A55184C24E2FC09004CDB45 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 240646132B61FFCD00246067 /* CoreHaptics.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -637,7 +705,6 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -662,13 +729,13 @@
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
 			name = Debug;
 		};
 		7A55184D24E2FC09004CDB45 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 240646132B61FFCD00246067 /* CoreHaptics.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -701,7 +768,6 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -720,13 +786,13 @@
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
 			name = Release;
 		};
 		7A55184F24E2FC09004CDB45 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 240646132B61FFCD00246067 /* CoreHaptics.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
@@ -736,8 +802,6 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = CoreHapticsWrapper/Info.plist;
-				INFOPLIST_OUTPUT_FORMAT = XML;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -760,6 +824,7 @@
 		};
 		7A55185024E2FC09004CDB45 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 240646132B61FFCD00246067 /* CoreHaptics.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
@@ -769,8 +834,6 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = CoreHapticsWrapper/Info.plist;
-				INFOPLIST_OUTPUT_FORMAT = XML;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -792,13 +855,12 @@
 		};
 		7A55185824E2FF56004CDB45 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 240646132B61FFCD00246067 /* CoreHaptics.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = "";
-				INFOPLIST_FILE = CoreHapticsWrapper/Info.plist;
-				INFOPLIST_OUTPUT_FORMAT = XML;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -822,13 +884,12 @@
 		};
 		7A55185924E2FF56004CDB45 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 240646132B61FFCD00246067 /* CoreHaptics.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = "";
-				INFOPLIST_FILE = CoreHapticsWrapper/Info.plist;
-				INFOPLIST_OUTPUT_FORMAT = XML;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -851,6 +912,7 @@
 		};
 		7AE5BB7F2502C06C00BDBEDA /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 240646132B61FFCD00246067 /* CoreHaptics.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
@@ -860,8 +922,6 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = CoreHapticsWrapper/Info.plist;
-				INFOPLIST_OUTPUT_FORMAT = XML;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -885,6 +945,7 @@
 		};
 		7AE5BB802502C06C00BDBEDA /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 240646132B61FFCD00246067 /* CoreHaptics.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
@@ -894,8 +955,6 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = CoreHapticsWrapper/Info.plist;
-				INFOPLIST_OUTPUT_FORMAT = XML;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -916,34 +975,18 @@
 			};
 			name = Release;
 		};
-		CFF6B9F12628C9630002CEEB /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ADDITIONAL_SDKS = "macosx appletvos appletvsimulator iphoneos iphonesimulator";
-				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = S5585LNN66;
-				ONLY_ACTIVE_ARCH = NO;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos appletvsimulator appletvos";
-			};
-			name = Debug;
-		};
-		CFF6B9F22628C9630002CEEB /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ADDITIONAL_SDKS = "macosx appletvos appletvsimulator iphoneos iphonesimulator";
-				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = S5585LNN66;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos appletvsimulator appletvos";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		24B0643D2B7F0323007ABBB8 /* Build configuration list for PBXNativeTarget "CoreHapticsWrapper visionOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				24B0643E2B7F0323007ABBB8 /* Debug */,
+				24B0643F2B7F0323007ABBB8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		7A55184024E2FC09004CDB45 /* Build configuration list for PBXProject "CoreHapticsWrapper" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -976,15 +1019,6 @@
 			buildConfigurations = (
 				7AE5BB7F2502C06C00BDBEDA /* Debug */,
 				7AE5BB802502C06C00BDBEDA /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		CFF6B9F32628C9630002CEEB /* Build configuration list for PBXAggregateTarget "all" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				CFF6B9F12628C9630002CEEB /* Debug */,
-				CFF6B9F22628C9630002CEEB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

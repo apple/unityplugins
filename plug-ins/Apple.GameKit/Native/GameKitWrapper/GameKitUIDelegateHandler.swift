@@ -20,13 +20,13 @@ public class GameKitUIDelegateHandler : NSObject {
 
 extension GameKitUIDelegateHandler : GKGameCenterControllerDelegate {
     public func gameCenterViewControllerDidFinish(_ gameCenterViewController: GKGameCenterViewController) {
-        #if os(iOS) || os(tvOS)
-            gameCenterViewController.dismiss(animated: true, completion: {
-                self._onSuccess?(self._taskId!);
-            });
-        #else
-            GKDialogController.shared().dismiss(gameCenterViewController);
+#if os(macOS)
+        GKDialogController.shared().dismiss(gameCenterViewController);
+        self._onSuccess?(self._taskId!);
+#else
+        gameCenterViewController.dismiss(animated: true, completion: {
             self._onSuccess?(self._taskId!);
-        #endif
+        });
+#endif
     }
 }

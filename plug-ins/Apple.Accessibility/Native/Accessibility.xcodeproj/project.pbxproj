@@ -18,17 +18,16 @@
 			name = macOS_sentinel;
 			productName = macOS_sentinel;
 		};
-		242473AB276D443B009747F6 /* All */ = {
+		24B064172B7EEEC7007ABBB8 /* visionOS_sentinel */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = 242473AC276D443B009747F6 /* Build configuration list for PBXAggregateTarget "All" */;
+			buildConfigurationList = 24B064192B7EEEC7007ABBB8 /* Build configuration list for PBXAggregateTarget "visionOS_sentinel" */;
 			buildPhases = (
+				24B064182B7EEEC7007ABBB8 /* ShellScript */,
 			);
 			dependencies = (
-				242473B0276D4443009747F6 /* PBXTargetDependency */,
-				242473B2276D4443009747F6 /* PBXTargetDependency */,
 			);
-			name = All;
-			productName = All;
+			name = visionOS_sentinel;
+			productName = macOS_sentinel;
 		};
 /* End PBXAggregateTarget section */
 
@@ -57,51 +56,10 @@
 		C9729E1E27434953009BB169 /* UnityViewAccessibility.m in Sources */ = {isa = PBXBuildFile; fileRef = C9729D4527432564009BB169 /* UnityViewAccessibility.m */; };
 		C9729E1F27434953009BB169 /* AppleAccessibilityBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = C9729D4727432564009BB169 /* AppleAccessibilityBridge.m */; };
 		C9729E2027434953009BB169 /* AppleAccessibilityRuntime.m in Sources */ = {isa = PBXBuildFile; fileRef = C9729D4A27432564009BB169 /* AppleAccessibilityRuntime.m */; };
-		C9729E29274349EB009BB169 /* AppleAccessibility.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C9729E2827434953009BB169 /* AppleAccessibility.framework */; };
-		C9729E2A274349F3009BB169 /* AppleAccessibility.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C9729D3A274324FC009BB169 /* AppleAccessibility.framework */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		242473AF276D4443009747F6 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 93BB76AE25CB3A4600CF60ED /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = C9729D39274324FC009BB169;
-			remoteInfo = AppleAccessibility_iOS;
-		};
-		242473B1276D4443009747F6 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 93BB76AE25CB3A4600CF60ED /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = C9729E1127434953009BB169;
-			remoteInfo = AppleAccessibility_tvOS;
-		};
-/* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		C9729E0F27434910009BB169 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "$(PROJECT_DIR)/../Apple.Accessibility_Unity/Assets/Apple.Accessibility/Plugins/iOS";
-			dstSubfolderSpec = 0;
-			files = (
-				C9729E2A274349F3009BB169 /* AppleAccessibility.framework in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		C9729E2327434953009BB169 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "$(PROJECT_DIR)/../Apple.Accessibility_Unity/Assets/Apple.Accessibility/Plugins/tvOS";
-			dstSubfolderSpec = 0;
-			files = (
-				C9729E29274349EB009BB169 /* AppleAccessibility.framework in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXFileReference section */
+		240646122B61FC3C00246067 /* Accessibility.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Accessibility.xcconfig; sourceTree = "<group>"; };
 		C9155832273CDDB5007DF564 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.0.sdk/System/iOSSupport/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		C9155834273CDDBC007DF564 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS16.0.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		C9729D3A274324FC009BB169 /* AppleAccessibility.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AppleAccessibility.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -141,6 +99,7 @@
 		93BB76AD25CB3A4600CF60ED = {
 			isa = PBXGroup;
 			children = (
+				240646122B61FC3C00246067 /* Accessibility.xcconfig */,
 				C9729D3B274324FC009BB169 /* AppleAccessibility */,
 				93BB76B725CB3A4600CF60ED /* Products */,
 				C9155831273CDDB5007DF564 /* Frameworks */,
@@ -232,7 +191,6 @@
 				C9729D36274324FC009BB169 /* Sources */,
 				C9729D37274324FC009BB169 /* Frameworks */,
 				C9729D38274324FC009BB169 /* Resources */,
-				C9729E0F27434910009BB169 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -251,7 +209,6 @@
 				C9729E1A27434953009BB169 /* Sources */,
 				C9729E2127434953009BB169 /* Frameworks */,
 				C9729E2227434953009BB169 /* Resources */,
-				C9729E2327434953009BB169 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -273,9 +230,6 @@
 					241B6AA82947AC5500EC7B7A = {
 						CreatedOnToolsVersion = 14.1;
 					};
-					242473AB276D443B009747F6 = {
-						CreatedOnToolsVersion = 13.2;
-					};
 					C9729D39274324FC009BB169 = {
 						CreatedOnToolsVersion = 13.3;
 					};
@@ -296,8 +250,8 @@
 			targets = (
 				C9729D39274324FC009BB169 /* AppleAccessibility_iOS */,
 				C9729E1127434953009BB169 /* AppleAccessibility_tvOS */,
-				242473AB276D443B009747F6 /* All */,
 				241B6AA82947AC5500EC7B7A /* macOS_sentinel */,
+				24B064172B7EEEC7007ABBB8 /* visionOS_sentinel */,
 			);
 		};
 /* End PBXProject section */
@@ -339,6 +293,25 @@
 			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\necho \"\\n[Accessibility] macOS not currently supported by Accessibility plug-in. No native library built.\"\n";
 			showEnvVarsInLog = 0;
 		};
+		24B064182B7EEEC7007ABBB8 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\necho \"\\n[Accessibility] visionOS not currently supported by Accessibility plug-in. No native library built.\"\n";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -370,22 +343,10 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
-/* Begin PBXTargetDependency section */
-		242473B0276D4443009747F6 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = C9729D39274324FC009BB169 /* AppleAccessibility_iOS */;
-			targetProxy = 242473AF276D4443009747F6 /* PBXContainerItemProxy */;
-		};
-		242473B2276D4443009747F6 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = C9729E1127434953009BB169 /* AppleAccessibility_tvOS */;
-			targetProxy = 242473B1276D4443009747F6 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
 /* Begin XCBuildConfiguration section */
 		241B6AA92947AC5500EC7B7A /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 240646122B61FC3C00246067 /* Accessibility.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -395,6 +356,7 @@
 		};
 		241B6AAA2947AC5500EC7B7A /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 240646122B61FC3C00246067 /* Accessibility.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -402,32 +364,29 @@
 			};
 			name = Release;
 		};
-		242473AD276D443B009747F6 /* Debug */ = {
+		24B0641A2B7EEEC7007ABBB8 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 240646122B61FC3C00246067 /* Accessibility.xcconfig */;
 			buildSettings = {
-				ADDITIONAL_SDKS = "appletvos appletvsimulator iphoneos iphonesimulator";
-				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = XPSUQMMH5W;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
+				SDKROOT = xros;
 			};
 			name = Debug;
 		};
-		242473AE276D443B009747F6 /* Release */ = {
+		24B0641B2B7EEEC7007ABBB8 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 240646122B61FC3C00246067 /* Accessibility.xcconfig */;
 			buildSettings = {
-				ADDITIONAL_SDKS = "appletvos appletvsimulator iphoneos iphonesimulator";
-				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = XPSUQMMH5W;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SUPPORTED_PLATFORMS = "appletvos appletvsimulator iphoneos iphonesimulator";
+				SDKROOT = xros;
 			};
 			name = Release;
 		};
 		93BB76BD25CB3A4600CF60ED /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 240646122B61FC3C00246067 /* Accessibility.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -484,6 +443,7 @@
 		};
 		93BB76BE25CB3A4600CF60ED /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 240646122B61FC3C00246067 /* Accessibility.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -534,6 +494,7 @@
 		};
 		C9729D3E274324FC009BB169 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 240646122B61FC3C00246067 /* Accessibility.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -559,6 +520,7 @@
 		};
 		C9729D3F274324FC009BB169 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 240646122B61FC3C00246067 /* Accessibility.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -584,6 +546,7 @@
 		};
 		C9729E2627434953009BB169 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 240646122B61FC3C00246067 /* Accessibility.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -608,6 +571,7 @@
 		};
 		C9729E2727434953009BB169 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 240646122B61FC3C00246067 /* Accessibility.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -642,11 +606,11 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		242473AC276D443B009747F6 /* Build configuration list for PBXAggregateTarget "All" */ = {
+		24B064192B7EEEC7007ABBB8 /* Build configuration list for PBXAggregateTarget "visionOS_sentinel" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				242473AD276D443B009747F6 /* Debug */,
-				242473AE276D443B009747F6 /* Release */,
+				24B0641A2B7EEEC7007ABBB8 /* Debug */,
+				24B0641B2B7EEEC7007ABBB8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

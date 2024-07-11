@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
+using UnityEngine.Scripting;
+
+[assembly:Preserve]
 
 namespace Apple.Core.Runtime
 {
@@ -9,15 +11,13 @@ namespace Apple.Core.Runtime
     {
         private static readonly Dictionary<Type, ConstructorInfo> _constructors = new Dictionary<Type, ConstructorInfo>();
 
-        public static ConstructorInfo GetConstructor<T>() where T : InteropReference
+        public static ConstructorInfo GetConstructor(Type type)
         {
-            if(_constructors.TryGetValue(typeof(T), out var constructor))
+            if (_constructors.TryGetValue(type, out var constructor))
             {
                 return constructor;
             }
 
-            var type = typeof(T);
-            
             foreach (var constructorInfo in type.GetConstructors(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
             {
                 var parameters = constructorInfo.GetParameters();
@@ -34,23 +34,40 @@ namespace Apple.Core.Runtime
             return _constructors[type];
         }
 
-
-        public static T CreateInstanceOrDefault<T>(IntPtr pointer) where T : InteropReference
+        public static ConstructorInfo GetConstructor<T>()
         {
+            return GetConstructor(typeof(T));
+        }
+
+        public static InteropReference CreateInstanceOrDefault(Type type, IntPtr pointer)
+        {
+            if (!type.IsSubclassOf(typeof(InteropReference)) && !type.Equals(typeof(InteropReference)))
+            {
+                throw new ArgumentException("Type must be a subclass of InteropReference", nameof(type));
+            }
+
             if (pointer == IntPtr.Zero)
+            {
                 return default;
-            
-            var constructor = GetConstructor<T>();
+            }
+
+            var constructor = GetConstructor(type);
 
             if (constructor != null)
             {
-                return (T)constructor.Invoke(new object[] { pointer });
+                return (InteropReference)constructor.Invoke(new object[] { pointer });
             }
 
-            var instance = Activator.CreateInstance<T>();
+            var instance = (InteropReference)Activator.CreateInstance(type);
             instance.Pointer = pointer;
-            
+
             return instance;
+
+        }
+
+        public static T CreateInstanceOrDefault<T>(IntPtr pointer) where T : InteropReference
+        {
+            return CreateInstanceOrDefault(typeof(T), pointer) as T;
         }
     }
 }

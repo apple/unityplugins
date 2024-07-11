@@ -13,6 +13,7 @@ typedef enum {
     iOS = 1,
     macOS = 2,
     tvOS = 3,
+    visionOS = 4
 } ACOperatingSystem;
 
 typedef struct {

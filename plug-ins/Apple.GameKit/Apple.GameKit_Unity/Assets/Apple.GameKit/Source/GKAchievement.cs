@@ -9,119 +9,55 @@ namespace Apple.GameKit
     /// <summary>
     /// An achievement you can award a player as they make progress toward and reach a goal in your game.
     /// </summary>
-    public class GKAchievement : InteropReference
+    public class GKAchievement : NSObject
     {
-        #region Init & Dispose
         internal GKAchievement(IntPtr pointer) : base(pointer)
         {
         }
-        
-        [DllImport(InteropUtility.DLLName)]
-        private static extern void GKAchievement_Free(IntPtr pointer);
-
-        protected override void OnDispose(bool isDisposing)
-        {
-            if (Pointer != IntPtr.Zero)
-            {
-                GKAchievement_Free(Pointer);
-                Pointer = IntPtr.Zero;
-            }
-        }
-        #endregion
-        
-        #region Identifier
-        [DllImport(InteropUtility.DLLName)]
-        private static extern string GKAchievement_GetIdentifier(IntPtr pointer);
-        [DllImport(InteropUtility.DLLName)]
-        private static extern void GKAchievement_SetIdentifier(IntPtr pointer, string value);
 
         /// <summary>
         /// The identifier for the achievement that you enter in App Store Connect.
         /// </summary>
         public string Identifier
         {
-            get => GKAchievement_GetIdentifier(Pointer);
-            set => GKAchievement_SetIdentifier(Pointer, value);
+            get => Interop.GKAchievement_GetIdentifier(Pointer);
+            set => Interop.GKAchievement_SetIdentifier(Pointer, value);
         }
-        #endregion
-        
-        #region Player
-        [DllImport(InteropUtility.DLLName)]
-        private static extern IntPtr GKAchievement_GetPlayer(IntPtr pointer);
 
         /// <summary>
         /// The player who earned the achievement.
         /// </summary>
-        public GKPlayer Player => PointerCast<GKPlayer>(GKAchievement_GetPlayer(Pointer));
-
-        #endregion
+        public GKPlayer Player => PointerCast<GKPlayer>(Interop.GKAchievement_GetPlayer(Pointer));
         
-        #region PercentComplete
-        [DllImport(InteropUtility.DLLName)]
-        private static extern float GKAchievement_GetPercentComplete(IntPtr pointer);
-
-        [DllImport(InteropUtility.DLLName)]
-        private static extern void GKAchievement_SetPercentComplete(IntPtr pointer, float value);
-
         /// <summary>
         /// A percentage value that states how far the player has progressed on the achievement.
         /// </summary>
         public float PercentComplete
         {
-            get => GKAchievement_GetPercentComplete(Pointer);
-            set => GKAchievement_SetPercentComplete(Pointer, value);
+            get => Interop.GKAchievement_GetPercentComplete(Pointer);
+            set => Interop.GKAchievement_SetPercentComplete(Pointer, value);
         }
-        #endregion
-        
-        #region IsCompleted
-        [DllImport(InteropUtility.DLLName)]
-        private static extern bool GKAchievement_GetIsCompleted(IntPtr pointer);
 
         /// <summary>
         /// A Boolean value that states whether the player has completed the achievement.
         /// </summary>
-        public bool IsCompleted
-        {
-            get => GKAchievement_GetIsCompleted(Pointer);
-        }
-        #endregion
-        
-        #region LastReportedDate
-        [DllImport(InteropUtility.DLLName)]
-        private static extern double GKAchievement_GetLastReportedDate(IntPtr pointer);
+        public bool IsCompleted => Interop.GKAchievement_GetIsCompleted(Pointer);
 
         /// <summary>
         /// The last time your game reported progress on the achievement for the player.
         /// </summary>
-        public DateTimeOffset LastReportedDate
-        {
-            get
-            {
-                return DateTimeOffset.FromUnixTimeSeconds((long)GKAchievement_GetLastReportedDate(Pointer));
-            }
-        }
-        #endregion
+        public DateTimeOffset LastReportedDate => DateTimeOffset.FromUnixTimeSeconds((long)Interop.GKAchievement_GetLastReportedDate(Pointer));
         
-        #region ShowCompletionBanner
-        [DllImport(InteropUtility.DLLName)]
-        private static extern bool GKAchievement_GetShowCompletionBanner(IntPtr pointer);
-        [DllImport(InteropUtility.DLLName)]
-        private static extern void GKAchievement_SetShowCompletionBanner(IntPtr pointer, bool value);
-
         /// <summary>
         /// A Boolean value that indicates whether GameKit displays a banner when the player completes the achievement.
         /// </summary>
         public bool ShowCompletionBanner
         {
-            get => GKAchievement_GetShowCompletionBanner(Pointer);
-            set => GKAchievement_SetShowCompletionBanner(Pointer, value);
+            get => Interop.GKAchievement_GetShowCompletionBanner(Pointer);
+            set => Interop.GKAchievement_SetShowCompletionBanner(Pointer, value);
         }
 
-        #endregion
-        
         #region Report
-        [DllImport(InteropUtility.DLLName)]
-        private static extern void GKAchievement_Report(long taskId, IntPtr array, SuccessTaskCallback onSuccess, NSErrorTaskCallback onError);
 
         /// <summary>
         /// Reports the progress of players toward one or more achievements to Game Center.
@@ -132,14 +68,9 @@ namespace Apple.GameKit
         {
             var tcs = InteropTasks.Create<bool>(out var taskId);
 
-            var mutable = NSMutableArrayFactory.Init<NSMutableArrayGKAchievement, GKAchievement>();
-
-            foreach (var achievement in achievements)
-            {
-                mutable.Add(achievement);
-            }
+            var mutable = new NSMutableArray<GKAchievement>(achievements);
             
-            GKAchievement_Report(taskId, mutable.Pointer, OnReportSuccess, OnReportError);
+            Interop.GKAchievement_Report(taskId, mutable.Pointer, OnReportSuccess, OnReportError);
             return tcs.Task;
         }
 
@@ -157,8 +88,6 @@ namespace Apple.GameKit
         #endregion
         
         #region ResetAchievements
-        [DllImport(InteropUtility.DLLName)]
-        private static extern void GKAchievement_ResetAchievements(long taskId, SuccessTaskCallback onSuccess, NSErrorTaskCallback onError);
 
         /// <summary>
         /// Resets the percentage completed for all of the player's achievements.
@@ -167,7 +96,7 @@ namespace Apple.GameKit
         public static Task ResetAchievements()
         {
             var tcs = InteropTasks.Create<bool>(out var taskId);
-            GKAchievement_ResetAchievements(taskId, OnResetAchievements, OnResetAchievementsError);
+            Interop.GKAchievement_ResetAchievements(taskId, OnResetAchievements, OnResetAchievementsError);
             return tcs.Task;
         }
 
@@ -185,8 +114,6 @@ namespace Apple.GameKit
         #endregion
         
         #region LoadAchievements
-        [DllImport(InteropUtility.DLLName)]
-        private static extern void GKAchievement_LoadAchievements(long taskId, SuccessTaskCallback<IntPtr> onSuccess, NSErrorTaskCallback onError);
 
         /// <summary>
         /// Loads the achievements that you previously reported the player making progress toward.
@@ -195,14 +122,14 @@ namespace Apple.GameKit
         public static Task<NSArray<GKAchievement>> LoadAchievements()
         {
             var tcs = InteropTasks.Create<NSArray<GKAchievement>>(out var taskId);
-            GKAchievement_LoadAchievements(taskId, OnLoadAchievements, OnLoadAchievementsError);
+            Interop.GKAchievement_LoadAchievements(taskId, OnLoadAchievements, OnLoadAchievementsError);
             return tcs.Task;
         }
 
         [MonoPInvokeCallback(typeof(SuccessTaskCallback<IntPtr>))]
         private static void OnLoadAchievements(long taskId, IntPtr nsArrayPtr)
         {
-            InteropTasks.TrySetResultAndRemove(taskId, (NSArray<GKAchievement>) PointerCast<NSArrayGKAchievement>(nsArrayPtr));
+            InteropTasks.TrySetResultAndRemove(taskId, PointerCast<NSArray<GKAchievement>>(nsArrayPtr));
         }
 
         [MonoPInvokeCallback(typeof(NSErrorTaskCallback))]
@@ -213,8 +140,6 @@ namespace Apple.GameKit
         #endregion
         
         #region SelectChallengeablePlayers
-        [DllImport(InteropUtility.DLLName)]
-        private static extern void GKAchievement_SelectChallengeablePlayers(IntPtr pointer, long taskId, IntPtr players, SuccessTaskCallback<IntPtr> onSuccess, NSErrorTaskCallback onError);
 
         /// <summary>
         /// Finds the subset of players who can earn an achievement.
@@ -224,20 +149,17 @@ namespace Apple.GameKit
         public Task<NSArray<GKPlayer>> SelectChallengeablePlayers(GKPlayer[] players)
         {
             // Mutable players...
-            var mutablePlayers = NSMutableArrayFactory.Init<NSMutableArrayGKPlayer, GKPlayer>();
-            if(players != null)
-                foreach(var player in players)
-                    mutablePlayers.Add(player);
+            var mutablePlayers = new NSMutableArray<GKPlayer>(players);
             
             var tcs = InteropTasks.Create<NSArray<GKPlayer>>(out var taskId);
-            GKAchievement_SelectChallengeablePlayers(Pointer, taskId, mutablePlayers.Pointer, OnSelectChallengeablePlayers, OnSelectChallengeablePlayersError);
+            Interop.GKAchievement_SelectChallengeablePlayers(Pointer, taskId, mutablePlayers.Pointer, OnSelectChallengeablePlayers, OnSelectChallengeablePlayersError);
             return tcs.Task;
         }
 
         [MonoPInvokeCallback(typeof(SuccessTaskCallback<IntPtr>))]
         private static void OnSelectChallengeablePlayers(long taskId, IntPtr playersPtr)
         {
-            InteropTasks.TrySetResultAndRemove(taskId, (NSArray<GKPlayer>) PointerCast<NSArrayGKPlayer>(playersPtr));
+            InteropTasks.TrySetResultAndRemove(taskId, PointerCast<NSArray<GKPlayer>>(playersPtr));
         }
 
         [MonoPInvokeCallback(typeof(NSErrorTaskCallback))]
@@ -247,10 +169,6 @@ namespace Apple.GameKit
         }
         #endregion
         
-        #region ChallengeComposeController
-        [DllImport(InteropUtility.DLLName)]
-        private static extern void GKAchievement_ChallengeComposeController(IntPtr pointer, string message, IntPtr players);
-
         /// <summary>
         /// Provides a view controller that you present to the player to issue an achievement challenge.
         /// </summary>
@@ -259,28 +177,66 @@ namespace Apple.GameKit
         public void ChallengeComposeController(string message, GKPlayer[] players)
         {
             // Mutable players...
-            var mutablePlayers = NSMutableArrayFactory.Init<NSMutableArrayGKPlayer, GKPlayer>();
-            if(players != null)
-                foreach(var player in players)
-                    mutablePlayers.Add(player);
+            var mutablePlayers = new NSMutableArray<GKPlayer>(players);
             
-            GKAchievement_ChallengeComposeController(Pointer, message, mutablePlayers.Pointer);
+            Interop.GKAchievement_ChallengeComposeController(Pointer, message, mutablePlayers.Pointer);
         }
-        #endregion
         
-        #region Static Init
-        [DllImport(InteropUtility.DLLName)]
-        private static extern IntPtr GKAchievement_Init(string identifier);
-
         /// <summary>
         /// Initializes an achievement for the local player.
         /// </summary>
         /// <param name="identifier"></param>
-        /// <returns></returns>
+        /// <returns>GKAchievement</returns>
         public static GKAchievement Init(string identifier)
         {
-            return PointerCast<GKAchievement>(GKAchievement_Init(identifier));
+            return PointerCast<GKAchievement>(Interop.GKAchievement_Init(identifier));
         }
-        #endregion
+
+        /// <summary>
+        /// Initialize the achievement for a specific player. Use to submit participant achievements when ending a turn-based match.
+        /// </summary>
+        /// <param name="identifier"></param>
+        /// <param name="player"></param>
+        /// <returns>GKAchievement</returns>
+        public static GKAchievement Init(string identifier, GKPlayer player)
+        {
+            return PointerCast<GKAchievement>(Interop.GKAchievement_InitForPlayer(identifier, player));
+        }
+
+        private static class Interop
+        {
+            [DllImport(InteropUtility.DLLName)]
+            public static extern string GKAchievement_GetIdentifier(IntPtr pointer);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKAchievement_SetIdentifier(IntPtr pointer, string value);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern IntPtr GKAchievement_GetPlayer(IntPtr pointer);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern float GKAchievement_GetPercentComplete(IntPtr pointer);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKAchievement_SetPercentComplete(IntPtr pointer, float value);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern bool GKAchievement_GetIsCompleted(IntPtr pointer);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern double GKAchievement_GetLastReportedDate(IntPtr pointer);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern bool GKAchievement_GetShowCompletionBanner(IntPtr pointer);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKAchievement_SetShowCompletionBanner(IntPtr pointer, bool value);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKAchievement_Report(long taskId, IntPtr array, SuccessTaskCallback onSuccess, NSErrorTaskCallback onError);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKAchievement_ResetAchievements(long taskId, SuccessTaskCallback onSuccess, NSErrorTaskCallback onError);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKAchievement_LoadAchievements(long taskId, SuccessTaskCallback<IntPtr> onSuccess, NSErrorTaskCallback onError);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKAchievement_SelectChallengeablePlayers(IntPtr pointer, long taskId, IntPtr players, SuccessTaskCallback<IntPtr> onSuccess, NSErrorTaskCallback onError);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKAchievement_ChallengeComposeController(IntPtr pointer, string message, IntPtr players);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern IntPtr GKAchievement_Init(string identifier);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern IntPtr GKAchievement_InitForPlayer(string identifier, GKPlayer player);
+        }
     }
 }
