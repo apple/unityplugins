@@ -134,7 +134,7 @@ namespace Apple.GameKit.Multiplayer
         /// <summary>
         /// The name of the queue that Game Center places the match request in.
         /// </summary>
-        [Introduced(iOS: "17.2", macOS: "14.2", tvOS: "17.2")]
+        [Introduced(iOS: "17.2", macOS: "14.2", tvOS: "17.2", visionOS: "1.1")]
         public string QueueName
         {
             get => Interop.GKMatchRequest_GetQueueName(Pointer);
@@ -144,7 +144,7 @@ namespace Apple.GameKit.Multiplayer
         /// <summary>
         /// The criteria for the local player that Game Center uses to find other players when using matchmaking rules.
         /// </summary>
-        [Introduced(iOS: "17.2", macOS: "14.2", tvOS: "17.2")]
+        [Introduced(iOS: "17.2", macOS: "14.2", tvOS: "17.2", visionOS: "1.1")]
         public GKMatchProperties Properties
         {
             get => PointerCast<GKMatchProperties>(Interop.GKMatchRequest_GetProperties(Pointer));
@@ -154,7 +154,7 @@ namespace Apple.GameKit.Multiplayer
         /// <summary>
         /// The criteria for recipients of the match request that Game Center uses to find other players when using matchmaking rules.
         /// </summary>
-        [Introduced(iOS: "17.2", macOS: "14.2", tvOS: "17.2")]
+        [Introduced(iOS: "17.2", macOS: "14.2", tvOS: "17.2", visionOS: "1.1")]
         public NSDictionary<GKPlayer, GKMatchProperties> RecipientProperties
         {
             get => PointerCast<NSDictionary<GKPlayer, GKMatchProperties>>(Interop.GKMatchRequest_GetRecipientProperties(Pointer));

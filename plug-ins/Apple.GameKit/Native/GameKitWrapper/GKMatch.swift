@@ -51,7 +51,7 @@ public func GKMatch_GetPlayerProperties
     gkMatchPtr: UnsafeMutableRawPointer
 ) -> UnsafeMutableRawPointer?
 {
-    if #available(iOS 17.2, tvOS 17.2, macOS 14.2, visionOS 1.0, *) {
+    if #available(iOS 17.2, tvOS 17.2, macOS 14.2, visionOS 1.1, *) {
         let gkMatch = Unmanaged<GKMatch>.fromOpaque(gkMatchPtr).takeUnretainedValue()
         if let dictionary = gkMatch.playerProperties as NSDictionary? {
             return Unmanaged.passRetained(dictionary).toOpaque();

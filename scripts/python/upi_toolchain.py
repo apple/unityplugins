@@ -121,21 +121,20 @@ def Codesign(printer : Printer, signable_object_path : str, hash : str, logWithC
     
 # Method prompts the user before identifying a codesign identity to use for signing newly compiled native plug-in libraries
 def PromptForCodesignIdentity(printer : Printer) -> str:
-    printer.WarningMessage("No codesign identity provided.", "\n")
-    printer.InfoMessage("Recent versions of Unity require that native plug-in libraries are codesigned or they will not be loaded by the Editor or Player runtime.")
-    printer.Message(f"For more information about code signing, please see: {Printer.Bold('https://developer.apple.com/library/archive/documentation/Security/Conceptual/CodeSigningGuide/Introduction/Introduction.html')}", printer.Indent(1))
-    
     if not utility.BooleanPrompt(printer, "Would you like the script to code sign the compiled native plug-in libraries?"):
-        printer.Message("User opted out of code signing. Compiled libraries will not be signed and may not be loaded by Unity.")
+        printer.Message("User opted out of code signing.")
+        printer.Message(f"For more information about code signing, please see: {Printer.Bold('https://developer.apple.com/library/archive/documentation/Security/Conceptual/CodeSigningGuide/Introduction/Introduction.html')}", printer.Indent(1))
         return ""
     
     codesign_identities = GetCodesignIdentities()
     if len(codesign_identities) == 0:
-        printer.WarningMessage("No codesign identities found. Compiled libraries will not be signed and may not be loaded by Unity.")
+        printer.WarningMessage("No codesign identities found.")
+        printer.Message(f"For more information about code signing, please see: {Printer.Bold('https://developer.apple.com/library/archive/documentation/Security/Conceptual/CodeSigningGuide/Introduction/Introduction.html')}", printer.Indent(1))
         return ""
     
     elif len(codesign_identities) == 1:
         id_hash, id_name = list(codesign_identities.items())[0]
+        printer.InfoMessage("Only one codesign identity found.")
         printer.MessageWithContext("Using codesign identity: ", f"{id_hash} {id_name}", "\n")
         return id_hash
 

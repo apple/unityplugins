@@ -23,6 +23,7 @@ namespace Apple.Core
             DisplayName = displayName;
             PlayModeSupportLibrary = AppleNativeLibrary.Invalid;
             SourcePath = packageSystemPath;
+            IsNativePackage = true;
 
             _nativeLibraryCollection = new Dictionary<string, Dictionary<string, AppleNativeLibrary>>();
 
@@ -98,6 +99,22 @@ namespace Apple.Core
         }
 
         /// <summary>
+        /// Create a package with default values to act as a representation of a package without native libraries.
+        /// </summary>
+        /// <param name="name">Matches the 'name' field of the associated package's <c>package.json</c> file. Should be of the form <c>com.apple.unityplugin.XXX</c>.</param>
+        /// <param name="displayName">Matches the 'displayName' field of the associated package's <c>package.json</c> file</param>
+        public AppleUnityPackage(string name, string displayName)
+        {
+            Name = name;
+            DisplayName = displayName;
+            IsNativePackage = false;
+
+            PlayModeSupportLibrary = AppleNativeLibrary.Invalid;
+            SourcePath = string.Empty;
+            _nativeLibraryCollection = new Dictionary<string, Dictionary<string, AppleNativeLibrary>>();
+        }
+
+        /// <summary>
         /// Matches the 'name' field of the associated package's <c>package.json</c> file.
         /// </summary>
         /// <remarks>
@@ -129,6 +146,11 @@ namespace Apple.Core
         /// Records the source of the package in the local file system.
         /// </summary>
         public string SourcePath { get; private set; }
+
+        /// <summary>
+        /// True when this package references native libraries.
+        /// </summary>
+        public bool IsNativePackage { get; private set; }
     
         /// <summary>
         /// Helper will get an AppleNativeLibrary for the provided config and platform combination, returning an invalid AppleNativeLibrary if none exists.
@@ -152,6 +174,11 @@ namespace Apple.Core
         /// <returns>The flattened array of AppleNativeLibrary elements for this package.</returns>
         public AppleNativeLibrary[] GetLibraries(string appleConfig = "")
         {
+            if (!IsNativePackage)
+            {
+                return Array.Empty<AppleNativeLibrary>();
+            }
+
             List<AppleNativeLibrary> libraries = new List<AppleNativeLibrary>();
             if (appleConfig == AppleConfigID.Debug || appleConfig == AppleConfigID.Release)
             {

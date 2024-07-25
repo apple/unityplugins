@@ -163,6 +163,10 @@
 		FB8694492AD73AE5009B8676 /* GKMatchedPlayers.m in Sources */ = {isa = PBXBuildFile; fileRef = FB8694482AD73AE5009B8676 /* GKMatchedPlayers.m */; };
 		FB86944A2AD73AE5009B8676 /* GKMatchedPlayers.m in Sources */ = {isa = PBXBuildFile; fileRef = FB8694482AD73AE5009B8676 /* GKMatchedPlayers.m */; };
 		FB86944B2AD73AE5009B8676 /* GKMatchedPlayers.m in Sources */ = {isa = PBXBuildFile; fileRef = FB8694482AD73AE5009B8676 /* GKMatchedPlayers.m */; };
+		FB89C4EB2BAE49320078B971 /* UiUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB89C4EA2BAE49320078B971 /* UiUtilities.swift */; };
+		FB89C4EC2BAE4BA20078B971 /* UiUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB89C4EA2BAE49320078B971 /* UiUtilities.swift */; };
+		FB89C4ED2BAE4BA30078B971 /* UiUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB89C4EA2BAE49320078B971 /* UiUtilities.swift */; };
+		FB89C4EE2BAE4BA40078B971 /* UiUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB89C4EA2BAE49320078B971 /* UiUtilities.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -185,7 +189,6 @@
 		7A894465272F2C7D0008D820 /* GKGameCenterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GKGameCenterViewController.swift; sourceTree = "<group>"; };
 		7A9B815324A4FC3800FB2FE8 /* GameKitWrapper.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = GameKitWrapper.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7A9B815624A4FC3800FB2FE8 /* GameKitWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GameKitWrapper.h; sourceTree = "<group>"; };
-		7A9B815724A4FC3800FB2FE8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7AA8AD5B2729EF5500D3F909 /* GKAchievement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GKAchievement.swift; sourceTree = "<group>"; };
 		7AA8AD602729F3D100D3F909 /* GKAchievementDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GKAchievementDescription.swift; sourceTree = "<group>"; };
 		7AA8AD652729F5D600D3F909 /* GKChallenge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GKChallenge.swift; sourceTree = "<group>"; };
@@ -213,6 +216,7 @@
 		7AE5BBA22502C0DD00BDBEDA /* GameKitWrapper.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = GameKitWrapper.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FB7384C92ADE05A200616362 /* GKErrorCodeExtension.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GKErrorCodeExtension.h; sourceTree = "<group>"; };
 		FB8694482AD73AE5009B8676 /* GKMatchedPlayers.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GKMatchedPlayers.m; sourceTree = "<group>"; };
+		FB89C4EA2BAE49320078B971 /* UiUtilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UiUtilities.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -271,6 +275,7 @@
 		7A9B815524A4FC3800FB2FE8 /* GameKitWrapper */ = {
 			isa = PBXGroup;
 			children = (
+				FB89C4EA2BAE49320078B971 /* UiUtilities.swift */,
 				7A7D6B7F25D6E7650072DB37 /* AccessPoint_BridgingHeader.h */,
 				7A4ADFE924DDF23400664BD3 /* AccessPoint.swift */,
 				7A486BA926A09D7A00255BD5 /* AppleCoreRuntimeShared.h */,
@@ -311,7 +316,6 @@
 				7AA8ADBF272B0A3900D3F909 /* GKTurnBasedMatchmakerViewControllerDelegate.swift */,
 				7AA8AD97272A458400D3F909 /* GKTurnBasedParticipant.swift */,
 				7AA8AD9C272A46AF00D3F909 /* GKVoiceChat.swift */,
-				7A9B815724A4FC3800FB2FE8 /* Info.plist */,
 			);
 			path = GameKitWrapper;
 			sourceTree = "<group>";
@@ -552,6 +556,7 @@
 				24B0647A2B7F29E1007ABBB8 /* GKAchievement.swift in Sources */,
 				24B0647B2B7F29E1007ABBB8 /* GKVoiceChat.swift in Sources */,
 				24B0647C2B7F29E1007ABBB8 /* GKTurnBasedMatchDelegate.swift in Sources */,
+				FB89C4ED2BAE4BA30078B971 /* UiUtilities.swift in Sources */,
 				24B0647D2B7F29E1007ABBB8 /* GKTurnBasedMatch.swift in Sources */,
 				24B0647E2B7F29E1007ABBB8 /* GKMatchmakerViewController.swift in Sources */,
 				24B0647F2B7F29E1007ABBB8 /* GameKitUIDelegateHandler.swift in Sources */,
@@ -594,6 +599,7 @@
 				7AA8AD5E2729EF5500D3F909 /* GKAchievement.swift in Sources */,
 				7A7E43A124B509130086FB7A /* GameKitUIDelegateHandler.swift in Sources */,
 				7AA8AD9F272A46AF00D3F909 /* GKVoiceChat.swift in Sources */,
+				FB89C4EE2BAE4BA40078B971 /* UiUtilities.swift in Sources */,
 				7AA8ADB3272B02AF00D3F909 /* GKTurnBasedMatchDelegate.swift in Sources */,
 				7AA8ADAE272AF7A000D3F909 /* GKTurnBasedMatch.swift in Sources */,
 				7AA8AD90272A3EE600D3F909 /* GKMatchmakerViewController.swift in Sources */,
@@ -636,6 +642,7 @@
 				7AA8AD5C2729EF5500D3F909 /* GKAchievement.swift in Sources */,
 				7AA8AD9D272A46AF00D3F909 /* GKVoiceChat.swift in Sources */,
 				7AA8ADB1272B02AF00D3F909 /* GKTurnBasedMatchDelegate.swift in Sources */,
+				FB89C4EB2BAE49320078B971 /* UiUtilities.swift in Sources */,
 				7AA8ADAC272AF7A000D3F909 /* GKTurnBasedMatch.swift in Sources */,
 				7AA8AD8E272A3EE600D3F909 /* GKMatchmakerViewController.swift in Sources */,
 				7A50579324ABD01000477507 /* GameKitUIDelegateHandler.swift in Sources */,
@@ -678,6 +685,7 @@
 				7AA8AD5D2729EF5500D3F909 /* GKAchievement.swift in Sources */,
 				7AA8AD9E272A46AF00D3F909 /* GKVoiceChat.swift in Sources */,
 				7AA8ADB2272B02AF00D3F909 /* GKTurnBasedMatchDelegate.swift in Sources */,
+				FB89C4EC2BAE4BA20078B971 /* UiUtilities.swift in Sources */,
 				7AA8ADAD272AF7A000D3F909 /* GKTurnBasedMatch.swift in Sources */,
 				7AA8AD8F272A3EE600D3F909 /* GKMatchmakerViewController.swift in Sources */,
 				7AE5BB9C2502C0DD00BDBEDA /* GameKitUIDelegateHandler.swift in Sources */,
@@ -848,7 +856,6 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -866,9 +873,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				INFOPLIST_FILE = GameKitWrapper/Info.plist;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "\"Copyright © 2021 - 2024 Apple, Inc. All rights reserved.\"";
-				INFOPLIST_OUTPUT_FORMAT = XML;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.2;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -876,7 +880,6 @@
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
 			name = Debug;
@@ -915,7 +918,6 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -927,9 +929,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				INFOPLIST_FILE = GameKitWrapper/Info.plist;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "\"Copyright © 2021 - 2024 Apple, Inc. All rights reserved.\"";
-				INFOPLIST_OUTPUT_FORMAT = XML;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.2;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -937,7 +936,6 @@
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
 			name = Release;

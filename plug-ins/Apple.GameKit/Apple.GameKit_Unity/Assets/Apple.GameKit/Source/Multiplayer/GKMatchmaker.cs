@@ -131,7 +131,7 @@ namespace Apple.GameKit.Multiplayer
         /// </summary>
         /// <param name="matchRequest">The configuration for the match.</param>
         /// <returns>The players that join the match, including their properties that matchmaking rules uses. If unsuccessful, this parameter is null.</returns>
-        [Introduced(iOS: "17.2", macOS: "14.2", tvOS: "17.2")]
+        [Introduced(iOS: "17.2", macOS: "14.2", tvOS: "17.2", visionOS: "1.1")]
         public Task<GKMatchedPlayers> FindMatchedPlayers(GKMatchRequest matchRequest)
         {
             var tcs = InteropTasks.Create<GKMatchedPlayers>(out var taskId);
@@ -216,7 +216,7 @@ namespace Apple.GameKit.Multiplayer
         /// The string should be in reverse-DNS format and queue names are case sensitive.
         /// </param>
         /// <returns>The number of match requests in the queue during the previous 60 seconds.</returns>
-        [Introduced(iOS: "17.2", macOS: "14.2", tvOS: "17.2")]
+        [Introduced(iOS: "17.2", macOS: "14.2", tvOS: "17.2", visionOS: "1.1")]
         public Task<long> QueryQueueActivity(string queueName)
         {
             var tcs = InteropTasks.Create<long>(out var taskId);

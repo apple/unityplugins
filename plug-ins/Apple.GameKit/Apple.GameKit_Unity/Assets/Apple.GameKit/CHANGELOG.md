@@ -1,6 +1,17 @@
 # CHANGELOG
 All notable changes to this project will be documented in this file.
 
+## [2.2.2] - 2023-04-23
+### Updated
+- Updating how Info.plist files are generated for native libraries.
+  - Info.plist files are now each generated when libraries are built
+  - Settings for the Info.plist file are configured in GameKit.xcconfig
+  - Updated projet to generate XML (human readable) for debug and binary for release when generating Info.plist
+  - Encoded version(s) in the xcconfig and generated Info.plist should align with the plug-in version reported in `package.json`
+
+## [2.2.1] - 2023-04-01
+- Fix some issues with how view controllers are handled on visionOS.
+
 ## [2.2.0] - 2023-02-23
 ### Added
 - Support for visionOS
