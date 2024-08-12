@@ -26,4 +26,7 @@ public class GKWLocalPlayerListener : NSObject, GKLocalPlayerListener {
     public var MatchEnded : MatchEndedCallback? = nil;
     public var TurnEventReceived : TurnEventReceivedCallback? = nil;
     public var PlayerWantsToQuit: PlayerWantsToQuitCallback? = nil;
+    
+    public var SavedGameConflicting : SavedGameConflictingCallback? = nil;
+    public var SavedGameModified : SavedGameModifiedCallback? = nil;
 }

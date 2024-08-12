@@ -46,6 +46,14 @@
 		24B0647F2B7F29E1007ABBB8 /* GameKitUIDelegateHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A50579224ABD01000477507 /* GameKitUIDelegateHandler.swift */; };
 		24B064802B7F29E1007ABBB8 /* GKPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A630059271F315500C40BC1 /* GKPlayer.swift */; };
 		24B064812B7F29E1007ABBB8 /* GKInviteDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AA8ADC9272B10F500D3F909 /* GKInviteDelegate.swift */; };
+		4304C1A72C6643A700AD7FF0 /* GKSavedGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4304C1A62C6643A700AD7FF0 /* GKSavedGame.swift */; };
+		4304C1A82C6643A700AD7FF0 /* GKSavedGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4304C1A62C6643A700AD7FF0 /* GKSavedGame.swift */; };
+		4304C1A92C6643A700AD7FF0 /* GKSavedGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4304C1A62C6643A700AD7FF0 /* GKSavedGame.swift */; };
+		4304C1AA2C6643A700AD7FF0 /* GKSavedGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4304C1A62C6643A700AD7FF0 /* GKSavedGame.swift */; };
+		43DA68BB2C69FD8500B398EF /* GKSavedGameDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43DA68BA2C69FD8500B398EF /* GKSavedGameDelegate.swift */; };
+		43DA68BC2C69FD8500B398EF /* GKSavedGameDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43DA68BA2C69FD8500B398EF /* GKSavedGameDelegate.swift */; };
+		43DA68BD2C69FD8500B398EF /* GKSavedGameDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43DA68BA2C69FD8500B398EF /* GKSavedGameDelegate.swift */; };
+		43DA68BE2C69FD8500B398EF /* GKSavedGameDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43DA68BA2C69FD8500B398EF /* GKSavedGameDelegate.swift */; };
 		7A3E81F726F27BD800B102BB /* GKNotificationBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A3E81F626F27BD800B102BB /* GKNotificationBanner.swift */; };
 		7A3E81F826F27BD800B102BB /* GKNotificationBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A3E81F626F27BD800B102BB /* GKNotificationBanner.swift */; };
 		7A3E81F926F27BD800B102BB /* GKNotificationBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A3E81F626F27BD800B102BB /* GKNotificationBanner.swift */; };
@@ -172,6 +180,8 @@
 /* Begin PBXFileReference section */
 		240646152B62D61800246067 /* GameKit.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = GameKit.xcconfig; sourceTree = "<group>"; };
 		24B064882B7F29E1007ABBB8 /* GameKitWrapper.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = GameKitWrapper.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4304C1A62C6643A700AD7FF0 /* GKSavedGame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GKSavedGame.swift; sourceTree = "<group>"; };
+		43DA68BA2C69FD8500B398EF /* GKSavedGameDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GKSavedGameDelegate.swift; sourceTree = "<group>"; };
 		46531AD89A1A23DEFB9D6429 /* libPods-GameKitWrapperUnitTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-GameKitWrapperUnitTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7A3E81F626F27BD800B102BB /* GKNotificationBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GKNotificationBanner.swift; sourceTree = "<group>"; };
 		7A486BA926A09D7A00255BD5 /* AppleCoreRuntimeShared.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleCoreRuntimeShared.h; sourceTree = "<group>"; };
@@ -297,6 +307,7 @@
 				7AA8ADCE272B2D0A00D3F909 /* GKLeaderboardEntry.swift */,
 				7AA8AD74272A00FA00D3F909 /* GKLeaderboardSet.swift */,
 				7A63005E271F336800C40BC1 /* GKLocalPlayer.swift */,
+				4304C1A62C6643A700AD7FF0 /* GKSavedGame.swift */,
 				7AA8ADB5272B02E500D3F909 /* GKLocalPlayerListener.swift */,
 				7AA8AD7E272A0B2100D3F909 /* GKMatch.swift */,
 				7AA8AD83272A0E0800D3F909 /* GKMatchDelegate.swift */,
@@ -316,6 +327,7 @@
 				7AA8ADBF272B0A3900D3F909 /* GKTurnBasedMatchmakerViewControllerDelegate.swift */,
 				7AA8AD97272A458400D3F909 /* GKTurnBasedParticipant.swift */,
 				7AA8AD9C272A46AF00D3F909 /* GKVoiceChat.swift */,
+				43DA68BA2C69FD8500B398EF /* GKSavedGameDelegate.swift */,
 			);
 			path = GameKitWrapper;
 			sourceTree = "<group>";
@@ -533,6 +545,7 @@
 				24B064632B7F29E1007ABBB8 /* GKChallengeDelegate.swift in Sources */,
 				24B064642B7F29E1007ABBB8 /* GKMatchDelegate.swift in Sources */,
 				24B064652B7F29E1007ABBB8 /* GKMatchmakerViewControllerDelegate.swift in Sources */,
+				43DA68BD2C69FD8500B398EF /* GKSavedGameDelegate.swift in Sources */,
 				24B064662B7F29E1007ABBB8 /* GKInvite.swift in Sources */,
 				24B064672B7F29E1007ABBB8 /* GKChallenge.swift in Sources */,
 				24B064682B7F29E1007ABBB8 /* GKTurnBasedParticipant.swift in Sources */,
@@ -547,6 +560,7 @@
 				24B064712B7F29E1007ABBB8 /* AppleCoreRuntimeShared.swift in Sources */,
 				24B064722B7F29E1007ABBB8 /* GKMatchmaker.swift in Sources */,
 				24B064732B7F29E1007ABBB8 /* GKTurnBasedExchange.swift in Sources */,
+				4304C1A92C6643A700AD7FF0 /* GKSavedGame.swift in Sources */,
 				24B064742B7F29E1007ABBB8 /* GKNotificationBanner.swift in Sources */,
 				24B064752B7F29E1007ABBB8 /* GKScoreChallenge.swift in Sources */,
 				24B064762B7F29E1007ABBB8 /* GKLocalPlayer.swift in Sources */,
@@ -576,6 +590,7 @@
 				7AA8ADC7272B0EE900D3F909 /* GKChallengeDelegate.swift in Sources */,
 				7AA8AD86272A0E0800D3F909 /* GKMatchDelegate.swift in Sources */,
 				7AA8AD95272A41DC00D3F909 /* GKMatchmakerViewControllerDelegate.swift in Sources */,
+				43DA68BE2C69FD8500B398EF /* GKSavedGameDelegate.swift in Sources */,
 				7AA8AD6D2729F86D00D3F909 /* GKInvite.swift in Sources */,
 				7AA8AD682729F5D700D3F909 /* GKChallenge.swift in Sources */,
 				7AA8AD9A272A458400D3F909 /* GKTurnBasedParticipant.swift in Sources */,
@@ -590,6 +605,7 @@
 				7A630052271F25BE00C40BC1 /* GKMatchmaker.swift in Sources */,
 				7AA8ADA4272AF2B100D3F909 /* GKTurnBasedExchange.swift in Sources */,
 				7A3E81F926F27BD800B102BB /* GKNotificationBanner.swift in Sources */,
+				4304C1AA2C6643A700AD7FF0 /* GKSavedGame.swift in Sources */,
 				7A486BB126A09E7A00255BD5 /* AppleCoreRuntimeShared.swift in Sources */,
 				7A89445C272DEC460008D820 /* GKScoreChallenge.swift in Sources */,
 				7A630061271F336800C40BC1 /* GKLocalPlayer.swift in Sources */,
@@ -619,6 +635,7 @@
 				7AA8ADC5272B0EE900D3F909 /* GKChallengeDelegate.swift in Sources */,
 				7AA8AD84272A0E0800D3F909 /* GKMatchDelegate.swift in Sources */,
 				7AA8AD93272A41DC00D3F909 /* GKMatchmakerViewControllerDelegate.swift in Sources */,
+				43DA68BB2C69FD8500B398EF /* GKSavedGameDelegate.swift in Sources */,
 				7AA8AD6B2729F86D00D3F909 /* GKInvite.swift in Sources */,
 				7AA8AD662729F5D700D3F909 /* GKChallenge.swift in Sources */,
 				7AA8AD98272A458400D3F909 /* GKTurnBasedParticipant.swift in Sources */,
@@ -633,6 +650,7 @@
 				7A486BAF26A09E7A00255BD5 /* AppleCoreRuntimeShared.swift in Sources */,
 				7A630050271F25BE00C40BC1 /* GKMatchmaker.swift in Sources */,
 				7AA8ADA2272AF2B100D3F909 /* GKTurnBasedExchange.swift in Sources */,
+				4304C1A72C6643A700AD7FF0 /* GKSavedGame.swift in Sources */,
 				7A3E81F726F27BD800B102BB /* GKNotificationBanner.swift in Sources */,
 				7A89445A272DEC460008D820 /* GKScoreChallenge.swift in Sources */,
 				7A63005F271F336800C40BC1 /* GKLocalPlayer.swift in Sources */,
@@ -662,6 +680,7 @@
 				7AA8ADC6272B0EE900D3F909 /* GKChallengeDelegate.swift in Sources */,
 				7AA8AD85272A0E0800D3F909 /* GKMatchDelegate.swift in Sources */,
 				7AA8AD94272A41DC00D3F909 /* GKMatchmakerViewControllerDelegate.swift in Sources */,
+				43DA68BC2C69FD8500B398EF /* GKSavedGameDelegate.swift in Sources */,
 				7AA8AD6C2729F86D00D3F909 /* GKInvite.swift in Sources */,
 				7AA8AD672729F5D700D3F909 /* GKChallenge.swift in Sources */,
 				7AA8AD99272A458400D3F909 /* GKTurnBasedParticipant.swift in Sources */,
@@ -676,6 +695,7 @@
 				7A486BB026A09E7A00255BD5 /* AppleCoreRuntimeShared.swift in Sources */,
 				7A630051271F25BE00C40BC1 /* GKMatchmaker.swift in Sources */,
 				7AA8ADA3272AF2B100D3F909 /* GKTurnBasedExchange.swift in Sources */,
+				4304C1A82C6643A700AD7FF0 /* GKSavedGame.swift in Sources */,
 				7A3E81F826F27BD800B102BB /* GKNotificationBanner.swift in Sources */,
 				7A89445B272DEC460008D820 /* GKScoreChallenge.swift in Sources */,
 				7A630060271F336800C40BC1 /* GKLocalPlayer.swift in Sources */,

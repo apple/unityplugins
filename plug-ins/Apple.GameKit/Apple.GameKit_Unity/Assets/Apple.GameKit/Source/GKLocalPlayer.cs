@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using AOT;
+using Apple.Core;
 using Apple.Core.Runtime;
 using Apple.GameKit.Players;
 
@@ -9,6 +10,50 @@ namespace Apple.GameKit
 {
     public class GKLocalPlayer : GKPlayer
     {
+        #region Delegates
+        public delegate void SavedGameConflictingHandler(GKPlayer player, NSArray<GKSavedGame> conflicts);
+        private delegate void InteropSavedGameConflictingHandler(IntPtr player, IntPtr conflicts);
+
+        public delegate void SavedGameModifiedHandler(GKPlayer player, GKSavedGame modified);
+        private delegate void InteropSavedGameModifiedHandler(IntPtr player, IntPtr modified);
+        #endregion
+        
+        #region Static Events
+        /// <summary>
+        /// Chooses the correct game data from the saved games that contain conflicts.
+        /// </summary>
+        public static event SavedGameConflictingHandler SavedGameConflicting;
+
+        /// <summary>
+        /// Handles when data changes in a saved game file.
+        /// </summary>
+        public static event SavedGameModifiedHandler SavedGameModified;
+        #endregion
+        
+        #region Static Event Registration
+        static GKLocalPlayer()
+        {
+            if (Availability.Available(RuntimeOperatingSystem.macOS, 10, 10) ||
+                Availability.Available(RuntimeOperatingSystem.iOS, 8, 0))
+            {
+                Interop.GKSavedGame_SetSavedGameConflictingCallback(OnSavedGameConflicting);
+                Interop.GKSavedGame_SetSavedGameModifiedCallback(OnSavedGameModified);
+            }
+        }
+
+        [MonoPInvokeCallback(typeof(InteropSavedGameConflictingHandler))]
+        private static void OnSavedGameConflicting(IntPtr player, IntPtr conflicts)
+        {
+            InteropPInvokeExceptionHandler.CatchAndLog(() => SavedGameConflicting?.Invoke(PointerCast<GKPlayer>(player), PointerCast<NSArray<GKSavedGame>>(conflicts)));
+        }
+
+        [MonoPInvokeCallback(typeof(InteropSavedGameModifiedHandler))]
+        private static void OnSavedGameModified(IntPtr player, IntPtr modified)
+        {
+            InteropPInvokeExceptionHandler.CatchAndLog(() => SavedGameModified?.Invoke(PointerCast<GKPlayer>(player), PointerCast<GKSavedGame>(modified)));
+        }
+        #endregion
+
         internal GKLocalPlayer(IntPtr pointer) : base(pointer) {}
 
         /// <summary>
@@ -236,6 +281,140 @@ namespace Apple.GameKit
         }
         #endregion
 
+        #region SaveGameData
+
+        /// <summary>
+        /// Saves game data with the specified name.
+        /// </summary>
+        /// <returns>
+        /// The saved game.
+        ///</returns>
+        public Task<GKSavedGame> SaveGameData(byte[] data, string name)
+        {
+            // Data...
+            var handle = GCHandle.Alloc(data, GCHandleType.Pinned);
+            var interopData = new InteropData
+            {
+                DataPtr = handle.AddrOfPinnedObject(),
+                DataLength = data.Length
+            };
+
+            var tcs = InteropTasks.Create<GKSavedGame>(out var taskId);
+            Interop.GKLocalPlayer_SaveGameData(Pointer, taskId, interopData, name, OnSaveGameData, OnSaveGameDataError);
+
+            handle.Free();
+            return tcs.Task;
+        }
+
+        [MonoPInvokeCallback(typeof(SuccessTaskCallback<IntPtr>))]
+        private static void OnSaveGameData(long taskId, IntPtr pointer)
+        {
+            InteropTasks.TrySetResultAndRemove(taskId, PointerCast<GKSavedGame>(pointer));
+        }
+
+        [MonoPInvokeCallback(typeof(NSErrorTaskCallback))]
+        private static void OnSaveGameDataError(long taskId, IntPtr errorPointer)
+        {
+            InteropTasks.TrySetExceptionAndRemove<GKSavedGame>(taskId, new GameKitException(errorPointer));
+        }
+        #endregion
+
+        #region FetchSavedGames
+
+        /// <summary>
+        /// Retrieves all available saved games.
+        /// </summary>
+        /// <returns>
+        /// An array of saved games that GameKit fetches.
+        ///</returns>
+        public Task<NSArray<GKSavedGame>> FetchSavedGames()
+        {
+            var tcs = InteropTasks.Create<NSArray<GKSavedGame>>(out var taskId);
+            Interop.GKLocalPlayer_FetchSavedGames(Pointer, taskId, OnFetchSavedGames, OnFetchSavedGamesError);
+            return tcs.Task;
+        }
+
+        [MonoPInvokeCallback(typeof(SuccessTaskCallback<IntPtr>))]
+        private static void OnFetchSavedGames(long taskId, IntPtr pointer)
+        {
+            InteropTasks.TrySetResultAndRemove(taskId, PointerCast<NSArray<GKSavedGame>>(pointer));
+        }
+
+        [MonoPInvokeCallback(typeof(NSErrorTaskCallback))]
+        private static void OnFetchSavedGamesError(long taskId, IntPtr errorPointer)
+        {
+            InteropTasks.TrySetExceptionAndRemove<NSArray<GKSavedGame>>(taskId, new GameKitException(errorPointer));
+        }
+        #endregion
+
+        #region ResolveConflictingSavedGames
+
+        /// <summary>
+        /// Replaces duplicate saved games that use the same filename with one file containing the specified game data.
+        /// </summary>
+        /// <returns>
+        /// The resolved saved games that you include in conflictingSavedGames, and any other saved games GameKit
+        /// finds with conflicts that you don’t include in conflictingSavedGames.
+        ///
+        /// For example, if there are five saved game files with the same filename, but only three are in conflictingSavedGames,
+        /// this parameter contains the three saved games you provide and the two saved games GameKit finds.
+        ///</returns>
+        public Task<NSArray<GKSavedGame>> ResolveConflictingSavedGames(NSArray<GKSavedGame> conflictingSavedGames, byte[] data)
+        {
+            // Data...
+            var handle = GCHandle.Alloc(data, GCHandleType.Pinned);
+            var interopData = new InteropData
+            {
+                DataPtr = handle.AddrOfPinnedObject(),
+                DataLength = data.Length
+            };
+
+            var tcs = InteropTasks.Create<NSArray<GKSavedGame>>(out var taskId);
+            Interop.GKLocalPlayer_ResolveConflictingSavedGames(Pointer, taskId, conflictingSavedGames.Pointer, interopData, OnResolveConflictingSavedGames, OnResolveConflictingSavedGamesError);
+
+            handle.Free();
+            return tcs.Task;
+        }
+
+        [MonoPInvokeCallback(typeof(SuccessTaskCallback<IntPtr>))]
+        private static void OnResolveConflictingSavedGames(long taskId, IntPtr pointer)
+        {
+            InteropTasks.TrySetResultAndRemove(taskId, PointerCast<NSArray<GKSavedGame>>(pointer));
+        }
+
+        [MonoPInvokeCallback(typeof(NSErrorTaskCallback))]
+        private static void OnResolveConflictingSavedGamesError(long taskId, IntPtr errorPointer)
+        {
+            InteropTasks.TrySetExceptionAndRemove<NSArray<GKSavedGame>>(taskId, new GameKitException(errorPointer));
+        }
+        #endregion
+
+        #region DeleteSavedGames
+
+        /// <summary>
+        /// Deletes saved games with the specified filename.
+        /// </summary>
+        /// <returns></returns>
+        public Task DeleteSavedGames(string name)
+        {
+            var tcs = InteropTasks.Create<NSArray<GKSavedGame>>(out var taskId);
+            Interop.GKLocalPlayer_DeleteSavedGames(Pointer, taskId, name, OnDeleteSavedGames, OnDeleteSavedGamesError);
+            return tcs.Task;
+        }
+
+        [MonoPInvokeCallback(typeof(SuccessTaskCallback))]
+        private static void OnDeleteSavedGames(long taskId)
+        {
+            InteropTasks.TrySetResultAndRemove(taskId, true);
+        }
+
+        [MonoPInvokeCallback(typeof(NSErrorTaskCallback))]
+        private static void OnDeleteSavedGamesError(long taskId, IntPtr errorPointer)
+        {
+            InteropTasks.TrySetExceptionAndRemove<GKSavedGame>(taskId, new GameKitException(errorPointer));
+        }
+        #endregion
+        
         private static class Interop
         {
             [DllImport(InteropUtility.DLLName)]
@@ -262,6 +441,18 @@ namespace Apple.GameKit
             public static extern void GKLocalPlayer_LoadChallengableFriends(IntPtr pointer, long taskId, SuccessTaskCallback<IntPtr> onCallback, NSErrorTaskCallback onError);
             [DllImport(InteropUtility.DLLName)]
             public static extern void GKLocalPlayer_LoadRecentPlayers(IntPtr pointer, long taskId, SuccessTaskCallback<IntPtr> onCallback, NSErrorTaskCallback onError);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKSavedGame_SetSavedGameConflictingCallback(InteropSavedGameConflictingHandler callback);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKSavedGame_SetSavedGameModifiedCallback(InteropSavedGameModifiedHandler callback);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKLocalPlayer_SaveGameData(IntPtr gkLocalPlayerPtr, long taskId, InteropData data, string name, SuccessTaskCallback<IntPtr> onCallback, NSErrorTaskCallback onError);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKLocalPlayer_FetchSavedGames(IntPtr gkLocalPlayerPtr, long taskId, SuccessTaskCallback<IntPtr> onCallback, NSErrorTaskCallback onError);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKLocalPlayer_ResolveConflictingSavedGames(IntPtr gkLocalPlayerPtr, long taskId, IntPtr savedGames, InteropData data, SuccessTaskCallback<IntPtr> onCallback, NSErrorTaskCallback onError);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKLocalPlayer_DeleteSavedGames(IntPtr gkLocalPlayerPtr, long taskId, string name, SuccessTaskCallback onCallback, NSErrorTaskCallback onError);
         }
     }
 }
