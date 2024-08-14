@@ -3,11 +3,16 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using AOT;
 using Apple.Core.Runtime;
+using UnityEngine.Scripting;
 
 namespace Apple.GameKit
 {
+    /// <summary>
+    /// An object that represents a file containing saved game data.
+    /// </summary>
     public class GKSavedGame : NSObject
     {
+        [Preserve]
         internal GKSavedGame(IntPtr pointer) : base(pointer) { }
 
         /// <summary>
@@ -53,6 +58,11 @@ namespace Apple.GameKit
         }
         #endregion
 
+        public static bool CheckCloudAvailability()
+        {
+            return Interop.GKSavedGame_CheckCloudAvailability();
+        }
+
         private static class Interop
         {
             [DllImport(InteropUtility.DLLName)]
@@ -63,6 +73,8 @@ namespace Apple.GameKit
             public static extern string GKSavedGame_GetDeviceName(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
             public static extern void GKSavedGame_LoadData(IntPtr pointer, long taskId, SuccessTaskCallback<InteropData> onSuccess, NSErrorTaskCallback onError);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern bool GKSavedGame_CheckCloudAvailability();
         }
     }
 }

@@ -66,3 +66,12 @@ public func GKSavedGame_LoadData
         onError(taskId, Unmanaged.passRetained(error as NSError).toOpaque());
     };
 }
+
+@_cdecl("GKSavedGame_CheckCloudAvailability")
+public func GKSavedGame_CheckCloudAvailability
+(
+) -> Bool
+{
+    let ubiquity = FileManager.default.ubiquityIdentityToken;
+    return ubiquity != nil;
+}
