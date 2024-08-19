@@ -4,11 +4,13 @@ using System.Threading.Tasks;
 using AOT;
 using Apple.Core.Runtime;
 using Apple.GameKit.Leaderboards;
+using UnityEngine.Scripting;
 
 namespace Apple.GameKit
 {
     public class GKGameCenterViewController : NSObject
     {
+        [Preserve]
         public GKGameCenterViewController(IntPtr pointer) : base(pointer)
         {
         }
