@@ -132,7 +132,7 @@ namespace Apple.Core
             {
                 LogDevelopmentMessage("OnPostProcessBuild", "OnProcessEntitlements begin");
 
-                var entitlementsPath = GetEntitlementsPath(buildTarget, generatedProjectPath);
+                var entitlementsPath = pbxProject.GetEntitlementFilePathForTarget(pbxProject.GetUnityMainTargetGuid());
                 var entitlements = new PlistDocument();
 
                 if (File.Exists(entitlementsPath))
@@ -283,32 +283,6 @@ namespace Apple.Core
             else
             {
                 return $"{pathToBuiltProject}/Info.plist";
-            }
-        }
-
-        /// <summary>
-        /// Returns the path to the entitlements for a given build target and project
-        /// </summary>
-        public static string GetEntitlementsPath(BuildTarget buildTarget, string pathToBuiltProject)
-        {
-            if (buildTarget == BuildTarget.StandaloneOSX)
-            {
-                if (AppleNativeLibraryUtility.IsXcodeProjectGeneratedForMac)
-                {
-#if UNITY_2020_1_OR_NEWER
-                    return $"{pathToBuiltProject}/{Application.productName}/{Application.productName}.entitlements";
-#else
-                    return $"{Path.GetDirectoryName(pathToBuiltProject)}/{Application.productName}/{Application.productName}.entitlements";
-#endif
-                }
-                else
-                {
-                    return $"{Path.GetDirectoryName(pathToBuiltProject)}/{Application.productName}.entitlements";
-                }
-            }
-            else
-            {
-                return $"{pathToBuiltProject}/{Application.productName}.entitlements";
             }
         }
 
