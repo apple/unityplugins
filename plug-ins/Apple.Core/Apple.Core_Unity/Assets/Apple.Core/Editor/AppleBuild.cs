@@ -382,7 +382,7 @@ namespace Apple.Core
             + "dstFrameworkFolder=\"$BUILT_PRODUCTS_DIR/$FRAMEWORKS_FOLDER_PATH\"\n"
             + "dstBundleFolder=\"$BUILT_PRODUCTS_DIR/$PLUGINS_FOLDER_PATH\"\n"
             + $"APPLE_PLUGIN_LIBRARY_ROOT=\"$PROJECT_DIR/{projectRelativeNativeLibraryRoot}\"\n"
-            + "if [ -d $APPLE_PLUGIN_LIBRARY_ROOT ]; then\n"
+            + "if [ -d \"$APPLE_PLUGIN_LIBRARY_ROOT\" ]; then\n"
             + "    for folder in \"$APPLE_PLUGIN_LIBRARY_ROOT\"/*; do\n"
             + "        if [ -d \"$folder\" ]; then\n"
             + "            for item in \"$folder\"/*; do\n"
