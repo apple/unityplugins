@@ -432,7 +432,7 @@ namespace Apple.Core
             + "echo \"Embed framework destination folder: $dstFrameworkFolder\"\n"
             + "echo \"Embed bundle destination folder: $dstBundleFolder\"\n"
             + $"APPLE_PLUGIN_LIBRARY_ROOT=\"$PROJECT_DIR/{projectRelativeNativeLibraryRoot}\"\n"
-            + "if [ -d $APPLE_PLUGIN_LIBRARY_ROOT ]; then\n"
+            + "if [ -d \"$APPLE_PLUGIN_LIBRARY_ROOT\" ]; then\n"
             + "    echo \"Found Apple plug-in native library root: $APPLE_PLUGIN_LIBRARY_ROOT\"\n"
             + "    echo \"Iterating through contents.\"\n"
             + "    for folder in \"$APPLE_PLUGIN_LIBRARY_ROOT\"/*; do\n"
