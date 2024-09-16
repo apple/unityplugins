@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using Apple.Core;
 using Apple.Core.Runtime;
 
 namespace Apple.GameKit.Multiplayer
@@ -36,6 +37,7 @@ namespace Apple.GameKit.Multiplayer
         /// <summary>
         /// The mode that a multiplayer game uses to find players.
         /// </summary>
+        [Introduced(iOS: "15.0", macOS: "12.0", tvOS: "15.0", visionOS: "1.0")]
         public GKMatchmakingMode MatchmakingMode
         {
             get => Interop.GKTurnBasedMatchmakerViewController_GetMatchmakingMode(Pointer);

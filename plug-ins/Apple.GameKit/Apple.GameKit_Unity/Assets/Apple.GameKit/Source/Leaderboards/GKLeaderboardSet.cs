@@ -1,8 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using AOT;
+using Apple.Core;
 using Apple.Core.Runtime;
 using UnityEngine;
 
@@ -33,6 +33,7 @@ namespace Apple.GameKit.Leaderboards
         /// Loads the leaderboards in the leaderboard set.
         /// </summary>
         /// <returns></returns>
+        [Introduced(iOS: "14.0", macOS: "11.0", tvOS: "14.0", visionOS: "1.0")]
         public Task<NSArray<GKLeaderboard>> LoadLeaderboards()
         {
             var tcs = InteropTasks.Create<NSArray<GKLeaderboard>>(out var taskId);
@@ -78,7 +79,8 @@ namespace Apple.GameKit.Leaderboards
             InteropTasks.TrySetExceptionAndRemove<NSArray<GKLeaderboardSet>>(taskId, new GameKitException(errorPointer));
         }
         #endregion
-        
+
+#if !UNITY_TVOS
         #region LoadImage
         
         /// <summary>
@@ -111,6 +113,7 @@ namespace Apple.GameKit.Leaderboards
             InteropTasks.TrySetExceptionAndRemove<Texture2D>(taskId, new GameKitException(errorPointer));
         }
         #endregion
+#endif
 
         private static class Interop
         {
@@ -124,8 +127,10 @@ namespace Apple.GameKit.Leaderboards
             public static extern void GKLeaderboardSet_LoadLeaderboards(IntPtr pointer, long taskId, SuccessTaskCallback<IntPtr> onSuccess, NSErrorTaskCallback onError);
             [DllImport(InteropUtility.DLLName)]
             public static extern void GKLeaderboardSet_LoadLeaderboardSets(long taskId, SuccessTaskCallback<IntPtr> onSuccess, NSErrorTaskCallback onError);
+#if !UNITY_TVOS
             [DllImport(InteropUtility.DLLName)]
             public static extern void GKLeaderboardSet_LoadImage(IntPtr pointer, long taskId, SuccessTaskImageCallback onSuccess, NSErrorTaskCallback onError);
+#endif            
         }
     }
 

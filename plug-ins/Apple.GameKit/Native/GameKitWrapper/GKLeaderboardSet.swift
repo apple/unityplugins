@@ -11,59 +11,54 @@ import GameKit
 @_cdecl("GKLeaderboardSet_GetTitle")
 public func GKLeaderboardSet_GetTitle
 (
-    pointer: UnsafeMutableRawPointer
+    pointer: UnsafeMutablePointer<GKLeaderboardSet>
 ) -> char_p
 {
-    let target = Unmanaged<GKLeaderboardSet>.fromOpaque(pointer).takeUnretainedValue();
+    let target = pointer.takeUnretainedValue();
     return target.title.toCharPCopy();
 }
 
 @_cdecl("GKLeaderboardSet_GetIdentifier")
 public func GKLeaderboardSet_GetIdentifier
 (
-    pointer: UnsafeMutableRawPointer
+    pointer: UnsafeMutablePointer<GKLeaderboardSet>
 ) -> char_p?
 {
-    let target = Unmanaged<GKLeaderboardSet>.fromOpaque(pointer).takeUnretainedValue();
+    let target = pointer.takeUnretainedValue();
     return target.identifier?.toCharPCopy();
 }
 
 @_cdecl("GKLeaderboardSet_GetGroupIdentifier")
 public func GKLeaderboardSet_GetGroupIdentifier
 (
-    pointer: UnsafeMutableRawPointer
+    pointer: UnsafeMutablePointer<GKLeaderboardSet>
 ) -> char_p?
 {
-    let target = Unmanaged<GKLeaderboardSet>.fromOpaque(pointer).takeUnretainedValue();
+    let target = pointer.takeUnretainedValue();
     return target.groupIdentifier?.toCharPCopy();
 }
 
 @_cdecl("GKLeaderboardSet_LoadLeaderboards")
 public func GKLeaderboardSet_LoadLeaderboards
 (
-    pointer: UnsafeMutableRawPointer,
+    pointer: UnsafeMutablePointer<GKLeaderboardSet>,
     taskId: Int64,
     onSuccess: @escaping SuccessTaskPtrCallback,
-    onError: @escaping NSErrorCallback
+    onError: @escaping NSErrorTaskCallback
 )
 {
-    let target = Unmanaged<GKLeaderboardSet>.fromOpaque(pointer).takeUnretainedValue();
     if #available(iOS 14, tvOS 14, macOS 11.0, *) {
+        let target = pointer.takeUnretainedValue();
         target.loadLeaderboards(handler: { leaderboards, error in
-            if(error != nil) {
-                onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
+            if let error = error as? NSError {
+                onError(taskId, error.passRetainedUnsafeMutablePointer());
                 return;
             }
-            
-            if(leaderboards != nil) {
-                onSuccess(taskId, Unmanaged.passRetained(leaderboards! as NSArray).toOpaque());
-            } else {
-                onSuccess(taskId, nil);
-            }
+
+            onSuccess(taskId, (leaderboards as? NSArray)?.passRetainedUnsafeMutablePointer());
         })
     } else {
-        // TODO: Handle fallback?
-        onSuccess(taskId, nil);
+        onError(taskId, NSError(code: GKErrorCodeExtension.unsupportedOperationForOSVersion).passRetainedUnsafeMutablePointer());
     };
 }
 
@@ -72,48 +67,43 @@ public func GKLeaderboardSet_LoadLeaderboardSets
 (
     taskId: Int64,
     onSuccess: @escaping SuccessTaskPtrCallback,
-    onError: @escaping NSErrorCallback
+    onError: @escaping NSErrorTaskCallback
 )
 {
     GKLeaderboardSet.loadLeaderboardSets(completionHandler: { sets, error  in
-        if(error != nil) {
-            onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
+        if let error = error as? NSError {
+            onError(taskId, error.passRetainedUnsafeMutablePointer());
             return;
         }
-        
-        if(sets != nil) {
-            onSuccess(taskId, Unmanaged.passRetained(sets! as NSArray).toOpaque());
-        } else {
-            onSuccess(taskId, nil);
-        }
+
+        onSuccess(taskId, (sets as? NSArray)?.passRetainedUnsafeMutablePointer());
     });
 }
 
 @_cdecl("GKLeaderboardSet_LoadImage")
 public func GKLeaderboardSet_LoadImage
 (
-    pointer: UnsafeMutableRawPointer,
+    pointer: UnsafeMutablePointer<GKLeaderboardSet>,
     taskId: Int64,
     onImageLoaded: @escaping SuccessTaskImageCallback,
-    onError: @escaping NSErrorCallback
+    onError: @escaping NSErrorTaskCallback
 )
 {
-    let target = Unmanaged<GKLeaderboardSet>.fromOpaque(pointer).takeUnretainedValue();
-    
-    #if !os(tvOS)
+#if !os(tvOS)
+    let target = pointer.takeUnretainedValue();
     target.loadImage(completionHandler: { (image, error) in
-        if(error != nil) {
-            onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
+
+        if let error = error as? NSError {
+            onError(taskId, error.passRetainedUnsafeMutablePointer());
             return;
         }
 
-        let data = image!.pngData()!;
-        onImageLoaded(
-            taskId,
-            Unmanaged.passRetained(data as NSData).toOpaque());
+        // Prior to iOS 14, loadImage can return nil if no image is set on App Store Connect.
+        // >= iOS 14, loadImage returns GKErrorCommunicationsFailure if no image is defined.
+        let data = image?.pngData() as? NSData;
+        onImageLoaded(taskId, data?.passRetainedUnsafeMutablePointer());
     });
-    #else
-    let error = NSError(domain: "GameKit", code: GKErrorCodeExtension.unsupportedOperationForOSVersion.rawValue, userInfo: nil);
-    onError(taskId, Unmanaged.passRetained(error).toOpaque());
-    #endif
+#else
+    onError(taskId, NSError(code: GKErrorCodeExtension.unsupportedOperationForOSVersion).passRetainedUnsafeMutablePointer());
+#endif
 }

@@ -98,11 +98,7 @@ namespace Apple.GameKit
         public static GKPlayer AnonymousGuestPlayer(string identifier)
         {
             var pointer = Interop.GKPlayer_AnonymousGuestPlayer(identifier);
-            
-            if(pointer != IntPtr.Zero)
-                return new GKPlayer(pointer);
-
-            return null;
+            return (pointer != IntPtr.Zero) ? new GKPlayer(pointer) : null;
         }
 
         private static class Interop

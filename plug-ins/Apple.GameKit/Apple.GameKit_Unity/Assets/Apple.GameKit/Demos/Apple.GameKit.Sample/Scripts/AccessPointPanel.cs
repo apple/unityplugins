@@ -1,6 +1,5 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
+using Apple.Core;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,25 +7,42 @@ namespace Apple.GameKit.Sample
 {
     public class AccessPointPanel : MonoBehaviour
     {
+        [SerializeField] Text _errorMessage = default;
+        [SerializeField] CanvasGroup _buttonGroup = default;
         [SerializeField] Dropdown _stateDropdown = default;
+
+        private readonly bool IsAccessPointAvailable = Availability.IsTypeAvailable<GKAccessPoint>();
+
+        void Start()
+        {
+            _buttonGroup.interactable = IsAccessPointAvailable;
+            _errorMessage.gameObject.SetActive(!IsAccessPointAvailable);
+        }
 
         public void OnToggleAccessPoint()
         {
-            GKAccessPoint.Shared.IsActive = !GKAccessPoint.Shared.IsActive;
-        }
-
-        public void OnTriggerAccessPoint()
-        {
-            GKAccessPoint.Shared.Trigger();
-        }
-
-        public void OnTriggerAccessPointWithState()
-        {
-            if (Enum.TryParse<GKGameCenterViewController.GKGameCenterViewControllerState>(
-                _stateDropdown.options[_stateDropdown.value].text,
-                out var state))
+            if (IsAccessPointAvailable)
             {
-                GKAccessPoint.Shared.Trigger(state);
+                GKAccessPoint.Shared.IsActive = !GKAccessPoint.Shared.IsActive;
+            }
+        }
+
+        public async void OnTriggerAccessPoint()
+        {
+            if (IsAccessPointAvailable)
+            {
+                await GKAccessPoint.Shared.Trigger();
+            }
+        }
+
+        public async void OnTriggerAccessPointWithState()
+        {
+            if (IsAccessPointAvailable &&
+                Enum.TryParse<GKGameCenterViewController.GKGameCenterViewControllerState>(
+                    _stateDropdown.options[_stateDropdown.value].text,
+                    out var state))
+            {
+                await GKAccessPoint.Shared.Trigger(state);
             }
         }
     }

@@ -3,39 +3,43 @@ using Apple.Core.Runtime;
 
 namespace Apple.GameKit
 {
-    public class GameKitException : Exception, IDisposable
+    public class GameKitException : Exception
     {
         public NSError NSError { get; set; }
 
-        #region Init & Dispose
         public GameKitException(IntPtr nsErrorPtr)
         {
             NSError = new NSError(nsErrorPtr);
         }
 
-        private bool _isDisposed;
-
-        public void Dispose()
+        public GameKitException(NSError nsError)
         {
-            if (!_isDisposed)
-            {
-                NSError?.Dispose();
-                NSError = null;
-
-                _isDisposed = true;
-
-                GC.SuppressFinalize(this);
-            }
+            NSError = nsError;
         }
-        #endregion
 
         public override string Message => $"Code={Code} Domain={Domain} Description={LocalizedDescription}";
 
-        #region NSError properties
         public long Code => NSError?.Code ?? default;
         public string Domain => NSError?.Domain ?? default;
-        public string LocalizedDescription => NSError?.LocalizedDescription ?? default;
+
+        public bool IsGKErrorDomain => Domain == GKErrorDomain.Name;
+        public GKErrorCode GKErrorCode => IsGKErrorDomain ? (GKErrorCode)Code : default;
+
+        public string LocalizedDescription
+        {
+            get
+            {
+                if (IsGKErrorDomain)
+                {
+                    return $"{NSError?.LocalizedDescription ?? default} ({GKErrorCode})";
+                }
+                else
+                {
+                    return NSError?.LocalizedDescription ?? default;
+                }
+                
+            }
+        } 
         public NSDictionary<NSString, NSObject> UserInfo => NSError?.UserInfo ?? default;
-        #endregion
     }
 }

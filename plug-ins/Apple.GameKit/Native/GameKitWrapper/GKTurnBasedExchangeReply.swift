@@ -11,44 +11,39 @@ import GameKit
 @_cdecl("GKTurnBasedExchangeReply_GetData")
 public func GKTurnBasedExchangeReply_GetData
 (
-    pointer: UnsafeMutableRawPointer
-) -> InteropStructArray
+    pointer: UnsafeMutablePointer<GKTurnBasedExchangeReply>
+) -> UnsafeMutablePointer<NSData>?
 {
-    let target = Unmanaged<GKTurnBasedExchangeReply>.fromOpaque(pointer).takeUnretainedValue();
-    
-    if(target.data != nil) {
-        return InteropStructArray(pointer: target.data!.toUCharP(), length: Int32(target.data!.count));
-    }
-    
-    return InteropStructArray();
+    let target = pointer.takeUnretainedValue();
+    return (target.data as? NSData)?.passRetainedUnsafeMutablePointer();
 }
 
 @_cdecl("GKTurnBasedExchangeReply_GetMessage")
 public func GKTurnBasedExchangeReply_GetMessage
 (
-    pointer: UnsafeMutableRawPointer
+    pointer: UnsafeMutablePointer<GKTurnBasedExchangeReply>
 ) -> char_p?
 {
-    let target = Unmanaged<GKTurnBasedExchangeReply>.fromOpaque(pointer).takeUnretainedValue();
+    let target = pointer.takeUnretainedValue();
     return target.message?.toCharPCopy();
 }
 
 @_cdecl("GKTurnBasedExchangeReply_GetRecipient")
 public func GKTurnBasedExchangeReply_GetRecipient
 (
-    pointer: UnsafeMutableRawPointer
-) -> UnsafeMutableRawPointer
+    pointer: UnsafeMutablePointer<GKTurnBasedExchangeReply>
+) -> UnsafeMutablePointer<GKTurnBasedParticipant>
 {
-    let target = Unmanaged<GKTurnBasedExchangeReply>.fromOpaque(pointer).takeUnretainedValue();
-    return Unmanaged.passRetained(target.recipient).toOpaque();
+    let target = pointer.takeUnretainedValue();
+    return target.recipient.passRetainedUnsafeMutablePointer();
 }
 
 @_cdecl("GKTurnBasedExchangeReply_GetReplyDate")
 public func GKTurnBasedExchangeReply_GetReplyDate
 (
-    pointer: UnsafeMutableRawPointer
-) -> Int
+    pointer: UnsafeMutablePointer<GKTurnBasedExchangeReply>
+) -> TimeInterval // aka Double
 {
-    let target = Unmanaged<GKTurnBasedExchangeReply>.fromOpaque(pointer).takeUnretainedValue();
-    return Int(target.replyDate.timeIntervalSince1970);
+    let target = pointer.takeUnretainedValue();
+    return target.replyDate.timeIntervalSince1970;
 }

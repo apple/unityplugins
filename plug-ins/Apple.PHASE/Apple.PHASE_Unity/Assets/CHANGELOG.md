@@ -1,6 +1,11 @@
 # CHANGELOG
 All notable changes to this project will be documented in this file.
 
+## [1.2.1] - 2024-09-05
+### Changed
+- Cleaned up default project code sign settings.
+- Removed -mno-thumb compiler flag that was causing build breaks in Xcode 16.
+
 ## [1.2.0] - 2024-02-23
 ### Added
 - Support for visionOS

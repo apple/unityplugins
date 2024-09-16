@@ -11,14 +11,9 @@ import GameKit
 @_cdecl("GKScoreChallenge_GetScore")
 public func GKScoreChallenge_GetScore
 (
-    pointer: UnsafeMutableRawPointer
-) -> UnsafeMutableRawPointer?
+    pointer: UnsafeMutablePointer<GKScoreChallenge>
+) -> UnsafeMutablePointer<GKScore>?
 {
-    let challenge = Unmanaged<GKScoreChallenge>.fromOpaque(pointer).takeUnretainedValue();
-    
-    if(challenge.score != nil) {
-        return Unmanaged.passRetained(challenge.score!).toOpaque();
-    }
-    
-    return nil;
+    let challenge = pointer.takeUnretainedValue();
+    return challenge.score?.passRetainedUnsafeMutablePointer();
 }

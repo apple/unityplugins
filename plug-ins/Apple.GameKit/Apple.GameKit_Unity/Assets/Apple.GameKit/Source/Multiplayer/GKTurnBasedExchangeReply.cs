@@ -16,7 +16,7 @@ namespace Apple.GameKit.Multiplayer
         /// <summary>
         /// Exchange data sent by the recipient.
         /// </summary>
-        public byte[] Data => Interop.GKTurnBasedExchangeReply_GetData(Pointer).ToBytes();
+        public byte[] Data => NSData.GetBytes(Interop.GKTurnBasedExchangeReply_GetData(Pointer));
 
         /// <summary>
         /// Localizable message for the push notification
@@ -31,18 +31,18 @@ namespace Apple.GameKit.Multiplayer
         /// <summary>
         /// The date the reply exchange was sent.
         /// </summary>
-        public DateTimeOffset ReplyDate => DateTimeOffset.FromUnixTimeSeconds(Interop.GKTurnBasedExchangeReply_GetReplyDate(Pointer));
+        public DateTimeOffset ReplyDate => DateTimeOffsetExtensions.FromUnixTimeSeconds(Interop.GKTurnBasedExchangeReply_GetReplyDate(Pointer));
 
         private static class Interop
         {
             [DllImport(InteropUtility.DLLName)]
-            public static extern InteropData GKTurnBasedExchangeReply_GetData(IntPtr pointer);
+            public static extern IntPtr GKTurnBasedExchangeReply_GetData(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
             public static extern string GKTurnBasedExchangeReply_GetMessage(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
             public static extern IntPtr GKTurnBasedExchangeReply_GetRecipient(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
-            public static extern long GKTurnBasedExchangeReply_GetReplyDate(IntPtr pointer);
+            public static extern double GKTurnBasedExchangeReply_GetReplyDate(IntPtr pointer);
         }
     }
 }

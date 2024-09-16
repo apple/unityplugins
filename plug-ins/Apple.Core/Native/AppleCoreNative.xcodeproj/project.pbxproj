@@ -456,7 +456,6 @@
 			baseConfigurationReference = 240646112B61F5F000246067 /* Core.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
-				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -491,7 +490,6 @@
 			baseConfigurationReference = 240646112B61F5F000246067 /* Core.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
-				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -646,7 +644,6 @@
 			baseConfigurationReference = 240646112B61F5F000246067 /* Core.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -679,7 +676,6 @@
 			baseConfigurationReference = 240646112B61F5F000246067 /* Core.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -711,7 +707,6 @@
 			baseConfigurationReference = 240646112B61F5F000246067 /* Core.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -743,7 +738,6 @@
 			baseConfigurationReference = 240646112B61F5F000246067 /* Core.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -773,7 +767,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 240646112B61F5F000246067 /* Core.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "\"Copyright © 2021 - 2024 Apple, Inc. All rights reserved.\"";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
@@ -794,7 +787,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 240646112B61F5F000246067 /* Core.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "\"Copyright © 2021 - 2024 Apple, Inc. All rights reserved.\"";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";

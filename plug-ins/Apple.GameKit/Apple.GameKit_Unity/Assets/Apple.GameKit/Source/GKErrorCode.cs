@@ -2,6 +2,11 @@
 
 namespace Apple.GameKit
 {
+    public static class GKErrorDomain
+    {
+        public static readonly string Name = nameof(GKErrorDomain);
+    }
+
     public enum GKErrorCode : int
     {
         // Unity-Specific GameKit plug-in Error Codes
@@ -14,6 +19,7 @@ namespace Apple.GameKit
         UnsupportedOperationForOSVersion = -7,
         NoAchievementDescriptionFound = -8,
         NoAchievementDescriptionImageFound = -9,
+        GameCenterDashboardAlreadyShown = -10,
 
         // GameKit.framework Error Codes
         UnknownError = 1,

@@ -48,6 +48,16 @@ var player = await GKLocalPlayer.Authenticate();
 Debug.Log($"GameKit Authentication: isAuthenticated => {player.IsAuthenticated}");
 ```
 
+You can also use the following events to be notified of subsequent changes to the local player's authentication status after the initial request completes.
+```csharp
+GKLocalPlayer.AuthenticateSuccess += (GKLocalPlayer localPlayer) {
+  // handle newly authenticated (or re-authenticated) player
+}
+GKLocalPlayer.AuthenticateError += (NSError error) {
+  // handle authentication error
+}
+```
+
 #### 1.2 Fetch Local Player
 **Note:** This call is not asynchronous.
 ```csharp
@@ -80,11 +90,11 @@ var challengeableFriends = await GKLocalPlayer.Local.LoadChallengeableFriends();
 var recentPlayers = await GKLocalPlayer.Local.LoadRecentPlayers();
 ```
 
-#### 1.5 FetchItems
-##### [FetchItems - Apple Developer Documentation](https://developer.apple.com/documentation/gamekit/gklocalplayer/3516283-fetchitems)
+#### 1.5 FetchItemsForIdentityVerificationSignature
+##### [FetchItemsForIdentityVerificationSignature - Apple Developer Documentation](https://developer.apple.com/documentation/gamekit/gklocalplayer/3516283-fetchitems)
 
 ```csharp
-var fetchItemsResponse = await GKLocalPlayer.Local.FetchItems();
+var fetchItemsResponse = await GKLocalPlayer.Local.FetchItemsForIdentityVerificationSignature();
 
 var signature = fetchItemsResponse.GetSignature(); 
 var salt = fetchItemsResponse.GetSalt();
@@ -161,7 +171,7 @@ await GKAchievement.ResetAchievements();
 ### 3 GKGameCenterViewController
 ##### [GKGameCenterViewController - Apple Developer Documentation](https://developer.apple.com/documentation/gamekit/gkgamecenterviewcontroller)
 
-#### 3.1 Show Achievements, Leaderboard, Challenges Dialog
+#### 3.1 Show Achievements, Leaderboards and LeaderboardSets, Challenges, and Player Details Dialog
 The Task will resolve when the dialog has been closed.
 ```csharp
 var gameCenter = GKGameCenterViewController.Init(GKGameCenterViewController.GKGameCenterViewControllerState.Achievement);'
@@ -512,9 +522,9 @@ GKAccessPoint.Shared.IsActive = true; // or false to hide.
 ```
 
 #### 7.3 Trigger
-**Note:** This call is not asynchronous.
+**Note:** This call is asynchronous as of Apple.GameKit version 3.0.0.
 ```csharp
-GKAccessPoint.Shared.Trigger();
+await GKAccessPoint.Shared.Trigger();
 ```
 
 ### 8. Challenges

@@ -19,5 +19,10 @@ public class TestNSData
         
         NSString testString = new NSString(testData);
         Assert.AreEqual("test", testString.ToString());
+
+        var testBytes = new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 };
+        NSData testData2 = new NSData(testBytes);
+        Assert.AreEqual(testData2.Length, testBytes.Length);
+        Assert.AreEqual(testBytes, testData2.Bytes);
     }
 }

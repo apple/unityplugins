@@ -8,11 +8,11 @@
 import Foundation
 import GameKit
 
-public typealias GKMatchDataReceivedCallback = @convention(c) (UnsafeMutableRawPointer, UnsafeMutableRawPointer, Int32, UnsafeMutableRawPointer) -> Void;
-public typealias GKMatchDataReceivedForPlayerCallback = @convention(c) (UnsafeMutableRawPointer, UnsafeMutableRawPointer, Int32, UnsafeMutableRawPointer, UnsafeMutableRawPointer) -> Void;
-public typealias GKMatchPlayerConnectionDidChangeCallback = @convention(c) (UnsafeMutableRawPointer, UnsafeMutableRawPointer, GKPlayerConnectionState) -> Void;
-public typealias GKMatchShouldReinviteDisconnectedPlayerCallback = @convention(c) (UnsafeMutableRawPointer, UnsafeMutableRawPointer) -> Bool;
-public typealias GKMatchDidFailWithErrorCallback = @convention(c) (UnsafeMutableRawPointer, UnsafeMutableRawPointer) -> Void;
+public typealias GKMatchDataReceivedCallback = @convention(c) (UnsafeMutablePointer<GKWMatchDelegate>, UnsafeMutablePointer<NSData>, UnsafeMutablePointer<GKPlayer>) -> Void;
+public typealias GKMatchDataReceivedForPlayerCallback = @convention(c) (UnsafeMutablePointer<GKWMatchDelegate>, UnsafeMutablePointer<NSData>, UnsafeMutablePointer<GKPlayer>, UnsafeMutablePointer<GKPlayer>) -> Void;
+public typealias GKMatchPlayerConnectionDidChangeCallback = @convention(c) (UnsafeMutablePointer<GKWMatchDelegate>, UnsafeMutablePointer<GKPlayer>, GKPlayerConnectionState) -> Void;
+public typealias GKMatchShouldReinviteDisconnectedPlayerCallback = @convention(c) (UnsafeMutablePointer<GKWMatchDelegate>, UnsafeMutablePointer<GKPlayer>) -> Bool;
+public typealias GKMatchDidFailWithErrorCallback = @convention(c) (UnsafeMutablePointer<GKWMatchDelegate>, UnsafeMutablePointer<NSError>) -> Void;
 
 public class GKWMatchDelegate : NSObject, GKMatchDelegate {
     public var Match : GKMatch? = nil;
@@ -25,92 +25,90 @@ public class GKWMatchDelegate : NSObject, GKMatchDelegate {
 
     public func match(_ match: GKMatch, didReceive data: Data, fromRemotePlayer player: GKPlayer) {
         DataReceivedHandler?(
-            Unmanaged.passRetained(self).toOpaque(),
-            data.toUCharP(),
-            Int32(data.count),
-            Unmanaged.passRetained(player).toOpaque());
+            self.passRetainedUnsafeMutablePointer(),
+            (data as NSData).passRetainedUnsafeMutablePointer(),
+            player.passRetainedUnsafeMutablePointer());
     }
 
     public func match(_ match: GKMatch, didReceive data: Data, forRecipient recipient: GKPlayer, fromRemotePlayer player: GKPlayer) {
         DataReceivedForPlayerHandler?(
-            Unmanaged.passRetained(self).toOpaque(),
-            data.toUCharP(),
-            Int32(data.count),
-            Unmanaged.passRetained(recipient).toOpaque(),
-            Unmanaged.passRetained(player).toOpaque());
+            self.passRetainedUnsafeMutablePointer(),
+            (data as NSData).passRetainedUnsafeMutablePointer(),
+            recipient.passRetainedUnsafeMutablePointer(),
+            player.passRetainedUnsafeMutablePointer());
     }
 
     public func match(_ match: GKMatch, player: GKPlayer, didChange state: GKPlayerConnectionState) {
         PlayerConnectionDidChangeHandler?(
-            Unmanaged.passRetained(self).toOpaque(),
-            Unmanaged.passRetained(player).toOpaque(),
+            self.passRetainedUnsafeMutablePointer(),
+            player.passRetainedUnsafeMutablePointer(),
             state);
     }
 
     public func match(_ match: GKMatch, shouldReinviteDisconnectedPlayer player: GKPlayer) -> Bool {
         return ShouldReinviteDisconnectedPlayerHandler?(
-            Unmanaged.passRetained(self).toOpaque(),
-            Unmanaged.passRetained(player).toOpaque()) ?? false;
+            self.passRetainedUnsafeMutablePointer(),
+            player.passRetainedUnsafeMutablePointer()) ?? false;
     }
 
     public func match(_ match: GKMatch, didFailWithError error: Error?) {
         DidFailWithErrorHandler?(
-            Unmanaged.passRetained(self).toOpaque(),
-            Unmanaged.passRetained(error! as NSError).toOpaque());
+            self.passRetainedUnsafeMutablePointer(),
+            (error! as NSError).passRetainedUnsafeMutablePointer());
     }
 }
 
 @_cdecl("GKMatchDelegate_SetDataReceived")
 public func GKMatchDelegate_SetDataReceived
 (
-    pointer: UnsafeMutableRawPointer,
+    pointer: UnsafeMutablePointer<GKWMatchDelegate>,
     callback: @escaping GKMatchDataReceivedCallback
 )
 {
-    let target = Unmanaged<GKWMatchDelegate>.fromOpaque(pointer).takeUnretainedValue();
+    let target = pointer.takeUnretainedValue();
     target.DataReceivedHandler = callback;
 }
 
 @_cdecl("GKMatchDelegate_SetDataReceivedForPlayer")
 public func GKMatchDelegate_SetDataReceivedForPlayer
 (
-    pointer: UnsafeMutableRawPointer,
+    pointer: UnsafeMutablePointer<GKWMatchDelegate>,
     callback: @escaping GKMatchDataReceivedForPlayerCallback
 )
 {
-    let target = Unmanaged<GKWMatchDelegate>.fromOpaque(pointer).takeUnretainedValue();
+    let target = pointer.takeUnretainedValue();
     target.DataReceivedForPlayerHandler = callback;
 }
 
 @_cdecl("GKMatchDelegate_SetPlayerConnectedDidChange")
 public func GKMatchDelegate_SetPlayerConnectedDidChange
 (
-    pointer: UnsafeMutableRawPointer,
+    pointer: UnsafeMutablePointer<GKWMatchDelegate>,
     callback: @escaping GKMatchPlayerConnectionDidChangeCallback
 )
 {
-    let target = Unmanaged<GKWMatchDelegate>.fromOpaque(pointer).takeUnretainedValue();
+    let target = pointer.takeUnretainedValue();
     target.PlayerConnectionDidChangeHandler = callback;
 }
 
 @_cdecl("GKMatchDelegate_SetDidFailWithError")
 public func GKMatchDelegate_SetDidFailWithError
 (
-    pointer: UnsafeMutableRawPointer,
+    pointer: UnsafeMutablePointer<GKWMatchDelegate>,
     callback: @escaping GKMatchDidFailWithErrorCallback
 )
 {
-    let target = Unmanaged<GKWMatchDelegate>.fromOpaque(pointer).takeUnretainedValue();
+    let target = pointer.takeUnretainedValue();
     target.DidFailWithErrorHandler = callback;
 }
 
 @_cdecl("GKMatchDelegate_SetShouldReinviteDisconnectedPlayer")
 public func GKMatchDelegate_SetShouldReinviteDisconnectedPlayer
 (
-    pointer: UnsafeMutableRawPointer,
+    pointer: UnsafeMutablePointer<GKWMatchDelegate>,
     callback: @escaping GKMatchShouldReinviteDisconnectedPlayerCallback
 )
 {
-    let target = Unmanaged<GKWMatchDelegate>.fromOpaque(pointer).takeUnretainedValue();
+    let target = pointer.takeUnretainedValue();
     target.ShouldReinviteDisconnectedPlayerHandler = callback;
 }

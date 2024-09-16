@@ -10,10 +10,15 @@ namespace Apple.GameKit.Sample
 {
     public class FriendsPanel : MonoBehaviour
     {
-        [SerializeField] private GameObject _friendPanelPrefab = default;
+        [SerializeField] private PlayerButton _friendButtonPrefab = default;
         [SerializeField] private GameObject _friendsListContent = default;
         [SerializeField] private Button _refreshButton = default;
-        [SerializeField] private GameObject _errorMessagePrefab = default;
+        [SerializeField] private ErrorButton _errorMessagePrefab = default;
+
+        void Start()
+        {
+            _refreshButton.onClick.AddListener(RefreshButtonAction);
+        }
 
         async void OnEnable()
         {
@@ -25,10 +30,13 @@ namespace Apple.GameKit.Sample
             await Refresh();
         }
 
-        private bool AreFriendsApisAvailable =>
-            Availability.Available(RuntimeOperatingSystem.macOS, 11, 3) ||
-            Availability.Available(RuntimeOperatingSystem.iOS, 14, 5) ||
-            Availability.Available(RuntimeOperatingSystem.tvOS, 14, 5);
+        private readonly bool AreFriendsApisAvailable =
+            Availability.IsMethodAvailable<GKLocalPlayer>(nameof(GKLocalPlayer.LoadFriends)) &&
+            Availability.IsMethodAvailable<GKLocalPlayer>(nameof(GKLocalPlayer.LoadFriendsAuthorizationStatus));
+
+        private bool _useAccessPoint = false;
+        private readonly bool IsAccessPointAvailable = Availability.IsMethodAvailable<GKAccessPoint>(nameof(GKAccessPoint.TriggerWithPlayer));
+        private readonly bool IsViewControllerAvailable = Availability.IsMethodAvailable<GKGameCenterViewController>(nameof(GKGameCenterViewController.InitWithPlayer));
 
         public async Task Refresh()
         {
@@ -38,59 +46,87 @@ namespace Apple.GameKit.Sample
             {
                 Clear();
 
-                var localPlayer = GKLocalPlayer.Local;
-                if (localPlayer != null && AreFriendsApisAvailable)
+                if (AreFriendsApisAvailable)
                 {
-                    var authStatus = await localPlayer.LoadFriendsAuthorizationStatus();
-                    if (authStatus == GKFriendsAuthorizationStatus.Authorized ||
-                        authStatus == GKFriendsAuthorizationStatus.NotDetermined)
+                    var localPlayer = GKLocalPlayer.Local;
+                    if (localPlayer != null)
                     {
-                        var friends = await localPlayer.LoadFriends();
-                        if (friends.Count > 0)
+                        var authStatus = await localPlayer.LoadFriendsAuthorizationStatus();
+                        if (authStatus == GKFriendsAuthorizationStatus.Authorized ||
+                            authStatus == GKFriendsAuthorizationStatus.NotDetermined)
                         {
-                            foreach (var friend in friends)
+                            var friends = await localPlayer.LoadFriends();
+                            if (friends.Count > 0)
                             {
-                                var panelObject = Instantiate(_friendPanelPrefab, _friendsListContent.transform, worldPositionStays: false);
+                                foreach (var friend in friends)
+                                {
+                                    var button = Instantiate(_friendButtonPrefab, _friendsListContent.transform, worldPositionStays: false);
+                                    button.Player = friend;
+                                    button.ButtonClick += async (sender, args) =>
+                                    {
+                                        // Alternate using the view controller and access point APIs to show the dashboard.
+                                        if ((_useAccessPoint || !IsViewControllerAvailable) && IsAccessPointAvailable)
+                                        {
+                                            await GKAccessPoint.Shared.TriggerWithPlayer(friend);
+                                        }
+                                        else if ((!_useAccessPoint || !IsAccessPointAvailable) && IsViewControllerAvailable)
+                                        {
+                                            var viewController = GKGameCenterViewController.InitWithPlayer(friend);
+                                            await viewController.Present();
+                                        }
+                                        _useAccessPoint = !_useAccessPoint;
+                                    };
+                                }
 
-                                var panel = panelObject.GetComponent<PlayerPanel>();
-                                panel.Player = friend;
-                            }
-
-                            // This is completely unnecessary except to verify that LoadFriends(NSArray<NSString> identifiers) returns the same result.
-                            var identifiers = new NSMutableArray<NSString>(friends.Select(friend => new NSString(friend.GamePlayerId)));
-                            var friends2 = await localPlayer.LoadFriends(identifiers);
-                            if (friends2.Count == friends.Count)
-                            {
-                                Debug.Log($"LoadFriends(identifiers) returned the correct number of results ({friends2.Count}).");
+                                // This is completely unnecessary except to verify that LoadFriends(NSArray<NSString> identifiers) returns the same result.
+                                var identifiers = new NSMutableArray<NSString>(friends.Select(friend => new NSString(friend.GamePlayerId)));
+                                var friends2 = await localPlayer.LoadFriends(identifiers);
+                                if (friends2.Count == friends.Count)
+                                {
+                                    Debug.Log($"LoadFriends(identifiers) returned the correct number of results ({friends2.Count}).");
+                                }
+                                else
+                                {
+                                    Debug.LogError($"LoadFriends(identifiers) returned the wrong number of results (expected {friends.Count} but got {friends2.Count}).");
+                                }
                             }
                             else
                             {
-                                Debug.LogError($"LoadFriends(identifiers) returned the wrong number of results (expected {friends.Count} but got {friends2.Count}).");
+                                // Explain why the friends list might be empty.
+                                var button = Instantiate(_errorMessagePrefab, _friendsListContent.transform, worldPositionStays: false);
+                                button.Text = $"None of your friends have opted-in to Connect with Friends for this game in their Game Center profile.";
                             }
                         }
+                        else
+                        {
+                            // show the authorization error
+                            var button = Instantiate<ErrorButton>(_errorMessagePrefab, _friendsListContent.transform, worldPositionStays: false);
+                            button.Text = $"{authStatus}";
+                        }
                     }
-                    else
-                    {
-                        // show the authorization error
-                        var errorObject = Instantiate(_errorMessagePrefab, _friendsListContent.transform, worldPositionStays: false);
-                        var panel = errorObject.GetComponent<FriendErrorPanel>();
-                        panel.Text = $"{authStatus}";
-                    }
+                }
+                else
+                {
+                    // show API not-available error
+                    var button = Instantiate(_errorMessagePrefab, _friendsListContent.transform, worldPositionStays: false);
+                    button.Text = $"LoadFriends and LoadFriendsAuthorizationStatus are not available on this OS version.";
                 }
             }
             catch (Exception ex)
             {
-                Debug.LogException(ex);
+                GKErrorCodeExtensions.LogException(ex);
 
                 // show the exception text
-                var errorObject = Instantiate(_errorMessagePrefab, _friendsListContent.transform, worldPositionStays: false);
-                var errorPanel = errorObject.GetComponent<FriendErrorPanel>();
-                errorPanel.Text = $"{ex.Message}";
+                var errorButton = Instantiate(_errorMessagePrefab, _friendsListContent.transform, worldPositionStays: false);
+                errorButton.Text = $"{ex.Message}";
 
                 // Add a helpful message about adding NSGKFriendListUsageDescription.
-                var helpObject = Instantiate(_errorMessagePrefab, _friendsListContent.transform, worldPositionStays: false);
-                var helpPanel = helpObject.GetComponent<FriendErrorPanel>();
-                helpPanel.Text = $"If the exception mentions NSGKFriendListUsageDescription, you can set this string in the Unity Editor by choosing Build Settings... -> Player Settings -> Apple Build Settings -> GameKit -> Friend List Usage Description.";
+                var explanation = (ex as GameKitException)?.GKErrorCode.GetExplanatoryText();
+                if (!string.IsNullOrWhiteSpace(explanation))
+                {
+                    var helpButton = Instantiate(_errorMessagePrefab, _friendsListContent.transform, worldPositionStays: false);
+                    helpButton.Text = explanation;
+                }
             }
             finally
             {

@@ -1,6 +1,26 @@
 # CHANGELOG
 All notable changes to this project will be documented in this file.
 
+## [3.0.0] - 2023-09-05
+### Added
+- C# wrappers for the following GameKit APIs new in iOS/tvOS 18.0, macOS 15.0, and visionOS 2.0.
+  - `GKGameCenterViewController.Init(leaderboardSetID)` and `.Init(player)`
+  - `GKAccessPoint`
+    - `.TriggerWithAchievementID(achievementID)`
+    - `.TriggerWithLeaderboardSetID(leaderboardSetID)`
+    - `.TriggerWithLeaderboardID(leaderboardID, playerScope, timeScope)`
+    - `.TriggerWithPlayer(player)`
+- C# wrappers for the following `GKLocalPlayer` methods:
+  - `.LoadDefaultLeaderboardIdentifier()`
+  - `.SetDefaultLeaderboardIdentifier(leaderboardIdentifier)`
+- C# wrappers for the existing `GKSavedGame` family of APIs.
+### Changed
+  - Add C# events to `GKLocalPlayer` to handle authentication state changes.
+    - `AuthenticateUpdate`
+    - `AuthenticateError`
+  - Improve precision of date, time, and duration properties of achievements, challenges, and leaderboards.
+  - All of the `GKAccessPoint.Trigger*` methods are now asynchronous.
+
 ## [2.2.2] - 2023-04-23
 ### Updated
 - Updating how Info.plist files are generated for native libraries.

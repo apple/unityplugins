@@ -174,13 +174,7 @@ namespace Apple.GameKit.Multiplayer
         /// <summary>
         /// Game-specific data that reflects the details of the match.
         /// </summary>
-        public byte[] MatchData
-        {
-            get
-            {
-                return Interop.GKTurnBasedMatch_GetMatchData(Pointer).ToBytes();
-            }
-        }
+        public byte[] MatchData => PointerCast<NSData>(Interop.GKTurnBasedMatch_GetMatchData(Pointer))?.Bytes ?? Array.Empty<byte>();
         
         /// <summary>
         /// Returns the limit the Game Center servers place on the size of the match data.
@@ -195,7 +189,7 @@ namespace Apple.GameKit.Multiplayer
         /// <summary>
         /// The date that the match was created.
         /// </summary>
-        public DateTimeOffset CreationDate => DateTimeOffset.FromUnixTimeSeconds(Interop.GKTurnBasedMatch_GetCreationDate(Pointer));
+        public DateTimeOffset CreationDate => DateTimeOffsetExtensions.FromUnixTimeSeconds(Interop.GKTurnBasedMatch_GetCreationDate(Pointer));
         
         /// <summary>
         /// A string that uniquely identifies the match.
@@ -220,10 +214,10 @@ namespace Apple.GameKit.Multiplayer
             return tcs.Task;
         }
 
-        [MonoPInvokeCallback(typeof(SuccessTaskCallback<InteropData>))]
-        private static void OnLoadMatchData(long taskId, InteropData data)
+        [MonoPInvokeCallback(typeof(SuccessTaskCallback<IntPtr>))]
+        private static void OnLoadMatchData(long taskId, IntPtr dataPtr)
         {
-            InteropTasks.TrySetResultAndRemove(taskId, data.ToBytes());
+            InteropTasks.TrySetResultAndRemove(taskId, NSData.GetBytes(dataPtr));
         }
 
         [MonoPInvokeCallback(typeof(NSErrorTaskCallback))]
@@ -242,15 +236,8 @@ namespace Apple.GameKit.Multiplayer
         /// <returns></returns>
         public Task SaveCurrentTurn(byte[] matchData)
         {
-            var handle = GCHandle.Alloc(matchData, GCHandleType.Pinned);
-            var data = new InteropData
-            {
-                DataPtr = handle.AddrOfPinnedObject(),
-                DataLength = matchData.Length
-            };
             var tcs = InteropTasks.Create<bool>(out var taskId);
-            Interop.GKTurnBasedMatch_SaveCurrentTurn(Pointer, taskId, data, OnSaveCurrentTurn, OnSaveCurrentTurnError);
-            handle.Free();
+            Interop.GKTurnBasedMatch_SaveCurrentTurn(Pointer, taskId, new NSData(matchData).Pointer, OnSaveCurrentTurn, OnSaveCurrentTurnError);
             return tcs.Task;
         }
 
@@ -278,19 +265,11 @@ namespace Apple.GameKit.Multiplayer
         /// <returns></returns>
         public Task EndTurn(GKTurnBasedParticipant[] nextParticipants, TimeSpan timeout, byte[] matchData)
         {
-            var handle = GCHandle.Alloc(matchData, GCHandleType.Pinned);
-            var data = new InteropData
-            {
-                DataPtr = handle.AddrOfPinnedObject(),
-                DataLength = matchData.Length
-            };
-
             // Prepare participants...
             var mutable = new NSMutableArray<GKTurnBasedParticipant>(nextParticipants);
             
             var tcs = InteropTasks.Create<bool>(out var taskId);
-            Interop.GKTurnBasedMatch_EndTurn(Pointer, taskId, mutable.Pointer, timeout.TotalSeconds, data, OnEndTurn, OnSaveCurrentTurnError);
-            handle.Free();
+            Interop.GKTurnBasedMatch_EndTurn(Pointer, taskId, mutable.Pointer, timeout.TotalSeconds, new NSData(matchData).Pointer, OnEndTurn, OnSaveCurrentTurnError);
             return tcs.Task;
         }
 
@@ -319,19 +298,11 @@ namespace Apple.GameKit.Multiplayer
         /// <returns></returns>
         public Task ParticipantQuitInTurn(Outcome outcome, GKTurnBasedParticipant[] nextParticipants, TimeSpan turnTimeout, byte[] matchData)
         {
-            var handle = GCHandle.Alloc(matchData, GCHandleType.Pinned);
-            var data = new InteropData
-            {
-                DataPtr = handle.AddrOfPinnedObject(),
-                DataLength = matchData.Length
-            };
-
             // Prepare participants...
             var mutable = new NSMutableArray<GKTurnBasedParticipant>(nextParticipants);
             
             var tcs = InteropTasks.Create<bool>(out var taskId);
-            Interop.GKTurnBasedMatch_ParticipantQuitInTurn(Pointer, taskId, outcome, mutable.Pointer, turnTimeout.TotalSeconds, data, OnParticipantQuitInTurn, OnParticipantQuitInTurnError);
-            handle.Free();
+            Interop.GKTurnBasedMatch_ParticipantQuitInTurn(Pointer, taskId, outcome, mutable.Pointer, turnTimeout.TotalSeconds, new NSData(matchData).Pointer, OnParticipantQuitInTurn, OnParticipantQuitInTurnError);
             return tcs.Task;
         }
         
@@ -384,16 +355,8 @@ namespace Apple.GameKit.Multiplayer
         /// <returns></returns>
         public Task EndMatchInTurn(byte[] matchData)
         {
-            var handle = GCHandle.Alloc(matchData, GCHandleType.Pinned);
-            var data = new InteropData
-            {
-                DataPtr = handle.AddrOfPinnedObject(),
-                DataLength = matchData.Length
-            };
-
             var tcs = InteropTasks.Create<bool>(out var taskId);
-            Interop.GKTurnBasedMatch_EndMatchInTurn(Pointer, taskId, data, OnEndMatchInTurn, OnEndMatchInTurnError);
-            handle.Free();
+            Interop.GKTurnBasedMatch_EndMatchInTurn(Pointer, taskId, new NSData(matchData).Pointer, OnEndMatchInTurn, OnEndMatchInTurnError);
             return tcs.Task;
         }
         
@@ -446,19 +409,11 @@ namespace Apple.GameKit.Multiplayer
         /// <returns></returns>
         public Task SaveMergedMatch(byte[] matchData, params GKTurnBasedExchange[] exchanges)
         {
-            var handle = GCHandle.Alloc(matchData, GCHandleType.Pinned);
-            var data = new InteropData
-            {
-                DataPtr = handle.AddrOfPinnedObject(),
-                DataLength = matchData.Length
-            };
-
             // Prepare exchanges...
             var mutable = new NSMutableArray<GKTurnBasedExchange>(exchanges);
             
             var tcs = InteropTasks.Create<bool>(out var taskId);
-            Interop.GKTurnBasedMatch_SaveMergedMatch(Pointer, taskId, data, mutable.Pointer, OnSaveMergedMatch, OnSaveMergedMatchError);
-            handle.Free();
+            Interop.GKTurnBasedMatch_SaveMergedMatch(Pointer, taskId, new NSData(matchData).Pointer, mutable.Pointer, OnSaveMergedMatch, OnSaveMergedMatchError);
             return tcs.Task;
         }
         
@@ -479,14 +434,6 @@ namespace Apple.GameKit.Multiplayer
 
         public Task<GKTurnBasedExchange> SendExchange(GKTurnBasedParticipant[] participants, byte[] data, string localizableMessageKey, string[] arguments, TimeSpan timeout)
         {
-            // Data...
-            var handle = GCHandle.Alloc(data, GCHandleType.Pinned);
-            var interopData = new InteropData
-            {
-                DataPtr = handle.AddrOfPinnedObject(),
-                DataLength = data.Length
-            };
-            
             // Participants...
             var mutableParticipants = new NSMutableArray<GKTurnBasedParticipant>(participants);
 
@@ -497,14 +444,13 @@ namespace Apple.GameKit.Multiplayer
             Interop.GKTurnBasedMatch_SendExchange(
                 Pointer, 
                 taskId, participants: mutableParticipants.Pointer,
-                data: interopData,
+                nsDataPtr: new NSData(data).Pointer,
                 localizableMessageKey: localizableMessageKey,
                 arguments: mutableArguments.Pointer,
                 timeout: timeout.TotalSeconds,
                 onSuccess: OnSendExchange,
                 onError: OnSendExchangeError);
 
-            handle.Free();
             return tcs.Task;
         }
 
@@ -870,35 +816,35 @@ namespace Apple.GameKit.Multiplayer
             [DllImport(InteropUtility.DLLName)]
             public static extern IntPtr GKTurnBasedMatch_GetCurrentParticipant(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
-            public static extern InteropData GKTurnBasedMatch_GetMatchData(IntPtr pointer);
+            public static extern IntPtr GKTurnBasedMatch_GetMatchData(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
             public static extern int GKTurnBasedMatch_GetMatchDataMaximumSize(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
             public static extern string GKTurnBasedMatch_GetMessage(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
-            public static extern long GKTurnBasedMatch_GetCreationDate(IntPtr pointer);
+            public static extern double GKTurnBasedMatch_GetCreationDate(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
             public static extern string GKTurnBasedMatch_GetMatchID(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
             public static extern Status GKTurnBasedMatch_GetStatus(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
-            public static extern void GKTurnBasedMatch_LoadMatchData(IntPtr pointer, long taskId, SuccessTaskCallback<InteropData> onSuccess, NSErrorTaskCallback onError);
+            public static extern void GKTurnBasedMatch_LoadMatchData(IntPtr pointer, long taskId, SuccessTaskCallback<IntPtr> onSuccess, NSErrorTaskCallback onError);
             [DllImport(InteropUtility.DLLName)]
-            public static extern void GKTurnBasedMatch_SaveCurrentTurn(IntPtr pointer, long taskId, InteropData data, SuccessTaskCallback onSuccess, NSErrorTaskCallback onError);
+            public static extern void GKTurnBasedMatch_SaveCurrentTurn(IntPtr pointer, long taskId, IntPtr nsDataPtr, SuccessTaskCallback onSuccess, NSErrorTaskCallback onError);
             [DllImport(InteropUtility.DLLName)]
-            public static extern void GKTurnBasedMatch_EndTurn(IntPtr pointer, long taskId, IntPtr participants, double timeout, InteropData data, SuccessTaskCallback onSuccess, NSErrorTaskCallback onError);
+            public static extern void GKTurnBasedMatch_EndTurn(IntPtr pointer, long taskId, IntPtr participants, double timeout, IntPtr nsDataPtr, SuccessTaskCallback onSuccess, NSErrorTaskCallback onError);
             [DllImport(InteropUtility.DLLName)]
-            public static extern void GKTurnBasedMatch_ParticipantQuitInTurn(IntPtr pointer, long taskId, Outcome outcome, IntPtr nextParticipants, double timeout, InteropData data, SuccessTaskCallback onSuccess, NSErrorTaskCallback onError);
+            public static extern void GKTurnBasedMatch_ParticipantQuitInTurn(IntPtr pointer, long taskId, Outcome outcome, IntPtr nextParticipants, double timeout, IntPtr nsDataPtr, SuccessTaskCallback onSuccess, NSErrorTaskCallback onError);
             [DllImport(InteropUtility.DLLName)]
             public static extern void GKTurnBasedMatch_ParticipantQuitOutOfTurn(IntPtr pointer, long taskId, Outcome outcome, SuccessTaskCallback onSuccess, NSErrorTaskCallback onError);
             [DllImport(InteropUtility.DLLName)]
-            public static extern void GKTurnBasedMatch_EndMatchInTurn(IntPtr pointer, long taskId, InteropData data, SuccessTaskCallback onSuccess, NSErrorTaskCallback onError);
+            public static extern void GKTurnBasedMatch_EndMatchInTurn(IntPtr pointer, long taskId, IntPtr nsDataPtr, SuccessTaskCallback onSuccess, NSErrorTaskCallback onError);
             [DllImport(InteropUtility.DLLName)]
             public static extern void GKTurnBasedMatch_Remove(IntPtr pointer, long taskId, SuccessTaskCallback onSuccess, NSErrorTaskCallback onError);
             [DllImport(InteropUtility.DLLName)]
-            public static extern void GKTurnBasedMatch_SaveMergedMatch(IntPtr pointer, long taskId, InteropData data, IntPtr exchanges, SuccessTaskCallback onSuccess, NSErrorTaskCallback onError);
+            public static extern void GKTurnBasedMatch_SaveMergedMatch(IntPtr pointer, long taskId, IntPtr nsDataPtr, IntPtr exchanges, SuccessTaskCallback onSuccess, NSErrorTaskCallback onError);
             [DllImport(InteropUtility.DLLName)]
-            public static extern void GKTurnBasedMatch_SendExchange(IntPtr pointer, long taskId, IntPtr participants, InteropData data, string localizableMessageKey, IntPtr arguments, double timeout, SuccessTaskCallback<IntPtr> onSuccess, NSErrorTaskCallback onError);
+            public static extern void GKTurnBasedMatch_SendExchange(IntPtr pointer, long taskId, IntPtr participants, IntPtr nsDataPtr, string localizableMessageKey, IntPtr arguments, double timeout, SuccessTaskCallback<IntPtr> onSuccess, NSErrorTaskCallback onError);
             [DllImport(InteropUtility.DLLName)]
             public static extern double GKTurnBasedMatch_GKExchangeTimeoutDefault();
             [DllImport(InteropUtility.DLLName)]

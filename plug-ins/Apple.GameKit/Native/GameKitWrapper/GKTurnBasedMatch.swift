@@ -11,135 +11,120 @@ import GameKit
 @_cdecl("GKTurnBasedMatch_GetParticipants")
 public func GKTurnBasedMatch_GetParticipants
 (
-    pointer: UnsafeMutableRawPointer
-) -> UnsafeMutableRawPointer
+    pointer: UnsafeMutablePointer<GKTurnBasedMatch>
+) -> UnsafeMutablePointer<NSArray> // NSArray<GKTurnBasedParticipant>
 {
-    let target = Unmanaged<GKTurnBasedMatch>.fromOpaque(pointer).takeUnretainedValue();
-    return Unmanaged.passRetained(target.participants as NSArray).toOpaque();
+    let target = pointer.takeUnretainedValue();
+    return (target.participants as NSArray).passRetainedUnsafeMutablePointer();
 }
 
 @_cdecl("GKTurnBasedMatch_GetCurrentParticipant")
 public func GKTurnBasedMatch_GetCurrentParticipant
 (
-    pointer: UnsafeMutableRawPointer
-) -> UnsafeMutableRawPointer?
+    pointer: UnsafeMutablePointer<GKTurnBasedMatch>
+) -> UnsafeMutablePointer<GKTurnBasedParticipant>?
 {
-    let target = Unmanaged<GKTurnBasedMatch>.fromOpaque(pointer).takeUnretainedValue();
-    
-    if(target.currentParticipant != nil) {
-        return Unmanaged.passRetained(target.currentParticipant!).toOpaque();
-    }
-    return nil;
+    let target = pointer.takeUnretainedValue();
+    return target.currentParticipant?.passRetainedUnsafeMutablePointer();
 }
 
 @_cdecl("GKTurnBasedMatch_GetMatchData")
 public func GKTurnBasedMatch_GetMatchData
 (
-    pointer: UnsafeMutableRawPointer
-) -> InteropStructArray
+    pointer: UnsafeMutablePointer<GKTurnBasedMatch>
+) -> UnsafeMutablePointer<NSData>?
 {
-    let target = Unmanaged<GKTurnBasedMatch>.fromOpaque(pointer).takeUnretainedValue();
-    
-    if(target.matchData != nil) {
-        return InteropStructArray(pointer: target.matchData!.toUCharP(), length: Int32(target.matchData!.count));
-    }
-    
-    return InteropStructArray();
+    let target = pointer.takeUnretainedValue();
+    return (target.matchData as? NSData)?.passRetainedUnsafeMutablePointer();
 }
 
 @_cdecl("GKTurnBasedMatch_GetMatchDataMaximumSize")
 public func GKTurnBasedMatch_GetMatchDataMaximumSize
 (
-    pointer: UnsafeMutableRawPointer
+    pointer: UnsafeMutablePointer<GKTurnBasedMatch>
 ) -> Int
 {
-    let target = Unmanaged<GKTurnBasedMatch>.fromOpaque(pointer).takeUnretainedValue();
+    let target = pointer.takeUnretainedValue();
     return target.matchDataMaximumSize;
 }
 
 @_cdecl("GKTurnBasedMatch_GetMessage")
 public func GKTurnBasedMatch_GetMessage
 (
-    pointer: UnsafeMutableRawPointer
+    pointer: UnsafeMutablePointer<GKTurnBasedMatch>
 ) -> char_p?
 {
-    let target = Unmanaged<GKTurnBasedMatch>.fromOpaque(pointer).takeUnretainedValue();
+    let target = pointer.takeUnretainedValue();
     return target.message?.toCharPCopy();
 }
 
 @_cdecl("GKTurnBasedMatch_GetMatchID")
 public func GKTurnBasedMatch_GetMatchID
 (
-    pointer: UnsafeMutableRawPointer
+    pointer: UnsafeMutablePointer<GKTurnBasedMatch>
 ) -> char_p
 {
-    let target = Unmanaged<GKTurnBasedMatch>.fromOpaque(pointer).takeUnretainedValue();
+    let target = pointer.takeUnretainedValue();
     return target.matchID.toCharPCopy();
 }
 
 @_cdecl("GKTurnBasedMatch_GetCreationDate")
 public func GKTurnBasedMatch_GetCreationDate
 (
-    pointer: UnsafeMutableRawPointer
-) -> Int
+    pointer: UnsafeMutablePointer<GKTurnBasedMatch>
+) -> TimeInterval // aka Double
 {
-    let target = Unmanaged<GKTurnBasedMatch>.fromOpaque(pointer).takeUnretainedValue();
-    return Int(target.creationDate.timeIntervalSince1970);
+    let target = pointer.takeUnretainedValue();
+    return target.creationDate.timeIntervalSince1970;
 }
 
 @_cdecl("GKTurnBasedMatch_GetStatus")
 public func GKTurnBasedMatch_GetStatus
 (
-    pointer: UnsafeMutableRawPointer
+    pointer: UnsafeMutablePointer<GKTurnBasedMatch>
 ) -> Int
 {
-    let target = Unmanaged<GKTurnBasedMatch>.fromOpaque(pointer).takeUnretainedValue();
+    let target = pointer.takeUnretainedValue();
     return target.status.rawValue;
 }
-
-public typealias SuccessTaskInteropStructArrayCallback = @convention(c) (Int64, InteropStructArray) -> Void;
 
 @_cdecl("GKTurnBasedMatch_LoadMatchData")
 public func GKTurnBasedMatch_LoadMatchData
 (
-    pointer: UnsafeMutableRawPointer,
+    pointer: UnsafeMutablePointer<GKTurnBasedMatch>,
     taskId: Int64,
-    onSuccess: @escaping SuccessTaskInteropStructArrayCallback,
-    onError: @escaping NSErrorCallback
+    onSuccess: @escaping SuccessTaskPtrCallback,
+    onError: @escaping NSErrorTaskCallback
 )
 {
-    let target = Unmanaged<GKTurnBasedMatch>.fromOpaque(pointer).takeUnretainedValue();
+    let target = pointer.takeUnretainedValue();
     target.loadMatchData(completionHandler: { data, error in
-        if(error != nil) {
-            onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
+        if let error = error as? NSError {
+            onError(taskId, error.passRetainedUnsafeMutablePointer());
             return;
         }
-        
-        if(data != nil) {
-            onSuccess(taskId, InteropStructArray(pointer: data!.toUCharP(), length: Int32(data!.count)));
-        } else {
-            onSuccess(taskId, InteropStructArray());
-        }
+
+        onSuccess(taskId, (data as? NSData)?.passRetainedUnsafeMutablePointer());
     });
 }
 
 @_cdecl("GKTurnBasedMatch_SaveCurrentTurn")
 public func GKTurnBasedMatch_SaveCurrentTurn
 (
-    pointer: UnsafeMutableRawPointer,
+    pointer: UnsafeMutablePointer<GKTurnBasedMatch>,
     taskId: Int64,
-    data: InteropStructArray,
+    dataPtr: UnsafeMutablePointer<NSData>,
     onSuccess: @escaping SuccessTaskCallback,
-    onError: @escaping NSErrorCallback
+    onError: @escaping NSErrorTaskCallback
 )
 {
-    let target = Unmanaged<GKTurnBasedMatch>.fromOpaque(pointer).takeUnretainedValue();
-    target.saveCurrentTurn(withMatch: data.toData(), completionHandler: { error in
-        if(error != nil) {
-            onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
+    let target = pointer.takeUnretainedValue();
+    target.saveCurrentTurn(withMatch: dataPtr.takeUnretainedValue() as Data, completionHandler: { error in
+        if let error = error as? NSError {
+            onError(taskId, error.passRetainedUnsafeMutablePointer());
             return;
         }
-        
+
         onSuccess(taskId);
     });
 }
@@ -147,24 +132,24 @@ public func GKTurnBasedMatch_SaveCurrentTurn
 @_cdecl("GKTurnBasedMatch_EndTurn")
 public func GKTurnBasedMatch_EndTurn
 (
-    pointer: UnsafeMutableRawPointer,
+    pointer: UnsafeMutablePointer<GKTurnBasedMatch>,
     taskId: Int64,
-    participantsPtr: UnsafeMutableRawPointer,
+    participantsPtr: UnsafeMutablePointer<NSArray>, // NSArray<GKTurnBasedParticipant>
     timeout: Double,
-    data: InteropStructArray,
+    dataPtr: UnsafeMutablePointer<NSData>,
     onSuccess: @escaping SuccessTaskCallback,
-    onError: @escaping NSErrorCallback
+    onError: @escaping NSErrorTaskCallback
 )
 {
-    let target = Unmanaged<GKTurnBasedMatch>.fromOpaque(pointer).takeUnretainedValue();
-    let participants = Unmanaged<NSArray>.fromOpaque(participantsPtr).takeUnretainedValue() as! [GKTurnBasedParticipant];
+    let target = pointer.takeUnretainedValue();
+    let participants = participantsPtr.takeUnretainedValue() as! [GKTurnBasedParticipant];
     
-    target.endTurn(withNextParticipants: participants, turnTimeout: TimeInterval(timeout), match: data.toData(), completionHandler: { error in
-        if(error != nil) {
-            onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
+    target.endTurn(withNextParticipants: participants, turnTimeout: TimeInterval(timeout), match: dataPtr.takeUnretainedValue() as Data, completionHandler: { error in
+        if let error = error as? NSError {
+            onError(taskId, error.passRetainedUnsafeMutablePointer());
             return;
         }
-        
+
         onSuccess(taskId);
     });
 }
@@ -172,25 +157,25 @@ public func GKTurnBasedMatch_EndTurn
 @_cdecl("GKTurnBasedMatch_ParticipantQuitInTurn")
 public func GKTurnBasedMatch_ParticipantQuitInTurn
 (
-    pointer: UnsafeMutableRawPointer,
+    pointer: UnsafeMutablePointer<GKTurnBasedMatch>,
     taskId: Int64,
     outcome: Int,
-    participantsPtr: UnsafeMutableRawPointer,
+    participantsPtr: UnsafeMutablePointer<NSArray>, // NSArray<GKTurnBasedParticipant>
     timeout: Double,
-    data: InteropStructArray,
+    dataPtr: UnsafeMutablePointer<NSData>,
     onSuccess: @escaping SuccessTaskCallback,
-    onError: @escaping NSErrorCallback
+    onError: @escaping NSErrorTaskCallback
 )
 {
-    let target = Unmanaged<GKTurnBasedMatch>.fromOpaque(pointer).takeUnretainedValue();
-    let participants = Unmanaged<NSArray>.fromOpaque(participantsPtr).takeUnretainedValue() as! [GKTurnBasedParticipant];
+    let target = pointer.takeUnretainedValue();
+    let participants = participantsPtr.takeUnretainedValue() as! [GKTurnBasedParticipant];
     
-    target.participantQuitInTurn(with: GKTurnBasedMatch.Outcome(rawValue: outcome)!, nextParticipants: participants, turnTimeout: TimeInterval(timeout), match: data.toData(), completionHandler: { error in
-        if(error != nil) {
-            onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
+    target.participantQuitInTurn(with: GKTurnBasedMatch.Outcome(rawValue: outcome)!, nextParticipants: participants, turnTimeout: TimeInterval(timeout), match: dataPtr.takeUnretainedValue() as Data, completionHandler: { error in
+        if let error = error as? NSError {
+            onError(taskId, error.passRetainedUnsafeMutablePointer());
             return;
         }
-        
+
         onSuccess(taskId);
     });
 }
@@ -198,21 +183,21 @@ public func GKTurnBasedMatch_ParticipantQuitInTurn
 @_cdecl("GKTurnBasedMatch_ParticipantQuitOutOfTurn")
 public func GKTurnBasedMatch_ParticipantQuitOutOfTurn
 (
-    pointer: UnsafeMutableRawPointer,
+    pointer: UnsafeMutablePointer<GKTurnBasedMatch>,
     taskId: Int64,
     outcome: Int,
     onSuccess: @escaping SuccessTaskCallback,
-    onError: @escaping NSErrorCallback
+    onError: @escaping NSErrorTaskCallback
 )
 {
-    let target = Unmanaged<GKTurnBasedMatch>.fromOpaque(pointer).takeUnretainedValue();
+    let target = pointer.takeUnretainedValue();
     
     target.participantQuitOutOfTurn(with: GKTurnBasedMatch.Outcome(rawValue: outcome)!, withCompletionHandler: { error in
-        if(error != nil) {
-            onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
+        if let error = error as? NSError {
+            onError(taskId, error.passRetainedUnsafeMutablePointer());
             return;
         }
-        
+
         onSuccess(taskId);
     });
 }
@@ -220,21 +205,21 @@ public func GKTurnBasedMatch_ParticipantQuitOutOfTurn
 @_cdecl("GKTurnBasedMatch_EndMatchInTurn")
 public func GKTurnBasedMatch_EndMatchInTurn
 (
-    pointer: UnsafeMutableRawPointer,
+    pointer: UnsafeMutablePointer<GKTurnBasedMatch>,
     taskId: Int64,
-    data: InteropStructArray,
+    dataPtr: UnsafeMutablePointer<NSData>,
     onSuccess: @escaping SuccessTaskCallback,
-    onError: @escaping NSErrorCallback
+    onError: @escaping NSErrorTaskCallback
 )
 {
-    let target = Unmanaged<GKTurnBasedMatch>.fromOpaque(pointer).takeUnretainedValue();
+    let target = pointer.takeUnretainedValue();
 
-    target.endMatchInTurn(withMatch: data.toData(), completionHandler: { error in
-        if(error != nil) {
-            onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
+    target.endMatchInTurn(withMatch: dataPtr.takeUnretainedValue() as Data, completionHandler: { error in
+        if let error = error as? NSError {
+            onError(taskId, error.passRetainedUnsafeMutablePointer());
             return;
         }
-        
+
         onSuccess(taskId);
     });
 }
@@ -242,19 +227,19 @@ public func GKTurnBasedMatch_EndMatchInTurn
 @_cdecl("GKTurnBasedMatch_Remove")
 public func GKTurnBasedMatch_Remove
 (
-    pointer: UnsafeMutableRawPointer,
+    pointer: UnsafeMutablePointer<GKTurnBasedMatch>,
     taskId: Int64,
     onSuccess: @escaping SuccessTaskCallback,
-    onError: @escaping NSErrorCallback
+    onError: @escaping NSErrorTaskCallback
 )
 {
-    let target = Unmanaged<GKTurnBasedMatch>.fromOpaque(pointer).takeUnretainedValue();
+    let target = pointer.takeUnretainedValue();
     target.remove(completionHandler: { error in
-        if(error != nil) {
-            onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
+        if let error = error as? NSError {
+            onError(taskId, error.passRetainedUnsafeMutablePointer());
             return;
         }
-        
+
         onSuccess(taskId);
     });
 }
@@ -262,23 +247,23 @@ public func GKTurnBasedMatch_Remove
 @_cdecl("GKTurnBasedMatch_SaveMergedMatch")
 public func GKTurnBasedMatch_SaveMergedMatch
 (
-    pointer: UnsafeMutableRawPointer,
+    pointer: UnsafeMutablePointer<GKTurnBasedMatch>,
     taskId: Int64,
-    data: InteropStructArray,
-    exchangesPtr: UnsafeMutableRawPointer,
+    dataPtr: UnsafeMutablePointer<NSData>,
+    exchangesPtr: UnsafeMutablePointer<NSArray>, // NSArray<GKTurnBasedExchange>
     onSuccess: @escaping SuccessTaskCallback,
-    onError: @escaping NSErrorCallback
+    onError: @escaping NSErrorTaskCallback
 )
 {
-    let target = Unmanaged<GKTurnBasedMatch>.fromOpaque(pointer).takeUnretainedValue();
-    let exchanges = Unmanaged<NSArray>.fromOpaque(exchangesPtr).takeUnretainedValue() as! [GKTurnBasedExchange];
+    let target = pointer.takeUnretainedValue();
+    let exchanges = exchangesPtr.takeUnretainedValue() as! [GKTurnBasedExchange];
 
-    target.saveMergedMatch(data.toData(), withResolvedExchanges: exchanges, completionHandler: { error in
-        if(error != nil) {
-            onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
+    target.saveMergedMatch(dataPtr.takeUnretainedValue() as Data, withResolvedExchanges: exchanges, completionHandler: { error in
+        if let error = error as? NSError {
+            onError(taskId, error.passRetainedUnsafeMutablePointer());
             return;
         }
-        
+
         onSuccess(taskId);
     });
 }
@@ -286,33 +271,28 @@ public func GKTurnBasedMatch_SaveMergedMatch
 @_cdecl("GKTurnBasedMatch_SendExchange")
 public func GKTurnBasedMatch_SendExchange
 (
-    pointer: UnsafeMutableRawPointer,
+    pointer: UnsafeMutablePointer<GKTurnBasedMatch>,
     taskId: Int64,
-    participantsPtr: UnsafeMutableRawPointer,
-    data: InteropStructArray,
+    participantsPtr: UnsafeMutablePointer<NSArray>, // NSArray<GKTurnBasedParticipant>
+    dataPtr: UnsafeMutablePointer<NSData>,
     localizableMessageKey: char_p,
-    argumentsPtr: UnsafeMutableRawPointer,
+    argumentsPtr: UnsafeMutablePointer<NSArray>, // NSArray<NSString>
     timeout: Double,
     onSuccess: @escaping SuccessTaskPtrCallback,
-    onError: @escaping NSErrorCallback
+    onError: @escaping NSErrorTaskCallback
 )
 {
-    let target = Unmanaged<GKTurnBasedMatch>.fromOpaque(pointer).takeUnretainedValue();
-    let participants = Unmanaged<NSArray>.fromOpaque(participantsPtr).takeUnretainedValue() as! [GKTurnBasedParticipant];
-    let arguments = Unmanaged<NSArray>.fromOpaque(argumentsPtr).takeUnretainedValue() as! [String];
+    let target = pointer.takeUnretainedValue();
+    let participants = participantsPtr.takeUnretainedValue() as! [GKTurnBasedParticipant];
+    let arguments = argumentsPtr.takeUnretainedValue() as! [String];
  
-    target.sendExchange(to: participants, data: data.toData(), localizableMessageKey: localizableMessageKey.toString(), arguments: arguments, timeout: TimeInterval(timeout), completionHandler: { exchange, error in
-        if(error != nil) {
-            onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
+    target.sendExchange(to: participants, data: dataPtr.takeUnretainedValue() as Data, localizableMessageKey: localizableMessageKey.toString(), arguments: arguments, timeout: TimeInterval(timeout), completionHandler: { exchange, error in
+        if let error = error as? NSError {
+            onError(taskId, error.passRetainedUnsafeMutablePointer());
             return;
         }
-        
-        if(exchange != nil) {
-            onSuccess(taskId, Unmanaged.passRetained(exchange!).toOpaque());
-        } else {
-            onSuccess(taskId, nil);
-        }
-        
+
+        onSuccess(taskId, exchange?.passRetainedUnsafeMutablePointer());
     });
 }
 
@@ -351,95 +331,80 @@ public func GKTurnBasedMatch_GetTurnTimeoutNone
 @_cdecl("GKTurnBasedMatch_GetActiveExchanges")
 public func GKTurnBasedMatch_GetActiveExchanges
 (
-    pointer: UnsafeMutableRawPointer
-    
-) -> UnsafeMutableRawPointer?
+    pointer: UnsafeMutablePointer<GKTurnBasedMatch>
+
+) -> UnsafeMutablePointer<NSArray>? // NSArray<GKTurnBasedExchange>
 {
-    let target = Unmanaged<GKTurnBasedMatch>.fromOpaque(pointer).takeUnretainedValue();
-    
-    if(target.activeExchanges != nil) {
-        return Unmanaged.passRetained(target.activeExchanges! as NSArray).toOpaque();
-    }
-    
-    return nil;
+    let target = pointer.takeUnretainedValue();
+    return (target.activeExchanges as? NSArray)?.passRetainedUnsafeMutablePointer();
 }
 
 @_cdecl("GKTurnBasedMatch_GetCompletedExchanges")
 public func GKTurnBasedMatch_GetCompletedExchanges
 (
-    pointer: UnsafeMutableRawPointer
-    
-) -> UnsafeMutableRawPointer?
+    pointer: UnsafeMutablePointer<GKTurnBasedMatch>
+
+) -> UnsafeMutablePointer<NSArray>? // NSArray<GKTurnBasedExchange>
 {
-    let target = Unmanaged<GKTurnBasedMatch>.fromOpaque(pointer).takeUnretainedValue();
-    
-    if(target.completedExchanges != nil) {
-        return Unmanaged.passRetained(target.completedExchanges! as NSArray).toOpaque();
-    }
-    
-    return nil;
+    let target = pointer.takeUnretainedValue();
+    return (target.completedExchanges as? NSArray)?.passRetainedUnsafeMutablePointer();
 }
 
 @_cdecl("GKTurnBasedMatch_GetExchanges")
 public func GKTurnBasedMatch_GetExchanges
 (
-    pointer: UnsafeMutableRawPointer
-    
-) -> UnsafeMutableRawPointer?
+    pointer: UnsafeMutablePointer<GKTurnBasedMatch>
+
+) -> UnsafeMutablePointer<NSArray>? // NSArray<GKTurnBasedExchange>
 {
-    let target = Unmanaged<GKTurnBasedMatch>.fromOpaque(pointer).takeUnretainedValue();
-    
-    if(target.exchanges != nil) {
-        return Unmanaged.passRetained(target.exchanges! as NSArray).toOpaque();
-    }
-    
-    return nil;
+    let target = pointer.takeUnretainedValue();
+    return (target.exchanges as? NSArray)?.passRetainedUnsafeMutablePointer();
 }
 
 @_cdecl("GKTurnBasedMatch_GetExchangeDataMaximumSize")
 public func GKTurnBasedMatch_GetExchangeDataMaximumSize
 (
-    pointer: UnsafeMutableRawPointer
-    
+    pointer: UnsafeMutablePointer<GKTurnBasedMatch>
+
 ) -> Int
 {
-    let target = Unmanaged<GKTurnBasedMatch>.fromOpaque(pointer).takeUnretainedValue();
+    let target = pointer.takeUnretainedValue();
     return target.exchangeDataMaximumSize;
 }
 
 @_cdecl("GKTurnBasedMatch_GetExchangeMaxInitiatedExchangesPerPlayer")
 public func GKTurnBasedMatch_GetExchangeMaxInitiatedExchangesPerPlayer
 (
-    pointer: UnsafeMutableRawPointer
-    
+    pointer: UnsafeMutablePointer<GKTurnBasedMatch>
+
 ) -> Int
 {
-    let target = Unmanaged<GKTurnBasedMatch>.fromOpaque(pointer).takeUnretainedValue();
+    let target = pointer.takeUnretainedValue();
     return target.exchangeMaxInitiatedExchangesPerPlayer;
 }
 
 @_cdecl("GKTurnBasedMatch_SendReminder")
 public func GKTurnBasedMatch_SendReminder
 (
-    pointer: UnsafeMutableRawPointer,
+    pointer: UnsafeMutablePointer<GKTurnBasedMatch>,
     taskId: Int64,
-    participantsPtr: UnsafeMutableRawPointer,
+    participantsPtr: UnsafeMutablePointer<NSArray>, // NSArray<GKTurnBasedParticipant>
     localizableMessageKey: char_p,
-    argumentsPtr: UnsafeMutableRawPointer,
+    argumentsPtr: UnsafeMutablePointer<NSArray>, // NSArray<NSString>
     onSuccess: @escaping SuccessTaskCallback,
-    onError: @escaping NSErrorCallback
+    onError: @escaping NSErrorTaskCallback
 )
 {
-    let target = Unmanaged<GKTurnBasedMatch>.fromOpaque(pointer).takeUnretainedValue();
-    let participants = Unmanaged<NSArray>.fromOpaque(participantsPtr).takeUnretainedValue() as! [GKTurnBasedParticipant];
-    let arguments = Unmanaged<NSArray>.fromOpaque(argumentsPtr).takeUnretainedValue() as! [String];
+    let target = pointer.takeUnretainedValue();
+    let participants = participantsPtr.takeUnretainedValue() as! [GKTurnBasedParticipant];
+    let arguments = argumentsPtr.takeUnretainedValue() as! [String];
     
     target.sendReminder(to: participants, localizableMessageKey: localizableMessageKey.toString(), arguments: arguments, completionHandler: { error in
-        if(error != nil) {
-            onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
+        if let error = error as? NSError {
+            onError(taskId, error.passRetainedUnsafeMutablePointer());
             return;
         }
-        
+
         onSuccess(taskId);
     });
 }
@@ -447,13 +412,13 @@ public func GKTurnBasedMatch_SendReminder
 @_cdecl("GKTurnBasedMatch_SetLocalizableMessageWithKey")
 public func GKTurnBasedMatch_SetLocalizableMessageWithKey
 (
-    gkTurnBasedMatchPtr: UnsafeMutableRawPointer,
+    gkTurnBasedMatchPtr: UnsafeMutablePointer<GKTurnBasedMatch>,
     key: char_p,
-    argumentsPtr: UnsafeMutableRawPointer?
+    argumentsPtr: UnsafeMutablePointer<NSArray>? // NSArray<NSString>
 )
 {
-    let gkTurnBasedMatch = Unmanaged<GKTurnBasedMatch>.fromOpaque(gkTurnBasedMatchPtr).takeUnretainedValue();
-    let arguments = argumentsPtr.map { Unmanaged<NSArray>.fromOpaque($0).takeUnretainedValue() as! [String] };
+    let gkTurnBasedMatch = gkTurnBasedMatchPtr.takeUnretainedValue();
+    let arguments = argumentsPtr?.takeUnretainedValue() as? [String];
 
     gkTurnBasedMatch.setLocalizableMessageWithKey(key.toString(), arguments: arguments);
 }
@@ -463,20 +428,15 @@ public func GKTurnBasedMatch_LoadMatches
 (
     taskId: Int64,
     onSuccess: @escaping SuccessTaskPtrCallback,
-    onError: @escaping NSErrorCallback
+    onError: @escaping NSErrorTaskCallback
 )
 {
     GKTurnBasedMatch.loadMatches(completionHandler: { matches, error in
-        if(error != nil) {
-            onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
+        if let error = error as? NSError {
+            onError(taskId, error.passRetainedUnsafeMutablePointer());
             return;
         }
-        
-        if(matches != nil) {
-            onSuccess(taskId, Unmanaged.passRetained(matches! as NSArray).toOpaque());
-        } else {
-            onSuccess(taskId, nil);
-        }
+        onSuccess(taskId, (matches as? NSArray)?.passRetainedUnsafeMutablePointer());
     });
 }
 
@@ -486,20 +446,16 @@ public func GKTurnBasedMatch_Load
     taskId: Int64,
     matchId: char_p,
     onSuccess: @escaping SuccessTaskPtrCallback,
-    onError: @escaping NSErrorCallback
+    onError: @escaping NSErrorTaskCallback
 )
 {
     GKTurnBasedMatch.load(withID: matchId.toString(), withCompletionHandler: { match, error in
-        if(error != nil) {
-            onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
+        if let error = error as? NSError {
+            onError(taskId, error.passRetainedUnsafeMutablePointer());
             return;
         }
-        
-        if(match != nil) {
-            onSuccess(taskId, Unmanaged.passRetained(match!).toOpaque());
-        } else {
-            onSuccess(taskId, nil);
-        }
+
+        onSuccess(taskId, match?.passRetainedUnsafeMutablePointer());
     });
 }
 
@@ -507,67 +463,59 @@ public func GKTurnBasedMatch_Load
 public func GKTurnBasedMatch_Find
 (
     taskId: Int64,
-    matchRequestPtr: UnsafeMutableRawPointer,
+    matchRequestPtr: UnsafeMutablePointer<GKMatchRequest>,
     onSuccess: @escaping SuccessTaskPtrCallback,
-    onError: @escaping NSErrorCallback
+    onError: @escaping NSErrorTaskCallback
 )
 {
-    let request = Unmanaged<GKMatchRequest>.fromOpaque(matchRequestPtr).takeUnretainedValue();
-    
+    let request = matchRequestPtr.takeUnretainedValue();
+
     GKTurnBasedMatch.find(for: request, withCompletionHandler: { match, error in
-        if(error != nil) {
-            onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
+        if let error = error as? NSError {
+            onError(taskId, error.passRetainedUnsafeMutablePointer());
             return;
         }
-        
-        if(match != nil) {
-            onSuccess(taskId, Unmanaged.passRetained(match!).toOpaque());
-        } else {
-            onSuccess(taskId, nil);
-        }
+
+        onSuccess(taskId, match?.passRetainedUnsafeMutablePointer());
     });
 }
 
 @_cdecl("GKTurnBasedMatch_AcceptInvite")
 public func GKTurnBasedMatch_AcceptInvite
 (
-    pointer: UnsafeMutableRawPointer,
+    pointer: UnsafeMutablePointer<GKTurnBasedMatch>,
     taskId: Int64,
     onSuccess: @escaping SuccessTaskPtrCallback,
-    onError: @escaping NSErrorCallback
+    onError: @escaping NSErrorTaskCallback
 )
 {
-    let target = Unmanaged<GKTurnBasedMatch>.fromOpaque(pointer).takeUnretainedValue();
+    let target = pointer.takeUnretainedValue();
     target.acceptInvite(completionHandler: { match, error in
-        if(error != nil) {
-            onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
+        if let error = error as? NSError {
+            onError(taskId, error.passRetainedUnsafeMutablePointer());
             return;
         }
-        
-        if(match != nil) {
-            onSuccess(taskId, Unmanaged.passRetained(match!).toOpaque());
-        } else {
-            onSuccess(taskId, nil);
-        }
+
+        onSuccess(taskId, match?.passRetainedUnsafeMutablePointer());
     });
 }
 
 @_cdecl("GKTurnBasedMatch_DeclineInvite")
 public func GKTurnBasedMatch_DeclineInvite
 (
-    pointer: UnsafeMutableRawPointer,
+    pointer: UnsafeMutablePointer<GKTurnBasedMatch>,
     taskId: Int64,
     onSuccess: @escaping SuccessTaskCallback,
-    onError: @escaping NSErrorCallback
+    onError: @escaping NSErrorTaskCallback
 )
 {
-    let target = Unmanaged<GKTurnBasedMatch>.fromOpaque(pointer).takeUnretainedValue();
+    let target = pointer.takeUnretainedValue();
     target.declineInvite(completionHandler: { error in
-        if(error != nil) {
-            onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
+        if let error = error as? NSError {
+            onError(taskId, error.passRetainedUnsafeMutablePointer());
             return;
         }
-        
+
         onSuccess(taskId);
     });
 }
@@ -575,23 +523,19 @@ public func GKTurnBasedMatch_DeclineInvite
 @_cdecl("GKTurnBasedMatch_Rematch")
 public func GKTurnBasedMatch_Rematch
 (
-    pointer: UnsafeMutableRawPointer,
+    pointer: UnsafeMutablePointer<GKTurnBasedMatch>,
     taskId: Int64,
     onSuccess: @escaping SuccessTaskPtrCallback,
-    onError: @escaping NSErrorCallback
+    onError: @escaping NSErrorTaskCallback
 )
 {
-    let target = Unmanaged<GKTurnBasedMatch>.fromOpaque(pointer).takeUnretainedValue();
+    let target = pointer.takeUnretainedValue();
     target.rematch(completionHandler: { match, error in
-        if(error != nil) {
-            onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
+        if let error = error as? NSError {
+            onError(taskId, error.passRetainedUnsafeMutablePointer());
             return;
         }
-        
-        if(match != nil) {
-            onSuccess(taskId, Unmanaged.passRetained(match!).toOpaque());
-        } else {
-            onSuccess(taskId, nil);
-        }
+
+        onSuccess(taskId, match?.passRetainedUnsafeMutablePointer());
     });
 }

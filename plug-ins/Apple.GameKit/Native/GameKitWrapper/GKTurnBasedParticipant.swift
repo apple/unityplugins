@@ -11,65 +11,60 @@ import GameKit
 @_cdecl("GKTurnBasedParticipant_GetPlayer")
 public func GKTurnBasedParticipant_GetPlayer
 (
-    pointer: UnsafeMutableRawPointer
-) -> UnsafeMutableRawPointer?
+    pointer: UnsafeMutablePointer<GKTurnBasedParticipant>
+) -> UnsafeMutablePointer<GKPlayer>?
 {
-    let target = Unmanaged<GKTurnBasedParticipant>.fromOpaque(pointer).takeUnretainedValue();
-    
-    if(target.player != nil) {
-        return Unmanaged.passRetained(target.player!).toOpaque();
-    }
-
-    return nil;
+    let target = pointer.takeUnretainedValue();
+    return target.player?.passRetainedUnsafeMutablePointer();
 }
 
 @_cdecl("GKTurnBasedParticipant_GetStatus")
 public func GKTurnBasedParticipant_GetStatus
 (
-    pointer: UnsafeMutableRawPointer
+    pointer: UnsafeMutablePointer<GKTurnBasedParticipant>
 ) -> Int
 {
-    let target = Unmanaged<GKTurnBasedParticipant>.fromOpaque(pointer).takeUnretainedValue();
+    let target = pointer.takeUnretainedValue();
     return target.status.rawValue;
 }
 
 @_cdecl("GKTurnBasedParticipant_GetLastTurnDate")
 public func GKTurnBasedParticipant_GetLastTurnDate
 (
-    pointer: UnsafeMutableRawPointer
-) -> Int
+    pointer: UnsafeMutablePointer<GKTurnBasedParticipant>
+) -> TimeInterval // aka Double
 {
-    let target = Unmanaged<GKTurnBasedParticipant>.fromOpaque(pointer).takeUnretainedValue();
-    return Int(target.lastTurnDate?.timeIntervalSince1970 ?? 0);
+    let target = pointer.takeUnretainedValue();
+    return target.lastTurnDate?.timeIntervalSince1970 ?? 0.0;
 }
 
 @_cdecl("GKTurnBasedParticipant_GetTimeoutDate")
 public func GKTurnBasedParticipant_GetTimeoutDate
 (
-    pointer: UnsafeMutableRawPointer
-) -> Int
+    pointer: UnsafeMutablePointer<GKTurnBasedParticipant>
+) -> TimeInterval // aka Double
 {
-    let target = Unmanaged<GKTurnBasedParticipant>.fromOpaque(pointer).takeUnretainedValue();
-    return Int(target.timeoutDate?.timeIntervalSince1970 ?? 0);
+    let target = pointer.takeUnretainedValue();
+    return target.timeoutDate?.timeIntervalSince1970 ?? 0.0;
 }
 
 @_cdecl("GKTurnBasedParticipant_GetMatchOutcome")
 public func GKTurnBasedParticipant_GetMatchOutcome
 (
-    pointer: UnsafeMutableRawPointer
+    pointer: UnsafeMutablePointer<GKTurnBasedParticipant>
 ) -> Int
 {
-    let target = Unmanaged<GKTurnBasedParticipant>.fromOpaque(pointer).takeUnretainedValue();
+    let target = pointer.takeUnretainedValue();
     return target.matchOutcome.rawValue;
 }
 
 @_cdecl("GKTurnBasedParticipant_SetMatchOutcome")
 public func GKTurnBasedParticipant_SetMatchOutcome
 (
-    pointer: UnsafeMutableRawPointer,
+    pointer: UnsafeMutablePointer<GKTurnBasedParticipant>,
     value: Int
 )
 {
-    let target = Unmanaged<GKTurnBasedParticipant>.fromOpaque(pointer).takeUnretainedValue();
+    let target = pointer.takeUnretainedValue();
     target.matchOutcome = GKTurnBasedMatch.Outcome.init(rawValue: value)!;
 }

@@ -11,14 +11,9 @@ import GameKit
 @_cdecl("GKAchievementChallenge_GetAchievement")
 public func GKAchievementChallenge_GetAchievement
 (
-    pointer: UnsafeMutableRawPointer
-) -> UnsafeMutableRawPointer?
+    pointer: UnsafeMutablePointer<GKAchievementChallenge>
+) -> UnsafeMutablePointer<GKAchievement>?
 {
-    let challenge = Unmanaged<GKAchievementChallenge>.fromOpaque(pointer).takeUnretainedValue();
-    
-    if(challenge.achievement != nil) {
-        return Unmanaged.passRetained(challenge.achievement!).toOpaque();
-    }
-    
-    return nil;
+    let challenge = pointer.takeUnretainedValue();
+    return challenge.achievement?.passRetainedUnsafeMutablePointer();
 }

@@ -8,9 +8,19 @@
 import Foundation
 import GameKit
 
-public typealias DidFindMatchCallback = @convention(c) (UnsafeMutableRawPointer, UnsafeMutableRawPointer, UnsafeMutableRawPointer) -> Void;
-public typealias MatchmakingCanceledCallback = @convention(c) (UnsafeMutableRawPointer, UnsafeMutableRawPointer) -> Void;
-public typealias DidFailWithErrorCallback = @convention(c) (UnsafeMutableRawPointer, UnsafeMutableRawPointer, UnsafeMutableRawPointer) -> Void;
+public typealias DidFindMatchCallback = @convention(c) (
+    UnsafeMutablePointer<GKWTurnBasedMatchmakerViewControllerDelegate>,
+    UnsafeMutablePointer<GKTurnBasedMatchmakerViewController>,
+    UnsafeMutablePointer<GKTurnBasedMatch>) -> Void;
+
+public typealias MatchmakingCanceledCallback = @convention(c) (
+    UnsafeMutablePointer<GKWTurnBasedMatchmakerViewControllerDelegate>,
+    UnsafeMutablePointer<GKTurnBasedMatchmakerViewController>) -> Void;
+
+public typealias DidFailWithErrorCallback = @convention(c) (
+    UnsafeMutablePointer<GKWTurnBasedMatchmakerViewControllerDelegate>,
+    UnsafeMutablePointer<GKTurnBasedMatchmakerViewController>,
+    UnsafeMutablePointer<NSError>) -> Void;
 
 public class GKWTurnBasedMatchmakerViewControllerDelegate : NSObject, GKTurnBasedMatchmakerViewControllerDelegate {
     public var DidFindMatch : DidFindMatchCallback? = nil;
@@ -19,51 +29,51 @@ public class GKWTurnBasedMatchmakerViewControllerDelegate : NSObject, GKTurnBase
     
     public func turnBasedMatchmakerViewControllerWasCancelled(_ viewController: GKTurnBasedMatchmakerViewController) {
         GKTurnBasedMatchmakerViewController_Dismiss(viewController: viewController);
-        
-        MatchmakingCanceled?(
-            Unmanaged.passRetained(self).toOpaque(),
-            Unmanaged.passRetained(viewController).toOpaque());
+
+        MatchmakingCanceled?( // MatchmakingCanceledCallback
+            self.passRetainedUnsafeMutablePointer(),
+            viewController.passRetainedUnsafeMutablePointer());
     }
     
     public func turnBasedMatchmakerViewController(_ viewController: GKTurnBasedMatchmakerViewController, didFailWithError error: Error) {
         GKTurnBasedMatchmakerViewController_Dismiss(viewController: viewController);
         
-        DidFailWithError?(
-            Unmanaged.passRetained(self).toOpaque(),
-            Unmanaged.passRetained(viewController).toOpaque(),
-            Unmanaged.passRetained(error as NSError).toOpaque());
+        DidFailWithError?( // DidFailWithErrorCallback
+            self.passRetainedUnsafeMutablePointer(),
+            viewController.passRetainedUnsafeMutablePointer(),
+            (error as NSError).passRetainedUnsafeMutablePointer());
     }
 }
 
 @_cdecl("GKTurnBasedMatchmakerViewControllerDelegate_SetDidFindMatchCallback")
 public func GKTurnBasedMatchmakerViewControllerDelegate_SetDidFindMatchCallback
 (
-    pointer: UnsafeMutableRawPointer,
+    pointer: UnsafeMutablePointer<GKWTurnBasedMatchmakerViewControllerDelegate>,
     callback: @escaping DidFindMatchCallback
 )
 {
-    let target = Unmanaged<GKWTurnBasedMatchmakerViewControllerDelegate>.fromOpaque(pointer).takeUnretainedValue();
+    let target = pointer.takeUnretainedValue();
     target.DidFindMatch = callback;
 }
 
 @_cdecl("GKTurnBasedMatchmakerViewControllerDelegate_SetDidFailWithErrorCallback")
 public func GKTurnBasedMatchmakerViewControllerDelegate_SetDidFailWithErrorCallback
 (
-    pointer: UnsafeMutableRawPointer,
+    pointer: UnsafeMutablePointer<GKWTurnBasedMatchmakerViewControllerDelegate>,
     callback: @escaping DidFailWithErrorCallback
 )
 {
-    let target = Unmanaged<GKWTurnBasedMatchmakerViewControllerDelegate>.fromOpaque(pointer).takeUnretainedValue();
+    let target = pointer.takeUnretainedValue();
     target.DidFailWithError = callback;
 }
 
 @_cdecl("GKTurnBasedMatchmakerViewControllerDelegate_SetMatchmakingCanceledCallback")
 public func GKTurnBasedMatchmakerViewControllerDelegate_SetMatchmakingCanceledCallback
 (
-    pointer: UnsafeMutableRawPointer,
+    pointer: UnsafeMutablePointer<GKWTurnBasedMatchmakerViewControllerDelegate>,
     callback: @escaping MatchmakingCanceledCallback
 )
 {
-    let target = Unmanaged<GKWTurnBasedMatchmakerViewControllerDelegate>.fromOpaque(pointer).takeUnretainedValue();
+    let target = pointer.takeUnretainedValue();
     target.MatchmakingCanceled = callback;
 }
