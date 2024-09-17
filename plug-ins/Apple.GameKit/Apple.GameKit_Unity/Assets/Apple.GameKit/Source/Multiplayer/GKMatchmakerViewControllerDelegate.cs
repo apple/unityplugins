@@ -50,9 +50,7 @@ namespace Apple.GameKit.Multiplayer
             Interop.GKMatchmakerViewControllerDelegate_SetHostedPlayerDidAccept(Pointer, OnHostedPlayerDidAccept);
             Interop.GKMatchmakerViewControllerDelegate_SetDidFailWithErrorCallback(Pointer, OnDidFailWithError);
 
-            if (Availability.Available(RuntimeOperatingSystem.macOS, 14, 2) ||
-                Availability.Available(RuntimeOperatingSystem.iOS, 17, 2) ||
-                Availability.Available(RuntimeOperatingSystem.tvOS, 17, 2))
+            if (Availability.IsTypeAvailable<GetMatchPropertiesForRecipientHandler>())
             {
                 Interop.GKMatchmakerViewControllerDelegate_SetGetMatchPropertiesForRecipientCallback(Pointer, OnGetMatchPropertiesForRecipient);
             }
@@ -75,7 +73,9 @@ namespace Apple.GameKit.Multiplayer
             InteropPInvokeExceptionHandler.CatchAndLog(() =>
             {
                 if (!_delegates.TryGetValue(pointer, out var matchmakerViewControllerDelegate))
+                {
                     return;
+                }
                 
                 matchmakerViewControllerDelegate?.DidFindMatch?.Invoke(
                     PointerCast<GKMatchmakerViewController>(matchmakerViewController), 
@@ -89,7 +89,9 @@ namespace Apple.GameKit.Multiplayer
             InteropPInvokeExceptionHandler.CatchAndLog(() =>
             {
                 if (!_delegates.TryGetValue(pointer, out var matchmakerViewControllerDelegate))
+                {
                     return;
+                }
                 
                 matchmakerViewControllerDelegate?.DidFindHostedPlayers?.Invoke(
                     PointerCast<GKMatchmakerViewController>(matchmakerViewController), 
@@ -103,7 +105,9 @@ namespace Apple.GameKit.Multiplayer
             InteropPInvokeExceptionHandler.CatchAndLog(() =>
             {
                 if (!_delegates.TryGetValue(pointer, out var matchmakerViewControllerDelegate))
+                {
                     return;
+                }
                 
                 matchmakerViewControllerDelegate?.MatchmakingCanceled?.Invoke(
                     PointerCast<GKMatchmakerViewController>(matchmakerViewController));
@@ -116,7 +120,9 @@ namespace Apple.GameKit.Multiplayer
             InteropPInvokeExceptionHandler.CatchAndLog(() => 
             {
                 if (!_delegates.TryGetValue(pointer, out var matchmakerViewControllerDelegate))
+                {
                     return;
+                }
                 
                 matchmakerViewControllerDelegate?.DidFailWithError?.Invoke(
                     PointerCast<GKMatchmakerViewController>(matchmakerViewController), 
@@ -130,7 +136,9 @@ namespace Apple.GameKit.Multiplayer
             InteropPInvokeExceptionHandler.CatchAndLog(() => 
             {
                 if (!_delegates.TryGetValue(pointer, out var matchmakerViewControllerDelegate))
+                {
                     return;
+                }
                 
                 matchmakerViewControllerDelegate?.HostedPlayerDidAccept?.Invoke(
                     PointerCast<GKMatchmakerViewController>(matchmakerViewController), 

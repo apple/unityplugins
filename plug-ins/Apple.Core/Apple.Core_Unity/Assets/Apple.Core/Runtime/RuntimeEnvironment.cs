@@ -1,6 +1,5 @@
 using System;
 using System.Runtime.InteropServices;
-using System.Text.RegularExpressions;
 using UnityEngine;
 
 namespace Apple.Core
@@ -22,24 +21,25 @@ namespace Apple.Core
     {
         public int Major;
         public int Minor;
+        public int Patch;
 
-        public RuntimeVersion(int major, int minor)
+        public RuntimeVersion(int major, int minor, int patch)
         {
             Major = major;
             Minor = minor;
+            Patch = patch;
         }
 
-        public override string ToString() => (Minor == 0) ? $"{Major}" : $"{Major}.{Minor}";
+        public override readonly string ToString() => (Patch == 0) ? ((Minor == 0) ? $"{Major}" : $"{Major}.{Minor}") : $"{Major}.{Minor}.{Patch}";
 
-        static readonly Regex _versionStringFormat = new Regex(@"^((?:\d+)(?:\.\d+)?)$");
-                
         /// <summary>
-        /// Accepted string formats are "Major.Minor" or "Major" where Major and Minor are represented by integer values.
+        /// Accepted string formats are "Major.Minor.Patch", "Major.Minor" or "Major" where Major, Minor, and Patch are represented by integer values.
         ///   Minor value is assumed to be 0 when no Minor value is provided in the format string.
         /// Examples:
         /// <code>
-        /// RuntimeVersion rtVersionA = RuntimeVersion.FromString("10.2");
-        /// RuntimeVersion rtVersionB = RuntimeVersion.FromString("11");
+        /// RuntimeVersion rtVersionA = RuntimeVersion.FromString("10.15.5");
+        /// RuntimeVersion rtVersionB = RuntimeVersion.FromString("10.2");
+        /// RuntimeVersion rtVersionC = RuntimeVersion.FromString("11");
         /// </code>
         /// </summary>
         public static RuntimeVersion? FromString(string versionString)
@@ -49,33 +49,17 @@ namespace Apple.Core
                 return null;
             }
 
-            // Ensure strings are formatted as "Major.Minor" or "Major" where Major and Minor are strings of numbers, e.g. "12.5" or "14"
-            if (_versionStringFormat.IsMatch(versionString))
+            // Ensure strings are formatted as "Major.Minor.Patch", "Major.Minor" or "Major" where Major, Minor, and Patch are strings of numbers, e.g. "10.15.5", "12.5", or "14"
+            int major = 0, minor = 0, patch = 0;
+            var numeralStrings = versionString.Split('.');
+            if (numeralStrings.Length >= 1 && numeralStrings.Length <= 3 &&
+                Int32.TryParse(numeralStrings[0], out major) &&
+                (numeralStrings.Length < 2 || Int32.TryParse(numeralStrings[1], out minor)) &&
+                (numeralStrings.Length < 3 || Int32.TryParse(numeralStrings[2], out patch)))
             {
-                int major = 0, minor = 0;
-
-                // Get first string of numerals and try to parse
-                Match currMatch = Regex.Match(versionString, @"\d+");
-                if (currMatch.Success && Int32.TryParse(currMatch.Value, out major))
-                {
-                    // Get the string of numerals, if they exist, and try to parse
-                    currMatch = currMatch.NextMatch();
-                    if (currMatch.Success && Int32.TryParse(currMatch.Value, out minor))
-                    {
-                        return new RuntimeVersion(major, minor);
-                    }
-                    else
-                    {
-                        return new RuntimeVersion(major, 0);
-                    }
-                }
-                else
-                {
-                    Debug.Log($"[Apple.Core Plug-In] RuntimeEnvironment failed to parse \"{currMatch.Value}\" as Int32.");
-                    return null;
-                }
+                return new RuntimeVersion(major, minor, patch);
             }
-            else 
+            else
             {
                 Debug.Log($"[Apple.Core Plug-In] RuntimeEnvironment failed to recognize \"{versionString}\" as a valid version string.");
                 return null;
@@ -89,10 +73,15 @@ namespace Apple.Core
         public RuntimeOperatingSystem RuntimeOperatingSystem;
         public RuntimeVersion VersionNumber;
 
-        public RuntimeEnvironment(RuntimeOperatingSystem operatingSystem, int major, int minor = 0)
+        public RuntimeEnvironment(RuntimeOperatingSystem operatingSystem, int major, int minor = 0, int patch = 0)
         {
             RuntimeOperatingSystem = operatingSystem;
-            VersionNumber = new RuntimeVersion(major, minor);
+            VersionNumber = new RuntimeVersion(major, minor, patch);
         }
+
+        public readonly bool IsUnknown => RuntimeOperatingSystem == RuntimeOperatingSystem.Unknown;
+
+        public override readonly string ToString() => $"{RuntimeOperatingSystem} {VersionNumber}";
+ 
     }
 }

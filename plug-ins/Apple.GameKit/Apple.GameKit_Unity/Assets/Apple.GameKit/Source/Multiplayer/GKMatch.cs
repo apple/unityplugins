@@ -81,12 +81,12 @@ namespace Apple.GameKit.Multiplayer
         /// <param name="sendDataMode">The mechanism used to send the data.</param>
         public void Send(byte[] data, NSArray<GKPlayer> players, GKSendDataMode sendDataMode)
         {
-            var handle = GCHandle.Alloc(data, GCHandleType.Pinned);
-            var errorPointer = Interop.GKMatch_SendTo(Pointer, handle.AddrOfPinnedObject(), data.Length, players.Pointer, sendDataMode);
-            handle.Free();
+            var errorPointer = Interop.GKMatch_SendTo(Pointer, new NSData(data).Pointer, players.Pointer, sendDataMode);
             
-            if(errorPointer != IntPtr.Zero)
+            if (errorPointer != IntPtr.Zero)
+            {
                 throw new GameKitException(errorPointer);
+            }
         }
         
         /// <summary>
@@ -96,12 +96,12 @@ namespace Apple.GameKit.Multiplayer
         /// <param name="sendDataMode">The mechanism used to send the data.</param>
         public void Send(byte[] data, GKSendDataMode sendDataMode)
         {
-            var handle = GCHandle.Alloc(data, GCHandleType.Pinned);
-            var errorPointer = Interop.GKMatch_SendToAll(Pointer, handle.AddrOfPinnedObject(), data.Length, sendDataMode);
-            handle.Free();
-            
-            if(errorPointer != IntPtr.Zero)
+            var errorPointer = Interop.GKMatch_SendToAll(Pointer, new NSData(data).Pointer, sendDataMode);
+
+            if (errorPointer != IntPtr.Zero)
+            {
                 throw new GameKitException(errorPointer);
+            }
         }
         
         /// <summary>
@@ -187,9 +187,9 @@ namespace Apple.GameKit.Multiplayer
             [DllImport(InteropUtility.DLLName)]
             public static extern IntPtr GKMatch_GetPlayerProperties(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
-            public static extern IntPtr GKMatch_SendTo(IntPtr pointer, IntPtr data, int dataLength, IntPtr players, GKSendDataMode sendDataMode);
+            public static extern IntPtr GKMatch_SendTo(IntPtr pointer, IntPtr nsData, IntPtr players, GKSendDataMode sendDataMode);
             [DllImport(InteropUtility.DLLName)]
-            public static extern IntPtr GKMatch_SendToAll(IntPtr pointer, IntPtr data, int dataLength, GKSendDataMode sendDataMode);
+            public static extern IntPtr GKMatch_SendToAll(IntPtr pointer, IntPtr nsData, GKSendDataMode sendDataMode);
             [DllImport(InteropUtility.DLLName)]
             public static extern void GKMatch_Disconnect(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]

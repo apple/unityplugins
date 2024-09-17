@@ -21,6 +21,7 @@ typedef NS_ENUM(NSInteger, GKErrorCodeExtension) {
     GKErrorCodeExtensionUnsupportedOperationForOSVersion = -7,
     GKErrorCodeExtensionNoAchievementDescriptionFound = -8,
     GKErrorCodeExtensionNoAchievementDescriptionImageFound = -9,
+    GKErrorCodeExtensionGameCenterDashboardAlreadyShown = -10,
 };
 
-#endif /* DGKErrorCodeExtension_h */
+#endif /* GKErrorCodeExtension_h */

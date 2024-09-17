@@ -50,17 +50,17 @@ namespace Apple.GameKit.Multiplayer
         /// <summary>
         /// The date when the exchange was completed.
         /// </summary>
-        public DateTimeOffset CompletionDate => DateTimeOffset.FromUnixTimeSeconds(Interop.GKTurnBasedExchange_GetCompletionDate(Pointer));
+        public DateTimeOffset CompletionDate => DateTimeOffsetExtensions.FromUnixTimeSeconds(Interop.GKTurnBasedExchange_GetCompletionDate(Pointer));
 
         /// <summary>
         /// The date that the exchange was sent out.
         /// </summary>
-        public DateTimeOffset SendDate => DateTimeOffset.FromUnixTimeSeconds(Interop.GKTurnBasedExchange_GetSendDate(Pointer));
+        public DateTimeOffset SendDate => DateTimeOffsetExtensions.FromUnixTimeSeconds(Interop.GKTurnBasedExchange_GetSendDate(Pointer));
 
         /// <summary>
         /// The amount of time the exchange is to stay active before timing out.
         /// </summary>
-        public DateTimeOffset TimeoutDate => DateTimeOffset.FromUnixTimeSeconds(Interop.GKTurnBasedExchange_GetTimeoutDate(Pointer));
+        public DateTimeOffset TimeoutDate => DateTimeOffsetExtensions.FromUnixTimeSeconds(Interop.GKTurnBasedExchange_GetTimeoutDate(Pointer));
 
         /// <summary>
         /// The participant who sent the exchange.
@@ -70,7 +70,7 @@ namespace Apple.GameKit.Multiplayer
         /// <summary>
         /// Data that is sent with the exchange.
         /// </summary>
-        public byte[] Data => Interop.GKTurnBasedExchange_GetData(Pointer).ToBytes();
+        public byte[] Data => NSData.GetBytes(Interop.GKTurnBasedExchange_GetData(Pointer));
 
         /// <summary>
         /// A persistent identifier that is used when referring to this exchange.
@@ -108,22 +108,12 @@ namespace Apple.GameKit.Multiplayer
         /// <returns></returns>
         public Task Reply(string localizableMessageKey, string[] arguments, byte[] data)
         {
-            // Data...
-            var handle = GCHandle.Alloc(data, GCHandleType.Pinned);
-            var interopData = new InteropData
-            {
-                DataPtr = handle.AddrOfPinnedObject(),
-                DataLength = data.Length
-            };
-            
             // Arguments...
             var mutableArguments = new NSMutableArray<NSString>(arguments?.Select(arg => new NSString(arg)));
 
             // Execute...
             var tcs = InteropTasks.Create<bool>(out var taskId);
-            Interop.GKTurnBasedExchange_Reply(Pointer, taskId, localizableMessageKey, mutableArguments.Pointer, interopData, OnReply, OnReplyError);
-            handle.Free();
-            
+            Interop.GKTurnBasedExchange_Reply(Pointer, taskId, localizableMessageKey, mutableArguments.Pointer, new NSData(data).Pointer, OnReply, OnReplyError);
             return tcs.Task;
         }
 
@@ -172,15 +162,15 @@ namespace Apple.GameKit.Multiplayer
             [DllImport(InteropUtility.DLLName)]
             public static extern void GKTurnBasedExchange_Cancel(IntPtr pointer, long taskId, string localizableMessageKey, IntPtr arguments, SuccessTaskCallback onSuccess, NSErrorTaskCallback onError);
             [DllImport(InteropUtility.DLLName)]
-            public static extern long GKTurnBasedExchange_GetCompletionDate(IntPtr pointer);
+            public static extern double GKTurnBasedExchange_GetCompletionDate(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
-            public static extern long GKTurnBasedExchange_GetSendDate(IntPtr pointer);
+            public static extern double GKTurnBasedExchange_GetSendDate(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
-            public static extern long GKTurnBasedExchange_GetTimeoutDate(IntPtr pointer);
+            public static extern double GKTurnBasedExchange_GetTimeoutDate(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
             public static extern IntPtr GKTurnBasedExchange_GetSender(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
-            public static extern InteropData GKTurnBasedExchange_GetData(IntPtr pointer);
+            public static extern IntPtr GKTurnBasedExchange_GetData(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
             public static extern string GKTurnBasedExchange_GetExchangeID(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
@@ -192,7 +182,7 @@ namespace Apple.GameKit.Multiplayer
             [DllImport(InteropUtility.DLLName)]
             public static extern GKTurnBasedExchangeStatus GKTurnBasedExchange_GetStatus(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
-            public static extern void GKTurnBasedExchange_Reply(IntPtr pointer, long taskId, string localizableMessageKey, IntPtr arguments, InteropData data, SuccessTaskCallback onSuccess, NSErrorTaskCallback onError);
+            public static extern void GKTurnBasedExchange_Reply(IntPtr pointer, long taskId, string localizableMessageKey, IntPtr arguments, IntPtr nsDataPtr, SuccessTaskCallback onSuccess, NSErrorTaskCallback onError);
         }
     }
 }

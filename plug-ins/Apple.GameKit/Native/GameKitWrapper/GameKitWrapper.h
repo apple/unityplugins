@@ -17,7 +17,6 @@ FOUNDATION_EXPORT const unsigned char GameKitWrapperVersionString[];
 #if TARGET_OS_IOS || TARGET_OS_TV || TARGET_OS_VISION
     #include <stdbool.h>
 
-    #import "AppleCoreRuntimeShared.h"
-    #import "AccessPoint_BridgingHeader.h"
+    #import "GKAccessPoint_BridgingHeader.h"
     #import "GKErrorCodeExtension.h"
 #endif

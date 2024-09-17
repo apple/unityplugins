@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Apple.Core;
 using Apple.Core.Runtime;
 using Apple.GameKit.Multiplayer;
 using UnityEngine;
@@ -13,14 +14,23 @@ namespace Apple.GameKit.Sample
 
     public class RealtimeMatchStatusPanel : MonoBehaviour
     {
-        [SerializeField] private GameObject _playerStatusPanelPrefab = default;
+        [SerializeField] private MatchPlayerButton _playerStatusButtonPrefab = default;
         [SerializeField] private GameObject _playerListContent = default;
-        [SerializeField] private Text _messageLogText = default;
         [SerializeField] private Text _matchStatusTitleText = default;
         [SerializeField] private GameObject _matchButtonArea = default;
         [SerializeField] private GameObject _addPlayersButtonArea = default;
         [SerializeField] private GameObject _inviteButtonArea = default;
         [SerializeField] private GameObject _startGameButtonArea = default;
+
+        [SerializeField] private MessageLog _messageLog = default;
+
+        private readonly bool IsViewControllerAvailableForPlayer = Availability.IsMethodAvailable<GKGameCenterViewController>(nameof(GKGameCenterViewController.InitWithPlayer));
+        private readonly bool IsRuleBasedMatchmakingAvailable = Availability.IsPropertyAvailable<GKMatchRequest>(nameof(GKMatchRequest.QueueName));
+
+        public void Start()
+        {
+            _messageLog.LinesToKeep = 5;
+        }
 
         public void Populate(GKMatch match) => Populate(
             GKPlayerConnectionState.Connected,
@@ -57,11 +67,11 @@ namespace Apple.GameKit.Sample
             MatchedPlayers = matchedPlayers;
 
             players ??= match?.Players ?? matchedPlayers?.Players;
-            var playerProperties = match?.PlayerProperties ?? matchedPlayers?.PlayerProperties ?? request?.RecipientProperties;
-            var localPlayerProperties = match?.Properties ?? matchedPlayers?.Properties ?? request?.Properties;
+            var playerProperties = IsRuleBasedMatchmakingAvailable ? (match?.PlayerProperties ?? matchedPlayers?.PlayerProperties ?? request?.RecipientProperties) : null;
+            var localPlayerProperties = IsRuleBasedMatchmakingAvailable ? (match?.Properties ?? matchedPlayers?.Properties ?? request?.Properties) : null;
 
             // Add the local player first.
-            AddOrUpdatePlayerPanel(GKLocalPlayer.Local, initialConnectionState, localPlayerProperties);
+            AddOrUpdatePlayerButton(GKLocalPlayer.Local, initialConnectionState, localPlayerProperties);
 
             // Add remote players last.
             if (players != null)
@@ -72,7 +82,7 @@ namespace Apple.GameKit.Sample
                     playerProperties?.TryGetValue(player, out matchProperties);
 
                     // All players in the list are in the connected state.
-                    AddOrUpdatePlayerPanel(player, initialConnectionState, matchProperties);
+                    AddOrUpdatePlayerButton(player, initialConnectionState, matchProperties);
                 }
             }
 
@@ -108,7 +118,7 @@ namespace Apple.GameKit.Sample
                 Destroy(transform.gameObject);
             }            
             _playerListContent.transform.DetachChildren();
-            _playerStatusPanels.Clear();
+            _playerStatusButtons.Clear();
 
             _matchStatusTitleText.gameObject.SetActive(false);
             _matchButtonArea.SetActive(false);
@@ -125,30 +135,40 @@ namespace Apple.GameKit.Sample
         public GKMatchedPlayers MatchedPlayers { get; private set; }
         public bool IsRequestingMatch { get; private set; }
 
-        private Dictionary<GKPlayer, MatchPlayerPanel> _playerStatusPanels = new Dictionary<GKPlayer, MatchPlayerPanel>();
+        private Dictionary<GKPlayer, MatchPlayerButton> _playerStatusButtons = new Dictionary<GKPlayer, MatchPlayerButton>();
 
-        private MatchPlayerPanel AddOrUpdatePlayerPanel(GKPlayer player, GKPlayerConnectionState connectionState, GKMatchProperties matchProperties = null)
+        private MatchPlayerButton AddOrUpdatePlayerButton(GKPlayer player, GKPlayerConnectionState connectionState, GKMatchProperties matchProperties = null)
         {
-            if (_playerStatusPanels.TryGetValue(player, out var panel))
+            if (_playerStatusButtons.TryGetValue(player, out var button))
             {
-                // Existing player: just update the existing panel.
-                panel.ConnectionState = connectionState;
+                // Existing player: just update the existing button.
+                button.ConnectionState = connectionState;
             }
             else
             {
-                // New player: create new panel.
-                var panelObject = Instantiate(_playerStatusPanelPrefab, _playerListContent.transform, worldPositionStays: false);
+                // New player: create new button.
+                button = Instantiate(_playerStatusButtonPrefab, _playerListContent.transform, worldPositionStays: false);
+                button.Player = player;
+                button.ConnectionState = connectionState;
 
-                panel = panelObject.GetComponent<MatchPlayerPanel>();
-                panel.Player = player;
-                panel.ConnectionState = connectionState;
+                if (IsRuleBasedMatchmakingAvailable)
+                {
+                    button.MatchProperties = matchProperties;
+                }
 
-                panel.MatchProperties = matchProperties;
+                if (IsViewControllerAvailableForPlayer)
+                {
+                    button.ButtonClick += async (sender, args) =>
+                    {
+                        var viewController = GKGameCenterViewController.InitWithPlayer(player);
+                        await viewController.Present();
+                    };
+                }
 
-                _playerStatusPanels[player] = panel;
+                _playerStatusButtons[player] = button;
             }
 
-            return panel;
+            return button;
         }
 
         private void OnDidFailWithError(GameKitException exception)
@@ -160,53 +180,23 @@ namespace Apple.GameKit.Sample
         private void OnPlayerConnectionChanged(GKPlayer player, GKPlayerConnectionState connectionState)
         {
             GKMatchProperties matchProperties = null;
-            if (connectionState == GKPlayerConnectionState.Connected)
+            if (IsRuleBasedMatchmakingAvailable && connectionState == GKPlayerConnectionState.Connected)
             {
                 // get player properties for this new player
                 Match?.PlayerProperties?.TryGetValue(player, out matchProperties);
             }
 
-            AddOrUpdatePlayerPanel(player, connectionState, matchProperties);
+            AddOrUpdatePlayerButton(player, connectionState, matchProperties);
         }
 
         private void OnDataReceived(byte[] data, GKPlayer fromPlayer)
         {
-            AppendMessageToLog($"{DateTime.Now} {data.Length} bytes from {fromPlayer.DisplayName}");
+            _messageLog.AppendMessageToLog($"{DateTime.Now} {data.Length} bytes from {fromPlayer.DisplayName}");
         }
 
         private void OnDataReceivedForPlayer(byte[] data, GKPlayer forPlayer, GKPlayer fromPlayer)
         {
-            AppendMessageToLog($"{DateTime.Now} {data.Length} bytes for {forPlayer.DisplayName} from {fromPlayer.DisplayName}");
-        }
-
-        private void AppendMessageToLog(string message)
-        {
-            string messageLog = _messageLogText.text;
-            if (string.IsNullOrEmpty(messageLog))
-            {
-                messageLog = message;
-            }
-            else
-            {
-                // keep the last N messages
-                const int LinesToKeep = 5;
-
-                int numLines, index;
-                for (numLines = 1, index = messageLog.Length; 
-                    numLines < LinesToKeep && index > 0; 
-                    numLines++, index = messageLog.LastIndexOf('\n', index - 1))
-                {
-                }
-
-                if (index > 0)
-                {
-                    messageLog = messageLog.Substring(index + 1);
-                }
-
-                messageLog += '\n' + message;
-            }
-
-            _messageLogText.text = messageLog;
+            _messageLog.AppendMessageToLog($"{DateTime.Now} {data.Length} bytes for {forPlayer.DisplayName} from {fromPlayer.DisplayName}");
         }
 
         private int _broadcastNumber = 0;
@@ -220,7 +210,7 @@ namespace Apple.GameKit.Sample
         {
             Match?.Disconnect();
             Match = null;
-            GameKitSample.PopPanel();
+            GameKitSample.Instance.PopPanel();
         }
 
         public void Invite()
@@ -228,7 +218,7 @@ namespace Apple.GameKit.Sample
             if (MatchRequest != null && MatchedPlayers != null)
             {
                 IsRequestingMatch = true;
-                GameKitSample.PopPanel();
+                GameKitSample.Instance.PopPanel();
             }
         }
 
@@ -254,9 +244,12 @@ namespace Apple.GameKit.Sample
                 matchRequest.PlayerGroup = MatchRequest.PlayerGroup;
                 matchRequest.PlayerAttributes = MatchRequest.PlayerAttributes;
                 matchRequest.InviteMessage = MatchRequest.InviteMessage;
-                matchRequest.QueueName = MatchRequest.QueueName;
-                matchRequest.Properties = MatchRequest.Properties;
-                matchRequest.RecipientProperties = MatchRequest.RecipientProperties;
+                if (IsRuleBasedMatchmakingAvailable)
+                {
+                    matchRequest.QueueName = MatchRequest.QueueName;
+                    matchRequest.Properties = MatchRequest.Properties;
+                    matchRequest.RecipientProperties = MatchRequest.RecipientProperties;
+                }
                 matchRequest.DefaultNumberOfPlayers = MatchRequest.DefaultNumberOfPlayers;
 
                 // When adding new players, we don't want to reuse the previous recipient list, if any.

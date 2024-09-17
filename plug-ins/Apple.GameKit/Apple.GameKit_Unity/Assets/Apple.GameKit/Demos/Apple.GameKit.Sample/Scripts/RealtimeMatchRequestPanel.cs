@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Apple.Core;
 using Apple.Core.Runtime;
 using Apple.GameKit.Multiplayer;
 using UnityEngine;
@@ -31,12 +33,19 @@ namespace Apple.GameKit.Sample
         [SerializeField] private string _updateString = default;
         [SerializeField] private string _updatingString = default;
 
+        [SerializeField] private Button _callFindMatchedPlayersButton = default;
+        [SerializeField] private CanvasGroup _rbmmCanvasGroup = default;
+
         [SerializeField] private RealtimeMatchStatusPanel _realtimeMatchStatusPanel = default;
         [SerializeField] private WaitPanel _waitPanel = default;
 
         private Color _propertiesTextDefaultColor = Color.black;
         private GKMatchProperties _propertiesDictionary = null;
         private NSDictionary<NSString, GKMatchProperties> _recipientPropertiesDictionary = null;
+
+        private readonly bool IsFindMatchedPlayersAvailable = Availability.IsMethodAvailable<GKMatchmaker>(nameof(GKMatchmaker.FindMatchedPlayers));
+        private readonly bool IsRuleBasedMatchmakingAvailable = Availability.IsPropertyAvailable<GKMatchRequest>(nameof(GKMatchRequest.QueueName));
+        private readonly bool IsMatchmakingModeAvailable = Availability.IsTypeAvailable<GKMatchmakingMode>();
 
         private static List<Dropdown.OptionData> CreatePlayerCountDropdownContent(GKMatchRequest.GKMatchType matchType)
         {
@@ -54,10 +63,31 @@ namespace Apple.GameKit.Sample
 
         void Start()
         {
+            _rbmmCanvasGroup.interactable = IsRuleBasedMatchmakingAvailable;
+            _callFindMatchedPlayersButton.interactable = IsFindMatchedPlayersAvailable;
+
             _propertiesTextDefaultColor = _propertiesInputField.textComponent.color;
 
-        _peerToPeerDropDownOptionData = CreatePlayerCountDropdownContent(GKMatchRequest.GKMatchType.PeerToPeer);
-        _hostedDropDownOptionData = CreatePlayerCountDropdownContent(GKMatchRequest.GKMatchType.Hosted);
+            _peerToPeerDropDownOptionData = CreatePlayerCountDropdownContent(GKMatchRequest.GKMatchType.PeerToPeer);
+            _hostedDropDownOptionData = CreatePlayerCountDropdownContent(GKMatchRequest.GKMatchType.Hosted);
+
+            _matchmakingModeDropdown.interactable = IsMatchmakingModeAvailable;
+            if (IsMatchmakingModeAvailable)
+            {
+                _matchmakingModeDropdown.options = Enum.GetNames(typeof(GKMatchmakingMode))
+                    .Where(name => Availability.IsFieldAvailable<GKMatchmakingMode>(name))
+                    .Select(name => new Dropdown.OptionData(name))
+                    .ToList();
+            }
+            else
+            {
+                _matchmakingModeDropdown.options.Clear();
+            }
+
+            if (!IsRuleBasedMatchmakingAvailable)
+            {
+                _queueRelatedItems.SetActive(false);
+            }
 
             LoadSettings();
             OnServerHostedChanged(_serverHostedToggle.isOn);
@@ -76,12 +106,21 @@ namespace Apple.GameKit.Sample
         {
             PlayerPrefs.SetInt(MinPlayersPrefsKey, _minPlayersDropdown.value);
             PlayerPrefs.SetInt(MaxPlayersPrefsKey, _maxPlayersDropdown.value);
-            PlayerPrefs.SetInt(MatchmakingModePrefsKey, _matchmakingModeDropdown.value);
             PlayerPrefs.SetInt(FastStartPrefsKey, _fastStartToggle.isOn ? 1 : 0);
             PlayerPrefs.SetInt(ServerHostedPrefsKey, _serverHostedToggle.isOn ? 1 : 0);
-            PlayerPrefs.SetString(QueueNamePrefsKey, _queueNameInputField.text);
-            PlayerPrefs.SetString(PropertiesPrefsKey, _propertiesInputField.text);
-            PlayerPrefs.SetString(RecipientPropertiesPrefsKey, _recipientPropertiesInputField.text);
+
+            if (IsMatchmakingModeAvailable)
+            {
+                PlayerPrefs.SetInt(MatchmakingModePrefsKey, _matchmakingModeDropdown.value);
+            }
+
+            if (IsRuleBasedMatchmakingAvailable)
+            {
+                PlayerPrefs.SetString(QueueNamePrefsKey, _queueNameInputField.text);
+                PlayerPrefs.SetString(PropertiesPrefsKey, _propertiesInputField.text);
+                PlayerPrefs.SetString(RecipientPropertiesPrefsKey, _recipientPropertiesInputField.text);
+            }
+            
             PlayerPrefs.Save();
         }
 
@@ -89,19 +128,31 @@ namespace Apple.GameKit.Sample
         {
             _minPlayersDropdown.value = PlayerPrefs.GetInt(MinPlayersPrefsKey, _minPlayersDropdown.value);
             _maxPlayersDropdown.value = PlayerPrefs.GetInt(MaxPlayersPrefsKey, _maxPlayersDropdown.value);
-            _matchmakingModeDropdown.value = PlayerPrefs.GetInt(MatchmakingModePrefsKey, _matchmakingModeDropdown.value);
             _fastStartToggle.isOn = PlayerPrefs.GetInt(FastStartPrefsKey, _fastStartToggle.isOn ? 1 : 0) != 0;
             _serverHostedToggle.isOn = PlayerPrefs.GetInt(ServerHostedPrefsKey, _serverHostedToggle.isOn ? 1 : 0) != 0;
-            _queueNameInputField.text = PlayerPrefs.GetString(QueueNamePrefsKey, _queueNameInputField.text);
-            _propertiesInputField.text = PlayerPrefs.GetString(PropertiesPrefsKey, _propertiesInputField.text);
-            _recipientPropertiesInputField.text = PlayerPrefs.GetString(RecipientPropertiesPrefsKey, _recipientPropertiesInputField.text);
+
+            if (IsMatchmakingModeAvailable)
+            {
+                _matchmakingModeDropdown.value = PlayerPrefs.GetInt(MatchmakingModePrefsKey, _matchmakingModeDropdown.value);
+            }
+
+            if (IsRuleBasedMatchmakingAvailable)
+            {
+                _queueNameInputField.text = PlayerPrefs.GetString(QueueNamePrefsKey, _queueNameInputField.text);
+                _propertiesInputField.text = PlayerPrefs.GetString(PropertiesPrefsKey, _propertiesInputField.text);
+                _recipientPropertiesInputField.text = PlayerPrefs.GetString(RecipientPropertiesPrefsKey, _recipientPropertiesInputField.text);
+            }
 
             // Make sure UI rules get a chance to run on the new values.
             OnMinPlayersChanged(_minPlayersDropdown.value);
             OnMaxPlayersChanged(_maxPlayersDropdown.value);
-            OnQueueNameChanged(_queueNameInputField.text);
-            OnPropertiesChanged(_propertiesInputField.text);
-            OnRecipientPropertiesChanged(_recipientPropertiesInputField.text);
+
+            if (IsRuleBasedMatchmakingAvailable)
+            {
+                OnQueueNameChanged(_queueNameInputField.text);
+                OnPropertiesChanged(_propertiesInputField.text);
+                OnRecipientPropertiesChanged(_recipientPropertiesInputField.text);
+            }
         }
 
         public void OnMinPlayersChanged(Int32 newValue)
@@ -149,13 +200,13 @@ namespace Apple.GameKit.Sample
             }
             catch (Exception ex)
             {
-                if (ex is GameKitException gkex && gkex.Code == (long)GKErrorCode.Cancelled)
+                if (ex is GameKitException gkex && gkex.IsGKErrorDomain && gkex.GKErrorCode == GKErrorCode.Cancelled)
                 {
                     // User canceled the request
                 }
                 else
                 {
-                    Debug.LogException(ex);
+                    GKErrorCodeExtensions.LogException(ex);
                 }
                 _queueQueueActivityButtonText.text = _updateString;
             }
@@ -218,13 +269,17 @@ namespace Apple.GameKit.Sample
             request.MinPlayers = _minPlayersDropdown.value + PlayersForDropdownValue0;
             request.MaxPlayers = _maxPlayersDropdown.value + PlayersForDropdownValue0;
 
-            if (!string.IsNullOrWhiteSpace(_queueNameInputField.text))
+            if (IsRuleBasedMatchmakingAvailable && !string.IsNullOrWhiteSpace(_queueNameInputField.text))
             {
                 request.QueueName = _queueNameInputField.text;
                 request.Properties = _propertiesDictionary;
             }
 
-            mode = (GKMatchmakingMode)_matchmakingModeDropdown.value;
+            if (!IsMatchmakingModeAvailable || !Enum.TryParse<GKMatchmakingMode>(_matchmakingModeDropdown.options[_matchmakingModeDropdown.value].text, out mode))
+            {
+                mode = GKMatchmakingMode.Default;
+            }
+
             isHosted = _serverHostedToggle.isOn;
             canStartWithMinimumPlayers = _fastStartToggle.isOn;
 
@@ -260,7 +315,7 @@ namespace Apple.GameKit.Sample
                         request,
                         mode,
                         canStartWithMinimumPlayers,
-                        (request.QueueName != default) ? GetMatchPropertiesForRecipientHandler : default,
+                        (IsRuleBasedMatchmakingAvailable && request.QueueName != default) ? GetMatchPropertiesForRecipientHandler : default,
                         HostedPlayerDidAcceptHandler);
 
                     _realtimeMatchStatusPanel.Populate(request, players);
@@ -271,12 +326,12 @@ namespace Apple.GameKit.Sample
                         request, 
                         mode, 
                         canStartWithMinimumPlayers,
-                        (request.QueueName != default) ? GetMatchPropertiesForRecipientHandler : default);
+                        (IsRuleBasedMatchmakingAvailable && request.QueueName != default) ? GetMatchPropertiesForRecipientHandler : default);
 
                     _realtimeMatchStatusPanel.Populate(request, match, showStartGameButton: false);
                 }
 
-                GameKitSample.ReplaceActivePanel(_realtimeMatchStatusPanel.gameObject);
+                GameKitSample.Instance.ReplaceActivePanel(_realtimeMatchStatusPanel.gameObject);
             }
             catch (TaskCanceledException)
             {
@@ -284,12 +339,14 @@ namespace Apple.GameKit.Sample
             }
             catch (Exception ex)
             {
-                Debug.LogException(ex);
+                GKErrorCodeExtensions.LogException(ex);
             }
         }
 
         public void CallFindMatchedPlayers()
         {
+            Debug.Assert(IsFindMatchedPlayersAvailable);
+            
             var request = CreateMatchRequestFromUI(out var mode, out var isHosted, out var canStartWithMinimumPlayers);
 
             _waitPanel.CancelAction = () =>
@@ -307,25 +364,25 @@ namespace Apple.GameKit.Sample
                     GKMatchmaker.Shared.Cancel();
 
                     _realtimeMatchStatusPanel.Populate(request, matchedPlayers);
-                    GameKitSample.ReplaceActivePanel(_realtimeMatchStatusPanel.gameObject);
+                    GameKitSample.Instance.ReplaceActivePanel(_realtimeMatchStatusPanel.gameObject);
                 }
                 catch (Exception ex)
                 {
-                    if (ex is GameKitException gkex && gkex.Code == (long)GKErrorCode.Cancelled)
+                    if (ex is GameKitException gkex && gkex.IsGKErrorDomain && gkex.GKErrorCode == GKErrorCode.Cancelled)
                     {
                         // User canceled the request
                     }
                     else
                     {
-                        Debug.LogException(ex);
+                        GKErrorCodeExtensions.LogException(ex);
                     }
 
-                    GameKitSample.PopPanel();
+                    GameKitSample.Instance.PopPanel();
                 }
             };
 
             // Wait for the list of matched players.
-            GameKitSample.PushPanel(_waitPanel.gameObject);
+            GameKitSample.Instance.PushPanel(_waitPanel.gameObject);
         }
 
         private GKMatchRequest MatchRequest { get; set; }
@@ -350,7 +407,7 @@ namespace Apple.GameKit.Sample
             matchRequest.Recipients = matchedPlayers.Players;
 
             // Add optional recipient properties to the match request.
-            if (_recipientPropertiesDictionary?.Count > 0)
+            if (IsRuleBasedMatchmakingAvailable && _recipientPropertiesDictionary?.Count > 0)
             {
                 var recipientProperties = new NSMutableDictionary<GKPlayer, GKMatchProperties>();
                 foreach (var recipient in matchRequest.Recipients)
@@ -377,7 +434,7 @@ namespace Apple.GameKit.Sample
 
                 _realtimeMatchStatusPanel.Populate(matchRequest, match, showStartGameButton: true);
 
-                GameKitSample.ReplaceActivePanel(_realtimeMatchStatusPanel.gameObject);
+                GameKitSample.Instance.ReplaceActivePanel(_realtimeMatchStatusPanel.gameObject);
             }
             catch (TaskCanceledException)
             {
@@ -385,7 +442,7 @@ namespace Apple.GameKit.Sample
             }
             catch (Exception ex)
             {
-                Debug.LogException(ex);
+                GKErrorCodeExtensions.LogException(ex);
             }
        }
     }

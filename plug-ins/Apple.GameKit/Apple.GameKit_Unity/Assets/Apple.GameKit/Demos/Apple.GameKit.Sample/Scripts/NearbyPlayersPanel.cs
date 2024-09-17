@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Apple.Core;
 using Apple.GameKit.Multiplayer;
 using UnityEngine;
 
@@ -7,10 +8,12 @@ namespace Apple.GameKit.Sample
 {
     public class NearbyPlayersPanel : MonoBehaviour
     {
-        [SerializeField] private GameObject _playerPanelPrefab = default;
+        [SerializeField] private PlayerButton _playerButtonPrefab = default;
         [SerializeField] private GameObject _playersContent = default;
 
-        Dictionary<GKPlayer, PlayerPanel> _players = new Dictionary<GKPlayer, PlayerPanel>();
+        private Dictionary<GKPlayer, PlayerButton> _players = new Dictionary<GKPlayer, PlayerButton>();
+
+        private readonly bool IsViewControllerAvailableForPlayer = Availability.IsMethodAvailable<GKGameCenterViewController>(nameof(GKGameCenterViewController.InitWithPlayer));
 
         void OnEnable()
         {
@@ -34,31 +37,40 @@ namespace Apple.GameKit.Sample
             Clear();
         }
 
-        void AddPanelForPlayer(GKPlayer player)
+        void AddButtonForPlayer(GKPlayer player)
         {
-            var panelObject = Instantiate(_playerPanelPrefab, _playersContent.transform, worldPositionStays: false);
-            var panel = panelObject.GetComponent<PlayerPanel>();
-            panel.Player = player;
-            _players.Add(player, panel);
+            var button = Instantiate(_playerButtonPrefab, _playersContent.transform, worldPositionStays: false);
+            button.Player = player;
+
+            if (IsViewControllerAvailableForPlayer)
+            {
+                button.ButtonClick += async (sender, args) =>
+                {
+                    var viewController = GKGameCenterViewController.InitWithPlayer(player);
+                    await viewController.Present();
+                };
+            }
+
+            _players.Add(player, button);
         }
 
-        void RemovePlayerPanel(PlayerPanel panel)
+        void RemovePlayerButton(PlayerButton button)
         {
-            var player = panel.Player;
+            var player = button.Player;
             _players.Remove(player);
-            panel.transform.SetParent(null);
-            panel.Player = null;
-            Destroy(panel);
+            button.transform.SetParent(null);
+            button.Player = null;
+            Destroy(button);
         }
 
         void NearbyPlayerReachableHandler(GKPlayer player, bool isReachable)
         {
-            if (_players.TryGetValue(player, out var panel))
+            if (_players.TryGetValue(player, out var button))
             {
                 if (!isReachable)
                 {
                     // remove existing player from the list
-                    RemovePlayerPanel(panel);
+                    RemovePlayerButton(button);
                 }
             }
             else
@@ -66,7 +78,7 @@ namespace Apple.GameKit.Sample
                 if (isReachable)
                 {
                     // add new player to the list
-                    AddPanelForPlayer(player);
+                    AddButtonForPlayer(player);
                 }
             }
         }

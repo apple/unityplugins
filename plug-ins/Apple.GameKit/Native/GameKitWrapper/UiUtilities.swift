@@ -10,7 +10,25 @@ import SwiftUI
 class UiUtilities {
 #if os(macOS)
     static func defaultWindow() -> NSWindow? {
-        return NSApplication.shared.keyWindow;
+        // Find the "best" default window (main, key, or other) that also has a contentViewController.
+        // Otherwise, find the "best" one of those that doesn't have a contentViewController.
+        if let window = NSApplication.shared.mainWindow,
+           let _ = window.contentViewController {
+            return window;
+        } else if let window = NSApplication.shared.keyWindow,
+                  let _ = window.contentViewController {
+            return window;
+        } else if let window = NSApplication.shared.windows.first(where: { window in
+            return window.contentViewController != nil;
+        }) {
+            return window;
+        } else if let window = NSApplication.shared.mainWindow {
+            return window;
+        } else if let window = NSApplication.shared.keyWindow {
+            return window;
+        } else {
+            return NSApplication.shared.windows.first;
+        }
     }
 
     static func rootViewController() -> NSViewController? {
@@ -18,12 +36,28 @@ class UiUtilities {
     }
 
     static func presentViewController(viewController: NSViewController) {
-        rootViewController()?.presentAsModalWindow(viewController);
+        guard let window = defaultWindow() else {
+            return;
+        }
+
+        var vc = window.contentViewController;
+        if (vc == nil)
+        {
+            let childWindow = NSWindow(contentViewController: viewController);
+            window.addChildWindow(childWindow, ordered: NSWindow.OrderingMode.above);
+            vc = childWindow.contentViewController;
+        }
+
+        vc?.presentAsModalWindow(viewController);
     }
 
     static func presentViewController(viewController: any NSViewController & GKViewController) {
         GKDialogController.shared().parentWindow = defaultWindow();
         GKDialogController.shared().present(viewController);
+    }
+
+    static func dismissViewController(viewController: NSViewController) {
+        rootViewController()?.dismiss(viewController);
     }
 
     static func dismissViewController(viewController: any NSViewController & GKViewController) {
@@ -53,7 +87,7 @@ class UiUtilities {
         rootViewController()?.present(viewController, animated: true);
     }
 
-    static func dismissViewController(viewController: UINavigationController) {
+    static func dismissViewController(viewController: UIViewController) {
         viewController.dismiss(animated: true);
     }
 #endif

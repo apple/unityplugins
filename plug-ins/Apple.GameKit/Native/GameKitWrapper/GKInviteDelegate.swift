@@ -8,14 +8,14 @@
 import Foundation
 import GameKit
 
-public typealias InviteAcceptedCallback = @convention(c) (UnsafeMutableRawPointer, UnsafeMutableRawPointer) -> Void;
+public typealias InviteAcceptedCallback = @convention(c) (UnsafeMutablePointer<GKPlayer>, UnsafeMutablePointer<GKInvite>) -> Void;
 
 extension GKWLocalPlayerListener : GKInviteEventListener {
     
     public func player(_ player: GKPlayer, didAccept invite: GKInvite) {
         InviteAccepted?(
-            Unmanaged.passRetained(player).toOpaque(),
-            Unmanaged.passRetained(invite).toOpaque());
+            player.passRetainedUnsafeMutablePointer(),
+            invite.passRetainedUnsafeMutablePointer());
     }
 }
 

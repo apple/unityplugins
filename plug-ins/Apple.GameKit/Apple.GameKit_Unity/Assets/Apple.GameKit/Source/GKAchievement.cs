@@ -46,7 +46,7 @@ namespace Apple.GameKit
         /// <summary>
         /// The last time your game reported progress on the achievement for the player.
         /// </summary>
-        public DateTimeOffset LastReportedDate => DateTimeOffset.FromUnixTimeSeconds((long)Interop.GKAchievement_GetLastReportedDate(Pointer));
+        public DateTimeOffset LastReportedDate => DateTimeOffsetExtensions.FromUnixTimeSeconds(Interop.GKAchievement_GetLastReportedDate(Pointer));
         
         /// <summary>
         /// A Boolean value that indicates whether GameKit displays a banner when the player completes the achievement.

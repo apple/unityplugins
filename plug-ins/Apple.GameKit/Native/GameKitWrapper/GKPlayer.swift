@@ -11,85 +11,84 @@ import GameKit
 @_cdecl("GKPlayer_GetGamePlayerId")
 public func GKPlayer_GetGamePlayerId
 (
-    pointer : UnsafeMutableRawPointer
+    pointer : UnsafeMutablePointer<GKPlayer>
 ) -> char_p
 {
-    let player = Unmanaged<GKPlayer>.fromOpaque(pointer).takeUnretainedValue();
+    let player = pointer.takeUnretainedValue();
     return player.gamePlayerID.toCharPCopy();
 }
 
 @_cdecl("GKPlayer_GetTeamPlayerId")
 public func GKPlayer_GetTeamPlayerId
 (
-    pointer : UnsafeMutableRawPointer
+    pointer : UnsafeMutablePointer<GKPlayer>
 ) -> char_p
 {
-    let player = Unmanaged<GKPlayer>.fromOpaque(pointer).takeUnretainedValue();
+    let player = pointer.takeUnretainedValue();
     return player.teamPlayerID.toCharPCopy();
 }
 
 @_cdecl("GKPlayer_GetScopedIDsArePersistent")
 public func GKPlayer_GetScopedIDsArePersistent
 (
-    pointer : UnsafeMutableRawPointer
+    pointer : UnsafeMutablePointer<GKPlayer>
 ) -> Bool
 {
-    let player = Unmanaged<GKPlayer>.fromOpaque(pointer).takeUnretainedValue();
+    let player = pointer.takeUnretainedValue();
     return player.scopedIDsArePersistent();
 }
 
 @_cdecl("GKPlayer_GetAlias")
 public func GKPlayer_GetAlias
 (
-    pointer : UnsafeMutableRawPointer
+    pointer : UnsafeMutablePointer<GKPlayer>
 ) -> char_p
 {
-    let player = Unmanaged<GKPlayer>.fromOpaque(pointer).takeUnretainedValue();
+    let player = pointer.takeUnretainedValue();
     return player.alias.toCharPCopy();
 }
 
 @_cdecl("GKPlayer_GetDisplayName")
 public func GKPlayer_GetDisplayName
 (
-    pointer : UnsafeMutableRawPointer
+    pointer : UnsafeMutablePointer<GKPlayer>
 ) -> char_p
 {
-    let player = Unmanaged<GKPlayer>.fromOpaque(pointer).takeUnretainedValue();
+    let player = pointer.takeUnretainedValue();
     return player.displayName.toCharPCopy();
 }
 
 @_cdecl("GKPlayer_GetIsInvitable")
 public func GKPlayer_GetIsInvitable
 (
-    pointer : UnsafeMutableRawPointer
+    pointer : UnsafeMutablePointer<GKPlayer>
 ) -> Bool
 {
-    let player = Unmanaged<GKPlayer>.fromOpaque(pointer).takeUnretainedValue();
-    
     if #available(iOS 14, tvOS 14, macOS 11.0, *) {
+        let player = pointer.takeUnretainedValue();
         return player.isInvitable
     } else {
-        return false;
-    };
+        DefaultNSErrorHandler.throwApiUnavailableError();
+    }
 }
 
 @_cdecl("GKPlayer_GetScopedIdsArePersistent")
 public func GKPlayer_GetScopedIdsArePersistent
 (
-    pointer : UnsafeMutableRawPointer
+    pointer : UnsafeMutablePointer<GKPlayer>
 ) -> Bool
 {
-    let player = Unmanaged<GKPlayer>.fromOpaque(pointer).takeUnretainedValue();
+    let player = pointer.takeUnretainedValue();
     return player.scopedIDsArePersistent();
 }
 
 @_cdecl("GKPlayer_GetGuestIdentifier")
 public func GKPlayer_GetGuestIdentifier
 (
-    pointer : UnsafeMutableRawPointer
+    pointer : UnsafeMutablePointer<GKPlayer>
 ) -> char_p?
 {
-    let player = Unmanaged<GKPlayer>.fromOpaque(pointer).takeUnretainedValue();
+    let player = pointer.takeUnretainedValue();
     return player.guestIdentifier?.toCharPCopy();
 }
 
@@ -97,34 +96,33 @@ public func GKPlayer_GetGuestIdentifier
 public func GKPlayer_AnonymousGuestPlayer
 (
     identifier: char_p
-) -> UnsafeMutableRawPointer
+) -> UnsafeMutablePointer<GKPlayer>
 {
     let player = GKPlayer.anonymousGuestPlayer(withIdentifier: identifier.toString());
-    return Unmanaged.passRetained(player).toOpaque();
+    return player.passRetainedUnsafeMutablePointer();
 }
 
 
 @_cdecl("GKPlayer_LoadPhoto")
 public func GKPlayer_LoadPhoto
 (
-    pointer: UnsafeMutableRawPointer,
+    pointer: UnsafeMutablePointer<GKPlayer>,
     taskId: Int64,
     photoSize: Int,
     onImageLoaded: @escaping SuccessTaskImageCallback,
-    onError: @escaping NSErrorCallback
+    onError: @escaping NSErrorTaskCallback
 )
 {
-    let player = Unmanaged<GKPlayer>.fromOpaque(pointer).takeUnretainedValue();
+    let player = pointer.takeUnretainedValue();
 
     player.loadPhoto(for: GKPlayer.PhotoSize.init(rawValue: photoSize)!, withCompletionHandler: { (image, error) in
-        if (error != nil) {
-            onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
+        if let error = error as? NSError {
+            onError(taskId, error.passRetainedUnsafeMutablePointer());
             return;
         }
 
-        let data = image!.pngData()!;
-        onImageLoaded(
-            taskId,
-            Unmanaged.passRetained(data as NSData).toOpaque());
+        // GKPlayer loadPhoto is supposed to return GKErrorPlayerPhotoFailure if the image can't be loaded.
+        let data = image?.pngData() as? NSData;
+        onImageLoaded(taskId, data?.passRetainedUnsafeMutablePointer());
     });
 }

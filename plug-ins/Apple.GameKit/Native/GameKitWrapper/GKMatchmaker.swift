@@ -11,73 +11,72 @@ import GameKit
 @_cdecl("GKMatchmaker_GetShared")
 public func GKMatchmaker_GetShared
 (
-) -> UnsafeMutableRawPointer
+) -> UnsafeMutablePointer<GKMatchmaker>
 {
-    let matchmaker = GKMatchmaker.shared();
-    return Unmanaged.passRetained(matchmaker).toOpaque();
+    return GKMatchmaker.shared().passRetainedUnsafeMutablePointer();
 }
 
 @_cdecl("GKMatchmaker_MatchForInvite")
 public func GKMatchmaker_MatchForInvite
 (
-    pointer: UnsafeMutableRawPointer,
+    pointer: UnsafeMutablePointer<GKMatchmaker>,
     taskId: Int64,
-    invitePtr: UnsafeMutableRawPointer,
+    invitePtr: UnsafeMutablePointer<GKInvite>,
     onSuccess: @escaping SuccessTaskPtrCallback,
-    onError: @escaping NSErrorCallback
+    onError: @escaping NSErrorTaskCallback
 )
 {
-    let matchmaker = Unmanaged<GKMatchmaker>.fromOpaque(pointer).takeUnretainedValue();
-    let invite = Unmanaged<GKInvite>.fromOpaque(invitePtr).takeUnretainedValue();
+    let matchmaker = pointer.takeUnretainedValue();
+    let invite = invitePtr.takeUnretainedValue();
 
     matchmaker.match(for: invite, completionHandler: { match, error in
-        if (error != nil) {
-            onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
+        if let error = error as? NSError {
+            onError(taskId, error.passRetainedUnsafeMutablePointer());
             return;
         }
-        
+
         let delegate = GKWMatchDelegate();
         match!.delegate = delegate;
 
-        onSuccess(taskId, Unmanaged.passRetained(match!).toOpaque());
+        onSuccess(taskId, match!.passRetainedUnsafeMutablePointer());
     });
 }
 
 @_cdecl("GKMatchmaker_FindMatch")
 public func GKMatchmaker_FindMatch
 (
-    pointer: UnsafeMutableRawPointer,
+    pointer: UnsafeMutablePointer<GKMatchmaker>,
     taskId: Int64,
-    matchRequestPtr: UnsafeMutableRawPointer,
+    matchRequestPtr: UnsafeMutablePointer<GKMatchRequest>,
     onSuccess: @escaping SuccessTaskPtrCallback,
-    onError: @escaping NSErrorCallback
+    onError: @escaping NSErrorTaskCallback
 )
 {
-    let matchmaker = Unmanaged<GKMatchmaker>.fromOpaque(pointer).takeUnretainedValue();
-    let matchRequest = Unmanaged<GKMatchRequest>.fromOpaque(matchRequestPtr).takeUnretainedValue();
+    let matchmaker = pointer.takeUnretainedValue();
+    let matchRequest = matchRequestPtr.takeUnretainedValue();
 
     matchmaker.findMatch(for: matchRequest, withCompletionHandler: { match, error in
-        if (error != nil) {
-            onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
+        if let error = error as? NSError {
+            onError(taskId, error.passRetainedUnsafeMutablePointer());
             return;
         }
-        
+
         let delegate = GKWMatchDelegate();
         match!.delegate = delegate;
 
-        onSuccess(taskId, Unmanaged.passRetained(match!).toOpaque());
+        onSuccess(taskId, match!.passRetainedUnsafeMutablePointer());
     });
 }
 
 @_cdecl("GKMatchmaker_FinishMatchmaking")
 public func GKMatchmaker_FinishMatchmaking
 (
-    gkMatchmakerPtr : UnsafeMutableRawPointer,
-    gkMatchPtr : UnsafeMutableRawPointer
+    gkMatchmakerPtr : UnsafeMutablePointer<GKMatchmaker>,
+    gkMatchPtr : UnsafeMutablePointer<GKMatch>
 )
 {
-    let gkMatchmaker = Unmanaged<GKMatchmaker>.fromOpaque(gkMatchmakerPtr).takeUnretainedValue();
-    let gkMatch = Unmanaged<GKMatch>.fromOpaque(gkMatchPtr).takeUnretainedValue();
+    let gkMatchmaker = gkMatchmakerPtr.takeUnretainedValue();
+    let gkMatch = gkMatchPtr.takeUnretainedValue();
 
     gkMatchmaker.finishMatchmaking(for: gkMatch);
 }
@@ -85,92 +84,83 @@ public func GKMatchmaker_FinishMatchmaking
 @_cdecl("GKMatchmaker_Cancel")
 public func GKMatchmaker_Cancel
 (
-    pointer: UnsafeMutableRawPointer
+    pointer: UnsafeMutablePointer<GKMatchmaker>
 )
 {
-    let matchmaker = Unmanaged<GKMatchmaker>.fromOpaque(pointer).takeUnretainedValue();
+    let matchmaker = pointer.takeUnretainedValue();
     matchmaker.cancel();
 }
 
 @_cdecl("GKMatchmaker_FindPlayers")
 public func GKMatchmaker_FindPlayers
 (
-    pointer: UnsafeMutableRawPointer,
+    pointer: UnsafeMutablePointer<GKMatchmaker>,
     taskId: Int64,
-    matchRequestPtr: UnsafeMutableRawPointer,
+    matchRequestPtr: UnsafeMutablePointer<GKMatchRequest>,
     onSuccess: @escaping SuccessTaskPtrCallback,
-    onError: @escaping NSErrorCallback
+    onError: @escaping NSErrorTaskCallback
 )
 {
-    let matchmaker = Unmanaged<GKMatchmaker>.fromOpaque(pointer).takeUnretainedValue();
-    let matchRequest = Unmanaged<GKMatchRequest>.fromOpaque(matchRequestPtr).takeUnretainedValue();
+    let matchmaker = pointer.takeUnretainedValue();
+    let matchRequest = matchRequestPtr.takeUnretainedValue();
     matchmaker.findPlayers(forHostedRequest: matchRequest, withCompletionHandler: { players, error in
-        if(error != nil) {
-            onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
+        if let error = error as? NSError {
+            onError(taskId, error.passRetainedUnsafeMutablePointer());
             return;
         }
-        
-        if(players != nil) {
-            onSuccess(taskId, Unmanaged.passRetained(players! as NSArray).toOpaque());
-        } else {
-            onSuccess(taskId, nil);
-        }
+
+        onSuccess(taskId, (players as? NSArray)?.passRetainedUnsafeMutablePointer());
     });
 }
 
 @_cdecl("GKMatchMaker_FindMatchedPlayers")
 public func GKMatchMaker_FindMatchedPlayers
 (
-    gkMatchmakerPtr: UnsafeMutableRawPointer,
+    gkMatchmakerPtr: UnsafeMutablePointer<GKMatchmaker>,
     taskId: Int64,
-    gkMatchRequestPtr: UnsafeMutableRawPointer,
+    gkMatchRequestPtr: UnsafeMutablePointer<GKMatchRequest>,
     onSuccess: @escaping SuccessTaskPtrCallback,
-    onError: @escaping NSErrorCallback
+    onError: @escaping NSErrorTaskCallback
 )
 {
     if #available(iOS 17.2, tvOS 17.2, macOS 14.2, visionOS 1.1, *) {
-        let gkMatchMaker = Unmanaged<GKMatchmaker>.fromOpaque(gkMatchmakerPtr).takeUnretainedValue()
-        let gkMatchRequest = Unmanaged<GKMatchRequest>.fromOpaque(gkMatchRequestPtr).takeUnretainedValue()
+        let gkMatchMaker = gkMatchmakerPtr.takeUnretainedValue()
+        let gkMatchRequest = gkMatchRequestPtr.takeUnretainedValue()
 
         gkMatchMaker.findMatchedPlayers(gkMatchRequest, withCompletionHandler: { gkMatchedPlayers, error in
-            if (error != nil) {
-                onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque())
+            if let error = error as? NSError {
+                onError(taskId, error.passRetainedUnsafeMutablePointer());
                 return;
             }
 
-            if (gkMatchedPlayers != nil) {
-                onSuccess(taskId, Unmanaged.passRetained(gkMatchedPlayers! as GKMatchedPlayers).toOpaque())
-            } else {
-                onSuccess(taskId, nil);
-            }
+            onSuccess(taskId, gkMatchedPlayers?.passRetainedUnsafeMutablePointer());
         })
     } else {
-        // API not available
-        onError(taskId, Unmanaged.passRetained(NSError.init(domain: "GKMatchmaker", code: GKErrorCodeExtension.unsupportedOperationForOSVersion.rawValue, userInfo: nil)).toOpaque())
+        onError(taskId, NSError(code: GKErrorCodeExtension.unsupportedOperationForOSVersion).passRetainedUnsafeMutablePointer());
     }
 }
 
 @_cdecl("GKMatchmaker_AddPlayers")
 public func GKMatchmaker_AddPlayers
 (
-    pointer: UnsafeMutableRawPointer,
+    pointer: UnsafeMutablePointer<GKMatchmaker>,
     taskId: Int64,
-    matchPtr: UnsafeMutableRawPointer,
-    matchRequestPtr: UnsafeMutableRawPointer,
+    matchPtr: UnsafeMutablePointer<GKMatch>,
+    matchRequestPtr: UnsafeMutablePointer<GKMatchRequest>,
     onSuccess: @escaping SuccessTaskCallback,
-    onError: @escaping NSErrorCallback
+    onError: @escaping NSErrorTaskCallback
 )
 {
-    let matchmaker = Unmanaged<GKMatchmaker>.fromOpaque(pointer).takeUnretainedValue();
-    let match = Unmanaged<GKMatch>.fromOpaque(matchPtr).takeUnretainedValue();
-    let matchRequest = Unmanaged<GKMatchRequest>.fromOpaque(matchRequestPtr).takeUnretainedValue();
+    let matchmaker = pointer.takeUnretainedValue();
+    let match = matchPtr.takeUnretainedValue();
+    let matchRequest = matchRequestPtr.takeUnretainedValue();
     
     matchmaker.addPlayers(to: match, matchRequest: matchRequest, completionHandler: { error in
-        if(error != nil) {
-            onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
+        if let error = error as? NSError {
+            onError(taskId, error.passRetainedUnsafeMutablePointer());
             return;
         }
-        
+
         onSuccess(taskId);
     });
 }
@@ -178,19 +168,19 @@ public func GKMatchmaker_AddPlayers
 @_cdecl("GKMatchmaker_QueryActivity")
 public func GKMatchmaker_QueryActivity
 (
-    pointer: UnsafeMutableRawPointer,
+    pointer: UnsafeMutablePointer<GKMatchmaker>,
     taskId: Int64,
     onSuccess: @escaping SuccessTaskIntCallback,
-    onError: @escaping NSErrorCallback
+    onError: @escaping NSErrorTaskCallback
 )
 {
-    let matchmaker = Unmanaged<GKMatchmaker>.fromOpaque(pointer).takeUnretainedValue();
+    let matchmaker = pointer.takeUnretainedValue();
     matchmaker.queryActivity(completionHandler: { numPlayers, error in
-        if(error != nil) {
-            onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
+        if let error = error as? NSError {
+            onError(taskId, error.passRetainedUnsafeMutablePointer());
             return;
         }
-        
+
         onSuccess(taskId, numPlayers);
     });
 }
@@ -198,46 +188,45 @@ public func GKMatchmaker_QueryActivity
 @_cdecl("GKMatchmaker_QueryQueueActivity")
 public func GKMatchmaker_QueryQueueActivity
 (
-    gkMatchmakerPtr: UnsafeMutableRawPointer,
+    gkMatchmakerPtr: UnsafeMutablePointer<GKMatchmaker>,
     taskId: Int64,
     queueName: char_p,
     onSuccess: @escaping SuccessTaskIntCallback,
-    onError: @escaping NSErrorCallback
+    onError: @escaping NSErrorTaskCallback
 )
 {
     if #available(iOS 17.2, tvOS 17.2, macOS 14.2, visionOS 1.1, *) {
-        let gkMatchmaker = Unmanaged<GKMatchmaker>.fromOpaque(gkMatchmakerPtr).takeUnretainedValue();
+        let gkMatchmaker = gkMatchmakerPtr.takeUnretainedValue();
         gkMatchmaker.queryQueueActivity(queueName.toString(), withCompletionHandler: { numPlayers, error in
-            if (error != nil) {
-                onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
+            if let error = error as? NSError {
+                onError(taskId, error.passRetainedUnsafeMutablePointer());
                 return;
             }
 
             onSuccess(taskId, numPlayers);
         });
     } else {
-        // API not available
-        onError(taskId, Unmanaged.passRetained(NSError.init(domain: "GKMatchmaker", code: GKErrorCodeExtension.unsupportedOperationForOSVersion.rawValue, userInfo: nil)).toOpaque())
+        onError(taskId, NSError(code: GKErrorCodeExtension.unsupportedOperationForOSVersion).passRetainedUnsafeMutablePointer());
     }
 }
 
 @_cdecl("GKMatchmaker_QueryPlayerGroupActivity")
 public func GKMatchmaker_QueryPlayerGroupActivity
 (
-    pointer: UnsafeMutableRawPointer,
+    pointer: UnsafeMutablePointer<GKMatchmaker>,
     taskId: Int64,
     groupId: Int,
     onSuccess: @escaping SuccessTaskIntCallback,
-    onError: @escaping NSErrorCallback
+    onError: @escaping NSErrorTaskCallback
 )
 {
-    let matchmaker = Unmanaged<GKMatchmaker>.fromOpaque(pointer).takeUnretainedValue();
+    let matchmaker = pointer.takeUnretainedValue();
     matchmaker.queryPlayerGroupActivity(groupId, withCompletionHandler: { numPlayers, error in
-        if(error != nil) {
-            onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
+        if let error = error as? NSError {
+            onError(taskId, error.passRetainedUnsafeMutablePointer());
             return;
         }
-        
+
         onSuccess(taskId, numPlayers);
     });
 }
@@ -245,79 +234,87 @@ public func GKMatchmaker_QueryPlayerGroupActivity
 @_cdecl("GKMatchmaker_CancelPendingInvite")
 public func GKMatchmaker_CancelPendingInvite
 (
-    pointer: UnsafeMutableRawPointer,
-    playerId: UnsafeMutableRawPointer
+    pointer: UnsafeMutablePointer<GKMatchmaker>,
+    playerPtr: UnsafeMutablePointer<GKPlayer>
 )
 {
-    let matchmaker = Unmanaged<GKMatchmaker>.fromOpaque(pointer).takeUnretainedValue();
-    let player = Unmanaged<GKPlayer>.fromOpaque(playerId).takeUnretainedValue();
-    
+    let matchmaker = pointer.takeUnretainedValue();
+    let player = playerPtr.takeUnretainedValue();
+
     matchmaker.cancelPendingInvite(to: player);
 }
 
-public typealias GKMatchmakerNearbyPlayerReachableHandler = @convention(c) (UnsafeMutableRawPointer /*GKMatchmaker*/, UnsafeMutableRawPointer /*GKPlayer*/, Bool /*reachable*/) -> Void;
+public typealias GKMatchmakerNearbyPlayerReachableHandler = @convention(c) (UnsafeMutablePointer<GKMatchmaker>, UnsafeMutablePointer<GKPlayer>, Bool /*reachable*/) -> Void;
 
 @_cdecl("GKMatchmaker_StartBrowsingForNearbyPlayers")
 public func GKMatchmaker_StartBrowsingForNearbyPlayers
 (
-    gkMatchmakerPtr: UnsafeMutableRawPointer,
+    gkMatchmakerPtr: UnsafeMutablePointer<GKMatchmaker>,
     nearbyPlayerReachableHandler: @escaping GKMatchmakerNearbyPlayerReachableHandler
 )
 {
     if #available(iOS 8.0, tvOS 9.0, macOS 10.10, *) {
-        let gkMatchmaker = Unmanaged<GKMatchmaker>.fromOpaque(gkMatchmakerPtr).takeUnretainedValue();
+        let gkMatchmaker = gkMatchmakerPtr.takeUnretainedValue();
         gkMatchmaker.startBrowsingForNearbyPlayers(handler: { gkPlayer, isReachable in
             nearbyPlayerReachableHandler(
                 gkMatchmakerPtr,    // not retained as per notes in InteropWeakMap.cs.
-                Unmanaged.passRetained(gkPlayer).toOpaque(),
+                gkPlayer.passRetainedUnsafeMutablePointer(),
                 isReachable);
         });
+    } else {
+        DefaultNSErrorHandler.throwApiUnavailableError();
     }
 }
 
 @_cdecl("GKMatchmaker_StopBrowsingForNearbyPlayers")
 public func GKMatchmaker_StopBrowsingForNearbyPlayers
 (
-    gkMatchmakerPtr: UnsafeMutableRawPointer
+    gkMatchmakerPtr: UnsafeMutablePointer<GKMatchmaker>
 )
 {
     if #available(iOS 6.0, tvOS 9.0, macOS 10.9, *) {
-        let gkMatchmaker = Unmanaged<GKMatchmaker>.fromOpaque(gkMatchmakerPtr).takeUnretainedValue();
+        let gkMatchmaker = gkMatchmakerPtr.takeUnretainedValue();
         gkMatchmaker.stopBrowsingForNearbyPlayers();
+    } else {
+        DefaultNSErrorHandler.throwApiUnavailableError();
     }
 }
 
-public typealias GKMatchmakerGroupActivityPlayerHandler = @convention(c) (UnsafeMutableRawPointer /*GKMatchmaker*/, UnsafeMutableRawPointer /*GKPlayer*/) -> Void;
+public typealias GKMatchmakerGroupActivityPlayerHandler = @convention(c) (UnsafeMutablePointer<GKMatchmaker>, UnsafeMutablePointer<GKPlayer>) -> Void;
 
 @_cdecl("GKMatchmaker_StartGroupActivity")
 public func GKMatchmaker_StartGroupActivity
 (
-    gkMatchmakerPtr: UnsafeMutableRawPointer,
+    gkMatchmakerPtr: UnsafeMutablePointer<GKMatchmaker>,
     groupActivityPlayerHandler: @escaping GKMatchmakerGroupActivityPlayerHandler
 )
 {
-    #if !os(tvOS)
+#if !os(tvOS)
     if #available(iOS 16.2, macOS 13.1, *) {
-        let gkMatchmaker = Unmanaged<GKMatchmaker>.fromOpaque(gkMatchmakerPtr).takeUnretainedValue();
+        let gkMatchmaker = gkMatchmakerPtr.takeUnretainedValue();
         gkMatchmaker.startGroupActivity(playerHandler: { gkPlayer in
             groupActivityPlayerHandler(
                 gkMatchmakerPtr,    // not retained as per notes in InteropWeakMap.cs.
-                Unmanaged.passRetained(gkPlayer).toOpaque());
+                gkPlayer.passRetainedUnsafeMutablePointer());
         });
+        return;
     }
-    #endif
+#endif
+    DefaultNSErrorHandler.throwApiUnavailableError();
 }
 
 @_cdecl("GKMatchmaker_StopGroupActivity")
 public func GKMatchmaker_StopGroupActivity
 (
-    gkMatchmakerPtr: UnsafeMutableRawPointer
+    gkMatchmakerPtr: UnsafeMutablePointer<GKMatchmaker>
 )
 {
-    #if !os(tvOS)
+#if !os(tvOS)
     if #available(iOS 16.2, macOS 13.1, *) {
-        let gkMatchmaker = Unmanaged<GKMatchmaker>.fromOpaque(gkMatchmakerPtr).takeUnretainedValue();
+        let gkMatchmaker = gkMatchmakerPtr.takeUnretainedValue();
         gkMatchmaker.stopGroupActivity();
+        return;
     }
-    #endif
+#endif
+    DefaultNSErrorHandler.throwApiUnavailableError();
 }

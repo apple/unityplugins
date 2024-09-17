@@ -1,6 +1,14 @@
 # CHANGELOG
 All notable changes to this project will be documented in this file.
 
+## [3.1.4] - 2024-09-05
+### Added
+- NSData.InitWithBytes() to create an NSData instance from a byte array.
+### Changed
+- Added runtime queries for API availability on all supported Apple operating systems.
+### Fixed
+- Fixed the operation Time.GetNetworkTime() and added a unit test.
+
 ## [3.1.3] - 2024-04-23
 ### Updated
 - Updating how Info.plist files are generated for native libraries.

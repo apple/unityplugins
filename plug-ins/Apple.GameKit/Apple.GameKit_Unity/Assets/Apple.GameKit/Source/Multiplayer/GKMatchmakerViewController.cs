@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using Apple.Core;
 using Apple.Core.Runtime;
 
 namespace Apple.GameKit.Multiplayer
@@ -45,6 +46,7 @@ namespace Apple.GameKit.Multiplayer
         /// <summary>
         /// A Boolean value that indicates whether your game can start after a minimum number of players join a match.
         /// </summary>
+        [Introduced(iOS: "15.0", macOS: "12.0", tvOS: "15.0", visionOS: "1.0")]
         public bool CanStartWithMinimumPlayers
         {
             get => Interop.GKMatchmakerViewController_GetCanStartWithMinimumPlayers(Pointer);
@@ -54,6 +56,7 @@ namespace Apple.GameKit.Multiplayer
         /// <summary>
         /// The mode that a multiplayer game uses to find players.
         /// </summary>
+        [Introduced(iOS: "14.0", macOS: "11.0", tvOS: "14.0", visionOS: "1.0")]
         public GKMatchmakingMode MatchmakingMode
         {
             get => Interop.GKMatchmakerViewController_GetMatchmakingMode(Pointer);
@@ -111,8 +114,16 @@ namespace Apple.GameKit.Multiplayer
         {
             var matchmaker = Init(matchRequest);
 
-            matchmaker.MatchmakingMode = mode;
-            matchmaker.CanStartWithMinimumPlayers = canStartWithMinimumPlayers;
+            if (Availability.IsPropertyAvailable<GKMatchmakerViewController>(nameof(MatchmakingMode)))
+            {
+                matchmaker.MatchmakingMode = mode;
+            }
+
+            if (Availability.IsPropertyAvailable<GKMatchmakerViewController>(nameof(CanStartWithMinimumPlayers)))
+            {
+                matchmaker.CanStartWithMinimumPlayers = canStartWithMinimumPlayers;
+            }
+
             matchmaker.IsHosted = false;
 
             return await Request(matchmaker, getMatchPropertiesForRecipientHandler);
@@ -154,8 +165,16 @@ namespace Apple.GameKit.Multiplayer
         {
             var matchmaker = Init(matchRequest);
 
-            matchmaker.MatchmakingMode = mode;
-            matchmaker.CanStartWithMinimumPlayers = canStartWithMinimumPlayers;
+            if (Availability.IsPropertyAvailable<GKMatchmakerViewController>(nameof(MatchmakingMode)))
+            {
+                matchmaker.MatchmakingMode = mode;
+            }
+
+            if (Availability.IsPropertyAvailable<GKMatchmakerViewController>(nameof(CanStartWithMinimumPlayers)))
+            {
+                matchmaker.CanStartWithMinimumPlayers = canStartWithMinimumPlayers;
+            }
+
             matchmaker.IsHosted = false;
 
             Interop.GKMatchmakerViewController_AddPlayersToMatch(matchmaker.Pointer, match.Pointer);
@@ -182,7 +201,8 @@ namespace Apple.GameKit.Multiplayer
                 tcs.TrySetCanceled();
             };
 
-            if (getMatchPropertiesForRecipientHandler != default)
+            if (getMatchPropertiesForRecipientHandler != default &&
+                Availability.IsEventAvailable<GKMatchmakerViewControllerDelegate>(nameof(GKMatchmakerViewControllerDelegate.GetMatchPropertiesForRecipient)))
             {
                 matchmaker.MatchmakerDelegate.GetMatchPropertiesForRecipient += getMatchPropertiesForRecipientHandler;
             }
@@ -209,8 +229,16 @@ namespace Apple.GameKit.Multiplayer
             
             var matchmaker = Init(matchRequest);
 
-            matchmaker.MatchmakingMode = mode;
-            matchmaker.CanStartWithMinimumPlayers = canStartWithMinimumPlayers;
+            if (Availability.IsPropertyAvailable<GKMatchmakerViewController>(nameof(MatchmakingMode)))
+            {
+                matchmaker.MatchmakingMode = mode;
+            }
+
+            if (Availability.IsPropertyAvailable<GKMatchmakerViewController>(nameof(CanStartWithMinimumPlayers)))
+            {
+                matchmaker.CanStartWithMinimumPlayers = canStartWithMinimumPlayers;
+            }
+
             matchmaker.IsHosted = true;
 
             matchmaker.MatchmakerDelegate.DidFindHostedPlayers += (controller, players) =>
@@ -226,7 +254,8 @@ namespace Apple.GameKit.Multiplayer
                 tcs.TrySetCanceled();
             };
 
-            if (getMatchPropertiesForRecipientHandler != default)
+            if (getMatchPropertiesForRecipientHandler != default &&
+                Availability.IsEventAvailable<GKMatchmakerViewControllerDelegate>(nameof(GKMatchmakerViewControllerDelegate.GetMatchPropertiesForRecipient)))
             {
                 matchmaker.MatchmakerDelegate.GetMatchPropertiesForRecipient += getMatchPropertiesForRecipientHandler;
             }
