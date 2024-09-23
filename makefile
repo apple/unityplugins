@@ -10,4 +10,4 @@ test:
 
 .PHONY: installsrc
 installsrc:
-
+	ditto . $(SRCROOT)
