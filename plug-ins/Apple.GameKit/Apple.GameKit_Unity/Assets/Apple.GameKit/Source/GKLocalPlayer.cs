@@ -397,7 +397,7 @@ namespace Apple.GameKit
         /// <returns></returns>
         public Task DeleteSavedGames(string name)
         {
-            var tcs = InteropTasks.Create<NSArray<GKSavedGame>>(out var taskId);
+            var tcs = InteropTasks.Create<bool>(out var taskId);
             Interop.GKLocalPlayer_DeleteSavedGames(Pointer, taskId, name, OnDeleteSavedGames, OnDeleteSavedGamesError);
             return tcs.Task;
         }
