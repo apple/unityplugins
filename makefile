@@ -1,11 +1,13 @@
+# Invoke build.py via B&I compatible makefile
+
 .PHONY: all
-all:
-	@echo "make all"
-	./build.py
+all: install
 
 .PHONY: clean
 clean:
-	@echo "make clean: no-op"
+	@echo "make clean"
+	@echo ./build.py --clean-action all --force --build-action none
+	./build.py --clean-action all --force --build-action none
 
 .PHONY: test
 test:
@@ -15,3 +17,15 @@ test:
 installsrc:
 	@echo "make installsrc: ditto . $(SRCROOT)"
 	ditto . $(SRCROOT)
+
+.PHONY: installhdrs
+installhdrs:
+	@echo "make installhdrs: no-op"
+
+.PHONY: install
+install:
+	@echo "make install"
+	@echo ./build.py
+	./build.py
+
+
