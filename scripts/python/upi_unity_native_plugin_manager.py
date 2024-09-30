@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 # Requirements: python3
 
-import os, shutil
+import os, shutil, json
 
 import scripts.python.upi_utility as utility
 import scripts.python.upi_toolchain as toolchain
@@ -424,8 +424,18 @@ class NativeUnityPluginManager:
                 utility.RunCommand(["mv", curr_demo_path, dest_demo_path])
                 utility.RunCommand(["mv", curr_demo_meta_path, dest_demo_meta_path])
 
-            pack_command = ["npm", "pack", f"{target_package_json_path.parent}", "--pack-destination", f"{CTX.build_output_path}"]
-            
+            # get the package name and version
+            package_json_file = open(target_package_json_path)
+            package_json_data = json.load(package_json_file)
+            tgz_filename = f"{package_json_data['name']}" "-" f"{package_json_data['version']}" ".tgz"
+            package_json_file.close()
+
+            # using npm:
+            # pack_command = ["npm", "pack", f"{target_package_json_path.parent}", "--pack-destination", f"{CTX.build_output_path}"]
+
+            # using tar:
+            pack_command = ["tar", "--auto-compress", "--create", "--file", f"{CTX.build_output_path.joinpath(tgz_filename)}", "--cd", f"{target_package_json_path.parent}", "-s", "/./package/", "." ]
+
             CTX.printer.MessageWithContext("Project package.json path: ", f"{target_package_json_path}", CTX.printer.Indent(1))
             CTX.printer.MessageWithContext("Pack command: ", f"{(' '.join(pack_command))}", CTX.printer.Indent(1))
             
