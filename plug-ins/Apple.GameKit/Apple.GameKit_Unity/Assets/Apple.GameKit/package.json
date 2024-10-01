@@ -5,7 +5,7 @@
     "version": "3.0.0",
     "unity": "2022.3",
     "dependencies": {
-        "com.apple.unityplugin.core": "3.1.4"
+        "com.apple.unityplugin.core": "3.1.5"
     },
     "keywords": [
         "gamekit",

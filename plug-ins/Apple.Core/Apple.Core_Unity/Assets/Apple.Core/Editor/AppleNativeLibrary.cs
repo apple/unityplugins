@@ -22,7 +22,7 @@ namespace Apple.Core
         }
 
         /// <summary>
-        /// Construct an AppleNativeLibrary object using it's filename, debug symbols filename, and full path.
+        /// Construct an AppleNativeLibrary object using its filename, debug symbols filename, and full path.
         /// </summary>
         /// <param name="fileName">The library's name including extension.</param>
         /// <param name="debugSymbolsFileName">The debug symbols filename, including dSYM extension</param>

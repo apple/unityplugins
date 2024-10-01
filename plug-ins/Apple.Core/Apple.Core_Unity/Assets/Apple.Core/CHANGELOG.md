@@ -1,6 +1,10 @@
 # CHANGELOG
 All notable changes to this project will be documented in this file.
 
+## [3.1.5] - 2024-10-01
+### Fixed
+- Fixed a bug in the Apple.Core editor scripts that failed loading of plug-ins that were built for only a single platform.
+
 ## [3.1.4] - 2024-09-05
 ### Added
 - NSData.InitWithBytes() to create an NSData instance from a byte array.
