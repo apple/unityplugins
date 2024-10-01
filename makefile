@@ -8,6 +8,8 @@ clean:
 	@echo "make clean"
 	@echo ./build.py --clean-action all --force --build-action none
 	./build.py --clean-action all --force --build-action none
+	rm -rf ./**/NativeLibraries~
+	rm -rf ./**/__pycache__
 
 .PHONY: test
 test:
