@@ -434,7 +434,7 @@ class NativeUnityPluginManager:
             # pack_command = ["npm", "pack", f"{target_package_json_path.parent}", "--pack-destination", f"{CTX.build_output_path}"]
 
             # using tar:
-            pack_command = ["tar", "--auto-compress", "--create", "--file", f"{CTX.build_output_path.joinpath(tgz_filename)}", "--cd", f"{target_package_json_path.parent}", "-s", "/./package/", "." ]
+            pack_command = ["tar", "--auto-compress", "--create", "--file", f"{CTX.build_output_path.joinpath(tgz_filename)}", "--directory", f"{target_package_json_path.parent}", "-s", "/./package/", "." ]
 
             CTX.printer.MessageWithContext("Project package.json path: ", f"{target_package_json_path}", CTX.printer.Indent(1))
             CTX.printer.MessageWithContext("Pack command: ", f"{(' '.join(pack_command))}", CTX.printer.Indent(1))

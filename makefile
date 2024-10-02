@@ -31,4 +31,12 @@ install:
 	@echo ./build.py
 	./build.py
 
+	ditto $(SRCROOT)/Build $(DSTROOT)/Build
+
+	ditto $(SRCROOT)/plug-ins/Apple.Core/Apple.Core_Unity/Assets/Apple.Core $(DSTROOT)/Assets/Apple.Core
+	ditto $(SRCROOT)/plug-ins/Apple.GameController/Apple.GameController_Unity/Assets/Apple.GameController $(DSTROOT)/Assets/Apple.GameController
+	ditto $(SRCROOT)/plug-ins/Apple.CoreHaptics/Apple.CoreHaptics_Unity/Assets/Apple.CoreHaptics $(DSTROOT)/Assets/Apple.CoreHaptics
+	ditto $(SRCROOT)/plug-ins/Apple.Accessibility/Apple.Accessibility_Unity/Assets/Apple.Accessibility $(DSTROOT)/Assets/Apple.Accessibility
+	ditto $(SRCROOT)/plug-ins/Apple.GameKit/Apple.GameKit_Unity/Assets/Apple.GameKit $(DSTROOT)/Assets/Apple.GameKit
+	ditto $(SRCROOT)/plug-ins/Apple.PHASE/Apple.PHASE_Unity/Assets/Apple.PHASE $(DSTROOT)/Assets/Apple.PHASE
 
