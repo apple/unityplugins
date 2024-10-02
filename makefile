@@ -38,5 +38,5 @@ install:
 	ditto $(SRCROOT)/plug-ins/Apple.CoreHaptics/Apple.CoreHaptics_Unity/Assets/Apple.CoreHaptics $(DSTROOT)/Assets/Apple.CoreHaptics
 	ditto $(SRCROOT)/plug-ins/Apple.Accessibility/Apple.Accessibility_Unity/Assets/Apple.Accessibility $(DSTROOT)/Assets/Apple.Accessibility
 	ditto $(SRCROOT)/plug-ins/Apple.GameKit/Apple.GameKit_Unity/Assets/Apple.GameKit $(DSTROOT)/Assets/Apple.GameKit
-	ditto $(SRCROOT)/plug-ins/Apple.PHASE/Apple.PHASE_Unity/Assets/Apple.PHASE $(DSTROOT)/Assets/Apple.PHASE
+	ditto $(SRCROOT)/plug-ins/Apple.PHASE/Apple.PHASE_Unity/Assets $(DSTROOT)/Assets/Apple.PHASE
 
