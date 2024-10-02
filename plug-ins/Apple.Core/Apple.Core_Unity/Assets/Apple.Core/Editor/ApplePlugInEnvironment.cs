@@ -168,7 +168,7 @@ namespace Apple.Core
 
             // Initialize collection of packages
             _appleUnityPackages = new Dictionary<string, AppleUnityPackage>();
-            _packageManagerListRequest = Client.List();
+            _packageManagerListRequest = Client.List(false, true);
 
             // Initialize state tracking
             _updateState = UpdateState.Initializing;
