@@ -10,6 +10,7 @@ using UnityEditor.iOS.Xcode.Extensions;
 using UnityEditor.PackageManager;
 using UnityEditor.PackageManager.Requests;
 using UnityEngine;
+using System.Threading;
 
 namespace Apple.Core
 {
@@ -38,9 +39,8 @@ namespace Apple.Core
         } 
     }
 
-    [InitializeOnLoad]
-    public static class ApplePlugInEnvironment
-    {
+    public class ApplePlugInEnvironment : AssetPostprocessor
+    {   
         /// <summary>
         /// Name of the folder that the Apple Unity Plug-Ins will use for storing permanent data assets and helper objects
         /// </summary>
@@ -106,6 +106,7 @@ namespace Apple.Core
         /// </summary>
         private enum UpdateState
         {
+            NotInitialized,
             Initializing,
             Updating
         }
@@ -129,10 +130,14 @@ namespace Apple.Core
         private static string _trackedApplePlatform;
 
         /// <summary>
-        /// Static constructor used by Unity for initialization of the ApplePlugInEnvironment.
+        /// Initialize the ApplePlugInEnvironment after all assets finished processing, so we can alter our own.
         /// </summary>
-        static ApplePlugInEnvironment()
+        private static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths, bool didDomainReload)
         {
+            if (_updateState != UpdateState.NotInitialized) { return; }
+            
+            _updateState = UpdateState.Initializing;
+            
             // Ensure that the necessary Apple Unity Plug-In support folders exist and let user know if any have been created.
             string createFolderMessage = "[Apple Unity Plug-ins] Creating support folders:\n";
             bool foldersCreated = false;
@@ -171,12 +176,23 @@ namespace Apple.Core
             _packageManagerListRequest = Client.List();
 
             // Initialize state tracking
-            _updateState = UpdateState.Initializing;
             _trackedAppleConfig = GetAppleBuildConfig();
             _trackedApplePlatform = GetApplePlatformID(EditorUserBuildSettings.activeBuildTarget);
 
             EditorApplication.update += OnEditorUpdate;
             Events.registeringPackages += OnPackageManagerRegistrationUpdate;
+            
+            if (Application.isBatchMode) {
+                // when in -batchmode -quit, EditorUpdate is not called, so we have to
+                // lock the main thread until the packages are downloaded
+                static long nowMilis() => DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                long start = nowMilis();
+                const long timeout = 10000;
+                while (_updateState != UpdateState.Updating && nowMilis() - start < timeout) {
+                    Thread.Sleep(100);
+                    OnEditorUpdate();
+                }
+            }
         }
 
         /// <summary>
