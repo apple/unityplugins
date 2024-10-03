@@ -63,7 +63,7 @@ namespace Apple.Core
 
         public override bool IsAvailable(RuntimeEnvironment env)
         {
-            var osVersion = _osVersions[env.RuntimeOperatingSystem];
+            _osVersions.TryGetValue(env.RuntimeOperatingSystem, out var osVersion);
             return 
                 osVersion.HasValue &&
                 ((env.VersionNumber.Major > osVersion.Value.Major) ||
@@ -136,7 +136,7 @@ namespace Apple.Core
 
         public override bool IsAvailable(RuntimeEnvironment env)
         {
-            var osVersion = _osVersions[env.RuntimeOperatingSystem];
+            _osVersions.TryGetValue(env.RuntimeOperatingSystem, out var osVersion);
             var isObsoleted = 
                 osVersion.HasValue &&
                 ((env.VersionNumber.Major > osVersion.Value.Major) ||
