@@ -27,6 +27,7 @@ namespace Apple.GameController.Controller
         public float ThumbstickRightHorizontal;
         public float ThumbstickRightVertical;
         public float ThumbstickRightButton;
+
         // Dualshock & DualSense
         public float TouchpadButton;
         public float TouchpadPrimaryHorizontal;
@@ -36,6 +37,28 @@ namespace Apple.GameController.Controller
         // Battery
         public float BatteryLevel;
         public int BatteryState;
+
+        [MarshalAs(UnmanagedType.I1)]
+        public bool HasAttitude;
+        [MarshalAs(UnmanagedType.I1)]
+        public bool HasRotationRate;
+        [MarshalAs(UnmanagedType.I1)]
+        public bool HasGravityAndUserAcceleration;
+        [MarshalAs(UnmanagedType.I1)]
+        public bool SensorsRequireManualActivation;
+        [MarshalAs(UnmanagedType.I1)]
+        public bool SensorsActive;
+
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+        public double[] Attitude;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+        public double[] RotationRate;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+        public double[] Acceleration;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+        public double[] Gravity;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+        public double[] UserAcceleration;
 
         public static GCControllerInputState None = new GCControllerInputState();
     }
