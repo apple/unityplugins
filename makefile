@@ -9,8 +9,8 @@ clean:
 	@echo ./build.py --clean-action all --force --build-action none
 	./build.py --clean-action all --force --build-action none
 	pwd
-	zsh -o extended_glob -c 'rm -rfdv ./**/NativeLibraries~'
-	zsh -o extended_glob -c 'rm -rfdv ./**/__pycache__'
+	zsh -o extended_glob -c 'rm -rfdv ./**/NativeLibraries~(N)'
+	zsh -o extended_glob -c 'rm -rfdv ./**/__pycache__(N)'
 
 .PHONY: test
 test:
