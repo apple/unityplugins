@@ -6,8 +6,8 @@ all: install
 .PHONY: clean
 clean:
 	@echo "make clean"
-	@echo ./build.py --clean-action all --force --build-action none
-	./build.py --clean-action all --force --build-action none
+	@echo ./build.py --no-color --clean-action all --force --build-action none
+	./build.py --no-color --clean-action all --force --build-action none
 	pwd
 	zsh -o extended_glob -c 'rm -rfdv ./**/NativeLibraries~(N)'
 	zsh -o extended_glob -c 'rm -rfdv ./**/__pycache__(N)'
@@ -28,8 +28,8 @@ installhdrs:
 .PHONY: install
 install:
 	@echo "make install"
-	@echo ./build.py
-	./build.py
+	@echo ./build.py --no-color
+	./build.py --no-color
 
 	ditto $(SRCROOT)/Build $(DSTROOT)/Build
 
