@@ -392,9 +392,9 @@ class NativeUnityPluginManager:
                 else:
                     CTX.printer.ErrorMessage("No Unity installations are being tracked. Please check your Unity installation root path or install the Unity Editor.")
     
-    # Packs plug-ins with npm and moves the resulting package to the currently configured build output folder.
+    # Packs plug-ins with tar and moves the resulting package to the currently configured build output folder.
     def GeneratePlugInPackages(self) -> None:
-        # Cache to return; npm should be invoked from the folder containing the associated package.json
+        # Cache to return; tar should be invoked from the folder containing the associated package.json
         working_dir = os.getcwd()
         for  plugin_id, native_plugin in self.native_unity_plugin_table.items():
             CTX.printer.StatusMessageWithContext("Packing plug-in: ", f"{plugin_id}", "\n")
@@ -429,9 +429,6 @@ class NativeUnityPluginManager:
             package_json_data = json.load(package_json_file)
             tgz_filename = f"{package_json_data['name']}" "-" f"{package_json_data['version']}" ".tgz"
             package_json_file.close()
-
-            # using npm:
-            # pack_command = ["npm", "pack", f"{target_package_json_path.parent}", "--pack-destination", f"{CTX.build_output_path}"]
 
             # using tar:
             pack_command = ["tar", "--auto-compress", "--create", "--file", f"{CTX.build_output_path.joinpath(tgz_filename)}", "--directory", f"{target_package_json_path.parent}", "-s", "/./package/", "." ]

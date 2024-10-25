@@ -1,7 +1,7 @@
 #!/bin/sh
 # Repackage a release build .dmg image into one .tgz archive per plug-in.
 
-script_basename=$(basename "$0")
+script_basename=`basename "$0" .sh`
 dmg=$1
 outdir=$2
 
