@@ -2,8 +2,8 @@
 # Repackage a release build .dmg image into one .tgz archive per plug-in.
 
 script_basename=`basename "$0" .sh`
-dmg=$1
-outdir=$2
+dmg=`realpath "$1"`
+outdir=`realpath "$2"`
 
 # check args
 if [[ ! -f "$dmg" ]] || [[ ! -e "$outdir" ]] ; then
@@ -20,13 +20,18 @@ if [ $? -ne 0 ]; then
 fi
 
 # mount the dmg image
+echo "Mounting $dmg in $tmpdir"
 hdiutil attach "$dmg" -readonly -mountpoint "$tmpdir"
 pushd "$tmpdir"
+
+echo "Contents of $dmg:"
+ls .
 
 # repackage each plug-in
 for dir in */
 do
     echo "Repacking ${dir%/}."
+    echo "tar -caf $outdir/${dir%/}.tgz -C ${dir%/} package"
     tar -caf "$outdir/${dir%/}.tgz" -C "${dir%/}" package
 done
 
