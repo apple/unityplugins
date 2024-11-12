@@ -3,8 +3,8 @@
 # Usage: unpack-tgzs <srcdir> <outdir>
 
 script_basename=`basename "$0" .sh`
-tgzdir=$1
-outdir=$2
+tgzdir=`realpath "$1"`
+outdir=`realpath "$2"`
 
 # check args
 if [[ ! -e "$tgzdir" ]] || [[ ! -e "$outdir" ]] ; then
