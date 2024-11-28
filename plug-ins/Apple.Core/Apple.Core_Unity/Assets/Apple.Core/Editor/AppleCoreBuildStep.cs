@@ -21,7 +21,7 @@ namespace Apple.Core
             if (pbxProject != null)
             {
                 var targetGuid = buildTarget == BuildTarget.StandaloneOSX ? pbxProject.TargetGuidByName(Application.productName) : pbxProject.GetUnityMainTargetGuid();
-                pbxProject.AddBuildProperty(buildTarget, "ENABLE_BITCODE", "NO");
+                pbxProject.AddBuildProperty(targetGuid, "ENABLE_BITCODE", "NO");
 
                 if (buildTarget != BuildTarget.StandaloneOSX)
                 {
