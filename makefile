@@ -1,4 +1,5 @@
 # Invoke build.py via B&I compatible makefile
+# More details here: https://quip-apple.com/WR2vAGY9FLCD
 
 # To test locally via buildit:
 # sudo xbs buildit -project GamePlugins -update PrevailingGamePlugins .
