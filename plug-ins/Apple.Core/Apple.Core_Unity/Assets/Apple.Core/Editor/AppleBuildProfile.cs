@@ -47,7 +47,7 @@ namespace Apple.Core
                 defaultProfile = (AppleBuildProfile)AssetDatabase.LoadMainAssetAtPath(DefaultBuildSettingsAssetPath);
             }
 
-            if (defaultProfile is null)
+            if (defaultProfile == null)
             {
                 Debug.Log("[AppleBuildProfile] Creating Apple Unity Plug-Ins build setting asset.");
                 defaultProfile = CreateInstance<AppleBuildProfile>();

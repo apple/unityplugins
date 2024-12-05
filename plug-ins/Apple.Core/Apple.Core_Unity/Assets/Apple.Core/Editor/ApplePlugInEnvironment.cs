@@ -10,6 +10,7 @@ using UnityEditor.iOS.Xcode.Extensions;
 using UnityEditor.PackageManager;
 using UnityEditor.PackageManager.Requests;
 using UnityEngine;
+using System.Threading;
 
 namespace Apple.Core
 {
@@ -39,7 +40,7 @@ namespace Apple.Core
     }
 
     [InitializeOnLoad]
-    public static class ApplePlugInEnvironment
+    public class ApplePlugInEnvironment : AssetPostprocessor
     {
         /// <summary>
         /// Name of the folder that the Apple Unity Plug-Ins will use for storing permanent data assets and helper objects
@@ -97,6 +98,14 @@ namespace Apple.Core
         private static ListRequest _packageManagerListRequest;
 
         /// <summary>
+        /// Time, in seconds, that the package manager list request will wait before failing the list request.
+        /// </summary>
+        /// <remarks>
+        /// The Apple Unity Plug-Ins infrastructure will fail if attempts to access the list of packages fails, so it may be necessary to investigate what would cause timeouts or even to extend the timeout duration.
+        /// </remarks>
+        private static int _packageManagerBatchModeListRequestTimeout => 5;
+
+        /// <summary>
         /// Collection of all known Apple Unity Plug-In packages
         /// </summary>
         private static Dictionary<string, AppleUnityPackage> _appleUnityPackages;
@@ -129,60 +138,137 @@ namespace Apple.Core
         private static string _trackedApplePlatform;
 
         /// <summary>
-        /// Static constructor used by Unity for initialization of the ApplePlugInEnvironment.
+        /// Static constructor used by Unity for early initialization of the <c>ApplePlugInEnvironment</c>.
         /// </summary>
         static ApplePlugInEnvironment()
         {
-            // Ensure that the necessary Apple Unity Plug-In support folders exist and let user know if any have been created.
-            string createFolderMessage = "[Apple Unity Plug-ins] Creating support folders:\n";
-            bool foldersCreated = false;
+            _appleUnityPackages = new Dictionary<string, AppleUnityPackage>();
+            _packageManagerListRequest = Client.List();
+            Events.registeringPackages += OnPackageManagerRegistrationUpdate;
 
+            _trackedAppleConfig = GetAppleBuildConfig();
+            _trackedApplePlatform = GetApplePlatformID(EditorUserBuildSettings.activeBuildTarget);
+
+            _updateState = UpdateState.Initializing;
+
+            if (!Application.isBatchMode)
+            {
+                EditorApplication.update += OnEditorUpdate;
+            }
+        }
+
+        /// <summary>
+        /// Called when Package Manager List requests have succeded, this method updates internal data structures which track Apple Unity Plug-In packages and their associated native libraries.
+        /// </summary>
+        /// <param name="syncPlayModeLibraries">When true, macOS support libraries for each Apple Unity Plug-In will be copied to <c>ApplePlugInSupportPlayModeSupportPath</c></param>
+        private static void OnPackageManagerListSuccess(bool syncPlayModeLibraries)
+        {
+            // Need to handle the special case of libraries being within this project, so postpone logging results.
+            AddPackagesFromCollection(_packageManagerListRequest.Result, logPackagesAfterUpdate: false);
+
+            // If this is one of the development Apple plug-in Unity projects, it needs to be handled as a special case because 
+            //  it isn't loaded/managed by the package manager; all of the assets are local under Assets/
+            // All Apple plug-ins will have an AppleBuildStep implementation, so check for build steps that haven't been added already
+            foreach (var buildStep in _defaultProfile.buildSteps.Values)
+            {
+                if (!_appleUnityPackages.ContainsKey(buildStep.DisplayName))
+                {
+                    _appleUnityPackages[buildStep.DisplayName] = buildStep.IsNativePlugIn ? new AppleUnityPackage("Local Project", buildStep.DisplayName, Application.dataPath) : new AppleUnityPackage("Local Project", buildStep.DisplayName);
+                }
+            }
+
+            LogLibrarySummary();
+
+            if (syncPlayModeLibraries)
+            {
+                SyncronizePlayModeSupportLibraries();
+            }
+            
+            ValidateLibraries();
+        }
+
+        /// <summary>
+        /// Handles all initialization which requires asset operations.
+        /// </summary>
+        /// <param name="importedAssets">Array of paths to imported assets.</param>
+        /// <param name="deletedAssets">Array of paths to deleted assets.</param>
+        /// <param name="movedAssets">Array of paths to moved assets.</param>
+        /// <param name="movedFromAssetPaths">Array of original paths for moved assets.</param>
+        /// <param name="didDomainReload">Boolean set to true if there has been a domain reload.</param>
+        static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths, bool didDomainReload)
+        {
+            if (!didDomainReload)
+            {
+                return;
+            }
+
+            // Apple Unity plug-ins settings are stored in a non-volatile asset, the default build profile, at ApplePlugInSupportEditorPath within the project
             if (!Directory.Exists(ApplePlugInSupportRootPath))
             {
-                createFolderMessage += $"  Created {ApplePlugInSupportRootPath}\n";
-                foldersCreated = true;
+                Debug.Log($"[Apple Unity Plug-ins] Creating support folder: {ApplePlugInSupportRootPath}");
                 AssetDatabase.CreateFolder("Assets", ApplePlugInSupportFolderName);
             }
 
             if (!Directory.Exists(ApplePlugInSupportEditorPath))
             {
-                createFolderMessage += $"  Created {ApplePlugInSupportEditorPath}\n";
-                foldersCreated = true;
+                Debug.Log($"[Apple Unity Plug-ins] Creating support folder: {ApplePlugInSupportEditorPath}");
                 AssetDatabase.CreateFolder(ApplePlugInSupportRootPath, "Editor");
-            }
-
-            if (!Directory.Exists(ApplePlugInSupportPlayModeSupportPath))
-            {
-                createFolderMessage += $"  Created {ApplePlugInSupportPlayModeSupportPath}\n";
-                foldersCreated = true;
-                AssetDatabase.CreateFolder(ApplePlugInSupportEditorPath, "PlayModeSupport");
-            }
-
-            if (foldersCreated)
-            {
-                Debug.Log(createFolderMessage);
             }
 
             _defaultProfile = AppleBuildProfile.DefaultProfile();
             _defaultProfile.ResolveBuildSteps();
 
-            // Initialize collection of packages
-            _appleUnityPackages = new Dictionary<string, AppleUnityPackage>();
-            _packageManagerListRequest = Client.List();
+            // When running in the Editor, initialization of the tracked Apple Unity plug-in packages is driven through interaction with the Package Manager scriting API,
+            //  which may take several update cycles to complete. Lacking a standard update loop, a while-loop will burn cycles until the list request has completed.
+            if (Application.isBatchMode)
+            {
+                DateTime startTime = DateTime.Now;
 
-            // Initialize state tracking
-            _updateState = UpdateState.Initializing;
-            _trackedAppleConfig = GetAppleBuildConfig();
-            _trackedApplePlatform = GetApplePlatformID(EditorUserBuildSettings.activeBuildTarget);
+                // Unfortunately, Unity will throw an exception if this isn't called on the main thread. Stuck with blocking behavior for now.
+                while (!_packageManagerListRequest.IsCompleted)
+                {
+                    if ((DateTime.Now - startTime).Seconds > _packageManagerBatchModeListRequestTimeout)
+                    {
+                        string errorMessage = $"[Apple Unity Plug-Ins] Package manager list request exceeded {_packageManagerBatchModeListRequestTimeout} seconds.\n"
+                        + "  This may be the result of the size of the project, network latency, or issues with the package cache.\n"
+                        + "  Apple.Core build processing will not function correctly if this fails. Please investigate and retry.";
+                        
+                        Debug.LogError(errorMessage);
+                        return;
+                    }
 
-            EditorApplication.update += OnEditorUpdate;
-            Events.registeringPackages += OnPackageManagerRegistrationUpdate;
+                    // Prevent being blocked by tight loop.
+                    Thread.Sleep(100);
+                }
+
+                if (_packageManagerListRequest.Status == StatusCode.Success)
+                {
+                    // No need to sync play mode support libraries in batch mode. These are used just for Play Mode within the Editor.
+                    OnPackageManagerListSuccess(syncPlayModeLibraries: false);
+                }
+                else
+                {
+                    Debug.LogError($"[Apple Unity Plug-Ins] Failed query to the package manager for list of packages with status: {_packageManagerListRequest.Status}");
+                }
+            }
+            else
+            {
+                if (!Directory.Exists(ApplePlugInSupportPlayModeSupportPath))
+                {
+                    Debug.Log($"[Apple Unity Plug-ins] Running in Editor, creating support folder: {ApplePlugInSupportPlayModeSupportPath}");
+                    AssetDatabase.CreateFolder(ApplePlugInSupportEditorPath, "PlayModeSupport");
+                }   
+            }
         }
 
         /// <summary>
-        /// As soon as the Unity Editor creates the ApplePluginEnvironment, this event handler will be added to initialize the _appleUnityPackages dictionary.
+        /// As soon as the Unity Editor creates the <c>ApplePluginEnvironment</c>, this event handler will be added to initialize the <c>_appleUnityPackages</c> dictionary.
         /// Once initialization has occured, this method will handle runtime validation for available libraries against selected Unity Editor settings.
         /// </summary>
+        /// <remarks>
+        /// Note that this method does not apply when Unity is run in batch mode.
+        /// Please see the section under 'Batch mode arguments' at: https://docs.unity3d.com/Manual/EditorCommandLineArguments.html
+        /// </remarks>
         private static void OnEditorUpdate()
         {
             switch (_updateState)
@@ -190,30 +276,7 @@ namespace Apple.Core
                 case UpdateState.Initializing:
                     if (_packageManagerListRequest.IsCompleted && _packageManagerListRequest.Status == StatusCode.Success)
                     {
-                        // Need to handle a the special case of libraries being within this project, so postpone logging results.
-                        AddPackagesFromCollection(_packageManagerListRequest.Result, false);
-
-                        // If this is one of the development Apple plug-in Unity projects, it needs to be handled as a special case because 
-                        //  it isn't loaded/managed by the package manager; all of the assets are local under Assets/
-                        // All Apple plug-ins will have an AppleBuildStep implementation, so check for build steps that haven't been added already
-                        foreach (var buildStep in _defaultProfile.buildSteps.Values)
-                        {
-                            if (!_appleUnityPackages.ContainsKey(buildStep.DisplayName))
-                            {
-                                if (buildStep.IsNativePlugIn)
-                                {
-                                    _appleUnityPackages[buildStep.DisplayName] = new AppleUnityPackage("Local Project", buildStep.DisplayName, Application.dataPath);
-                                }
-                                else
-                                {
-                                    _appleUnityPackages[buildStep.DisplayName] = new AppleUnityPackage("Local Project", buildStep.DisplayName);
-                                }
-                            }
-                        }
-
-                        LogLibrarySummary();
-                        SyncronizePlayModeSupportLibraries();
-                        ValidateLibraries();
+                        OnPackageManagerListSuccess(syncPlayModeLibraries: true);
 
                         _updateState = UpdateState.Updating;
                     }
@@ -279,9 +342,9 @@ namespace Apple.Core
         }
 
         /// <summary>
-        /// Gelper gets the current AppleConfigID based upon Editor development build settings.
+        /// Helper gets the current <c>AppleConfigID</c> based upon Editor development build settings.
         /// </summary>
-        /// <returns>A tuple which contains an AppleConfigID string representing the principal config as well as a fallback</returns>
+        /// <returns>A tuple which contains an <c>AppleConfigID</c> string representing the principal config as well as a fallback</returns>
         public static (string Principal, string Fallback) GetAppleBuildConfig()
         {
             return IsDevelopmentBuild ? (AppleConfigID.Debug, AppleConfigID.Release) : (AppleConfigID.Release, AppleConfigID.Debug);
@@ -462,14 +525,24 @@ namespace Apple.Core
                 AssetDatabase.DeleteAsset(path);
             }
             
+            string summary = $"[Apple Unity Plug-ins] Synchronizing plug-in libraries for Editor Play Mode support to <b>{ApplePlugInSupportPlayModeSupportPath}</b>\nLibraries copied:";
+            bool librariesCopied = false;
+
             // Copy current
             foreach (AppleUnityPackage applePackage in _appleUnityPackages.Values)
             {
                 if (applePackage.PlayModeSupportLibrary.IsValid)
                 {
+                    librariesCopied = true;
                     AppleNativeLibrary pmsLibrary = applePackage.PlayModeSupportLibrary;
+                    summary += $"\n  <b>{pmsLibrary.FileName}</b>";
                     FileUtil.CopyFileOrDirectory(pmsLibrary.FullPath, $"{UnityProjectPath}/{ApplePlugInSupportPlayModeSupportPath}/{pmsLibrary.FileName}");
                 }
+            }
+
+            if (librariesCopied)
+            {
+                Debug.Log(summary);
             }
 
             AssetDatabase.Refresh();
@@ -550,9 +623,9 @@ namespace Apple.Core
         /// Gets the native library root folder for the generated Xcode project.
         /// </summary>
         /// <remarks>
-        /// When building Xcode projects for macOS, Unity puts everything but the project under an additional folder "/{Application.productName}" - this script will respect this folder hierarchy.
-        /// Output paths will of the following form:
-        ///   iOS/tvOS/visionOS: <c>[XCODE_PROJECT_DIR]/ApplePluginLibraries/[PLUGIN_NAME]/ApplePluginLibrary.suffix</c>
+        /// When building Xcode projects for macOS, Unity puts everything but the project under an additional folder "/{Application.productName}" - this script will respect this folder hierarchy.<br/>
+        /// Output paths will of the following form: <br/>
+        ///   iOS/tvOS/visionOS: <c>[XCODE_PROJECT_DIR]/ApplePluginLibraries/[PLUGIN_NAME]/ApplePluginLibrary.suffix</c><br/>
         ///               macOS: <c>[XCODE_PROJECT_DIR]/[Application.productName]/ApplePluginLibraries/[PLUGIN_NAME]/ApplePluginLibrary.suffix</c>
         /// </remarks>
         /// <param name="unityBuildTarget">Current Unity BuildTarget</param>

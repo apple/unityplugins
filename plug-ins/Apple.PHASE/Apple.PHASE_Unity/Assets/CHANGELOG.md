@@ -1,6 +1,10 @@
 # CHANGELOG
 All notable changes to this project will be documented in this file.
 
+## [1.2.2] - 2024-11-20
+### Changed
+- Repaired tvOS build targets and scheme.
+
 ## [1.2.1] - 2024-09-05
 ### Changed
 - Cleaned up default project code sign settings.

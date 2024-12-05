@@ -1,6 +1,13 @@
 # CHANGELOG
 All notable changes to this project will be documented in this file.
 
+## [3.1.6] - 2024-10-15
+### Updated
+- Added support for batch mode builds.
+- `ApplePlugInEnvironment` now inherits from Unity's `AssetPostprocessor` class
+- Moved asset operations out of `ApplePlugInEnvironment`'s static constructor and into the `OnPostprocessAllAssets` method inherited from `AssetPostprocessor`.
+- Cleaned up some comment typos and inconsistencies.
+
 ## [3.1.5] - 2024-10-01
 ### Fixed
 - Fixed a bug in the Apple.Core editor scripts that failed loading of plug-ins that were built for only a single platform.
