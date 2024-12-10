@@ -1,6 +1,9 @@
 # CHANGELOG
 All notable changes to this project will be documented in this file.
 
+## [3.0.1] - 2024-12-10
+- Add Apache 2.0 license file.
+
 ## [3.0.0] - 2023-09-05
 ### Added
 - C# wrappers for the following GameKit APIs new in iOS/tvOS 18.0, macOS 15.0, and visionOS 2.0.
