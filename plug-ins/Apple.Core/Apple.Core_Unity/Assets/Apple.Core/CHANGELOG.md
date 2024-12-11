@@ -1,6 +1,10 @@
 # CHANGELOG
 All notable changes to this project will be documented in this file.
 
+## [3.1.7] - 2024-12-10
+- Add Apache 2.0 license file.
+- Fixed build issues due to spaces in paths or project names.
+
 ## [3.1.6] - 2024-10-15
 ### Updated
 - Added support for batch mode builds.
