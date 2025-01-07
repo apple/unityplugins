@@ -14,7 +14,32 @@ from scripts.python.upi_build_context import BuildContext
 from scripts.python.upi_utility import PromptColor, Printer
 
 # Set a script version to track evolution
-build_script_version = "2.2.1"
+build_script_version = "2.2.2"
+
+#---------------------
+# Create Build Context
+
+# Create context and configure default paths
+CTX = BuildContext(Path().resolve(__file__))
+
+# ------------------------
+# Handle command line args
+
+argument_parser = argparse.ArgumentParser(description="Builds all native libraries, packages plug-ins, and moves packages to build folder.")
+argument_parser.add_argument("-p", "--plugin-list", dest="plugin_list", nargs='*', default=[PluginID.ALL], help=f"Selects the plug-ins to process. Possible values are: {PluginID.ACCESSIBILITY}, {PluginID.CORE}, {PluginID.CORE_HAPTICS}, {PluginID.GAME_CONTROLLER}, {PluginID.GAME_KIT}, {PluginID.PHASE}, or {PluginID.ALL}. Default is: {PluginID.ALL}")
+argument_parser.add_argument("-m", "--platforms", dest="platform_list", nargs='*', default=[PlatformID.ALL], help=f"Selects the desired platforms to target when building native libraries. Possible values are: {PlatformID.IOS}, {PlatformID.IOS_SIMULATOR}, {PlatformID.MACOS}, {PlatformID.TVOS}, {PlatformID.TVOS_SIMULATOR}, {PlatformID.VISIONOS}, {PlatformID.VISIONOS_SIMULATOR}, {PlatformID.SIMULATORS}, {PlatformID.DEVICES} or {PlatformID.ALL}. Default is: {PlatformID.ALL}")
+argument_parser.add_argument("-b", "--build-action", dest="build_actions", nargs='*', default=[BuildActionID.BUILD, BuildActionID.PACK], help=f"Sets the build actions for the selected plug-ins. Possible values are: {BuildActionID.BUILD}, {BuildActionID.PACK}, {BuildActionID.NONE} or {BuildActionID.ALL}. Defaults are: {BuildActionID.BUILD}, {BuildActionID.PACK}")
+argument_parser.add_argument("-bc","--build-config", dest="build_config", default=ConfigID.ALL, help=f"Sets the build configuration to compile. Possible values are: {ConfigID.RELEASE}, {ConfigID.DEBUG}, or {ConfigID.ALL} which builds all other configs. Default is: {ConfigID.ALL}")
+argument_parser.add_argument("-c", "--codesign-identity", dest="codesign_identity", default=str(), help=f"Signs compiled native libraries with provided code signing identity hash or prompts the user to select from a list of identities on the system when {CodeSignActionID.PROMPT} is passed.")
+argument_parser.add_argument("-u", "--unity-installation-root", dest="unity_installation_root", default="", help="Root path to search for Unity installations when building tests. Note: performs a full recursive search of the given directory.")
+argument_parser.add_argument("-o", "--output-path", dest="output_path", default=CTX.build_output_path, help=f"Build result path for final packages. Default: {CTX.build_output_path}")
+argument_parser.add_argument("-k", "--clean-action", dest="clean_actions", nargs='*', default=[CleanActionID.NONE], help=f"Sets the clean actions for the selected plug-ins. Possible values are: {CleanActionID.NATIVE}, {CleanActionID.PACKAGES}, {CleanActionID.TESTS}, {CleanActionID.NONE}, or {CleanActionID.ALL}. Defaults to no clean action.")
+argument_parser.add_argument("-f", "--force", dest="force_clean", action="store_true", help="Setting this option will not prompt user on file deletion during clean operations.")
+argument_parser.add_argument("-t", "--test", dest="build_tests", action="store_true", help="Builds Unity tests for each plug-in.")
+argument_parser.add_argument("-to", "--test-output-path", dest="test_output_path", default=CTX.test_build_root, help=f"Output path for test build results. Default: {CTX.test_build_root}")
+argument_parser.add_argument("-nc", "--no-color", dest="no_color", action="store_true", help="Use no color in the terminal output. Default: terminal output is colorized.")
+
+build_args = argument_parser.parse_args()
 
 # -----------------
 # Prompt Formatting
@@ -22,7 +47,10 @@ build_script_version = "2.2.1"
 prompt_theme = utility.PromptTheme()
 
 # Set to false to disable all colors in your terminal emulator.
-prompt_theme_enable = True
+if build_args.no_color:
+    prompt_theme_enable = False
+else:
+    prompt_theme_enable = True
 
 # These colors control the colors that the script uses in your terminal emulator.
 if prompt_theme_enable:
@@ -57,32 +85,9 @@ if prompt_theme_enable:
 # This string represents a single level of indentation in the script output in your terminal emulator.
 prompt_theme.indent_string = '  '
 
-#---------------------
-# Create Build Context
-
-# Create context and configure default paths
-CTX = BuildContext(Path().resolve(__file__))
-
 # Store prompt theme
 CTX.printer = Printer(prompt_theme)
 
-# ------------------------
-# Handle command line args
-
-argument_parser = argparse.ArgumentParser(description="Builds all native libraries, packages plug-ins, and moves packages to build folder.")
-argument_parser.add_argument("-p", "--plugin-list", dest="plugin_list", nargs='*', default=[PluginID.ALL], help=f"Selects the plug-ins to process. Possible values are: {PluginID.ACCESSIBILITY}, {PluginID.CORE}, {PluginID.CORE_HAPTICS}, {PluginID.GAME_CONTROLLER}, {PluginID.GAME_KIT}, {PluginID.PHASE}, or {PluginID.ALL}. Default is: {PluginID.ALL}")
-argument_parser.add_argument("-m", "--platforms", dest="platform_list", nargs='*', default=[PlatformID.ALL], help=f"Selects the desired platforms to target when building native libraries. Possible values are: {PlatformID.IOS}, {PlatformID.IOS_SIMULATOR}, {PlatformID.MACOS}, {PlatformID.TVOS}, {PlatformID.TVOS_SIMULATOR}, {PlatformID.VISIONOS}, {PlatformID.VISIONOS_SIMULATOR}, {PlatformID.SIMULATORS}, {PlatformID.DEVICES} or {PlatformID.ALL}. Default is: {PlatformID.ALL}")
-argument_parser.add_argument("-b", "--build-action", dest="build_actions", nargs='*', default=[BuildActionID.BUILD, BuildActionID.PACK], help=f"Sets the build actions for the selected plug-ins. Possible values are: {BuildActionID.BUILD}, {BuildActionID.PACK}, {BuildActionID.NONE} or {BuildActionID.ALL}. Defaults are: {BuildActionID.BUILD}, {BuildActionID.PACK}")
-argument_parser.add_argument("-bc","--build-config", dest="build_config", default=ConfigID.ALL, help=f"Sets the build configuration to compile. Possible values are: {ConfigID.RELEASE}, {ConfigID.DEBUG}, or {ConfigID.ALL} which builds all other configs. Default is: {ConfigID.ALL}")
-argument_parser.add_argument("-c", "--codesign-identity", dest="codesign_identity", default=str(), help=f"Signs compiled native libraries with provided code signing identity hash or prompts the user to select from a list of identities on the system when {CodeSignActionID.PROMPT} is passed.")
-argument_parser.add_argument("-u", "--unity-installation-root", dest="unity_installation_root", default="", help="Root path to search for Unity installations when building tests. Note: performs a full recursive search of the given directory.")
-argument_parser.add_argument("-o", "--output-path", dest="output_path", default=CTX.build_output_path, help=f"Build result path for final packages. Default: {CTX.build_output_path}")
-argument_parser.add_argument("-k", "--clean-action", dest="clean_actions", nargs='*', default=[CleanActionID.NONE], help=f"Sets the clean actions for the selected plug-ins. Possible values are: {CleanActionID.NATIVE}, {CleanActionID.PACKAGES}, {CleanActionID.TESTS}, {CleanActionID.NONE}, or {CleanActionID.ALL}. Defaults to no clean action.")
-argument_parser.add_argument("-f", "--force", dest="force_clean", action="store_true", help="Setting this option will not prompt user on file deletion during clean operations.")
-argument_parser.add_argument("-t", "--test", dest="build_tests", action="store_true", help="Builds Unity tests for each plug-in.")
-argument_parser.add_argument("-to", "--test-output-path", dest="test_output_path", default=CTX.test_build_root, help=f"Output path for test build results. Default: {CTX.test_build_root}")
-
-build_args = argument_parser.parse_args()
 
 def Main():
     # Store the time of invocation for later use

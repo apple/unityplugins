@@ -17,5 +17,15 @@ To get started with integration of these plug-ins into your Unity projects, run 
 | Apple.GameKit | Allows Unity developers to easily integrate GameKit features such as leaderboards, achievements, and match making. |
 | Apple.PHASE | The PHASE plug-in allows Unity developers to take full advantage of Apple's new geometry and material aware spatial audio system. |
 
+## Minimum Supported OS Versions
+| OS | Version |
+| :- | :------ |
+| iOS | 13.0 |
+| macOS | 10.15 |
+| tvOS | 13.0 |
+| visionOS | 1.0 |
+| watchOS | not supported |
+
+
 ## Leaving Feedback
 See the [Feedback](Documentation/Feedback.md) documentation for more information.

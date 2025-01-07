@@ -1,6 +1,10 @@
 # CHANGELOG
 All notable changes to this project will be documented in this file.
 
+## [1.2.3] - 2024-12-10
+- Add Apache 2.0 license file.
+- Remove out-of-date documentation file.
+
 ## [1.2.2] - 2024-09-05
 ### Changed
 - Cleaned up default project code sign settings.
