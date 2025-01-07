@@ -14,7 +14,7 @@ from scripts.python.upi_build_context import BuildContext
 from scripts.python.upi_utility import PromptColor, Printer
 
 # Set a script version to track evolution
-build_script_version = "2.2.1"
+build_script_version = "2.2.2"
 
 #---------------------
 # Create Build Context
