@@ -17,6 +17,10 @@ All notable changes to this project will be documented in this file.
   - Updated projet to generate XML (human readable) for debug and binary for release when generating Info.plist
   - Encoded version(s) in the xcconfig and generated Info.plist should align with the plug-in version reported in `package.json`
 
+## [1.3.0] - 2025-01-13
+### Changed
+- Pattern serialization supports systems that use commas for decimals
+
 ## [1.2.0] - 2024-02-23
 ### Added
 - Support for visionOS

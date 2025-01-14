@@ -1,10 +1,12 @@
 using System;
+using System.Globalization;
 using System.Runtime.InteropServices;
+using Apple.UnityJSON;
 
 namespace Apple.CoreHaptics
 {
     [Serializable]
-    public class CHHapticParameterCurveControlPoint
+    public class CHHapticParameterCurveControlPoint : ISerializable
     {
         public float Time;
         public float ParameterValue;
@@ -15,6 +17,14 @@ namespace Apple.CoreHaptics
         {
             Time = time;
             ParameterValue = parameterValue;
+        }
+
+        public string Serialize(Serializer serializer) {
+            var ret = "\t\t\t\t\t{\n";
+            ret += ((FormattableString)$"\t\t\t\t\t\t\"Time\": {Time},\n").ToString(CultureInfo.InvariantCulture);
+            ret += ((FormattableString)$"\t\t\t\t\t\t\"ParameterValue\": {ParameterValue}\n").ToString(CultureInfo.InvariantCulture);
+            ret += "\t\t\t\t\t}";
+            return ret;
         }
     }
 
