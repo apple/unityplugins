@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using Apple.UnityJSON;
 
 namespace Apple.CoreHaptics
@@ -22,7 +23,7 @@ namespace Apple.CoreHaptics
 
         internal string SerializeTypeAndTime() {
             var ret = $"\t\t\t\t\"EventType\": \"{EventType}\",\n";
-            ret += $"\t\t\t\t\"Time\": {Time}";
+            ret += $"\t\t\t\t\"Time\": {Time.ToString(new CultureInfo("en-US", false))}";
             return ret;
         }
 
@@ -33,7 +34,7 @@ namespace Apple.CoreHaptics
 
                 for (var idx = 0; idx < EventParameters.Count; idx++) {
                     var ep = EventParameters[idx];
-                    ret += $"\n\t\t\t\t\t{{\"ParameterID\": \"{ep.ParameterID}\", \"ParameterValue\": {ep.ParameterValue}}}";
+                    ret += $"\n\t\t\t\t\t{{\"ParameterID\": \"{ep.ParameterID}\", \"ParameterValue\": {ep.ParameterValue.ToString(new CultureInfo("en-US", false))}}}";
 
                     // Add a comma for all but the last Param
                     if (idx != EventParameters.Count - 1) {
