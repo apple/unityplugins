@@ -1,4 +1,6 @@
 using System;
+using static System.FormattableString;
+using System.Globalization;
 using Apple.UnityJSON;
 
 namespace Apple.CoreHaptics
@@ -25,7 +27,7 @@ namespace Apple.CoreHaptics
         public override string Serialize(Serializer serializer) {
             var ret = "{\n";
             ret += SerializeTypeAndTime();
-            ret += $",\n\t\t\t\t\"EventDuration\": {EventDuration}";
+            ret += ((FormattableString)$",\n\t\t\t\t\"EventDuration\": {EventDuration}").ToString(CultureInfo.InvariantCulture);
 
             ret += SerializeEventParams();
 
