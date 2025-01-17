@@ -199,7 +199,8 @@ namespace Apple.Core
             if (pbxProject != null)
             {
                 string projectRelativeNativeLibraryRoot = AppleNativeLibraryUtility.GetDestinationNativeLibraryFolderRoot(buildTarget);
-                pbxProject.AddShellScriptBuildPhase(pbxProject.GetUnityMainTargetGuid(), "Embed Apple Plug-in Libraries", "/bin/sh", GenerateEmbedNativeLibraryShellScript(projectRelativeNativeLibraryRoot));
+                var targetGuid = buildTarget == BuildTarget.StandaloneOSX ? pbxProject.TargetGuidByName(Application.productName) : pbxProject.GetUnityMainTargetGuid();
+                pbxProject.AddShellScriptBuildPhase(targetGuid, "Embed Apple Plug-in Libraries", "/bin/sh", GenerateEmbedNativeLibraryShellScript(projectRelativeNativeLibraryRoot));
                 pbxProject.WriteToFile(pbxProjectPath);
             }
 
