@@ -348,7 +348,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 240646122B61FC3C00246067 /* Accessibility.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 			};
@@ -358,7 +357,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 240646122B61FC3C00246067 /* Accessibility.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 			};
@@ -368,7 +366,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 240646122B61FC3C00246067 /* Accessibility.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = xros;
 			};
@@ -378,7 +375,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 240646122B61FC3C00246067 /* Accessibility.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = xros;
 			};
@@ -496,7 +492,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 240646122B61FC3C00246067 /* Accessibility.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				DEFINES_MODULE = YES;
@@ -522,7 +517,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 240646122B61FC3C00246067 /* Accessibility.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				DEFINES_MODULE = YES;
@@ -548,7 +542,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 240646122B61FC3C00246067 /* Accessibility.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				DEFINES_MODULE = YES;
@@ -573,7 +566,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 240646122B61FC3C00246067 /* Accessibility.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				DEFINES_MODULE = YES;

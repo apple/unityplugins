@@ -80,6 +80,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -187,7 +188,7 @@ namespace Apple.SimpleJSON
 			get
 			{
 				double v = 0.0;
-				if (double.TryParse(Value, out v))
+				if (double.TryParse(Value, NumberStyles.Any, CultureInfo.InvariantCulture, out v))
 					return v;
 				return 0.0;
 			}
@@ -375,7 +376,7 @@ namespace Apple.SimpleJSON
 			else
 			{
 				double val;
-				if (double.TryParse(token, out val))
+				if (double.TryParse(token, NumberStyles.Any, CultureInfo.InvariantCulture, out val))
 					ctx.Add(tokenName, val);
 				else
 					ctx.Add(tokenName, token);
@@ -1082,7 +1083,7 @@ namespace Apple.SimpleJSON
 			set
 			{
 				double v;
-				if (double.TryParse(value, out v))
+				if (double.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out v))
 					m_Data = v;
 			}
 		}

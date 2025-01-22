@@ -18,10 +18,25 @@ namespace Apple.GameKit.Editor
         [Tooltip("A message that tells the user why the app needs access to their Game Center friends list.")]
         public string FriendListUsageDescription;
 
+        [Tooltip("Identifier of the iCloud container for saved games.")]
+        public string SavedGameContainerIdentifier;
+
 #if (UNITY_EDITOR_OSX && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX || UNITY_VISIONOS))
         public override void OnProcessEntitlements(AppleBuildProfile _, BuildTarget buildTarget, string _1, PlistDocument entitlements)
         {
             entitlements.root.SetBoolean("com.apple.developer.game-center", true);
+
+            if (!string.IsNullOrWhiteSpace(SavedGameContainerIdentifier))
+            {
+                var iCloudIds = entitlements.root.CreateArray("com.apple.developer.icloud-container-identifiers");
+                iCloudIds.AddString(SavedGameContainerIdentifier);
+
+                var services = entitlements.root.CreateArray("com.apple.developer.icloud-services");
+                services.AddString("CloudDocuments");
+
+                var ubiquityIds = entitlements.root.CreateArray("com.apple.developer.ubiquity-container-identifiers");
+                ubiquityIds.AddString(SavedGameContainerIdentifier);
+            }
         }
 
         public override void OnProcessInfoPlist(AppleBuildProfile appleBuildProfile, BuildTarget buildTarget, string pathToBuiltTarget, PlistDocument infoPlist)

@@ -19,7 +19,7 @@ namespace Apple.GameKit.Multiplayer
         /// <param name="forRecipient"></param>
         /// <param name="fromPlayer"></param>
         public delegate void DataReceivedForPlayerHandler(byte[] data, GKPlayer forRecipient, GKPlayer fromPlayer);
-        private delegate void InteropDataReceivedForPlayerHandler(IntPtr pointer, IntPtr data, int dataLength, IntPtr forRecipientPtr, IntPtr fromPlayerPtr);
+        private delegate void InteropDataReceivedForPlayerHandler(IntPtr pointer, IntPtr nsData, IntPtr forRecipientPtr, IntPtr fromPlayerPtr);
 
         /// <summary>
         /// Processes the data sent from another player to the local player.
@@ -27,7 +27,7 @@ namespace Apple.GameKit.Multiplayer
         /// <param name="data"></param>
         /// <param name="fromPlayer"></param>
         public delegate void DataReceivedHandler(byte[] data, GKPlayer fromPlayer);
-        internal delegate void InteropDataReceivedHandler(IntPtr pointer, IntPtr data, int dataLength, IntPtr fromPlayerPtr);
+        internal delegate void InteropDataReceivedHandler(IntPtr pointer, IntPtr nsData, IntPtr fromPlayerPtr);
 
         /// <summary>
         /// Handles when players connect or disconnect from a match.
@@ -99,16 +99,14 @@ namespace Apple.GameKit.Multiplayer
         #region Callback Handlers
 
         [MonoPInvokeCallback(typeof(InteropDataReceivedForPlayerHandler))]
-        private static void OnDataReceivedForPlayer(IntPtr pointer, IntPtr dataPtr, int dataLength, IntPtr forRecipientPtr, IntPtr fromPlayerPtr)
+        private static void OnDataReceivedForPlayer(IntPtr pointer, IntPtr nsDataPtr, IntPtr forRecipientPtr, IntPtr fromPlayerPtr)
         {
             InteropPInvokeExceptionHandler.CatchAndLog(() =>
             {
                 if (!_delegates.TryGetValue(pointer, out var matchDelegate))
                     return;
                 
-                var data = new byte[dataLength];
-                Marshal.Copy(dataPtr, data, 0, dataLength);
-
+                var data = NSData.GetBytes(nsDataPtr);
                 var recipient = forRecipientPtr != IntPtr.Zero ? new GKPlayer(forRecipientPtr) : null;
                 var from = fromPlayerPtr != IntPtr.Zero ? new GKPlayer(fromPlayerPtr) : null;
                 
@@ -117,16 +115,14 @@ namespace Apple.GameKit.Multiplayer
         }
         
         [MonoPInvokeCallback(typeof(InteropDataReceivedHandler))]
-        private static void OnDataReceived(IntPtr pointer, IntPtr dataPtr, int dataLength, IntPtr fromPlayerPtr)
+        private static void OnDataReceived(IntPtr pointer, IntPtr nsDataPtr, IntPtr fromPlayerPtr)
         {
             InteropPInvokeExceptionHandler.CatchAndLog(() =>
             {
                 if (!_delegates.TryGetValue(pointer, out var matchDelegate))
                     return;
                 
-                var data = new byte[dataLength];
-                Marshal.Copy(dataPtr, data, 0, dataLength);
-                
+                var data = NSData.GetBytes(nsDataPtr);
                 var from = fromPlayerPtr != IntPtr.Zero ? new GKPlayer(fromPlayerPtr) : null;
                 matchDelegate.DataReceived?.Invoke(data, from);
             });

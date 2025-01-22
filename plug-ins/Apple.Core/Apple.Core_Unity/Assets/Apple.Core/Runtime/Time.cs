@@ -8,15 +8,9 @@ namespace Apple.Core.Runtime
     public static class Time
     {
         private const string _ntpServer = "time.apple.com";
+        private const int _ntpPort = 123;
         private const byte _serverReplyTimeOffset = 40;
-        private static UdpClient _udpClient;
         
-        /// <summary>
-        /// The timeout amount for doing Dns reverse lookup for the
-        /// NTP network server.
-        /// </summary>
-        public static int DnsLookupTimeoutMS { get; set; } = 3000;
-
         /// <summary>
         /// The timeout amount for the request and response to the
         /// NTP network server.
@@ -25,32 +19,28 @@ namespace Apple.Core.Runtime
         
         public static async Task<DateTime> GetNetworkTime()
         {
-            var dnsLookupTask = Dns.GetHostEntryAsync(_ntpServer);
-            
-            if (await Task.WhenAny(dnsLookupTask, Task.Delay(DnsLookupTimeoutMS)) == dnsLookupTask)
-            {
-                var ipEndPoint = new IPEndPoint(dnsLookupTask.Result.AddressList[0], 123);
-                return await GetNetworkTime(ipEndPoint);
-            }
-            else
-            {
-                throw new Exception("Time.GetNetworkTime() DNS lookup has timed out.");
-            }
-        }
-        
-        private static async Task<DateTime> GetNetworkTime(IPEndPoint endPoint)
-        {
             // NTP message size - 16 bytes of the digest (RFC 2030)
             var ntpData = new byte[48];
             ntpData[0] = 0x1B; //LI = 0 (no warning), VN = 3 (IPv4 only), Mode = 3 (Client Mode)
             
-            _udpClient = new UdpClient();
-            _udpClient.Client.ReceiveTimeout = NTPTimeoutMS;
-            _udpClient.Client.SendTimeout = NTPTimeoutMS;
-            
-            _udpClient.Connect(endPoint);
-            await _udpClient.SendAsync(ntpData, ntpData.Length);
-            var result = await _udpClient.ReceiveAsync();
+            using var udpClient = new UdpClient();
+
+            udpClient.Connect(_ntpServer, _ntpPort);
+
+            UdpReceiveResult result = default;
+
+            var delayTask = Task.Delay(NTPTimeoutMS);
+
+            if (await Task.WhenAny(
+                Task.Run(async () =>
+                {
+                    await udpClient.SendAsync(ntpData, ntpData.Length);
+                    result = await udpClient.ReceiveAsync();
+                }),
+                delayTask) == delayTask)
+            {
+                throw new Exception("Time.GetNetworkTime() has timed out.");
+            }
 
             ulong intPart = BitConverter.ToUInt32(result.Buffer, _serverReplyTimeOffset);
             ulong fractPart = BitConverter.ToUInt32(result.Buffer, _serverReplyTimeOffset + 4);
@@ -72,7 +62,5 @@ namespace Apple.Core.Runtime
                            ((x & 0x00ff0000) >> 8) +
                            ((x & 0xff000000) >> 24));
         }
-
-
     }
 }

@@ -8,38 +8,38 @@
 import Foundation
 import GameKit
 
-public typealias ChallengeReceivedCallback = @convention(c) (UnsafeMutableRawPointer, UnsafeMutableRawPointer) -> Void;
-public typealias ChallengeOtherPlayerAcceptedCallback = @convention(c) (UnsafeMutableRawPointer, UnsafeMutableRawPointer) -> Void;
-public typealias ChallengeCompletedCallback = @convention(c) (UnsafeMutableRawPointer, UnsafeMutableRawPointer, UnsafeMutableRawPointer) -> Void;
-public typealias ChallengeOtherPlayerCompletedCallback = @convention(c) (UnsafeMutableRawPointer, UnsafeMutableRawPointer, UnsafeMutableRawPointer) -> Void;
+public typealias ChallengeReceivedCallback = @convention(c) (UnsafeMutablePointer<GKPlayer>, UnsafeMutablePointer<GKChallenge>) -> Void;
+public typealias ChallengeOtherPlayerAcceptedCallback = @convention(c) (UnsafeMutablePointer<GKPlayer>, UnsafeMutablePointer<GKChallenge>) -> Void;
+public typealias ChallengeCompletedCallback = @convention(c) (UnsafeMutablePointer<GKPlayer>, UnsafeMutablePointer<GKChallenge>, UnsafeMutablePointer<GKPlayer>) -> Void;
+public typealias ChallengeOtherPlayerCompletedCallback = @convention(c) (UnsafeMutablePointer<GKPlayer>, UnsafeMutablePointer<GKChallenge>, UnsafeMutablePointer<GKPlayer>) -> Void;
 
 extension GKWLocalPlayerListener : GKChallengeListener {
 
     
     public func player(_ player: GKPlayer, didReceive challenge: GKChallenge) {
         ChallengeReceived?(
-            Unmanaged.passRetained(player).toOpaque(),
-            Unmanaged.passRetained(challenge).toOpaque());
+            player.passRetainedUnsafeMutablePointer(),
+            challenge.passRetainedUnsafeMutablePointer());
     }
     
     public func player(_ player: GKPlayer, wantsToPlay challenge: GKChallenge) {
         ChallengeOtherPlayerAccepted?(
-            Unmanaged.passRetained(player).toOpaque(),
-            Unmanaged.passRetained(challenge).toOpaque());
+            player.passRetainedUnsafeMutablePointer(),
+            challenge.passRetainedUnsafeMutablePointer());
     }
     
     public func player(_ player: GKPlayer, didComplete challenge: GKChallenge, issuedByFriend friendPlayer: GKPlayer) {
         ChallengeCompleted?(
-            Unmanaged.passRetained(player).toOpaque(),
-            Unmanaged.passRetained(challenge).toOpaque(),
-            Unmanaged.passRetained(friendPlayer).toOpaque());
+            player.passRetainedUnsafeMutablePointer(),
+            challenge.passRetainedUnsafeMutablePointer(),
+            friendPlayer.passRetainedUnsafeMutablePointer());
     }
     
     public func player(_ player: GKPlayer, issuedChallengeWasCompleted challenge: GKChallenge, byFriend friendPlayer: GKPlayer) {
         ChallengeOtherPlayerCompleted?(
-            Unmanaged.passRetained(player).toOpaque(),
-            Unmanaged.passRetained(challenge).toOpaque(),
-            Unmanaged.passRetained(friendPlayer).toOpaque());
+            player.passRetainedUnsafeMutablePointer(),
+            challenge.passRetainedUnsafeMutablePointer(),
+            friendPlayer.passRetainedUnsafeMutablePointer());
     }
 }
 

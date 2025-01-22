@@ -1,6 +1,18 @@
 # CHANGELOG
 All notable changes to this project will be documented in this file.
 
+## [1.2.3] - 2024-12-10
+- Add Apache 2.0 license file.
+
+## [1.2.2] - 2024-11-20
+### Changed
+- Repaired tvOS build targets and scheme.
+
+## [1.2.1] - 2024-09-05
+### Changed
+- Cleaned up default project code sign settings.
+- Removed -mno-thumb compiler flag that was causing build breaks in Xcode 16.
+
 ## [1.2.0] - 2024-02-23
 ### Added
 - Support for visionOS

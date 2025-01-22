@@ -10,41 +10,35 @@ import Foundation
 public typealias char_p = UnsafeMutablePointer<Int8>;
 public typealias uchar_p = UnsafeMutablePointer<UInt8>;
 
-public typealias ErrorCallback = @convention(c) (InteropError) -> Void;
-public typealias NSErrorCallback = @convention(c) (Int64, UnsafeMutableRawPointer) -> Void;
-public typealias SuccessCallback = @convention(c) () -> Void;
-public typealias SuccessTaskCallback = @convention(c) (Int64) -> Void;
-public typealias SuccessTaskPtrCallback = @convention(c) (Int64, UnsafeMutableRawPointer?) -> Void;
-public typealias SuccessTaskIntCallback = @convention(c) (Int64, Int) -> Void;
-public typealias SuccessTaskImageCallback = @convention(c) (Int64, UnsafeMutableRawPointer) -> Void;
+public typealias NSExceptionCallback = @convention(c) (UnsafeMutablePointer<NSException>) -> Void;
+public typealias NSErrorCallback = @convention(c) (UnsafeMutablePointer<NSError> /*nsErrorPtr*/) -> Void;
 
-public extension InteropStructArray {
-    func toData() -> Data {
-        let opaquePointer = UnsafeMutablePointer<UInt8>(OpaquePointer(self.pointer));
-        let buffer = UnsafeMutableBufferPointer<UInt8>(start: opaquePointer, count: Int(self.length));
-        return Data(buffer: buffer);
+// async task completion callbacks
+public typealias NSErrorTaskCallback = @convention(c) (Int64 /*taskId*/, UnsafeMutablePointer<NSError> /*nsErrorPtr*/) -> Void;
+public typealias SuccessTaskCallback = @convention(c) (Int64 /*taskId*/) -> Void;
+public typealias SuccessTaskPtrCallback = @convention(c) (Int64 /*taskId*/, UnsafeMutableRawPointer?) -> Void;
+public typealias SuccessTaskIntCallback = @convention(c) (Int64 /*taskId*/, Int) -> Void;
+public typealias SuccessTaskImageCallback = @convention(c) (Int64 /*taskId*/, UnsafeMutablePointer<NSData>? /*nsDataPtr*/) -> Void;
+
+public extension NSObjectProtocol where Self : NSObjectProtocol {
+    @inlinable func passRetainedUnsafeMutablePointer() -> UnsafeMutablePointer<Self> {
+        return Unmanaged.passRetained(self).toOpaque().assumingMemoryBound(to: Self.self);
     }
-    func toArray<Element>() -> [Element] {
-        let opaquePointer = UnsafeMutablePointer<Element>(OpaquePointer(self.pointer));
-        let buffer = UnsafeBufferPointer<Element>(start: opaquePointer, count: Int(self.length));
-        return Array(buffer);
+
+    @inlinable func passRetainedUnsafeMutableRawPointer() -> UnsafeMutableRawPointer {
+        return Unmanaged.passRetained(self).toOpaque();
     }
 }
 
-public extension InteropStructDictionary {
-    func toDictionary<KElement, VElement>() -> [KElement:VElement] {
-        var dict : [KElement: VElement] = [:];
-        
-        let keys : [KElement] = self.keys.toArray();
-        let values : [VElement] = self.values.toArray();
-        
-        for i in 0..<keys.count {
-            if(i < values.count) {
-                dict.updateValue(values[i], forKey: keys[i]);
-            }
-        }
-        
-        return dict;
+public extension UnsafeMutablePointer where Pointee : NSObjectProtocol {
+    @inlinable func takeUnretainedValue() -> Pointee {
+        return Unmanaged<Pointee>.fromOpaque(self).takeUnretainedValue();
+    }
+}
+
+public extension UnsafeMutableRawPointer {
+    @inlinable func takeUnretainedValue<Pointee>() -> Pointee where Pointee : NSObjectProtocol {
+        return Unmanaged<Pointee>.fromOpaque(self).takeUnretainedValue();
     }
 }
 
@@ -81,18 +75,6 @@ public extension uchar_p {
     func toData(count : Int) -> Data {
         let buffer = UnsafeMutableBufferPointer<UInt8>(start: self, count: count);
         return Data(buffer: buffer);
-    }
-}
-
-public extension Error {
-    func code() -> Int {
-        return (self as NSError).code;
-    }
-    func toCKWError(taskId: Int64) -> InteropError {
-        return InteropError(
-            code: Int32(self.code()),
-            localizedDescription: self.localizedDescription.toCharPCopy(),
-            taskId: Int(taskId));
     }
 }
 

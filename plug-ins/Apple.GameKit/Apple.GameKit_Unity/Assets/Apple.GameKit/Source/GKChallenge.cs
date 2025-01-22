@@ -108,12 +108,12 @@ namespace Apple.GameKit
         /// <summary>
         /// The date the player issued the challenge.
         /// </summary>
-        public DateTimeOffset IssueDate => DateTimeOffset.FromUnixTimeSeconds(Interop.GKChallenge_GetIssueDate(Pointer));
+        public DateTimeOffset IssueDate => DateTimeOffsetExtensions.FromUnixTimeSeconds(Interop.GKChallenge_GetIssueDate(Pointer));
 
         /// <summary>
         /// The date the challenged player completed the challenge.
         /// </summary>
-        public DateTimeOffset CompletionDate => DateTimeOffset.FromUnixTimeSeconds(Interop.GKChallenge_GetCompletionDate(Pointer));
+        public DateTimeOffset CompletionDate => DateTimeOffsetExtensions.FromUnixTimeSeconds(Interop.GKChallenge_GetCompletionDate(Pointer));
         
         /// <summary>
         /// Declines a challenge that another player issues to the local player.
@@ -197,9 +197,9 @@ namespace Apple.GameKit
             [DllImport(InteropUtility.DLLName)]
             public static extern GKChallengeState GKChallenge_GetState(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
-            public static extern long GKChallenge_GetIssueDate(IntPtr pointer);
+            public static extern double GKChallenge_GetIssueDate(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
-            public static extern long GKChallenge_GetCompletionDate(IntPtr pointer);
+            public static extern double GKChallenge_GetCompletionDate(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
             public static extern void GKChallenge_Decline(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]

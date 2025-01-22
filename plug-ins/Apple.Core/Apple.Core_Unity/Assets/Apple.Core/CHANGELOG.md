@@ -1,6 +1,29 @@
 # CHANGELOG
 All notable changes to this project will be documented in this file.
 
+## [3.1.7] - 2024-12-10
+- Add Apache 2.0 license file.
+- Fixed build issues due to spaces in paths or project names.
+
+## [3.1.6] - 2024-10-15
+### Updated
+- Added support for batch mode builds.
+- `ApplePlugInEnvironment` now inherits from Unity's `AssetPostprocessor` class
+- Moved asset operations out of `ApplePlugInEnvironment`'s static constructor and into the `OnPostprocessAllAssets` method inherited from `AssetPostprocessor`.
+- Cleaned up some comment typos and inconsistencies.
+
+## [3.1.5] - 2024-10-01
+### Fixed
+- Fixed a bug in the Apple.Core editor scripts that failed loading of plug-ins that were built for only a single platform.
+
+## [3.1.4] - 2024-09-05
+### Added
+- NSData.InitWithBytes() to create an NSData instance from a byte array.
+### Changed
+- Added runtime queries for API availability on all supported Apple operating systems.
+### Fixed
+- Fixed the operation Time.GetNetworkTime() and added a unit test.
+
 ## [3.1.3] - 2024-04-23
 ### Updated
 - Updating how Info.plist files are generated for native libraries.

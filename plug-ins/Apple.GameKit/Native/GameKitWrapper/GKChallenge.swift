@@ -11,80 +11,70 @@ import GameKit
 @_cdecl("GKChallenge_GetIssuingPlayer")
 public func GKChallenge_GetIssuingPlayer
 (
-    pointer: UnsafeMutableRawPointer
-) -> UnsafeMutableRawPointer?
+    pointer: UnsafeMutablePointer<GKChallenge>
+) -> UnsafeMutablePointer<GKPlayer>?
 {
-    let target = Unmanaged<GKChallenge>.fromOpaque(pointer).takeUnretainedValue();
-    
-    if(target.issuingPlayer != nil) {
-        return Unmanaged.passRetained(target.issuingPlayer!).toOpaque();
-    }
-    
-    return nil;
+    let target = pointer.takeUnretainedValue();
+    return target.issuingPlayer?.passRetainedUnsafeMutablePointer();
 }
 
 @_cdecl("GKChallenge_GetReceivingPlayer")
 public func GKChallenge_GetReceivingPlayer
 (
-    pointer: UnsafeMutableRawPointer
-) -> UnsafeMutableRawPointer?
+    pointer: UnsafeMutablePointer<GKChallenge>
+) -> UnsafeMutablePointer<GKPlayer>?
 {
-    let target = Unmanaged<GKChallenge>.fromOpaque(pointer).takeUnretainedValue();
-    
-    if(target.receivingPlayer != nil) {
-        return Unmanaged.passRetained(target.receivingPlayer!).toOpaque();
-    }
-    
-    return nil;
+    let target = pointer.takeUnretainedValue();
+    return target.receivingPlayer?.passRetainedUnsafeMutablePointer();
 }
 
 @_cdecl("GKChallenge_GetMessage")
 public func GKChallenge_GetMessage
 (
-    pointer: UnsafeMutableRawPointer
+    pointer: UnsafeMutablePointer<GKChallenge>
 ) -> char_p?
 {
-    let target = Unmanaged<GKChallenge>.fromOpaque(pointer).takeUnretainedValue();
+    let target = pointer.takeUnretainedValue();
     return target.message?.toCharPCopy();
 }
 
 @_cdecl("GKChallenge_GetState")
 public func GKChallenge_GetState
 (
-    pointer: UnsafeMutableRawPointer
+    pointer: UnsafeMutablePointer<GKChallenge>
 ) -> Int
 {
-    let target = Unmanaged<GKChallenge>.fromOpaque(pointer).takeUnretainedValue();
+    let target = pointer.takeUnretainedValue();
     return target.state.rawValue;
 }
 
 @_cdecl("GKChallenge_GetIssueDate")
 public func GKChallenge_GetIssueDate
 (
-    pointer: UnsafeMutableRawPointer
-) -> Int
+    pointer: UnsafeMutablePointer<GKChallenge>
+) -> TimeInterval // aka Double
 {
-    let target = Unmanaged<GKChallenge>.fromOpaque(pointer).takeUnretainedValue();
-    return Int(target.issueDate.timeIntervalSince1970);
+    let target = pointer.takeUnretainedValue();
+    return target.issueDate.timeIntervalSince1970;
 }
 
 @_cdecl("GKChallenge_GetCompletionDate")
 public func GKChallenge_GetCompletionDate
 (
-    pointer: UnsafeMutableRawPointer
-) -> Int
+    pointer: UnsafeMutablePointer<GKChallenge>
+) -> TimeInterval // aka Double
 {
-    let target = Unmanaged<GKChallenge>.fromOpaque(pointer).takeUnretainedValue();
-    return Int(target.completionDate?.timeIntervalSince1970 ?? 0);
+    let target = pointer.takeUnretainedValue();
+    return target.completionDate?.timeIntervalSince1970 ?? 0.0;
 }
 
 @_cdecl("GKChallenge_Decline")
 public func GKChallenge_Decline
 (
-    pointer: UnsafeMutableRawPointer
+    pointer: UnsafeMutablePointer<GKChallenge>
 )
 {
-    let target = Unmanaged<GKChallenge>.fromOpaque(pointer).takeUnretainedValue();
+    let target = pointer.takeUnretainedValue();
     target.decline();
 }
 
@@ -93,30 +83,26 @@ public func GKChallenge_LoadReceivedChallenges
 (
     taskId: Int64,
     onSuccess: @escaping SuccessTaskPtrCallback,
-    onError: @escaping NSErrorCallback
+    onError: @escaping NSErrorTaskCallback
 )
 {
     GKChallenge.loadReceivedChallenges(completionHandler: {challenges, error in
-        if(error != nil) {
-            onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
+        if let error = error as? NSError {
+            onError(taskId, error.passRetainedUnsafeMutablePointer());
             return;
         }
-        
-        if(challenges != nil) {
-            onSuccess(taskId, Unmanaged.passRetained(challenges! as NSArray).toOpaque());
-        } else {
-            onSuccess(taskId, nil);
-        }
+
+        onSuccess(taskId, (challenges as? NSArray)?.passRetainedUnsafeMutablePointer());
     });
 }
 
 @_cdecl("GKChallenge_GetChallengeType")
 public func GKChallenge_GetChallengeType
 (
-    pointer: UnsafeMutableRawPointer
+    pointer: UnsafeMutablePointer<GKChallenge>
 ) -> Int
 {
-    let challenge = Unmanaged<GKChallenge>.fromOpaque(pointer).takeUnretainedValue();
+    let challenge = pointer.takeUnretainedValue();
     
     if challenge is GKScoreChallenge {
         return 0;

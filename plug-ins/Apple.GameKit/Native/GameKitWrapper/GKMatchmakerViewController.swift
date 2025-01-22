@@ -11,126 +11,136 @@ import GameKit
 @_cdecl("GKMatchmakerViewController_InitWithInvite")
 public func GKMatchmakerViewController_InitWithInvite
 (
-    pointer: UnsafeMutableRawPointer
-) -> UnsafeMutableRawPointer
+    pointer: UnsafeMutablePointer<GKInvite>
+) -> UnsafeMutablePointer<GKMatchmakerViewController>
 {
-    let invite = Unmanaged<GKInvite>.fromOpaque(pointer).takeUnretainedValue();
+    let invite = pointer.takeUnretainedValue();
     let target = GKMatchmakerViewController.init(invite: invite);
-    
-    return Unmanaged.passRetained(target!).toOpaque();
+
+    return target!.passRetainedUnsafeMutablePointer();
 }
 
 @_cdecl("GKMatchmakerViewController_InitWithMatchRequest")
 public func GKMatchmakerViewController_InitWithMatchRequest
 (
-    pointer: UnsafeMutableRawPointer
-) -> UnsafeMutableRawPointer
+    pointer: UnsafeMutablePointer<GKMatchRequest>
+) -> UnsafeMutablePointer<GKMatchmakerViewController>
 {
-    let request = Unmanaged<GKMatchRequest>.fromOpaque(pointer).takeUnretainedValue();
+    let request = pointer.takeUnretainedValue();
     let target = GKMatchmakerViewController.init(matchRequest: request);
     
-    return Unmanaged.passRetained(target!).toOpaque();
+    return target!.passRetainedUnsafeMutablePointer();
 }
 
 @_cdecl("GKMatchmakerViewController_GetMatchRequest")
 public func GKMatchmakerViewController_GetMatchRequest
 (
-    pointer: UnsafeMutableRawPointer
-) -> UnsafeMutableRawPointer
+    pointer: UnsafeMutablePointer<GKMatchmakerViewController>
+) -> UnsafeMutablePointer<GKMatchRequest>
 {
-    let target = Unmanaged<GKMatchmakerViewController>.fromOpaque(pointer).takeUnretainedValue();
-    return Unmanaged.passRetained(target.matchRequest).toOpaque();
+    let target = pointer.takeUnretainedValue();
+    return target.matchRequest.passRetainedUnsafeMutablePointer();
 }
 
 @_cdecl("GKMatchmakerViewController_GetCanStartWithMinimumPlayers")
 public func GKMatchmakerViewController_GetCanStartWithMinimumPlayers
 (
-    pointer: UnsafeMutableRawPointer
+    pointer: UnsafeMutablePointer<GKMatchmakerViewController>
 ) -> Bool
 {
-    let target = Unmanaged<GKMatchmakerViewController>.fromOpaque(pointer).takeUnretainedValue();
     if #available(iOS 15, tvOS 15, macOS 12.0, *) {
+        let target = pointer.takeUnretainedValue();
         return target.canStartWithMinimumPlayers
     } else {
-        return false;
-    };
+        DefaultNSErrorHandler.throwApiUnavailableError();
+    }
 }
 
 @_cdecl("GKMatchmakerViewController_SetCanStartWithMinimumPlayers")
 public func GKMatchmakerViewController_SetCanStartWithMinimumPlayers
 (
-    pointer: UnsafeMutableRawPointer,
+    pointer: UnsafeMutablePointer<GKMatchmakerViewController>,
     value: Bool
 )
 {
-    let target = Unmanaged<GKMatchmakerViewController>.fromOpaque(pointer).takeUnretainedValue();
     if #available(iOS 15, tvOS 15, macOS 12.0, *) {
+        let target = pointer.takeUnretainedValue();
         target.canStartWithMinimumPlayers = value
+    } else {
+        DefaultNSErrorHandler.throwApiUnavailableError();
     }
 }
 
 @_cdecl("GKMatchmakerViewController_GetMatchmakingMode")
 public func GKMatchmakerViewController_GetMatchmakingMode
 (
-    pointer: UnsafeMutableRawPointer
+    pointer: UnsafeMutablePointer<GKMatchmakerViewController>
 ) -> Int
 {
-    let target = Unmanaged<GKMatchmakerViewController>.fromOpaque(pointer).takeUnretainedValue();
-    return target.matchmakingMode.rawValue;
+    if #available(iOS 14, tvOS 14, macOS 11.0, *) {
+        let target = pointer.takeUnretainedValue();
+        return target.matchmakingMode.rawValue;
+    } else {
+        DefaultNSErrorHandler.throwApiUnavailableError();
+    }
 }
 
 @_cdecl("GKMatchmakerViewController_SetMatchmakingMode")
 public func GKMatchmakerViewController_SetMatchmakingMode
 (
-    pointer: UnsafeMutableRawPointer,
+    pointer: UnsafeMutablePointer<GKMatchmakerViewController>,
     value: Int
 )
 {
-    let target = Unmanaged<GKMatchmakerViewController>.fromOpaque(pointer).takeUnretainedValue();
-    target.matchmakingMode = GKMatchmakingMode.init(rawValue: value)!;
+    if #available(iOS 14, tvOS 14, macOS 11.0, *) {
+        let target = pointer.takeUnretainedValue();
+        target.matchmakingMode = GKMatchmakingMode.init(rawValue: value)!;
+    } else {
+        DefaultNSErrorHandler.throwApiUnavailableError();
+    }
 }
 
 @_cdecl("GKMatchmakerViewController_GetIsHosted")
 public func GKMatchmakerViewController_GetIsHosted
 (
-    pointer: UnsafeMutableRawPointer
+    pointer: UnsafeMutablePointer<GKMatchmakerViewController>
 ) -> Bool
 {
-    let target = Unmanaged<GKMatchmakerViewController>.fromOpaque(pointer).takeUnretainedValue();
+    let target = pointer.takeUnretainedValue();
     return target.isHosted;
 }
 
 @_cdecl("GKMatchmakerViewController_SetIsHosted")
 public func GKMatchmakerViewController_SetIsHosted
 (
-    pointer: UnsafeMutableRawPointer,
+    pointer: UnsafeMutablePointer<GKMatchmakerViewController>,
     value: Bool
 )
 {
-    let target = Unmanaged<GKMatchmakerViewController>.fromOpaque(pointer).takeUnretainedValue();
+    let target = pointer.takeUnretainedValue();
     target.isHosted = value;
 }
 
 @_cdecl("GKMatchmakerViewController_SetHostedPlayerDidConnect")
 public func GKMatchmakerViewController_SetHostedPlayerDidConnect
 (
-    gkMatchmakerViewControllerPtr: UnsafeMutableRawPointer,
-    gkPlayerPtr: UnsafeMutableRawPointer,
+    gkMatchmakerViewControllerPtr: UnsafeMutablePointer<GKMatchmakerViewController>,
+    gkPlayerPtr: UnsafeMutablePointer<GKPlayer>,
     didConnect: Bool
 )
 {
-    let gkMatchmakerViewController = Unmanaged<GKMatchmakerViewController>.fromOpaque(gkMatchmakerViewControllerPtr).takeUnretainedValue();
-    let gkPlayer = Unmanaged<GKPlayer>.fromOpaque(gkPlayerPtr).takeUnretainedValue();
+    let gkMatchmakerViewController = gkMatchmakerViewControllerPtr.takeUnretainedValue();
+    let gkPlayer = gkPlayerPtr.takeUnretainedValue();
     gkMatchmakerViewController.setHostedPlayer(gkPlayer, didConnect:didConnect);
 }
 
 @_cdecl("GKMatchmakerViewController_Present")
 public func GKMatchmakerViewController_Present
 (
-    pointer: UnsafeMutableRawPointer
+    pointer: UnsafeMutablePointer<GKMatchmakerViewController>
 )
 {
-    let target = Unmanaged<GKMatchmakerViewController>.fromOpaque(pointer).takeUnretainedValue();
+    let target = pointer.takeUnretainedValue();
     UiUtilities.presentViewController(viewController: target)
 }
 
@@ -148,28 +158,28 @@ public var _activeRealtimeMatchmakerDelegate : GKWMatchmakerViewControllerDelega
 @_cdecl("GKMatchmakerViewController_GetMatchmakerDelegate")
 public func GKMatchmakerViewController_GetMatchmakerDelegate
 (
-    pointer: UnsafeMutableRawPointer
-) -> UnsafeMutableRawPointer?
+    pointer: UnsafeMutablePointer<GKMatchmakerViewController>
+) -> UnsafeMutablePointer<GKWMatchmakerViewControllerDelegate>?
 {
-    let target = Unmanaged<GKMatchmakerViewController>.fromOpaque(pointer).takeUnretainedValue();
-    
-    if(target.matchmakerDelegate == nil) {
+    let target = pointer.takeUnretainedValue();
+
+    if (target.matchmakerDelegate == nil) {
         _activeRealtimeMatchmakerDelegate = GKWMatchmakerViewControllerDelegate();
         target.matchmakerDelegate = _activeRealtimeMatchmakerDelegate;
     }
-    
-    return Unmanaged.passRetained(target.matchmakerDelegate!).toOpaque();
+
+    return _activeRealtimeMatchmakerDelegate!.passRetainedUnsafeMutablePointer();
 }
 
 @_cdecl("GKMatchmakerViewController_AddPlayersToMatch")
 public func GKMatchmakerViewController_AddPlayersToMatch
 (
-    gkMatchmakerViewControllerPtr: UnsafeMutableRawPointer,
-    gkMatchPtr: UnsafeMutableRawPointer
+    gkMatchmakerViewControllerPtr: UnsafeMutablePointer<GKMatchmakerViewController>,
+    gkMatchPtr: UnsafeMutablePointer<GKMatch>
 )
 {
-    let gkMatchmakerViewController = Unmanaged<GKMatchmakerViewController>.fromOpaque(gkMatchmakerViewControllerPtr).takeUnretainedValue();
-    let gkMatch = Unmanaged<GKMatch>.fromOpaque(gkMatchPtr).takeUnretainedValue();
+    let gkMatchmakerViewController = gkMatchmakerViewControllerPtr.takeUnretainedValue();
+    let gkMatch = gkMatchPtr.takeUnretainedValue();
 
     gkMatchmakerViewController.addPlayers(to: gkMatch);
 }

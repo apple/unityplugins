@@ -1,11 +1,14 @@
 using System;
 using System.Runtime.InteropServices;
+using Apple.Core;
 
 namespace Apple.GameKit
 {
+#if !UNITY_VISIONOS
     /// <summary>
     /// A notification banner that displays text to the player.
     /// </summary>
+    [Deprecated("Use UNNotificationRequest or provide custom UI instead. This method will become a no-op in a future version of GameKit.", iOS: "17.0", macOS: "14.0", tvOS: "16.1", visionOS: "1.0")]
     public static class GKNotificationBanner
     {
         /// <summary>
@@ -31,4 +34,5 @@ namespace Apple.GameKit
             public static extern void GKNotificationBanner_ShowWithDuration(string title, string message, double duration);
         }
     }
+#endif
 }

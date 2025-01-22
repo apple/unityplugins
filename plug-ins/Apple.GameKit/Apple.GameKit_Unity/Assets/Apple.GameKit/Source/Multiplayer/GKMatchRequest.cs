@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using AOT;
 using Apple.Core;
 using Apple.Core.Runtime;
+using UnityEngine.Scripting;
 
 namespace Apple.GameKit.Multiplayer
 {
@@ -65,6 +66,7 @@ namespace Apple.GameKit.Multiplayer
 
         private static readonly InteropWeakMap<GKMatchRequest> _instanceMap = new InteropWeakMap<GKMatchRequest>();
 
+        [Preserve]
         internal GKMatchRequest(IntPtr pointer) : base(pointer)
         {
             _instanceMap.Add(this);

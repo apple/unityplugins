@@ -15,9 +15,9 @@ namespace Apple.Core.Runtime
     //    exception but eat it to avoid causing a SIGABRT when execution passes back to the
     //    native side.
     //
-    //  2. Async Task completion callbacks. Exceptions that occur in async Task completion
-    //     callbacks are stowed and marshaled back to the main Unity C# script execution
-    //     context via InteropTasks.TrySetExceptionAndRemove.
+    // 2. Async Task completion callbacks. Exceptions that occur in async Task completion
+    //    callbacks are stowed and marshaled back to the main Unity C# script execution
+    //    context via InteropTasks.TrySetExceptionAndRemove.
 
     public static class InteropPInvokeExceptionHandler
     {

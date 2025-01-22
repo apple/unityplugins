@@ -20,12 +20,12 @@ namespace Apple.GameKit.Multiplayer
         /// <summary>
         /// The date and time that this participant last took a turn in the game.
         /// </summary>
-        public DateTimeOffset LastTurnDate => DateTimeOffset.FromUnixTimeSeconds(Interop.GKTurnBasedParticipant_GetLastTurnDate(Pointer));
+        public DateTimeOffset LastTurnDate => DateTimeOffsetExtensions.FromUnixTimeSeconds(Interop.GKTurnBasedParticipant_GetLastTurnDate(Pointer));
 
         /// <summary>
         /// The date and time that the participant's turn timed out.
         /// </summary>
-        public DateTimeOffset TimeoutDate => DateTimeOffset.FromUnixTimeSeconds(Interop.GKTurnBasedParticipant_GetTimeoutDate(Pointer));
+        public DateTimeOffset TimeoutDate => DateTimeOffsetExtensions.FromUnixTimeSeconds(Interop.GKTurnBasedParticipant_GetTimeoutDate(Pointer));
 
         /// <summary>
         /// The end-state of this participant in the match.
@@ -74,9 +74,9 @@ namespace Apple.GameKit.Multiplayer
             [DllImport(InteropUtility.DLLName)]
             public static extern GKTurnBasedParticipantStatus GKTurnBasedParticipant_GetStatus(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
-            public static extern long GKTurnBasedParticipant_GetLastTurnDate(IntPtr pointer);
+            public static extern double GKTurnBasedParticipant_GetLastTurnDate(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
-            public static extern long GKTurnBasedParticipant_GetTimeoutDate(IntPtr pointer);
+            public static extern double GKTurnBasedParticipant_GetTimeoutDate(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
             public static extern GKTurnBasedMatch.Outcome GKTurnBasedParticipant_GetMatchOutcome(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]

@@ -12,10 +12,10 @@ import GameKit
 public func GKAchievement_Init
 (
     identifier: char_p
-) -> UnsafeMutableRawPointer
+) -> UnsafeMutablePointer<GKAchievement>
 {
     let achievement = GKAchievement.init(identifier: identifier.toString());
-    return Unmanaged.passRetained(achievement).toOpaque();
+    return achievement.passRetainedUnsafeMutablePointer();
 }
 
 // Initialize the achievement for a specific player. Use to submit participant achievements when ending a turn-based match.
@@ -23,104 +23,104 @@ public func GKAchievement_Init
 public func GKAchievement_InitForPlayer
 (
     identifier: char_p,
-    gkPlayerPtr : UnsafeMutableRawPointer
-) -> UnsafeMutableRawPointer
+    gkPlayerPtr : UnsafeMutablePointer<GKPlayer>
+) -> UnsafeMutablePointer<GKAchievement>
 {
-    let player = Unmanaged<GKPlayer>.fromOpaque(gkPlayerPtr).takeUnretainedValue();
+    let player = gkPlayerPtr.takeUnretainedValue();
     let achievement = GKAchievement.init(identifier: identifier.toString(), player: player);
-    return Unmanaged.passRetained(achievement).toOpaque();
+    return achievement.passRetainedUnsafeMutablePointer();
 }
 
 @_cdecl("GKAchievement_GetIdentifier")
 public func GKAchievement_GetIdentifier
 (
-    pointer: UnsafeMutableRawPointer
+    pointer: UnsafeMutablePointer<GKAchievement>
 ) -> char_p
 {
-    let achievement = Unmanaged<GKAchievement>.fromOpaque(pointer).takeUnretainedValue();
+    let achievement = pointer.takeUnretainedValue();
     return achievement.identifier.toCharPCopy();
 }
 
 @_cdecl("GKAchievement_SetIdentifier")
 public func GKAchievement_SetIdentifier
 (
-    pointer: UnsafeMutableRawPointer,
+    pointer: UnsafeMutablePointer<GKAchievement>,
     value: char_p
 )
 {
-    let achievement = Unmanaged<GKAchievement>.fromOpaque(pointer).takeUnretainedValue();
+    let achievement = pointer.takeUnretainedValue();
     achievement.identifier = value.toString();
 }
 
 @_cdecl("GKAchievement_GetPlayer")
 public func GKAchievement_GetPlayer
 (
-    pointer: UnsafeMutableRawPointer
-) -> UnsafeMutableRawPointer
+    pointer: UnsafeMutablePointer<GKAchievement>
+) -> UnsafeMutablePointer<GKPlayer>
 {
-    let achievement = Unmanaged<GKAchievement>.fromOpaque(pointer).takeUnretainedValue();
-    return Unmanaged.passRetained(achievement.player).toOpaque();
+    let achievement = pointer.takeUnretainedValue();
+    return achievement.player.passRetainedUnsafeMutablePointer();
 }
 
 @_cdecl("GKAchievement_GetPercentComplete")
 public func GKAchievement_GetPercentComplete
 (
-    pointer: UnsafeMutableRawPointer
+    pointer: UnsafeMutablePointer<GKAchievement>
 ) -> Float
 {
-    let achievement = Unmanaged<GKAchievement>.fromOpaque(pointer).takeUnretainedValue();
+    let achievement = pointer.takeUnretainedValue();
     return Float(achievement.percentComplete);
 }
 
 @_cdecl("GKAchievement_SetPercentComplete")
 public func GKAchievement_SetPercentComplete
 (
-    pointer: UnsafeMutableRawPointer,
+    pointer: UnsafeMutablePointer<GKAchievement>,
     value: Float
 )
 {
-    let achievement = Unmanaged<GKAchievement>.fromOpaque(pointer).takeUnretainedValue();
+    let achievement = pointer.takeUnretainedValue();
     achievement.percentComplete = Double(value);
 }
 
 @_cdecl("GKAchievement_GetIsCompleted")
 public func GKAchievement_GetIsCompleted
 (
-    pointer: UnsafeMutableRawPointer
+    pointer: UnsafeMutablePointer<GKAchievement>
 ) -> Bool
 {
-    let achievement = Unmanaged<GKAchievement>.fromOpaque(pointer).takeUnretainedValue();
+    let achievement = pointer.takeUnretainedValue();
     return achievement.isCompleted;
 }
 
 @_cdecl("GKAchievement_GetLastReportedDate")
 public func GKAchievement_GetLastReportedDate
 (
-    pointer: UnsafeMutableRawPointer
-) -> Int
+    pointer: UnsafeMutablePointer<GKAchievement>
+) -> TimeInterval // aka Double
 {
-    let achievement = Unmanaged<GKAchievement>.fromOpaque(pointer).takeUnretainedValue();
-    return Int(achievement.lastReportedDate.timeIntervalSince1970);
+    let achievement = pointer.takeUnretainedValue();
+    return achievement.lastReportedDate.timeIntervalSince1970;
 }
 
 @_cdecl("GKAchievement_GetShowCompletionBanner")
 public func GKAchievement_GetShowCompletionBanner
 (
-    pointer: UnsafeMutableRawPointer
+    pointer: UnsafeMutablePointer<GKAchievement>
 ) -> Bool
 {
-    let achievement = Unmanaged<GKAchievement>.fromOpaque(pointer).takeUnretainedValue();
+    let achievement = pointer.takeUnretainedValue();
     return achievement.showsCompletionBanner;
 }
 
 @_cdecl("GKAchievement_SetShowCompletionBanner")
 public func GKAchievement_SetShowCompletionBanner
 (
-    pointer: UnsafeMutableRawPointer,
+    pointer: UnsafeMutablePointer<GKAchievement>,
     value : Bool
 )
 {
-    let achievement = Unmanaged<GKAchievement>.fromOpaque(pointer).takeUnretainedValue();
+    let achievement = pointer.takeUnretainedValue();
     achievement.showsCompletionBanner = value;
 }
 
@@ -128,18 +128,18 @@ public func GKAchievement_SetShowCompletionBanner
 public func GKAchievement_Report
 (
     taskId: Int64,
-    pointer: UnsafeMutableRawPointer,
+    pointer: UnsafeMutablePointer<NSArray>,
     onSuccess: @escaping SuccessTaskCallback,
-    onError: @escaping NSErrorCallback
+    onError: @escaping NSErrorTaskCallback
 )
 {
-    let array = Unmanaged<NSArray>.fromOpaque(pointer).takeUnretainedValue() as! [GKAchievement];
-    GKAchievement.report(array, withCompletionHandler: {error in
-        if(error != nil) {
-            onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
+    let array = pointer.takeUnretainedValue() as! [GKAchievement];
+    GKAchievement.report(array, withCompletionHandler: { error in
+        if let error = error as? NSError {
+            onError(taskId, error.passRetainedUnsafeMutablePointer());
             return;
         }
-        
+
         onSuccess(taskId);
     });
 }
@@ -149,12 +149,12 @@ public func GKAchievement_ResetAchievements
 (
     taskId: Int64,
     onSuccess: @escaping SuccessTaskCallback,
-    onError: @escaping NSErrorCallback
+    onError: @escaping NSErrorTaskCallback
 )
 {
     GKAchievement.resetAchievements(completionHandler: { error in
-        if(error != nil) {
-            onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
+        if let error = error as? NSError {
+            onError(taskId, error.passRetainedUnsafeMutablePointer());
             return;
         }
         
@@ -167,59 +167,51 @@ public func GKAchievement_LoadAchievements
 (
     taskId: Int64,
     onSuccess: @escaping SuccessTaskPtrCallback,
-    onError: @escaping NSErrorCallback
+    onError: @escaping NSErrorTaskCallback
 )
 {
     GKAchievement.loadAchievements(completionHandler: {achievements, error in
-        if(error != nil) {
-            onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
+        if let error = error as? NSError {
+            onError(taskId, error.passRetainedUnsafeMutablePointer());
             return;
         }
-        
-        if(achievements != nil) {
-            onSuccess(taskId, Unmanaged.passRetained(achievements! as NSArray).toOpaque());
-        } else {
-            onSuccess(taskId, nil);
-        }
+
+        onSuccess(taskId, (achievements as? NSArray)?.passRetainedUnsafeMutablePointer());
     });
 }
 
 @_cdecl("GKAchievement_SelectChallengeablePlayers")
 public func GKAchievement_SelectChallengeablePlayers
 (
-    pointer: UnsafeMutableRawPointer,
+    pointer: UnsafeMutablePointer<GKAchievement>,
     taskId: Int64,
-    playersPtr: UnsafeMutableRawPointer,
+    playersPtr: UnsafeMutablePointer<NSArray>,
     onSuccess: @escaping SuccessTaskPtrCallback,
-    onError: @escaping NSErrorCallback
+    onError: @escaping NSErrorTaskCallback
 )
 {
-    let target = Unmanaged<GKAchievement>.fromOpaque(pointer).takeUnretainedValue();
-    let players = Unmanaged<NSArray>.fromOpaque(playersPtr).takeUnretainedValue() as! [GKPlayer];
+    let target = pointer.takeUnretainedValue();
+    let players = playersPtr.takeUnretainedValue() as! [GKPlayer];
     target.selectChallengeablePlayers(players, withCompletionHandler: { players, error in
-        if(error != nil) {
-            onError(taskId, Unmanaged.passRetained(error! as NSError).toOpaque());
+        if let error = error as? NSError {
+            onError(taskId, error.passRetainedUnsafeMutablePointer());
             return;
         }
         
-        if(players != nil) {
-            onSuccess(taskId, Unmanaged.passRetained(players! as NSArray).toOpaque());
-        } else {
-            onSuccess(taskId, nil);
-        }
+        onSuccess(taskId, (players as? NSArray)?.passRetainedUnsafeMutablePointer());
     });
 }
 
 @_cdecl("GKAchievement_ChallengeComposeController")
 public func GKAchievement_ChallengeComposeController
 (
-    pointer: UnsafeMutableRawPointer,
+    pointer: UnsafeMutablePointer<GKAchievement>,
     message: char_p,
-    playersPtr: UnsafeMutableRawPointer
+    playersPtr: UnsafeMutablePointer<NSArray>
 )
 {
-    let target = Unmanaged<GKAchievement>.fromOpaque(pointer).takeUnretainedValue();
-    let players = Unmanaged<NSArray>.fromOpaque(playersPtr).takeUnretainedValue() as! [GKPlayer];
+    let target = pointer.takeUnretainedValue();
+    let players = playersPtr.takeUnretainedValue() as! [GKPlayer];
 
 #if os(visionOS)
     // Avoid including deprecated version of the API in visionOS builds.

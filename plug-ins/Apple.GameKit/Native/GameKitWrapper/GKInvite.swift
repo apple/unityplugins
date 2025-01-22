@@ -11,39 +11,39 @@ import GameKit
 @_cdecl("GKInvite_GetSender")
 public func GKInvite_GetSender
 (
-    pointer: UnsafeMutableRawPointer
-) -> UnsafeMutableRawPointer?
+    pointer: UnsafeMutablePointer<GKInvite>
+) -> UnsafeMutablePointer<GKPlayer>?
 {
-    let target = Unmanaged<GKInvite>.fromOpaque(pointer).takeUnretainedValue();
-    return Unmanaged.passRetained(target.sender).toOpaque();
+    let target = pointer.takeUnretainedValue();
+    return target.sender.passRetainedUnsafeMutablePointer();
 }
 
 @_cdecl("GKInvite_GetPlayerAttributes")
 public func GKInvite_GetPlayerAttributes
 (
-    pointer: UnsafeMutableRawPointer
+    pointer: UnsafeMutablePointer<GKInvite>
 ) -> UInt32
 {
-    let target = Unmanaged<GKInvite>.fromOpaque(pointer).takeUnretainedValue();
+    let target = pointer.takeUnretainedValue();
     return target.playerAttributes;
 }
 
 @_cdecl("GKInvite_GetPlayerGroup")
 public func GKInvite_GetPlayerGroup
 (
-    pointer: UnsafeMutableRawPointer
+    pointer: UnsafeMutablePointer<GKInvite>
 ) -> Int
 {
-    let target = Unmanaged<GKInvite>.fromOpaque(pointer).takeUnretainedValue();
+    let target = pointer.takeUnretainedValue();
     return target.playerGroup;
 }
 
 @_cdecl("GKInvite_GetIsHosted")
 public func GKInvite_GetIsHosted
 (
-    pointer: UnsafeMutableRawPointer
+    pointer: UnsafeMutablePointer<GKInvite>
 ) -> Bool
 {
-    let target = Unmanaged<GKInvite>.fromOpaque(pointer).takeUnretainedValue();
+    let target = pointer.takeUnretainedValue();
     return target.isHosted;
 }

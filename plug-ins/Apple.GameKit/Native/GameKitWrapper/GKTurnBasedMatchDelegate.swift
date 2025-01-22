@@ -8,76 +8,97 @@
 import Foundation
 import GameKit
 
-public typealias ExchangeCanceledCallback = @convention(c) (UnsafeMutableRawPointer, UnsafeMutableRawPointer, UnsafeMutableRawPointer) -> Void;
-public typealias ExchangeCompletedCallback = @convention(c) (UnsafeMutableRawPointer, UnsafeMutableRawPointer, UnsafeMutableRawPointer) -> Void;
-public typealias ExchangedReceivedCallback = @convention(c) (UnsafeMutableRawPointer, UnsafeMutableRawPointer, UnsafeMutableRawPointer) -> Void;
+public typealias ExchangeCanceledCallback = @convention(c) (
+    UnsafeMutablePointer<GKPlayer>,
+    UnsafeMutablePointer<GKTurnBasedExchange>,
+    UnsafeMutablePointer<GKTurnBasedMatch>) -> Void;
 
-public typealias MatchRequestedWithOtherPlayersCallback = @convention(c) (UnsafeMutableRawPointer, UnsafeMutableRawPointer) -> Void;
-public typealias MatchEndedCallback = @convention(c) (UnsafeMutableRawPointer, UnsafeMutableRawPointer) -> Void;
-public typealias TurnEventReceivedCallback = @convention(c) (UnsafeMutableRawPointer, UnsafeMutableRawPointer, Bool) -> Void;
-public typealias PlayerWantsToQuitCallback = @convention(c) (UnsafeMutableRawPointer, UnsafeMutableRawPointer) -> Void;
+public typealias ExchangeCompletedCallback = @convention(c) (
+    UnsafeMutablePointer<GKPlayer>,
+    UnsafeMutablePointer<NSArray>,  // NSArray<GKTurnBasedExchangeReply>
+    UnsafeMutablePointer<GKTurnBasedMatch>) -> Void;
+
+public typealias ExchangedReceivedCallback = @convention(c) (
+    UnsafeMutablePointer<GKPlayer>,
+    UnsafeMutablePointer<GKTurnBasedExchange>,
+    UnsafeMutablePointer<GKTurnBasedMatch>) -> Void;
+
+public typealias MatchRequestedWithOtherPlayersCallback = @convention(c) (
+    UnsafeMutablePointer<GKPlayer>,
+    UnsafeMutablePointer<NSArray>) -> Void; // NSArray<GKPlayer>
+
+public typealias MatchEndedCallback = @convention(c) (
+    UnsafeMutablePointer<GKPlayer>,
+    UnsafeMutablePointer<GKTurnBasedMatch>) -> Void;
+
+public typealias TurnEventReceivedCallback = @convention(c) (
+    UnsafeMutablePointer<GKPlayer>,
+    UnsafeMutablePointer<GKTurnBasedMatch>,
+    Bool) -> Void;
+
+public typealias PlayerWantsToQuitCallback = @convention(c) (
+    UnsafeMutablePointer<GKPlayer>,
+    UnsafeMutablePointer<GKTurnBasedMatch>) -> Void;
 
 extension GKWLocalPlayerListener : GKTurnBasedEventListener {
     
     public func player(_ player: GKPlayer, receivedExchangeRequest exchange: GKTurnBasedExchange, for match: GKTurnBasedMatch) {
-        ExchangeReceived?(
-            Unmanaged.passRetained(player).toOpaque(),
-            Unmanaged.passRetained(exchange).toOpaque(),
-            Unmanaged.passRetained(match).toOpaque());
+        ExchangeReceived?( // ExchangedReceivedCallback
+            player.passRetainedUnsafeMutablePointer(),
+            exchange.passRetainedUnsafeMutablePointer(),
+            match.passRetainedUnsafeMutablePointer());
     }
-    
+
     public func player(_ player: GKPlayer, receivedExchangeCancellation exchange: GKTurnBasedExchange, for match: GKTurnBasedMatch) {
-        ExchangeCanceled?(
-            Unmanaged.passRetained(player).toOpaque(),
-            Unmanaged.passRetained(exchange).toOpaque(),
-            Unmanaged.passRetained(match).toOpaque());
+        ExchangeCanceled?( // ExchangeCanceledCallback
+            player.passRetainedUnsafeMutablePointer(),
+            exchange.passRetainedUnsafeMutablePointer(),
+            match.passRetainedUnsafeMutablePointer());
     }
-    
-   public func player(_ player: GKPlayer, receivedExchangeReplies replies: [GKTurnBasedExchangeReply], forCompletedExchange exchange: GKTurnBasedExchange, for match: GKTurnBasedMatch) {
-       ExchangeCompleted?(
-        Unmanaged.passRetained(player).toOpaque(),
-        Unmanaged.passRetained(replies as NSArray).toOpaque(),
-        Unmanaged.passRetained(match).toOpaque());
+
+    public func player(_ player: GKPlayer, receivedExchangeReplies replies: [GKTurnBasedExchangeReply], forCompletedExchange exchange: GKTurnBasedExchange, for match: GKTurnBasedMatch) {
+        ExchangeCompleted?( // ExchangeCompletedCallback
+            player.passRetainedUnsafeMutablePointer(),
+            (replies as NSArray).passRetainedUnsafeMutablePointer(),
+            match.passRetainedUnsafeMutablePointer());
     }
-    
+
     public func player(_ player: GKPlayer, didRequestMatchWithRecipients recipientPlayers: [GKPlayer]) {
-        MatchRequestedWithOtherPlayers?(
-            Unmanaged.passRetained(player).toOpaque(),
-            Unmanaged.passRetained(recipientPlayers as NSArray).toOpaque());
+        MatchRequestedWithOtherPlayers?( // MatchRequestedWithOtherPlayersCallback
+            player.passRetainedUnsafeMutablePointer(),
+            (recipientPlayers as NSArray).passRetainedUnsafeMutablePointer());
     }
-    
+
     public func player(_ player: GKPlayer, matchEnded match: GKTurnBasedMatch) {
-        MatchEnded?(
-            Unmanaged.passRetained(player).toOpaque(),
-            Unmanaged.passRetained(match).toOpaque());
+        MatchEnded?( // MatchEndedCallback
+            player.passRetainedUnsafeMutablePointer(),
+            match.passRetainedUnsafeMutablePointer());
     }
-    
+
     public func player(_ player: GKPlayer, receivedTurnEventFor match: GKTurnBasedMatch, didBecomeActive: Bool) {
-        if(_presentingTurnBasedMatchmakerViewController != nil) {
+        if (_presentingTurnBasedMatchmakerViewController != nil) {
             // Match found...
-            let delegate = _presentingTurnBasedMatchmakerViewController!.turnBasedMatchmakerDelegate as? GKWTurnBasedMatchmakerViewControllerDelegate;
-            
-            if(delegate != nil) {
-                delegate!.DidFindMatch?(
-                        Unmanaged.passRetained(delegate!).toOpaque(),
-                        Unmanaged.passRetained(_presentingTurnBasedMatchmakerViewController!).toOpaque(),
-                        Unmanaged.passRetained(match).toOpaque());
+            if let delegate = _presentingTurnBasedMatchmakerViewController!.turnBasedMatchmakerDelegate as? GKWTurnBasedMatchmakerViewControllerDelegate {
+                delegate.DidFindMatch?( // DidFindMatchCallback
+                    delegate.passRetainedUnsafeMutablePointer(),
+                    _presentingTurnBasedMatchmakerViewController!.passRetainedUnsafeMutablePointer(),
+                    match.passRetainedUnsafeMutablePointer());
             }
-            
+
             // Dismiss...
             GKTurnBasedMatchmakerViewController_Dismiss(viewController: _presentingTurnBasedMatchmakerViewController!);
         }
-        
-        TurnEventReceived?(
-            Unmanaged.passRetained(player).toOpaque(),
-            Unmanaged.passRetained(match).toOpaque(),
+
+        TurnEventReceived?( // TurnEventReceivedCallback
+            player.passRetainedUnsafeMutablePointer(),
+            match.passRetainedUnsafeMutablePointer(),
             didBecomeActive);
     }
-    
+
     public func player(_ player: GKPlayer, wantsToQuitMatch match: GKTurnBasedMatch) {
-        PlayerWantsToQuit?(
-            Unmanaged.passRetained(player).toOpaque(),
-            Unmanaged.passRetained(match).toOpaque());
+        PlayerWantsToQuit?( // PlayerWantsToQuitCallback
+            player.passRetainedUnsafeMutablePointer(),
+            match.passRetainedUnsafeMutablePointer());
     }
 }
 
