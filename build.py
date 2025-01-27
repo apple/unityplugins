@@ -248,7 +248,7 @@ def Main():
             valid_plugin_found = True
             break
         else:
-            utility.WarningMessage(f"Ignoring unknown plug-in '{plugin_id}'. Valid options are {PluginID.ACCESSIBILITY}, {PluginID.CORE}, {PluginID.CORE_HAPTICS}, {PluginID.GAME_CONTROLLER}, {PluginID.GAME_KIT}, {PluginID.PHASE}, or {PluginID.ALL} (Default)")
+            CTX.printer.WarningMessage(f"Ignoring unknown plug-in '{plugin_id}'. Valid options are {PluginID.ACCESSIBILITY}, {PluginID.CORE}, {PluginID.CORE_HAPTICS}, {PluginID.GAME_CONTROLLER}, {PluginID.GAME_KIT}, {PluginID.PHASE}, or {PluginID.ALL} (Default)")
 
     # -------------------------------------------------------------------------
 
