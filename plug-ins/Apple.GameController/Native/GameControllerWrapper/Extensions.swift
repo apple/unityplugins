@@ -92,6 +92,30 @@ extension Bool {
     }
 }
 
+extension GCQuaternion {
+    func toDoubleArray() -> (Double, Double, Double, Double) {
+        return (self.x, self.y, self.z, self.w);
+    }
+}
+
+extension GCRotationRate {
+    func toDoubleArray() -> (Double, Double, Double) {
+        return (self.x, self.y, self.z);
+    }
+}
+
+extension GCEulerAngles {
+    func toDoubleArray() -> (Double, Double, Double) {
+        return (self.pitch, self.roll, self.yaw);
+    }
+}
+
+extension GCAcceleration {
+    func toDoubleArray() -> (Double, Double, Double) {
+        return (self.x, self.y, self.z);
+    }
+}
+
 extension GCController {
     func toGCWController(uid : String) -> GCWController {
         if #available(macOS 10.16, tvOS 14, iOS 14, *) {
