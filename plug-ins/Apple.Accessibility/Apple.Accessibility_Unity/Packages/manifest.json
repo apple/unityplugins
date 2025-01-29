@@ -1,7 +1,6 @@
 {
   "dependencies": {
     "com.apple.unityplugin.core": "file:../../../Apple.Core/Apple.Core_Unity/Assets/Apple.Core",
-    "com.unity.ai.navigation": "1.1.5",
     "com.unity.test-framework": "1.1.33",
     "com.unity.ugui": "1.0.0",
     "com.unity.modules.ai": "1.0.0",
