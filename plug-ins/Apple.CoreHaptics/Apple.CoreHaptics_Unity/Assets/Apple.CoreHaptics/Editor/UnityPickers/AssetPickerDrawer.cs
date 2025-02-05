@@ -22,7 +22,11 @@ namespace UnityPickers
 				assetType = assetType.GetElementType();
 
 			if (assetType == null)
+			{
+				// If assetType is null, draw the property field as is.
+				EditorGUI.PropertyField(position, property, label);
 				return;
+			}
 
 			var a = fieldInfo.GetAttribute<AssetPickerAttribute>();
 
