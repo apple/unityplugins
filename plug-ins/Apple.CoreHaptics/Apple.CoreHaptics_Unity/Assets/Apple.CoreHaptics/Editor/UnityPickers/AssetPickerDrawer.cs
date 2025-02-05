@@ -10,6 +10,13 @@ namespace UnityPickers
 	{
 		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
 		{
+			if (fieldInfo == null)
+			{
+				// If fieldInfo is null, draw the property field as is.
+				EditorGUI.PropertyField(position, property, label);
+				return;
+			}
+			
 			var assetType = fieldInfo.FieldType;
 			if (assetType.IsUnityCollection())
 				assetType = assetType.GetElementType();
