@@ -9,6 +9,8 @@
 
 #define PHASEInvalidInstanceHandle (-1)
 
+NS_HEADER_AUDIT_BEGIN(nullability)
+
 struct RandomNodeEntry
 {
     const int64_t nodeId;
@@ -115,12 +117,7 @@ enum CalibrationMode
     CalibrationModeAbsoluteSpl = 2
 };
 
-enum StartHandlerReason
-{
-    StartHandlerReasonFailure = 0,
-    StartHandlerReasonFinishedPlaying = 1,
-    StartHandlerReasonTerminated = 2
-};
+
 
 /****************************************************************************************************/
 /*! @class PHASEEngineWrapper
@@ -133,6 +130,12 @@ enum StartHandlerReason
     @return shared instance
 */
 + (id)sharedInstance;
+
+/*! @method isInitialized
+    @abstract Returns whether the engine is created and started
+    @return true on success, false otherwise
+*/
+- (BOOL)isInitialized;
 
 /*! @method createListener
     @abstract Creates the listener object
@@ -159,6 +162,13 @@ enum StartHandlerReason
     @return double representing listener gain scalar value, range of [0,1]
 */
 - (double)getListenerGain;
+
+/*! @method setListenerHeadTracking
+    @abstract Sets the listener to head track
+    @param headTrackingEnabled bool representing headTracking enabled or disabled
+    @return true on success, false otherwise
+*/
+- (BOOL)setListenerHeadTracking:(BOOL)headTrackingEnabled;
 
 /*! @method destroyListener
     @abstract Destroys the listener object
@@ -288,6 +298,7 @@ enum StartHandlerReason
     @param enableEarlyReflections enable early reflection modeling for this mixer
     @param enableLateReverb enable late reverb modeling for this mixer
     @param cullDistance distance at which the systems stops processing the sound
+    @param rolloffFactor rolloff factor for the geometric spreading distance model
     @param sourceDirectivityModelParameters directivity parameters for mixer source ( cone or cardioid)
     @param listenerDirectivityModelParameters directivity parameters for mixer listener ( cone or cardioid)
     @return mixer id
@@ -297,6 +308,7 @@ enum StartHandlerReason
                enableEarlyReflections:(BOOL)enableEarlyReflections
                      enableLateReverb:(BOOL)enableLateReverb
                          cullDistance:(double)cullDistance
+                        rolloffFactor:(float)rolloffFactor
      sourceDirectivityModelParameters:(DirectivityModelParameters)sourceDirectivityModelParameters
    listenerDirectivityModelParameters:(DirectivityModelParameters)listenerDirectivityModelParameters;
 
@@ -454,21 +466,36 @@ enum StartHandlerReason
                                 calibrationMode:(CalibrationMode)calibrationMode
                                           level:(double)level;
 
+/*! @method createSoundEventPullStreamNodeWithAsset
+    @abstract Creates a sound event pull stream node with a given asset name and parameters
+    @param assetName name of the asset to create sampler node for
+    @param mixerId mixer Id to attach this stream to
+    @param format the AVAudioFormat for the stream
+    @param calibrationMode the PHASECalibrationMode of the sampler node
+    @param level the volume level
+    @return true on success, false otherwise
+*/
+- (int64_t)createSoundEventPullStreamNodeWithAsset:(NSString*)assetName
+                                           mixerId:(int64_t)mixerId
+                                            format:(AVAudioFormat*)format
+                                   calibrationMode:(CalibrationMode)calibrationMode
+                                             level:(double)level;
+
 /*! @method createSoundEventSwitchNodeWithParameter
-    @abstract creates an sound event switch node with a given meta parameter id and switch entries
+    @abstract creates a sound event switch node with a given meta parameter id and switch entries
     @param parameterId meta parameter Id that controls the switch node
     @param switchEntries entries containing the different sound event nodes to switch from
 */
 - (int64_t)createSoundEventSwitchNodeWithParameter:(int64_t)parameterId switchEntries:(NSDictionary*)switchEntries;
 
 /*! @method createSoundEventRandomNodeWithEntries
-    @abstract creates an sound event random node with given random entries to select from
+    @abstract creates a sound event random node with given random entries to select from
     @param randomEntries entries to randomize
 */
 - (int64_t)createSoundEventRandomNodeWithEntries:(NSDictionary*)randomEntries;
 
 /*! @method createSoundEventBlendNodeWithParameter
-    @abstract creates an sound event blend node with a given meta parameter id and blend entries
+    @abstract creates a sound event blend node with a given meta parameter id and blend entries
     @param parameterId meta parameter Id that controls the switch node
     @param blendRanges array of ranges
     @param numRanges number of Ranges
@@ -507,18 +534,23 @@ enum StartHandlerReason
 - (void)unregisterSoundEventWithName:(NSString*)name;
 
 /*! @method playSoundEventWithName
-    @abstract Plays an sound event
+    @abstract Play the sound event
     @param name name of sound event to play
     @param sourceId source Id of source to play sound event from
-    @param completionHandler callback function called when SoundEvent is completed
-    @return playing instance id
+    @param mixerIds an array of mixerIds
+    @param numMixers the length of the above mixerId array
+    @param streamName name of the Pull Stream Node when the SoundEvent is of type PHASEPullStreamSoundEvent
+    @param renderBlock the render block, only used when the SoundEvent is of type PHASEPullStreamSoundEvent
+    @param completionHandlerBlock callback function called when SoundEvent is completed
+    @return true on success, false otherwise
 */
 - (int64_t)playSoundEventWithName:(NSString*)name
-                         sourceId:(int64_t)sourceId
-                         mixerIds:(int64_t*)mixerIds
-                        numMixers:(uint64_t)numMixers
-                completionHandler:
-                  (void (*)(StartHandlerReason reason, int64_t sourceId, int64_t soundEventId))completionHandler;
+                      sourceId:(int64_t)sourceId
+                      mixerIds:(int64_t*)mixerIds
+                     numMixers:(int64_t)numMixers
+                    streamName:(nullable NSString*)streamName
+                   renderBlock:(nullable PHASEPullStreamRenderBlock)renderBlock
+        completionHandlerBlock:(void (^_Nullable)(PHASESoundEventStartHandlerReason reason, int64_t sourceId, int64_t soundEventId))completionHandlerBlock;
 
 /*! @method stopSoundEventWithId
     @abstract Stops an sound event instance
@@ -532,6 +564,11 @@ enum StartHandlerReason
 */
 - (BOOL)start;
 
+/*! @method pause
+    @abstract Pauses the PHASE engine
+*/
+- (void)pause;
+
 /*! @method stop
     @abstract Stops the PHASE engine
 */
@@ -542,4 +579,5 @@ enum StartHandlerReason
 */
 - (void)update;
 
+NS_HEADER_AUDIT_END(nullability)
 @end

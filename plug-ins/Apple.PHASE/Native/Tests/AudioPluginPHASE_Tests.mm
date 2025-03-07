@@ -12,6 +12,7 @@
 #include "PhaseSoundEventInterface.h"
 #include <thread>
 #include <chrono>
+#include "PHASEWrapperRingBuffer.h"
 
 enum PHASEMixerType
 {
@@ -498,10 +499,6 @@ enum PHASEMixerType
     // Create the listener once - it should initialize the singleton engine and create successfully
     bool result = PHASECreateListener();
     XCTAssert(result == true);
-
-    // Create the listener again - should fail as it already exists.
-    result = PHASECreateListener();
-    XCTAssert(result == false);
 
     // Destroy the listener - should succeed.
     result = PHASEDestroyListener();
@@ -1912,6 +1909,63 @@ void MyOneShotCompletionHandler(StartHandlerReason reason, int64_t source, int64
     
     // Destroy the listener
     PHASEDestroyListener();
+}
+
+- (void)testSetListenerHeadTracking
+{
+    PHASESetListenerHeadTracking(true);
+    PHASESetListenerHeadTracking(false);
+    PHASESetListenerHeadTracking(true);
+
+}
+
+- (void)testRingBuffer
+{
+    unsigned int length = 48000;
+    float* inbuffer = new float[48000*2];
+
+    // Create AVAudioFormat
+    AVAudioChannelLayout* layout = [[AVAudioChannelLayout alloc] initWithLayoutTag:kAudioChannelLayoutTag_Stereo];
+    AudioStreamBasicDescription desc = { 0 };
+    desc.mSampleRate = 48000;
+    desc.mFormatID = kAudioFormatLinearPCM;
+    desc.mFormatFlags = kLinearPCMFormatFlagIsFloat | kLinearPCMFormatFlagIsNonInterleaved;
+    desc.mBitsPerChannel = 32;
+    desc.mChannelsPerFrame = 2;
+    desc.mFramesPerPacket = 1;
+    desc.mBytesPerFrame = 32 / 8;
+    desc.mBytesPerPacket = desc.mBytesPerFrame * desc.mFramesPerPacket;
+    AVAudioFormat* format = [[AVAudioFormat alloc]
+                              initWithStreamDescription:&desc
+                              channelLayout:layout];
+
+    PHASEWrapperRingBuffer* mRingBuffer = [[PHASEWrapperRingBuffer alloc] initWithFrameSize:length numberOfBuffers:1 format:format];
+
+    // Generate different sine tone for each channel inter-leaved
+    for (int j = 0; j < 2; j++)
+    {
+        for (int i = 0; i < length; i++)
+        {
+            float pitch = 440 + (i * 100);
+            inbuffer[(i*2) + j] = sinf((M_PI * 2 * pitch) / 48000 * i);
+        }
+    }
+
+    [mRingBuffer write:inbuffer frameCount:length];
+
+    // Create an audio buffer list with the input data
+    AudioBufferList outputData;
+    outputData.mNumberBuffers = 2;
+    outputData.mBuffers[0].mNumberChannels = 1;
+    outputData.mBuffers[0].mDataByteSize = sizeof(float) * 48000;
+    outputData.mBuffers[0].mData = new float[48000];
+
+    outputData.mBuffers[1].mNumberChannels = 1;
+    outputData.mBuffers[1].mDataByteSize = sizeof(float) * 48000;
+    outputData.mBuffers[1].mData = new float[48000];
+
+    BOOL success = [mRingBuffer read:&outputData frameCount:length];
+    XCTAssertTrue(success);
 }
 
 @end

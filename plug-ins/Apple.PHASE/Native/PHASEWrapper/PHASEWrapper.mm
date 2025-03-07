@@ -11,6 +11,8 @@
 #include "PHASEWrapper.h"
 #include <mutex>
 
+NS_HEADER_AUDIT_BEGIN(nullability)
+
 @interface PHASEEngineWrapper () {
     PHASEEngine* mEngine;
     PHASEListener* mListener;
@@ -18,7 +20,6 @@
     NSMutableDictionary<NSNumber*, PHASEOccluder*>* mOccluders;
     NSMutableDictionary<NSNumber*, PHASESoundEvent*>* mSoundEvents;
     NSMutableDictionary<NSString*, PHASEMaterial*>* mMaterials;
-    
 
     // Keep track of the number of sound events playing an sound event asset
     // For destruction purposes
@@ -43,10 +44,81 @@
     return wrapper;
 }
 
+- (BOOL)isInitialized
+{
+    return (nil != mEngine && nil != mListener && mEngine.renderingState == PHASERenderingStateStarted);
+}
+
+#if !TARGET_OS_MAC
+- (void)setupAudioSession
+{
+    NSError* error = nil;
+    
+    // Configure the audio session
+    AVAudioSession *sessionInstance = [AVAudioSession sharedInstance];
+
+    // set the session category to ambient (implicitly sets the session to mix with others)
+    bool success = [sessionInstance setCategory:AVAudioSessionCategoryAmbient error:&error];
+    if (!success)
+    {
+        NSLog(@"Error setting AVAudioSession category! %@\n", [error localizedDescription]);
+    }
+     
+    // add interruption handler
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleAudioSessionInterruption:)
+                                                 name:AVAudioSessionInterruptionNotification
+                                               object:sessionInstance];
+    
+    // On visionOS the system automatically virtualizes the output from the window anchor so disable that behavior here.
+    // Note: This plugin currently only supports fully immersive visionOS scenes.
+#if TARGET_OS_VISION
+    [sessionInstance setIntendedSpatialExperience:AVAudioSessionSpatialExperienceBypassed options:nil error:nil];
+#endif
+    
+    // activate the audio session
+    success = [sessionInstance setActive:YES error:&error];
+    if (!success) NSLog(@"Error setting session active! %@\n", [error localizedDescription]);
+}
+
+- (void)handleAudioSessionInterruption:(NSNotification *)notification
+{
+    UInt8 interruptionType = [[notification.userInfo valueForKey:AVAudioSessionInterruptionTypeKey] intValue];
+    
+    NSLog(@"Session interrupted > --- %s ---\n", interruptionType == AVAudioSessionInterruptionTypeBegan ? "Begin Interruption" : "End Interruption");
+    
+    if (interruptionType == AVAudioSessionInterruptionTypeBegan)
+    {
+        // pause the Phase engine when the interruption comes through
+        [self pause];
+    }
+    
+    if (interruptionType == AVAudioSessionInterruptionTypeEnded)
+    {
+        // resume the Phase engine when the interruption ends
+        NSError *error;
+        bool success = [[AVAudioSession sharedInstance] setActive:YES error:&error];
+        if (!success)
+        {
+            NSLog(@"AVAudioSession set active failed with error: %@", [error localizedDescription]);
+        }
+        else
+        {
+            [self start];
+        }
+    }
+}
+#endif // !TARGET_OS_MAC
+
 - (id)init
 {
     if (self = [super init])
     {
+#if !TARGET_OS_MAC
+        // Setup the audio session
+        [self setupAudioSession];
+#endif // !TARGET_OS_MAC
+        
         // Create engine
         mEngine = [[PHASEEngine alloc] initWithUpdateMode:PHASEUpdateModeManual];
 
@@ -79,7 +151,13 @@
 
         // Set default preset
         [mEngine setDefaultReverbPreset:PHASEReverbPresetMediumRoom];
-
+     
+        // On visionOS the default spatialization mode is channels since the system will auto virtualize the output.
+        // We've configured the audio session to bypass system spatialization so we can set the mode to binaural.
+#if TARGET_OS_VISION
+        [mEngine setOutputSpatializationMode:PHASESpatializationModeAlwaysUseBinaural];
+#endif
+        
         NSLog(@"Engine created successfully.");
         return self;
     }
@@ -92,7 +170,7 @@
     if (mListener != nil)
     {
         NSLog(@"Listener already exists.");
-        return NO;
+        return YES;
     }
 
     // Create the listener object
@@ -148,6 +226,33 @@
     }
 
     return mListener.gain;
+}
+
+- (BOOL)setListenerHeadTracking:(BOOL)headTrackingEnabled
+{
+    if (mListener == nil)
+    {
+        NSLog(@"Listener does not exist.");
+        return false;
+    }
+    
+#if !TARGET_OS_VISION
+    if (@available(macOS 15.0, iOS 18.0, tvOS 18.0, *)) {
+        if (headTrackingEnabled)
+        {
+            mListener.automaticHeadTrackingFlags = PHASEAutomaticHeadTrackingFlagOrientation;
+        }
+        else
+        {
+            mListener.automaticHeadTrackingFlags = 0;
+        }
+        
+        return true;
+    }
+#endif
+    
+    NSLog(@"Listener head-tracking is only available as of MacOS 15.0, iOS 18.0, tvOS 18.0");
+    return false;
 }
 
 - (BOOL)destroyListener
@@ -440,6 +545,7 @@
                enableEarlyReflections:(BOOL)enableEarlyReflections
                      enableLateReverb:(BOOL)enableLateReverb
                          cullDistance:(double)cullDistance
+                        rolloffFactor:(float)rolloffFactor
      sourceDirectivityModelParameters:(DirectivityModelParameters)sourceDirectivityModelParameters
    listenerDirectivityModelParameters:(DirectivityModelParameters)listenerDirectivityModelParameters
 {
@@ -485,6 +591,7 @@
     // Create geometric distance model.
     PHASEGeometricSpreadingDistanceModelParameters* geometricSpreadingDistanceModelParameters =
       [[PHASEGeometricSpreadingDistanceModelParameters alloc] init];
+    geometricSpreadingDistanceModelParameters.rolloffFactor = rolloffFactor;
 
     // Create distance model fade if we have fades
     if (cullDistance > 0.0f)
@@ -1010,6 +1117,50 @@
     return samplerId;
 }
 
+- (int64_t)createSoundEventPullStreamNodeWithAsset:(NSString*)assetName
+                                           mixerId:(int64_t)mixerId
+                                            format:(AVAudioFormat*)format
+                                   calibrationMode:(CalibrationMode)calibrationMode
+                                             level:(double)level
+{
+    if (@available(macOS 15.0, iOS 18.0, tvOS 18.0, visionOS 2.0, *)) {
+        // Find the mixer
+        PHASEMixerDefinition* mixer = [mSoundEventMixerDefinitions objectForKey:[NSNumber numberWithLongLong:mixerId]];
+        if (mixer == nil)
+        {
+            [NSException raise:@"Mixer invalid" format:@"Failed to create pull stream node."];
+        }
+
+        // Create the pull stream
+        PHASEPullStreamNodeDefinition* pullStream = [[PHASEPullStreamNodeDefinition alloc] initWithMixerDefinition:mixer format:format identifier:assetName];
+        pullStream.rate = 1;
+
+        PHASECalibrationMode outCalibrationMode;
+        switch (calibrationMode)
+        {
+            case CalibrationModeNone:
+                outCalibrationMode = PHASECalibrationModeNone;
+                break;
+            case CalibrationModeAbsoluteSpl:
+                outCalibrationMode = PHASECalibrationModeAbsoluteSpl;
+                break;
+            case CalibrationModeRelativeSpl:
+                outCalibrationMode = PHASECalibrationModeRelativeSpl;
+                break;
+        }
+        [pullStream setCalibrationMode:outCalibrationMode level:level];
+
+        const int64_t pullStreamId = reinterpret_cast<int64_t>(pullStream);
+        [mSoundEventNodeDefinitions setObject:pullStream forKey:[NSNumber numberWithLongLong:pullStreamId]];
+        return pullStreamId;
+    }
+    else
+    {
+        [NSException raise:@"Pull stream unavailable" format:@"Pull stream is only available macOS 15.0, iOS 18.0, tvOS 18.0 and visionOS 2.0 and higher."];
+    }
+    return PHASEInvalidInstanceHandle;
+}
+
 - (int64_t)createSoundEventSwitchNodeWithParameter:(int64_t)parameterId switchEntries:(NSDictionary*)switchEntries
 {
     PHASEStringMetaParameterDefinition* param =
@@ -1205,11 +1356,12 @@
 }
 
 - (int64_t)playSoundEventWithName:(NSString*)name
-                         sourceId:(int64_t)sourceId
-                         mixerIds:(int64_t*)mixerIds
-                        numMixers:(uint64_t)numMixers
-                completionHandler:
-                  (void (*)(StartHandlerReason reason, int64_t sourceId, int64_t soundEventId))completionHandler
+                      sourceId:(int64_t)sourceId
+                      mixerIds:(int64_t*)mixerIds
+                     numMixers:(int64_t)numMixers
+                    streamName:(nullable NSString*)streamName
+                   renderBlock:(nullable PHASEPullStreamRenderBlock)renderBlock
+             completionHandlerBlock:(void (^_Nullable)(PHASESoundEventStartHandlerReason reason, int64_t sourceId, int64_t soundEventId))completionHandlerBlock
 {
     PHASESource* source = [mSources objectForKey:[NSNumber numberWithLongLong:sourceId]];
     if (source == nil)
@@ -1253,26 +1405,23 @@
         [NSException raise:@"Sound event invalid." format:@"Failed to create sound event from sound event."];
     }
     const int64_t soundEventId = reinterpret_cast<int64_t>(soundEvent);
+   
+    if (nil != streamName && nil != renderBlock)
+    {
+        if (@available(macOS 15.0, iOS 18.0, tvOS 18.0, visionOS 2.0, *)) {
+            soundEvent.pullStreamNodes[streamName].renderBlock = renderBlock;
+        } else {
+            NSLog(@"Pull Stream is only available on macOS 15.0, iOS 18.0, tvOS 18.0 and visionOS 2.0 and higher.");
+            return PHASEInvalidInstanceHandle;
+        }
+    }
     
     [soundEvent startWithCompletion:^(PHASESoundEventStartHandlerReason reason) {
       @synchronized(self->mSoundEvents)
       {
-          StartHandlerReason handlerReason;
-          switch (reason)
+          if (completionHandlerBlock != nil)
           {
-              case PHASESoundEventStartHandlerReasonFailure:
-                  handlerReason = StartHandlerReasonFailure;
-                  break;
-              case PHASESoundEventStartHandlerReasonTerminated:
-                  handlerReason = StartHandlerReasonTerminated;
-                  break;
-              case PHASESoundEventStartHandlerReasonFinishedPlaying:
-                  handlerReason = StartHandlerReasonFinishedPlaying;
-                  break;
-          }
-          if (completionHandler != nil)
-          {
-              completionHandler(handlerReason, sourceId, soundEventId);
+              completionHandlerBlock(reason, sourceId, soundEventId);
           }
           [self->mSoundEvents removeObjectForKey:[NSNumber numberWithLongLong:soundEventId]];
 
@@ -1316,6 +1465,11 @@
     return startErrorRet;
 }
 
+- (void)pause
+{
+    [mEngine pause];
+}
+
 - (void)stop
 {
     [mEngine stop];
@@ -1325,5 +1479,7 @@
 {
     [mEngine update];
 }
+
+NS_HEADER_AUDIT_END(nullability)
 
 @end

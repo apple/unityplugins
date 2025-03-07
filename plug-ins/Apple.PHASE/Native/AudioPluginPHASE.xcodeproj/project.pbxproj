@@ -17,14 +17,11 @@
 		302D376323621CA40030DA9A /* AudioPluginPHASE.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FF98C0671F23DCD70043047A /* AudioPluginPHASE.a */; platformFilters = (ios, ); };
 		302D377623621F2E0030DA9A /* AudioPluginPHASE_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 302D377523621F2E0030DA9A /* AudioPluginPHASE_Tests.mm */; platformFilters = (ios, ); };
 		302D377723621F2E0030DA9A /* AudioPluginPHASE_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 302D377523621F2E0030DA9A /* AudioPluginPHASE_Tests.mm */; };
-		302D377823621F550030DA9A /* PHASEWrapper.h in Sources */ = {isa = PBXBuildFile; fileRef = 30B5DE4023608C730035B5D1 /* PHASEWrapper.h */; };
 		302D377923621F550030DA9A /* PHASEWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = 30B5DE3F23608C730035B5D1 /* PHASEWrapper.mm */; };
 		302D377A23621F550030DA9A /* PHASEInterface.mm in Sources */ = {isa = PBXBuildFile; fileRef = 30B5DE4323608C850035B5D1 /* PHASEInterface.mm */; };
-		302D377B23621F550030DA9A /* PHASEInterface.h in Sources */ = {isa = PBXBuildFile; fileRef = 3096610D23609F59003B950F /* PHASEInterface.h */; };
 		304557D1237F4C61009EEEFE /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 30E4658C237749A30050BC49 /* AVFoundation.framework */; };
 		309301C323A11DA7007FF16D /* PHASESoundEventInterface.mm in Sources */ = {isa = PBXBuildFile; fileRef = 309301C223A11DA7007FF16D /* PHASESoundEventInterface.mm */; };
 		309301C423A11DA7007FF16D /* PHASESoundEventInterface.mm in Sources */ = {isa = PBXBuildFile; fileRef = 309301C223A11DA7007FF16D /* PHASESoundEventInterface.mm */; };
-		309301C523A13873007FF16D /* PHASESoundEventInterface.h in Sources */ = {isa = PBXBuildFile; fileRef = 309301B823A11DA7007FF16D /* PHASESoundEventInterface.h */; };
 		309301C623A13873007FF16D /* PHASESoundEventInterface.mm in Sources */ = {isa = PBXBuildFile; fileRef = 309301C223A11DA7007FF16D /* PHASESoundEventInterface.mm */; };
 		30B5DE4123608C730035B5D1 /* PHASEWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = 30B5DE3F23608C730035B5D1 /* PHASEWrapper.mm */; };
 		30B5DE4223608C730035B5D1 /* PHASEWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = 30B5DE3F23608C730035B5D1 /* PHASEWrapper.mm */; };
@@ -51,6 +48,29 @@
 		F31EB83E2CEEA0D200AFCEB8 /* ModelIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 30CC5B842374488D002C7623 /* ModelIO.framework */; };
 		F31EB8462CEEA2CE00AFCEB8 /* AudioPluginPHASE.a in Copy plugin to Unity project */ = {isa = PBXBuildFile; fileRef = F31EB8442CEEA0D200AFCEB8 /* AudioPluginPHASE.a */; };
 		F31EB8472CEEA2DC00AFCEB8 /* AudioPluginPHASE.a in Copy plugin to Unity project */ = {isa = PBXBuildFile; fileRef = 2497ECA42B7FFA5D00E5B2EE /* AudioPluginPHASE.a */; };
+		F3873D1C2D08DEF30099D134 /* AudioPluginUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3873D182D08DEF30099D134 /* AudioPluginUtil.cpp */; };
+		F3873D1D2D08DEF30099D134 /* PHASESpatializerPlugin.mm in Sources */ = {isa = PBXBuildFile; fileRef = F3873D192D08DEF30099D134 /* PHASESpatializerPlugin.mm */; };
+		F3873D1E2D08DEF30099D134 /* AudioPluginUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3873D182D08DEF30099D134 /* AudioPluginUtil.cpp */; };
+		F3873D1F2D08DEF30099D134 /* PHASESpatializerPlugin.mm in Sources */ = {isa = PBXBuildFile; fileRef = F3873D192D08DEF30099D134 /* PHASESpatializerPlugin.mm */; };
+		F3873D202D08DEF30099D134 /* AudioPluginUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3873D182D08DEF30099D134 /* AudioPluginUtil.cpp */; };
+		F3873D212D08DEF30099D134 /* PHASESpatializerPlugin.mm in Sources */ = {isa = PBXBuildFile; fileRef = F3873D192D08DEF30099D134 /* PHASESpatializerPlugin.mm */; };
+		F3873D222D08DEF30099D134 /* AudioPluginUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3873D182D08DEF30099D134 /* AudioPluginUtil.cpp */; };
+		F3873D232D08DEF30099D134 /* PHASESpatializerPlugin.mm in Sources */ = {isa = PBXBuildFile; fileRef = F3873D192D08DEF30099D134 /* PHASESpatializerPlugin.mm */; };
+		F3873D242D08DEF30099D134 /* AudioPluginUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3873D182D08DEF30099D134 /* AudioPluginUtil.cpp */; };
+		F3873D252D08DEF30099D134 /* PHASESpatializerPlugin.mm in Sources */ = {isa = PBXBuildFile; fileRef = F3873D192D08DEF30099D134 /* PHASESpatializerPlugin.mm */; };
+		F3873D262D08DEF30099D134 /* AudioPluginUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3873D182D08DEF30099D134 /* AudioPluginUtil.cpp */; };
+		F3873D272D08DEF30099D134 /* PHASESpatializerPlugin.mm in Sources */ = {isa = PBXBuildFile; fileRef = F3873D192D08DEF30099D134 /* PHASESpatializerPlugin.mm */; };
+		F3873D2A2D08E1440099D134 /* PHASEWrapperRingBuffer.mm in Sources */ = {isa = PBXBuildFile; fileRef = F3873D292D08E1440099D134 /* PHASEWrapperRingBuffer.mm */; };
+		F3873D2B2D08E1440099D134 /* PHASEWrapperRingBuffer.mm in Sources */ = {isa = PBXBuildFile; fileRef = F3873D292D08E1440099D134 /* PHASEWrapperRingBuffer.mm */; };
+		F3873D2C2D08E1440099D134 /* PHASEWrapperRingBuffer.mm in Sources */ = {isa = PBXBuildFile; fileRef = F3873D292D08E1440099D134 /* PHASEWrapperRingBuffer.mm */; };
+		F3873D2D2D08E1440099D134 /* PHASEWrapperRingBuffer.mm in Sources */ = {isa = PBXBuildFile; fileRef = F3873D292D08E1440099D134 /* PHASEWrapperRingBuffer.mm */; };
+		F3873D2E2D08E1440099D134 /* PHASEWrapperRingBuffer.mm in Sources */ = {isa = PBXBuildFile; fileRef = F3873D292D08E1440099D134 /* PHASEWrapperRingBuffer.mm */; };
+		F3873D2F2D08E1440099D134 /* PHASEWrapperRingBuffer.mm in Sources */ = {isa = PBXBuildFile; fileRef = F3873D292D08E1440099D134 /* PHASEWrapperRingBuffer.mm */; };
+		F3873D312D08E5750099D134 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3873D302D08E5750099D134 /* Accelerate.framework */; };
+		F3873D322D08E5860099D134 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3873D302D08E5750099D134 /* Accelerate.framework */; };
+		F3873D342D08E58B0099D134 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3873D332D08E58B0099D134 /* Accelerate.framework */; };
+		F3873D362D08E58F0099D134 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3873D352D08E58F0099D134 /* Accelerate.framework */; };
+		F3873D372D08E5B60099D134 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F3873D302D08E5750099D134 /* Accelerate.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -129,6 +149,16 @@
 		30E4659023774A2E0050BC49 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		64FADC8E267A8EDF004FC962 /* PHASE.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PHASE.framework; path = System/Library/Frameworks/PHASE.framework; sourceTree = SDKROOT; };
 		F31EB8442CEEA0D200AFCEB8 /* AudioPluginPHASE.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = AudioPluginPHASE.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		F3873D162D08DEF30099D134 /* AudioPluginInterface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AudioPluginInterface.h; sourceTree = "<group>"; };
+		F3873D172D08DEF30099D134 /* AudioPluginUtil.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AudioPluginUtil.h; sourceTree = "<group>"; };
+		F3873D182D08DEF30099D134 /* AudioPluginUtil.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AudioPluginUtil.cpp; sourceTree = "<group>"; };
+		F3873D192D08DEF30099D134 /* PHASESpatializerPlugin.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PHASESpatializerPlugin.mm; sourceTree = "<group>"; };
+		F3873D1A2D08DEF30099D134 /* PluginList.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PluginList.h; sourceTree = "<group>"; };
+		F3873D282D08E1440099D134 /* PHASEWrapperRingBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PHASEWrapperRingBuffer.h; sourceTree = "<group>"; };
+		F3873D292D08E1440099D134 /* PHASEWrapperRingBuffer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PHASEWrapperRingBuffer.mm; sourceTree = "<group>"; };
+		F3873D302D08E5750099D134 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX16.0.sdk/System/Library/Frameworks/Accelerate.framework; sourceTree = DEVELOPER_DIR; };
+		F3873D332D08E58B0099D134 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS19.0.sdk/System/Library/Frameworks/Accelerate.framework; sourceTree = DEVELOPER_DIR; };
+		F3873D352D08E58F0099D134 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = Platforms/XROS.platform/Developer/SDKs/XROS3.0.sdk/System/Library/Frameworks/Accelerate.framework; sourceTree = DEVELOPER_DIR; };
 		FF98C0671F23DCD70043047A /* AudioPluginPHASE.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = AudioPluginPHASE.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		FFE523541F249EB000650301 /* AudioPluginPHASE.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AudioPluginPHASE.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -139,6 +169,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2497EC9B2B7FFA5D00E5B2EE /* PHASE.framework in Frameworks */,
+				F3873D362D08E58F0099D134 /* Accelerate.framework in Frameworks */,
 				2497EC9C2B7FFA5D00E5B2EE /* AVFoundation.framework in Frameworks */,
 				2497EC9D2B7FFA5D00E5B2EE /* ModelIO.framework in Frameworks */,
 			);
@@ -157,6 +188,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				64B68A67267A9EAD00DB5DA7 /* PHASE.framework in Frameworks */,
+				F3873D372D08E5B60099D134 /* Accelerate.framework in Frameworks */,
 				30DF014B23905DE8005C4C06 /* AVFoundation.framework in Frameworks */,
 				30CC5B91237448BA002C7623 /* ModelIO.framework in Frameworks */,
 			);
@@ -167,6 +199,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				64B68A69267A9ECC00DB5DA7 /* PHASE.framework in Frameworks */,
+				F3873D312D08E5750099D134 /* Accelerate.framework in Frameworks */,
 				30CC5B8E2374488D002C7623 /* ModelIO.framework in Frameworks */,
 				304557D1237F4C61009EEEFE /* AVFoundation.framework in Frameworks */,
 			);
@@ -177,6 +210,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F31EB83C2CEEA0D200AFCEB8 /* PHASE.framework in Frameworks */,
+				F3873D342D08E58B0099D134 /* Accelerate.framework in Frameworks */,
 				F31EB83D2CEEA0D200AFCEB8 /* AVFoundation.framework in Frameworks */,
 				F31EB83E2CEEA0D200AFCEB8 /* ModelIO.framework in Frameworks */,
 			);
@@ -187,6 +221,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				64B68A6A267A9ED000DB5DA7 /* PHASE.framework in Frameworks */,
+				F3873D322D08E5860099D134 /* Accelerate.framework in Frameworks */,
 				64BC78052575A7B900CA6596 /* AVFoundation.framework in Frameworks */,
 				64BC78042575A7B100CA6596 /* ModelIO.framework in Frameworks */,
 			);
@@ -218,6 +253,7 @@
 		08FB77AFFE84173DC02AAC07 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				F3873D1B2D08DEF30099D134 /* Spatializer */,
 				3070AB0023608BC900D21912 /* PHASEWrapper */,
 				3096610D23609F59003B950F /* PHASEInterface.h */,
 				30B5DE4323608C850035B5D1 /* PHASEInterface.mm */,
@@ -242,13 +278,30 @@
 			children = (
 				30B5DE4023608C730035B5D1 /* PHASEWrapper.h */,
 				30B5DE3F23608C730035B5D1 /* PHASEWrapper.mm */,
+				F3873D282D08E1440099D134 /* PHASEWrapperRingBuffer.h */,
+				F3873D292D08E1440099D134 /* PHASEWrapperRingBuffer.mm */,
 			);
 			path = PHASEWrapper;
+			sourceTree = "<group>";
+		};
+		F3873D1B2D08DEF30099D134 /* Spatializer */ = {
+			isa = PBXGroup;
+			children = (
+				F3873D162D08DEF30099D134 /* AudioPluginInterface.h */,
+				F3873D172D08DEF30099D134 /* AudioPluginUtil.h */,
+				F3873D182D08DEF30099D134 /* AudioPluginUtil.cpp */,
+				F3873D192D08DEF30099D134 /* PHASESpatializerPlugin.mm */,
+				F3873D1A2D08DEF30099D134 /* PluginList.h */,
+			);
+			path = Spatializer;
 			sourceTree = "<group>";
 		};
 		FF975ABC1ED8EB4A00315FF2 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F3873D302D08E5750099D134 /* Accelerate.framework */,
+				F3873D332D08E58B0099D134 /* Accelerate.framework */,
+				F3873D352D08E58F0099D134 /* Accelerate.framework */,
 				64FADC8E267A8EDF004FC962 /* PHASE.framework */,
 				30E4659023774A2E0050BC49 /* AudioToolbox.framework */,
 				30E4658E23774A170050BC49 /* CoreFoundation.framework */,
@@ -467,6 +520,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F3873D242D08DEF30099D134 /* AudioPluginUtil.cpp in Sources */,
+				F3873D2B2D08E1440099D134 /* PHASEWrapperRingBuffer.mm in Sources */,
+				F3873D252D08DEF30099D134 /* PHASESpatializerPlugin.mm in Sources */,
 				2497EC972B7FFA5D00E5B2EE /* PHASEInterface.mm in Sources */,
 				2497EC982B7FFA5D00E5B2EE /* PHASESoundEventInterface.mm in Sources */,
 				2497EC992B7FFA5D00E5B2EE /* PHASEWrapper.mm in Sources */,
@@ -481,6 +537,9 @@
 				30CC5B802373266F002C7623 /* PHASEInterface.mm in Sources */,
 				302D377623621F2E0030DA9A /* AudioPluginPHASE_Tests.mm in Sources */,
 				30CC5B762373266D002C7623 /* PHASEWrapper.mm in Sources */,
+				F3873D2E2D08E1440099D134 /* PHASEWrapperRingBuffer.mm in Sources */,
+				F3873D202D08DEF30099D134 /* AudioPluginUtil.cpp in Sources */,
+				F3873D212D08DEF30099D134 /* PHASESpatializerPlugin.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -489,11 +548,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				302D377723621F2E0030DA9A /* AudioPluginPHASE_Tests.mm in Sources */,
-				302D377823621F550030DA9A /* PHASEWrapper.h in Sources */,
+				F3873D2C2D08E1440099D134 /* PHASEWrapperRingBuffer.mm in Sources */,
 				302D377923621F550030DA9A /* PHASEWrapper.mm in Sources */,
 				302D377A23621F550030DA9A /* PHASEInterface.mm in Sources */,
-				302D377B23621F550030DA9A /* PHASEInterface.h in Sources */,
-				309301C523A13873007FF16D /* PHASESoundEventInterface.h in Sources */,
+				F3873D1C2D08DEF30099D134 /* AudioPluginUtil.cpp in Sources */,
+				F3873D1D2D08DEF30099D134 /* PHASESpatializerPlugin.mm in Sources */,
 				309301C623A13873007FF16D /* PHASESoundEventInterface.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -502,6 +561,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F3873D1E2D08DEF30099D134 /* AudioPluginUtil.cpp in Sources */,
+				F3873D2A2D08E1440099D134 /* PHASEWrapperRingBuffer.mm in Sources */,
+				F3873D1F2D08DEF30099D134 /* PHASESpatializerPlugin.mm in Sources */,
 				30B5DE4423608C850035B5D1 /* PHASEInterface.mm in Sources */,
 				309301C323A11DA7007FF16D /* PHASESoundEventInterface.mm in Sources */,
 				30B5DE4123608C730035B5D1 /* PHASEWrapper.mm in Sources */,
@@ -512,6 +574,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F3873D222D08DEF30099D134 /* AudioPluginUtil.cpp in Sources */,
+				F3873D2F2D08E1440099D134 /* PHASEWrapperRingBuffer.mm in Sources */,
+				F3873D232D08DEF30099D134 /* PHASESpatializerPlugin.mm in Sources */,
 				F31EB8382CEEA0D200AFCEB8 /* PHASEInterface.mm in Sources */,
 				F31EB8392CEEA0D200AFCEB8 /* PHASESoundEventInterface.mm in Sources */,
 				F31EB83A2CEEA0D200AFCEB8 /* PHASEWrapper.mm in Sources */,
@@ -522,6 +587,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F3873D262D08DEF30099D134 /* AudioPluginUtil.cpp in Sources */,
+				F3873D2D2D08E1440099D134 /* PHASEWrapperRingBuffer.mm in Sources */,
+				F3873D272D08DEF30099D134 /* PHASESpatializerPlugin.mm in Sources */,
 				30B5DE4523608C850035B5D1 /* PHASEInterface.mm in Sources */,
 				309301C423A11DA7007FF16D /* PHASESoundEventInterface.mm in Sources */,
 				30B5DE4223608C730035B5D1 /* PHASEWrapper.mm in Sources */,
@@ -549,6 +617,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
@@ -591,6 +660,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -706,6 +776,7 @@
 				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				DEAD_CODE_STRIPPING = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -743,6 +814,7 @@
 				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				DEAD_CODE_STRIPPING = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -993,6 +1065,7 @@
 				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				DEAD_CODE_STRIPPING = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -1031,6 +1104,7 @@
 				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				DEAD_CODE_STRIPPING = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -1063,6 +1137,7 @@
 				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				DEAD_CODE_STRIPPING = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -1099,6 +1174,7 @@
 				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
 				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				DEAD_CODE_STRIPPING = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";

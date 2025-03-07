@@ -11,7 +11,16 @@
 #import "PHASEWrapper.h"
 
 extern "C" {
+
+enum StartHandlerReason
+{
+    StartHandlerReasonFailure = 0,
+    StartHandlerReasonFinishedPlaying = 1,
+    StartHandlerReasonTerminated = 2
+};
+
 typedef void (*PHASESoundEventCompletionHandler)(StartHandlerReason reason, int64_t sourceId, int64_t soundEventId);
+
 /*
  Registers an audio buffer.
  */
@@ -184,5 +193,6 @@ int64_t PHASEPlaySoundEvent(const char* inName,
  Stop a sound event instance.
  */
 bool PHASEStopSoundEvent(int64_t inInstance);
+
 } //extern "C"
 #endif  // PHASESoundEventInterface_h
