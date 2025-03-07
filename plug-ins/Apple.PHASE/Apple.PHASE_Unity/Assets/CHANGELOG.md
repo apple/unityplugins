@@ -1,21 +1,23 @@
 # CHANGELOG
 All notable changes to this project will be documented in this file.
 
-## [1.2.4] - 2025-01-29
-- Remove references to some unused packages.
-
-## [1.2.3] - 2024-12-10
+## [1.2.5] - 2025-03-07
 
 ### Added
 - PHASE Spatializer plug-in
 - Listener head-tracking support
 - Personalized HRTF support
 - AVAudioSession interruption handler
-- Add Apache 2.0 license file.
 
 ### Changed
 - Initial gain level fix.
 - Updated failing test.
+
+## [1.2.4] - 2025-01-29
+- Remove references to some unused packages.
+
+## [1.2.3] - 2024-12-10
+- Add Apache 2.0 license file.
 
 ## [1.2.2] - 2024-11-20
 ### Changed
