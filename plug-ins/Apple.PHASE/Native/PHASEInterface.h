@@ -62,6 +62,11 @@ bool PHASESetListenerGain(double inGain);
 double PHASEGetListenerGain();
 
 /*
+    Sets the listener to automatically update orientation based on user's head-pose (with compatible devices)
+ */
+bool PHASESetListenerHeadTracking(bool inHeadTrack);
+
+/*
     Destroys a PHASE Listener.
     Returns true on success, false otherwise.
  */
@@ -149,6 +154,11 @@ void PHASESetSceneReverbPreset(const int inPresetIndex);
     Starts the PHASE engine
  */
 bool PHASEStart();
+
+/*
+    Pauses the PHASE engine
+ */
+void PHASEPause();
 
 /*
     Stops the PHASE engine
