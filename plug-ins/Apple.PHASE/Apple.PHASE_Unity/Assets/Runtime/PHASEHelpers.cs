@@ -1,5 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 using System;
+using UnityEditor;
 using UnityEngine;
 
 namespace Apple.PHASE
@@ -150,6 +151,14 @@ namespace Apple.PHASE
         /// </summary>
         /// <returns> A <c>double</c> representing listener gain scalar value, range of [0,1] </returns>
         [DllImport(PluginDllName)] public static extern double PHASEGetListenerGain();
+
+        /// <summary>
+        /// Set automatic head-tracking listener in the PHASE engine.
+        /// </summary>
+        /// <returns> A <c>BOOL</c> True on success, false otherwise. </returns>
+        [Apple.Core.Introduced(macOS: "15.0", iOS: "18.0", tvOS: "18.0")]
+        [Apple.Core.Unavailable(Apple.Core.RuntimeOperatingSystem.visionOS)]
+        [DllImport(PluginDllName)] public static extern bool PHASESetListenerHeadTracking(bool inHeadTrackingEnabled);
         #endregion
 
         #region Mixer native plugin methods and data structures.

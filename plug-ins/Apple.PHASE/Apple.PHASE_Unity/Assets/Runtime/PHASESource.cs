@@ -53,8 +53,7 @@ namespace Apple.PHASE
         /// Dynamically controlled gain scalar value of the source
         /// </summary>
         [Range(0.0f, 1.0f)]
-        [SerializeField] private double _gain = 1.0f;
-        private double _lastGain;
+        [SerializeField] private double _gain = 1.0;
 
         /// <summary>
         /// When true, this source will play when Awake() is called.
@@ -268,15 +267,11 @@ namespace Apple.PHASE
             }
         }
         private void UpdateGain()
-        {
-            if (_lastGain != _gain)
+        { 
+            var result = Helpers.PHASESetSourceGain(_sourceId, _gain);
+            if (result == false)
             {
-                _lastGain = _gain;
-                bool result = Helpers.PHASESetSourceGain(_sourceId, _gain);
-                if (result == false)
-                {
-                    Debug.LogError("Failed to set gain on source");
-                }
+                Debug.LogError("Failed to set gain on source");
             }
         }
 
@@ -297,9 +292,9 @@ namespace Apple.PHASE
         /// <param name="instanceId"> The id of the given source. </param>
         public void SetGain(double gain)
         {
-            if (_gain < 0.0f || _gain > 1.0f)
+            if (gain < 0.0 || gain > 1.0)
             {
-                Debug.LogWarning("Source gain {_gain} is not within [0, 1], value will be clamped to valid range in PHASE Engine.");
+                Debug.LogWarning("Source gain {gain} you are trying to set is not within [0, 1], value will be clamped to valid range in PHASE Engine.");
             }
             _gain = gain;
 

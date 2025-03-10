@@ -116,6 +116,11 @@ namespace Apple.UnityJSON
 						{
 							result = SerializeBool((bool)obj);
 						}
+						else if (obj is double doubleValue)
+						{
+							// Format floats with a decimal, not a comma
+							result = doubleValue.ToString(new CultureInfo("en-US", false));
+						}
 						else
 						{
 							result = obj.ToString();

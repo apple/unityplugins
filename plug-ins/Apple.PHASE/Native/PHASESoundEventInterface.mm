@@ -109,6 +109,7 @@ int64_t PHASECreateSpatialMixer(const char* inName,
                                enableEarlyReflections:inEnableEarlyReflections
                                      enableLateReverb:inEnableLateReverb
                                          cullDistance:inCullDistance
+                                        rolloffFactor:1.0f
                      sourceDirectivityModelParameters:inSourceDirectivityModelParameters
                    listenerDirectivityModelParameters:inListenerDirectivityModelParameters];
 }
@@ -385,7 +386,26 @@ int64_t PHASEPlaySoundEvent(const char* inName,
                                             sourceId:inSourceId
                                             mixerIds:inMixerIds
                                            numMixers:inNumMixers
-                                   completionHandler:completionHandler];
+                                          streamName:nil
+                                         renderBlock:nil
+                              completionHandlerBlock:^(PHASESoundEventStartHandlerReason reason, int64_t sourceId, int64_t soundEventId) {
+                                  if (completionHandler)
+                                  {
+                                      switch (reason)
+                                      {
+                                          default:
+                                          case PHASESoundEventStartHandlerReasonFailure:
+                                              completionHandler(StartHandlerReasonFailure, sourceId, soundEventId);
+                                              break;
+                                          case PHASESoundEventStartHandlerReasonTerminated:
+                                              completionHandler(StartHandlerReasonTerminated, sourceId, soundEventId);
+                                              break;
+                                          case PHASESoundEventStartHandlerReasonFinishedPlaying:
+                                              completionHandler(StartHandlerReasonFinishedPlaying, sourceId, soundEventId);
+                                              break;
+                                      }
+                                  }
+        }];
     }
     @catch (NSException* exception)
     {

@@ -1,10 +1,12 @@
 using System;
+using System.Globalization;
 using System.Runtime.InteropServices;
+using Apple.UnityJSON;
 
 namespace Apple.CoreHaptics
 {
     [Serializable]
-    public class CHHapticParameter : ICHHapticPatternEntry
+    public class CHHapticParameter : ICHHapticPatternEntry, ISerializable
     {
         public CHHapticDynamicParameterID ParameterID;
         public float ParameterValue;
@@ -29,6 +31,16 @@ namespace Apple.CoreHaptics
             ParameterID = parameterId;
             ParameterValue = parameterValue;
             Time = time;
+        }
+
+        public string Serialize(Serializer serializer) {
+            var ret = "{\n";
+            ret += $"\t\t\t\t\"ParameterID\": \"{ParameterID}\",\n";
+            ret += ((FormattableString)$"\t\t\t\t\"ParameterValue\": {ParameterValue},\n").ToString(CultureInfo.InvariantCulture);
+            ret += ((FormattableString)$"\t\t\t\t\"Time\": {Time}\n").ToString(CultureInfo.InvariantCulture);
+
+            ret += "\t\t\t}\n";
+            return ret;
         }
     }
 

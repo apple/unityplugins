@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using static System.FormattableString;
+using System.Globalization;
 using UnityEngine;
 using Apple.UnityJSON;
 
@@ -75,7 +77,7 @@ namespace Apple.CoreHaptics
 		public string Serialize(Serializer serializer)
 		{
 			var ret = "{\n";
-			ret += $"\t\"Version\": {Version},\n";
+			ret += ((FormattableString)$"\t\"Version\": {Version},\n").ToString(CultureInfo.InvariantCulture);
 			if (Metadata.HasMetadata())
 			{
 				ret += $"\t\"Metadata\": {Metadata.ToJSONString()},\n";

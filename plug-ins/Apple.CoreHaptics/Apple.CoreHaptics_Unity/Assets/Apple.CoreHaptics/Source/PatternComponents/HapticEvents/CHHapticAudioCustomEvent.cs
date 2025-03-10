@@ -1,4 +1,6 @@
 using System;
+using static System.FormattableString;
+using System.Globalization;
 using System.IO;
 
 using Apple.UnityJSON;
@@ -84,7 +86,7 @@ namespace Apple.CoreHaptics
             ret += SerializeTypeAndTime();
             ret += ",\n";
             if (EventDuration > 0) {
-                ret += $"\t\t\t\t\"EventDuration\": {EventDuration},\n";
+                ret += ((FormattableString)$"\t\t\t\t\"EventDuration\": {EventDuration},\n").ToString(CultureInfo.InvariantCulture);
             }
 
             ret += $"\t\t\t\t\"EventWaveformPath\": \"{EventWaveformPath}\"";
