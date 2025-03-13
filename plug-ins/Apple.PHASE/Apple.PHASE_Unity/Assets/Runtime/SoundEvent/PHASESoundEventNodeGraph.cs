@@ -38,7 +38,7 @@ namespace Apple.PHASE
             }
 
             // Create sound event asset
-            result = Helpers.PHASERegisterSoundEventAsset(name, m_rootNode.GetNodeId());
+            result = Helpers.PHASERegisterSoundEventAsset("SoundEvent_" + GetInstanceID().ToString(), m_rootNode.GetNodeId());
             if (result == false)
             {
                 Debug.LogError($"Failed to register PHASE sound event asset: {name}.");
