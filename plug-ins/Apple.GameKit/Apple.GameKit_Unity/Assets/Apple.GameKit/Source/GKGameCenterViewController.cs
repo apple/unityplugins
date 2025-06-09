@@ -8,6 +8,7 @@ using Apple.GameKit.Leaderboards;
 
 namespace Apple.GameKit
 {
+    [Deprecated("Deprecated", iOS: "19.0.0", macOS: "16.0.0", tvOS: "19.0.0", visionOS: "3.0.0")]
     public class GKGameCenterViewController : NSObject
     {
         public GKGameCenterViewController(IntPtr pointer) : base(pointer)
@@ -152,40 +153,7 @@ namespace Apple.GameKit
         }
         #endregion
         
-        /// <summary>
-        /// The type of content for the view controller to present.
-        /// </summary>
-        public enum GKGameCenterViewControllerState : long
-        {
-            /// <summary>
-            /// The view controller should present the default screen.
-            /// </summary>
-            Default = -1,
-            /// <summary>
-            /// The view controller should present leaderboard sets or leaderboards if there are no sets.
-            /// </summary>
-            Leaderboards = 0,
-            /// <summary>
-            /// The view controller should present a list of achievements.
-            /// </summary>
-            Achievements = 1,
-            /// <summary>
-            /// The view controller should present a list of challenges.
-            /// </summary>
-            Challenges = 2,
-            /// <summary>
-            /// The view controller should present the local player's profile.
-            /// </summary>
-            LocalPlayerProfile = 3,
-            /// <summary>
-            /// The view controller should present the dashboard.
-            /// </summary>
-            Dashboard = 4,
-            /// <summary>
-            /// The view controller should present the friends list.
-            /// </summary>
-            LocalPlayerFriendsList = 5
-        }
+        // BREAKING CHANGE: GKGameCenterViewControllerState has been moved out of class scope.
 
         private static class Interop
         {

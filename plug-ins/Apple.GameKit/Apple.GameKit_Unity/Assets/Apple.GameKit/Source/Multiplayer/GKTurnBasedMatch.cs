@@ -407,15 +407,14 @@ namespace Apple.GameKit.Multiplayer
         /// <param name="matchData">A serialized blob of data reflecting the current state for the match.</param>
         /// <param name="exchanges">An array of GKTurnBasedExchange objects that contains the resolved exchanges.</param>
         /// <returns></returns>
-        public Task SaveMergedMatch(byte[] matchData, params GKTurnBasedExchange[] exchanges)
+        public Task SaveMergedMatch(byte[] matchData, NSArray<GKTurnBasedExchange> exchanges)
         {
-            // Prepare exchanges...
-            var mutable = new NSMutableArray<GKTurnBasedExchange>(exchanges);
-            
             var tcs = InteropTasks.Create<bool>(out var taskId);
-            Interop.GKTurnBasedMatch_SaveMergedMatch(Pointer, taskId, new NSData(matchData).Pointer, mutable.Pointer, OnSaveMergedMatch, OnSaveMergedMatchError);
+            Interop.GKTurnBasedMatch_SaveMergedMatch(Pointer, taskId, new NSData(matchData).Pointer, exchanges.Pointer, OnSaveMergedMatch, OnSaveMergedMatchError);
             return tcs.Task;
         }
+        public Task SaveMergedMatch(byte[] matchData, params GKTurnBasedExchange[] exchanges) =>
+            SaveMergedMatch(matchData, new NSMutableArray<GKTurnBasedExchange>(exchanges));
         
         [MonoPInvokeCallback(typeof(SuccessTaskCallback))]
         private static void OnSaveMergedMatch(long taskId)

@@ -41,6 +41,10 @@
 		CFE533A3263B6E2200078448 /* CoreUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFE53398263B6D1400078448 /* CoreUtilities.swift */; };
 		CFE5340C263B700A00078448 /* CoreUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFE53398263B6D1400078448 /* CoreUtilities.swift */; };
 		CFE5341B263B702100078448 /* AppleCoreNative.h in Headers */ = {isa = PBXBuildFile; fileRef = CFE5338F263B6CCC00078448 /* AppleCoreNative.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FB077BE32D88B329007E6FA6 /* NSDateComponents.m in Sources */ = {isa = PBXBuildFile; fileRef = FB077BE22D88B31F007E6FA6 /* NSDateComponents.m */; };
+		FB077BE42D88B329007E6FA6 /* NSDateComponents.m in Sources */ = {isa = PBXBuildFile; fileRef = FB077BE22D88B31F007E6FA6 /* NSDateComponents.m */; };
+		FB077BE52D88B329007E6FA6 /* NSDateComponents.m in Sources */ = {isa = PBXBuildFile; fileRef = FB077BE22D88B31F007E6FA6 /* NSDateComponents.m */; };
+		FB077BE62D88B329007E6FA6 /* NSDateComponents.m in Sources */ = {isa = PBXBuildFile; fileRef = FB077BE22D88B31F007E6FA6 /* NSDateComponents.m */; };
 		FB32D8792AF96000006A8FE4 /* NSArray.m in Sources */ = {isa = PBXBuildFile; fileRef = FB32D8782AF96000006A8FE4 /* NSArray.m */; };
 		FB32D87A2AF96000006A8FE4 /* NSArray.m in Sources */ = {isa = PBXBuildFile; fileRef = FB32D8782AF96000006A8FE4 /* NSArray.m */; };
 		FB32D87B2AF96000006A8FE4 /* NSArray.m in Sources */ = {isa = PBXBuildFile; fileRef = FB32D8782AF96000006A8FE4 /* NSArray.m */; };
@@ -86,6 +90,7 @@
 		CFE53398263B6D1400078448 /* CoreUtilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreUtilities.swift; sourceTree = "<group>"; };
 		CFE533AA263B6E2200078448 /* AppleCoreNative.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AppleCoreNative.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFE533C5263B6E4800078448 /* AppleCoreNativeMac.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AppleCoreNativeMac.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
+		FB077BE22D88B31F007E6FA6 /* NSDateComponents.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NSDateComponents.m; sourceTree = "<group>"; };
 		FB32D8782AF96000006A8FE4 /* NSArray.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NSArray.m; sourceTree = "<group>"; };
 		FB32D87C2AF97A09006A8FE4 /* NSMutableArray.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NSMutableArray.m; sourceTree = "<group>"; };
 		FB32D8802AFAADAA006A8FE4 /* NSDictionary.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NSDictionary.m; sourceTree = "<group>"; };
@@ -161,6 +166,7 @@
 				CFE53398263B6D1400078448 /* CoreUtilities.swift */,
 				FB32D8782AF96000006A8FE4 /* NSArray.m */,
 				FB8FF4912B338A110058B918 /* NSData.m */,
+				FB077BE22D88B31F007E6FA6 /* NSDateComponents.m */,
 				FB32D8802AFAADAA006A8FE4 /* NSDictionary.m */,
 				245B212627DEA521007479CE /* NSError.swift */,
 				FB6C73C22AFDA7800077714C /* NSException.m */,
@@ -381,6 +387,7 @@
 				24B064112B7EE031007ABBB8 /* NSObject.m in Sources */,
 				24B064062B7EDFFA007ABBB8 /* AppleCoreRuntimeShared.swift in Sources */,
 				24B064092B7EE012007ABBB8 /* NSData.m in Sources */,
+				FB077BE32D88B329007E6FA6 /* NSDateComponents.m in Sources */,
 				24B064072B7EDFFD007ABBB8 /* CoreUtilities.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -402,6 +409,7 @@
 				FB32D8792AF96000006A8FE4 /* NSArray.m in Sources */,
 				FB32D8852AFADF1A006A8FE4 /* NSMutableDictionary.m in Sources */,
 				245B212A27DEA521007479CE /* NSError.swift in Sources */,
+				FB077BE52D88B329007E6FA6 /* NSDateComponents.m in Sources */,
 				FB86943D2ACF32FB009B8676 /* NSObject.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -423,6 +431,7 @@
 				FB32D87A2AF96000006A8FE4 /* NSArray.m in Sources */,
 				FB32D8862AFADF1A006A8FE4 /* NSMutableDictionary.m in Sources */,
 				245B212B27DEA521007479CE /* NSError.swift in Sources */,
+				FB077BE62D88B329007E6FA6 /* NSDateComponents.m in Sources */,
 				FB86943E2ACF32FB009B8676 /* NSObject.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -444,6 +453,7 @@
 				FB32D87B2AF96000006A8FE4 /* NSArray.m in Sources */,
 				FB32D8872AFADF1A006A8FE4 /* NSMutableDictionary.m in Sources */,
 				245B212C27DEA521007479CE /* NSError.swift in Sources */,
+				FB077BE42D88B329007E6FA6 /* NSDateComponents.m in Sources */,
 				FB86943F2ACF32FB009B8676 /* NSObject.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -99,12 +99,26 @@ public func GKLeaderboard_GetDuration
     };
 }
 
+@_cdecl("GKLeaderboard_IsHidden")
+public func GKLeaderboard_IsHidden
+(
+    pointer: UnsafeMutablePointer<GKLeaderboard>
+) -> Bool
+{
+    if #available(iOS 19.0, macOS 16.0, tvOS 19.0, visionOS 3.0, *) {
+        let target = pointer.takeUnretainedValue();
+        return target.isHidden;
+    } else {
+        DefaultNSErrorHandler.throwApiUnavailableError();
+    }
+}
+
 @_cdecl("GKLeaderboard_LoadPreviousOccurrence")
 public func GKLeaderboard_LoadPreviousOccurrence
 (
     pointer: UnsafeMutablePointer<GKLeaderboard>,
     taskId: Int64,
-    onSuccess: @escaping SuccessTaskPtrCallback,
+    onSuccess: @escaping SuccessTaskPtrCallback<GKLeaderboard>,
     onError: @escaping NSErrorTaskCallback
 )
 {
@@ -270,14 +284,14 @@ public func GKLeaderboard_SubmitScore
 @_cdecl("GKLeaderboard_LoadLeaderboards")
 public func GKLeaderboard_LoadLeaderboards
 (
-    pointer: UnsafeMutablePointer<NSArray>?, // NSArray<NSString>
     taskId: Int64,
-    onSuccess: @escaping SuccessTaskPtrCallback,
+    nsArrayIds: UnsafeMutablePointer<NSArray>?, // NSArray<NSString>
+    onSuccess: @escaping SuccessTaskPtrCallback<NSArray>, // NSArray<GKLeaderboard>
     onError: @escaping NSErrorTaskCallback
 )
 {
     if #available(iOS 14, tvOS 14, macOS 11.0, *) {
-        let ids = pointer?.takeUnretainedValue() as? [String];
+        let ids = nsArrayIds?.takeUnretainedValue() as? [String];
 
         GKLeaderboard.loadLeaderboards(IDs: ids, completionHandler: { leaderboards, error in
             if let error = error as? NSError {
@@ -291,3 +305,60 @@ public func GKLeaderboard_LoadLeaderboards
         onError(taskId, NSError(code: GKErrorCodeExtension.unsupportedOperationForOSVersion).passRetainedUnsafeMutablePointer());
     }
 }
+
+@_cdecl("GKLeaderboard_GetActivityIdentifier")
+public func GKLeaderboard_GetActivityIdentifier
+(
+    thisPtr: UnsafeMutablePointer<GKLeaderboard>
+) -> char_p?
+{
+    if #available(iOS 19.0, macOS 16.0, tvOS 19.0, visionOS 3.0, *) {
+        let thisObj = thisPtr.takeUnretainedValue();
+        return thisObj.activityIdentifier.toCharPCopy();
+    } else {
+        DefaultNSErrorHandler.throwApiUnavailableError();
+    }
+}
+
+@_cdecl("GKLeaderboard_GetActivityProperties")
+public func GKLeaderboard_GetActivityProperties
+(
+    thisPtr: UnsafeMutablePointer<GKLeaderboard>
+) -> UnsafeMutablePointer<NSDictionary>? // NSDictionary<NSString, NSString>
+{
+    if #available(iOS 19.0, macOS 16.0, tvOS 19.0, visionOS 3.0, *) {
+        let thisObj = thisPtr.takeUnretainedValue();
+        return (thisObj.activityProperties as NSDictionary).passRetainedUnsafeMutablePointer();
+    } else {
+        DefaultNSErrorHandler.throwApiUnavailableError();
+    }
+}
+
+@_cdecl("GKLeaderboard_GetLeaderboardDescription")
+public func GKLeaderboard_GetLeaderboardDescription
+(
+    thisPtr: UnsafeMutablePointer<GKLeaderboard>
+) -> char_p?
+{
+    if #available(iOS 19.0, macOS 16.0, tvOS 19.0, visionOS 3.0, *) {
+        let thisObj = thisPtr.takeUnretainedValue();
+        return thisObj.leaderboardDescription.toCharPCopy();
+    } else {
+        DefaultNSErrorHandler.throwApiUnavailableError();
+    }
+}
+
+@_cdecl("GKLeaderboard_GetReleaseState")
+public func GKLeaderboard_GetReleaseState
+(
+    thisPtr: UnsafeMutablePointer<GKLeaderboard>
+) -> UInt /* aka GKReleaseState */
+{
+    if #available(iOS 19.0, macOS 16.0, tvOS 19.0, visionOS 3.0, *) {
+        let thisObj = thisPtr.takeUnretainedValue();
+        return thisObj.releaseState.rawValue;
+    } else {
+        DefaultNSErrorHandler.throwApiUnavailableError();
+    }
+}
+

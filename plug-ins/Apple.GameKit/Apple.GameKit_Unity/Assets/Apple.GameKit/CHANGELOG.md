@@ -1,6 +1,13 @@
 # CHANGELOG
 All notable changes to this project will be documented in this file.
 
+## [4.0.0] - 2025-06-09
+- Add support for the new GameKit features in iOS 19 and macOS 16, including:
+  - [Game activities](https://developer.apple.com/documentation/gamekit/creating-activities-for-your-game)
+  - [Challenges for leaderboards](https://developer.apple.com/documentation/gamekit/creating-engaging-challenges-from-leaderboards)
+  - New methods for triggering the [access point](https://developer.apple.com/documentation/gamekit/gkaccesspoint)
+- Xcode 17 Beta 1 or better is required to use the new features.
+
 ## [3.0.2] - 2025-01-29
 - Remove references to some unused packages.
 

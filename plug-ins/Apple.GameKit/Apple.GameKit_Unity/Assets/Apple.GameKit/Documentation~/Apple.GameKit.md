@@ -37,7 +37,8 @@ private async Task Start()
 6. [Leaderboards](#6-leaderboards)
 7. [Access Point](#7-accesspoint)
 8. [Challenges](#8-challenges)
-9. [Invites](#9-invites)
+9. [Activities](#9-activities)
+10. [Invites](#10-invites)
 
 ### 1. Players
 ##### [GKLocalPlayer - Apple Developer Documentation](https://developer.apple.com/documentation/gamekit/gklocalplayer)
@@ -528,28 +529,124 @@ await GKAccessPoint.Shared.Trigger();
 ```
 
 ### 8. Challenges
-##### [GKChallenge - Apple Developer Documentation](https://developer.apple.com/documentation/gamekit/gkchallenge)
+##### [Creating engaging challenges from leaderboards - Apple Developer Documentation](https://developer.apple.com/documentation/gamekit/creating-engaging-challenges-from-leaderboards)
+Note: The older [`GKChallenge`](https://developer.apple.com/documentation/gamekit/gkchallenge) has been deprecated.
 
-#### 8.1 Load Received Challenges
+#### 8.1 Get the object that represents the challenge
 ```csharp
-var challenges = await GKChallenge.LoadReceivedChallenges();
+// Load all challenges for a game.
+var challengeDefinitions = await GKChallengeDefinition.LoadChallengeDefinitions();
+const string challengeID = "com.example.mygame.challenge.sprint";
+const string leaderboardID = "com.example.mygame.leaderboard.highscore";
 
-foreach (var c in challenges) 
-{
-  // Deprecated as GKScore was deprecated in < iOS 14, tvOS 14, and macOS 11
-  if(c is GKScoreChallenge) {
-    // Kept for historical purposes
-  }
+// Find a challenge definition by using an identifier.
+var challenge = challengeDefinitions?.Where(def => def.Identifier == challengeID).FirstOrDefault();
 
-  if(c is GKAchievementChallenge achievementChallenge) {
-    Debug.Log($"Achievement Challenge: {achievementChallenge.Achievement?.Identifier}");
-  }
-}
+// Find a leaderboard you associate with a challenge.
+var leaderboard = challengeDefinitions?.Where(def => def.Leaderboard?.BaseLeaderboardId == leaderboardID).FirstOrDefault();
 ```
-### 9. Invites
+
+#### 8.2 Create a challenge
+Present the default system UI that shows the available challenges for your game.
+```csharp
+// Show the system UI to show a list of available challenges the player selects from.
+await GKAccessPoint.Shared.TriggerForPlayTogether();
+```
+
+Present the system UI for a specific challenge.
+```csharp
+// Show the system UI to create a challenge based on the configuration.
+await GKAccessPoint.Shared.TriggerWithChallengeDefinitionID(challenge.Identifier);
+```
+
+### 9. Activities
+##### [Creating activities for your game - Apple Developer Documentation](https://developer.apple.com/documentation/gamekit/creating-activities-for-your-game)
+
+#### 9.1 Get the object that represents the activity
+```csharp
+// Load the game’s activities.
+var activityDescriptions = await GKGameActivityDefinition.LoadGameActivityDefinitions();
+const string activityID = "com.example.mygame.score_attack_mode";
+
+// Find an activity by using an identifier.
+var activityDescription = activityDescriptions?.Where(act => act.Identifier == activityID).FirstOrDefault();
+```
+Load the associated leaderboards or achievements that you configure to use with the activity:
+```csharp
+// Load the resources associated with the activity.
+var achievementDescription = await activityDescription.LoadAchievementDescriptions();
+var leaderboards = await activityDescription.LoadLeaderboards();
+```
+
+#### 9.2 Handle deep linking through activity listener
+```csharp
+GKGameActivity.WantsToPlay += async (GKPlayer player, GKGameActivity activity) =>
+{
+    if (activity.Identifier == "com.example.mygame.score_attack_mode")
+    {
+        await StartScoreAttackMode(activity);
+        return true;
+    }
+    else if (activity.Identifier == "com.example.mygame.versus_mode")
+    {
+        await StartMultiplayerMode(activity, activity.PartyCode);
+        return true;
+    }
+
+    return false;
+};
+```
+```csharp
+// Start matchmaking to find a match.
+var match = await activity.FindMatch();
+sampleGameUI.StartGame(match);
+```
+
+### 9.3 Start a game activity life cycle
+```csharp
+// Start the activity with a party code.
+var activity = GKGameActivity.Start(activityDescription, partyCode: "2345-CFGH");
+```
+Setting a score on a leaderboard or progress on an achievement.
+```csharp
+Leaderboards.GKLeaderboard leaderboard = null;
+GKAchievement achievement = null;
+// Set the score on a leaderboard for the local player.
+long score = 100;
+ulong context = 1;
+activity.SetScoreOnLeaderboard(leaderboard, score, context);
+
+// Set the progress on an achievement to 60 percent.
+activity.SetProgressOnAchievement(achievement, percentComplete: 60);
+```
+
+### 9.4 Report progress for an activity
+```csharp
+// Start the activity
+public void Init(GKGameActivity activity)
+{
+    this.activity = activity;
+    activity.Start();
+}
+
+// Handle tracking score updates at the local level.
+public long CurrentScore
+{
+    get => activity.GetScoreOnLeaderboard(leaderboard)?.Value ?? 0;
+    set => activity.SetScoreOnLeaderboard(leaderboard, value);
+}
+
+// End the activity to submit the score on your behalf.
+void Deinit()
+{
+    activity.End();
+}        
+```
+
+### 10. Invites
 ##### [GKInvite - Apple Developer Documentation](https://developer.apple.com/documentation/gamekit/gkinvite)
 
-#### 9.1 Checking for Accepted Invites on Start
+#### 10.1 Checking for Accepted Invites on Start
 ```csharp
 GKInvite.InviteAccepted += OnInviteAccepted;
 

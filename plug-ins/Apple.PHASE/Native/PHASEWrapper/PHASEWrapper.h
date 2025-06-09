@@ -491,8 +491,9 @@ enum CalibrationMode
 /*! @method createSoundEventRandomNodeWithEntries
     @abstract creates a sound event random node with given random entries to select from
     @param randomEntries entries to randomize
+    @param uniqueSelectionQueueLength Subtrees will not be repeated until after this random node is activated uniqueSelectionQueueLength number of times.
 */
-- (int64_t)createSoundEventRandomNodeWithEntries:(NSDictionary*)randomEntries;
+- (int64_t)createSoundEventRandomNodeWithEntries:(NSDictionary*)randomEntries uniqueSelectionQueueLength:(int64_t)uniqueSelectionQueueLength;
 
 /*! @method createSoundEventBlendNodeWithParameter
     @abstract creates a sound event blend node with a given meta parameter id and blend entries

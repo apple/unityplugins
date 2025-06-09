@@ -1,11 +1,14 @@
 using System;
 using System.Runtime.InteropServices;
+using Apple.Core;
 
 namespace Apple.GameKit
 {
     /// <summary>
     /// A type of challenge where a player must earn another player's achievement.
     /// </summary>
+    /// <symbol>c:objc(cs)GKAchievementChallenge</symbol>
+    [Deprecated("Deprecated", iOS: "19.0.0", macOS: "16.0.0", tvOS: "19.0.0", visionOS: "3.0.0")]
     public class GKAchievementChallenge : GKChallenge
     {
         internal GKAchievementChallenge(IntPtr pointer) : base(pointer)

@@ -39,13 +39,18 @@ namespace Apple.GameKit.Sample
             return button;
         }
 
+        void OnDisable()
+        {
+            _image.DestroyTexture();
+        }
+
 #if !UNITY_TVOS
         private async Task UpdateImage()
         {
             try
             {
                 var texture = (LeaderboardSet != null) ? await LeaderboardSet.LoadImage() : null;
-                _image.texture = (texture != null) ? texture : Texture2D.whiteTexture;
+                _image.DestroyTextureAndAssign(texture);
             }
             catch (Exception ex)
             {

@@ -106,7 +106,7 @@ public func GKAchievementDescription_GetRarityPercent
 public func GKAchievementDescription_LoadAchievementDescriptions
 (
     taskId: Int64,
-    onSuccess: @escaping SuccessTaskPtrCallback,
+    onSuccess: @escaping SuccessTaskPtrCallback<NSArray>, // NSArray<GKAchievementDescription>
     onError: @escaping NSErrorTaskCallback
 )
 {
@@ -161,3 +161,44 @@ public func GKAchievementDescription_GetPlaceholderCompletedAchievementImage
     return (image.pngData() as? NSData)?.passRetainedUnsafeMutablePointer();
 }
 
+@_cdecl("GKAchievementDescription_GetActivityIdentifier")
+public func GKAchievementDescription_GetActivityIdentifier
+(
+    thisPtr: UnsafeMutablePointer<GKAchievementDescription>
+) -> char_p
+{
+    if #available(iOS 19.0, macOS 16.0, tvOS 19.0, visionOS 3.0, *) {
+        let thisObj = thisPtr.takeUnretainedValue();
+        return thisObj.activityIdentifier.toCharPCopy();
+    } else {
+        DefaultNSErrorHandler.throwApiUnavailableError();
+    }
+}
+
+@_cdecl("GKAchievementDescription_GetActivityProperties")
+public func GKAchievementDescription_GetActivityProperties
+(
+    thisPtr: UnsafeMutablePointer<GKAchievementDescription>
+) -> UnsafeMutablePointer<NSDictionary>
+{
+    if #available(iOS 19.0, macOS 16.0, tvOS 19.0, visionOS 3.0, *) {
+        let thisObj = thisPtr.takeUnretainedValue();
+        return (thisObj.activityProperties as NSDictionary).passRetainedUnsafeMutablePointer();
+    } else {
+        DefaultNSErrorHandler.throwApiUnavailableError();
+    }
+}
+
+@_cdecl("GKAchievementDescription_GetReleaseState")
+public func GKAchievementDescription_GetReleaseState
+(
+    thisPtr: UnsafeMutablePointer<GKAchievementDescription>
+) -> UInt /* aka GKReleaseState */
+{
+    if #available(iOS 18.4, macOS 15.4, tvOS 18.4, visionOS 2.4, *) {
+        let thisObj = thisPtr.takeUnretainedValue();
+        return thisObj.releaseState.rawValue;
+    } else {
+        DefaultNSErrorHandler.throwApiUnavailableError();
+    }
+}

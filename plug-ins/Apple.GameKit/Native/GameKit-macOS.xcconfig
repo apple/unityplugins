@@ -1,0 +1,4 @@
+#include "GameKit.xcconfig"
+
+// SYSTEM_FRAMEWORK_SEARCH_PATHS = /Users/adamszofran/Downloads/luxon-sdk-macosx16.0.internal-f295b870-37fc-11f0-6d6f-d32bd1ed931f/System/Library/Frameworks
+// SDKROOT = macosx.internal

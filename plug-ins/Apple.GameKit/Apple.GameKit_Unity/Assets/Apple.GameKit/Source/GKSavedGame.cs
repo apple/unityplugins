@@ -63,7 +63,7 @@ namespace Apple.GameKit
         /// The name of the device that the player uses to save the game.
         /// </summary>
         /// <symbol>c:objc(cs)GKSavedGame(py)deviceName</symbol>
-        public NSString DeviceName => Interop.GKSavedGame_GetDeviceName(Pointer);
+        public string DeviceName => Interop.GKSavedGame_GetDeviceName(Pointer);
 
         /// <summary>
         /// The date when you saved the game data or modified it.
@@ -75,7 +75,7 @@ namespace Apple.GameKit
         /// The name of the saved game.
         /// </summary>
         /// <symbol>c:objc(cs)GKSavedGame(py)name</symbol>
-        public NSString Name => Interop.GKSavedGame_GetName(Pointer);
+        public string Name => Interop.GKSavedGame_GetName(Pointer);
         public override string ToString() => Name.ToString();
 
         /// <summary>

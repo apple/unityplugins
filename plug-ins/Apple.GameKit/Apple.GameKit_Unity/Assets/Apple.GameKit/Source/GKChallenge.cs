@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using AOT;
+using Apple.Core;
 using Apple.Core.Runtime;
 
 namespace Apple.GameKit
@@ -9,6 +10,8 @@ namespace Apple.GameKit
     /// <summary>
     /// A challenge issued by the local player to another player.
     /// </summary>
+    /// <symbol>c:objc(cs)GKChallenge</symbol>
+    [Deprecated("Deprecated", iOS: "19.0.0", macOS: "16.0.0", tvOS: "19.0.0", visionOS: "3.0.0")]
     public class GKChallenge : NSObject
     {
         #region Delegates

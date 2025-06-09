@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using AOT;
+using Apple.Core;
 using Apple.Core.Runtime;
 
 namespace Apple.GameKit
@@ -32,7 +33,7 @@ namespace Apple.GameKit
         /// <summary>
         /// A percentage value that states how far the player has progressed on the achievement.
         /// </summary>
-        public float PercentComplete
+        public double PercentComplete
         {
             get => Interop.GKAchievement_GetPercentComplete(Pointer);
             set => Interop.GKAchievement_SetPercentComplete(Pointer, value);
@@ -64,15 +65,13 @@ namespace Apple.GameKit
         /// </summary>
         /// <param name="achievements">The achievements that you're reporting to Game Center.</param>
         /// <returns></returns>
-        public static Task Report(params GKAchievement[] achievements)
+        public static Task Report(NSArray<GKAchievement> achievements)
         {
             var tcs = InteropTasks.Create<bool>(out var taskId);
-
-            var mutable = new NSMutableArray<GKAchievement>(achievements);
-            
-            Interop.GKAchievement_Report(taskId, mutable.Pointer, OnReportSuccess, OnReportError);
+            Interop.GKAchievement_Report(taskId, achievements.Pointer, OnReportSuccess, OnReportError);
             return tcs.Task;
         }
+        public static Task Report(params GKAchievement[] achievements) => Report(new NSMutableArray<GKAchievement>(achievements));
 
         [MonoPInvokeCallback(typeof(SuccessTaskCallback))]
         private static void OnReportSuccess(long taskId)
@@ -146,6 +145,9 @@ namespace Apple.GameKit
         /// </summary>
         /// <param name="players">A list of players that GameKit uses to find players who are eligible to earn the achievement.</param>
         /// <returns>The players in the players parameter who are able to earn the achievement. If an error occurs, this parameter may be non-nil, containing achievement information GameKit is able to fetch before the error.</returns>
+        /// <symbol>c:objc(cs)GKAchievement(im)selectChallengeablePlayers:withCompletionHandler:</symbol>
+        [Introduced(visionOS: "1.0.0")]
+        [Deprecated("Deprecated", iOS: "19.0.0", macOS: "16.0.0", tvOS: "19.0.0", visionOS: "3.0.0")]
         public Task<NSArray<GKPlayer>> SelectChallengeablePlayers(GKPlayer[] players)
         {
             // Mutable players...
@@ -174,6 +176,9 @@ namespace Apple.GameKit
         /// </summary>
         /// <param name="message">The challenge message which the player can edit before GameKit sends it to other players.</param>
         /// <param name="players">The players that the challenge should be sent to.</param>
+        /// <symbol>c:objc(cs)GKAchievement(im)challengeComposeControllerWithMessage:players:completion:</symbol>
+        [Introduced(iOS: "17.0.0", macOS: "14.0.0", tvOS: "17.0.0", visionOS: "1.0.0")]
+        [Deprecated("Deprecated", iOS: "19.0.0", macOS: "16.0.0", tvOS: "19.0.0", visionOS: "3.0.0")]
         public void ChallengeComposeController(string message, GKPlayer[] players)
         {
             // Mutable players...
@@ -212,9 +217,9 @@ namespace Apple.GameKit
             [DllImport(InteropUtility.DLLName)]
             public static extern IntPtr GKAchievement_GetPlayer(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
-            public static extern float GKAchievement_GetPercentComplete(IntPtr pointer);
+            public static extern double GKAchievement_GetPercentComplete(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
-            public static extern void GKAchievement_SetPercentComplete(IntPtr pointer, float value);
+            public static extern void GKAchievement_SetPercentComplete(IntPtr pointer, double value);
             [DllImport(InteropUtility.DLLName)]
             public static extern bool GKAchievement_GetIsCompleted(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]

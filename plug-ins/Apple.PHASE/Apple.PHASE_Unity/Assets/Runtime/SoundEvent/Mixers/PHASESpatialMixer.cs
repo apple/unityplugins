@@ -29,6 +29,12 @@ namespace Apple.PHASE
         [SerializeField] private float _cullDistance = 0.0f;
 
         /// <summary>
+        /// A roll-off effect changes the frequencies of a sound as it dissipates with distance. A value of 0.0 disables the roll-off effect. A value of 0.5 halves the roll-off. The default value is 1.0, which produces a realistic roll-off effect. A value of 2.0 amplifies the roll-off effect.
+        /// </summary>
+        [Min(0.0f)]
+        [SerializeField] private float _rolloffFactor = 1.0f;
+
+        /// <summary>
         /// The directivity shape for the listener.
         /// </summary>
         [SerializeField] private Helpers.DirectivityPreset _listenerDirectivityPreset = Helpers.DirectivityPreset.None;
@@ -121,7 +127,7 @@ namespace Apple.PHASE
                 }
 
                 // Create spatial mixer.
-                _mixerId = Helpers.PHASECreateSpatialMixer(name, _directPathModeler, _earlyReflectionModeler, _lateReverbModeler, _cullDistance, sourceDirectivityModelParameters, listenerDirectivityModelParameters);
+                _mixerId = Helpers.PHASECreateSpatialMixer(name, _directPathModeler, _earlyReflectionModeler, _lateReverbModeler, _cullDistance, _rolloffFactor, sourceDirectivityModelParameters, listenerDirectivityModelParameters);
 
                 if (_mixerId == Helpers.InvalidId)
                 {

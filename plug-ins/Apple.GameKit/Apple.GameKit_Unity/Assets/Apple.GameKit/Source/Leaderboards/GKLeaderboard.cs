@@ -139,6 +139,15 @@ namespace Apple.GameKit.Leaderboards
         [Introduced(iOS: "14.0", macOS: "11.0", tvOS: "14.0", visionOS: "1.0")]
         public TimeSpan Duration => TimeSpan.FromSeconds(Interop.GKLeaderboard_GetDuration(Pointer));
 
+        /// <summary>
+        /// A Boolean value that indicates whether the current leaderboard isn't visible in Game Center views.
+        /// 
+        /// You can still submit scores to a hidden leaderboard.
+        /// </summary>
+        /// <symbol>c:objc(cs)GKLeaderboard(py)isHidden</symbol>
+        [Introduced(iOS: "19.0.0", macOS: "16.0.0", tvOS: "19.0.0", visionOS: "3.0.0")]
+        public bool IsHidden => Interop.GKLeaderboard_IsHidden(Pointer);
+
         #region Load Leaderboards
 
         /// <summary>
@@ -147,20 +156,16 @@ namespace Apple.GameKit.Leaderboards
         /// <param name="identifiers">The leaderboards that match the IDs or null for all leaderboards.</param>
         /// <returns></returns>
         [Introduced(iOS: "14.0", macOS: "11.0", tvOS: "14.0", visionOS: "1.0")]
-        public static Task<NSArray<GKLeaderboard>> LoadLeaderboards(params string[] identifiers)
+        public static Task<NSArray<GKLeaderboard>> LoadLeaderboards(NSArray<NSString> identifiers)
         {
             var tcs = InteropTasks.Create<NSArray<GKLeaderboard>>(out var taskId);
-            
-            // Prepare identifiers array...
-            NSMutableArray<NSString> ids = null;
-            if (identifiers != null && identifiers.Length > 0)
-            {
-                ids = new NSMutableArray<NSString>(identifiers.Select(id => new NSString(id)));
-            }
-            
-            Interop.GKLeaderboard_LoadLeaderboards(ids?.Pointer ?? IntPtr.Zero, taskId, OnLoadLeaderboards, OnLoadLeaderboardsError);
+            Interop.GKLeaderboard_LoadLeaderboards(taskId, identifiers?.Pointer ?? IntPtr.Zero, OnLoadLeaderboards, OnLoadLeaderboardsError);
             return tcs.Task;
         }
+        public static Task<NSArray<GKLeaderboard>> LoadLeaderboards(params string[] identifiers) =>
+            LoadLeaderboards((identifiers != null && identifiers.Length > 0) ?
+                new NSMutableArray<NSString>(identifiers.Select(id => new NSString(id))) :
+                null);
 
         [MonoPInvokeCallback(typeof(SuccessTaskCallback<IntPtr>))]
         private static void OnLoadLeaderboards(long taskId, IntPtr pointer)
@@ -364,6 +369,34 @@ namespace Apple.GameKit.Leaderboards
         #endregion
 #endif
 
+        /// <summary>
+        /// The identifier of the game activity associated with this leaderboard, as configured by the developer in App Store Connect.
+        /// </summary>
+        /// <symbol>c:objc(cs)GKLeaderboard(py)activityIdentifier</symbol>
+        [Introduced(iOS: "19.0.0", macOS: "16.0.0", tvOS: "19.0.0", visionOS: "3.0.0")]
+        public string ActivityIdentifier => Interop.GKLeaderboard_GetActivityIdentifier(Pointer);
+
+        /// <summary>
+        /// The properties when associating this leaderboard with a game activity, as configured by the developer in App Store Connect.
+        /// </summary>
+        /// <symbol>c:objc(cs)GKLeaderboard(py)activityProperties</symbol>
+        [Introduced(iOS: "19.0.0", macOS: "16.0.0", tvOS: "19.0.0", visionOS: "3.0.0")]
+        public NSDictionary<NSString, NSString> ActivityProperties => PointerCast<NSDictionary<NSString, NSString>>(Interop.GKLeaderboard_GetActivityProperties(Pointer));
+
+        /// <summary>
+        /// The description of this Leaderboard as configured by the developer in App Store Connect.
+        /// </summary>
+        /// <symbol>c:objc(cs)GKLeaderboard(py)leaderboardDescription</symbol>
+        [Introduced(iOS: "19.0.0", macOS: "16.0.0", tvOS: "19.0.0", visionOS: "3.0.0")]
+        public string LeaderboardDescription => Interop.GKLeaderboard_GetLeaderboardDescription(Pointer);
+
+        /// <summary>
+        /// The release state of the leaderboard in App Store Connect.
+        /// </summary>
+        /// <symbol>c:objc(cs)GKLeaderboard(py)releaseState</symbol>
+        [Introduced(iOS: "19.0.0", macOS: "16.0.0", tvOS: "19.0.0", visionOS: "3.0.0")]
+        public GKReleaseState ReleaseState => Interop.GKLeaderboard_GetReleaseState(Pointer);
+
         private static class Interop
         {
             [DllImport(InteropUtility.DLLName)]
@@ -394,7 +427,7 @@ namespace Apple.GameKit.Leaderboards
             [DllImport(InteropUtility.DLLName)]
             public static extern long GKLeaderboard_GetDuration(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
-            public static extern void GKLeaderboard_LoadLeaderboards(IntPtr idsNsArray, long taskId, SuccessTaskCallback<IntPtr> onCallback, NSErrorTaskCallback onError);
+            public static extern void GKLeaderboard_LoadLeaderboards(long taskId, IntPtr nsArrayIds, SuccessTaskCallback<IntPtr> onCallback, NSErrorTaskCallback onError);
             [DllImport(InteropUtility.DLLName)]
             public static extern void GKLeaderboard_SubmitScore(IntPtr pointer, long taskId, long score, long context, IntPtr player, SuccessTaskCallback onSuccess, NSErrorTaskCallback onError);
             [DllImport(InteropUtility.DLLName)]
@@ -406,7 +439,18 @@ namespace Apple.GameKit.Leaderboards
 #if !UNITY_TVOS
             [DllImport(InteropUtility.DLLName)]
             public static extern void GKLeaderboard_LoadImage(IntPtr pointer, long taskId, SuccessTaskImageCallback onSuccess, NSErrorTaskCallback onError);
-#endif            
+#endif
+            [DllImport(InteropUtility.DLLName)]
+            public static extern string GKLeaderboard_GetActivityIdentifier(IntPtr pointer);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern IntPtr GKLeaderboard_GetActivityProperties(IntPtr pointer);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern string GKLeaderboard_GetLeaderboardDescription(IntPtr pointer);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern GKReleaseState GKLeaderboard_GetReleaseState(IntPtr pointer);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern bool GKLeaderboard_IsHidden(IntPtr pointer);
+
         }
     }
 }

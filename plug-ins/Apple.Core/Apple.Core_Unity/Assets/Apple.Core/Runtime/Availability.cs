@@ -69,7 +69,7 @@ namespace Apple.Core
         {            
             if (type == null)
             {
-                throw new ArgumentNullException(nameof(type));
+                return false;
             }
 
             // Test the current type and any declaring types.
@@ -94,7 +94,7 @@ namespace Apple.Core
         {
             if (memberInfo == null)
             {
-                throw new ArgumentNullException(nameof(memberInfo));
+                return false;
             }
 
             if (!IsAvailable(Attribute.GetCustomAttributes(memberInfo), env))
