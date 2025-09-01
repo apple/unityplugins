@@ -23,6 +23,13 @@ namespace Apple.Core.Runtime
         public NSData(byte[] bytes) : base(InitWithBytes(bytes))
         {
         }
+        
+        /// <summary>
+        /// Default constructor that initializes an empty NSData instance.
+        /// </summary>
+        public NSData() : base(CreateEmptyNSData())
+        {
+        }
 
         private static IntPtr InitWithBytes(byte[] bytes)
         {
@@ -66,12 +73,23 @@ namespace Apple.Core.Runtime
         /// Helper method to get the byte array from an interop IntPtr to NSData.
         /// </summary>
         public static byte[] GetBytes(IntPtr pointer) => (pointer != default) ? new NSData(pointer).Bytes : Array.Empty<byte>();
+        
+        /// <summary>
+        /// Creates an empty NSData instance using a native method.
+        /// </summary>
+        /// <returns>Pointer to the newly created empty NSData object.</returns>
+        private static IntPtr CreateEmptyNSData()
+        {
+            return Interop.NSData_Empty(NSException.ThrowOnExceptionCallback);
+        }
 
         private static class Interop
         {
             [DllImport(InteropUtility.DLLName)] public static extern IntPtr NSData_InitWithBytes(IntPtr bytes, UInt64 length, NSExceptionCallback onException);
             [DllImport(InteropUtility.DLLName)] public static extern UInt64 NSData_GetLength(IntPtr nsDataPtr, NSExceptionCallback onException);
             [DllImport(InteropUtility.DLLName)] public static extern IntPtr NSData_GetBytes(IntPtr nsDataPtr, NSExceptionCallback onException);
+            [DllImport(InteropUtility.DLLName)] public static extern IntPtr NSData_Empty(NSExceptionCallback onException);
+
         }
     }
 }
