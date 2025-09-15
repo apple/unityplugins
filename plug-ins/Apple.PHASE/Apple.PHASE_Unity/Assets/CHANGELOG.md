@@ -1,6 +1,24 @@
 # CHANGELOG
 All notable changes to this project will be documented in this file.
 
+## [1.2.7] - 2025-06-30
+
+### Changed
+
+- Handle UIKit interruptions.
+- Only lazy initialize MetaParameters once.
+- Initialize mixers with unique names.
+
+## [1.2.6] - 2025-04-08
+
+### Added
+- Use client rendering mode for visionOS 3.0.
+- uniqueSelectionQueueLength to SoundEventRandomNode.
+- Rolloff Factor on SpatialMixer.
+
+### Changed
+- Refactored ring buffer.
+
 ## [1.2.5] - 2025-03-07
 
 ### Added
@@ -8,6 +26,8 @@ All notable changes to this project will be documented in this file.
 - Listener head-tracking support
 - Personalized HRTF support
 - AVAudioSession interruption handler
+- Expose rolloffFactor on Spatial Mixer
+- Expose uniqueSelectionQueueLength on RandomNode
 
 ### Changed
 - Initial gain level fix.

@@ -49,6 +49,7 @@ int64_t PHASECreateSpatialMixer(const char* inName,
                                 bool inEnableEarlyReflections,
                                 bool inEnableLateReverb,
                                 float inCullDistance,
+                                float inRolloffFactor,
                                 DirectivityModelParameters inSourceDirectivityModelParameters,
                                 DirectivityModelParameters inListenerDirectivityModelParameters);
 
@@ -150,7 +151,7 @@ int64_t PHASECreateSoundEventSwitchNode(int64_t inSwitchParameterId, SwitchNodeE
 /*
  Creates a sound event random node
  */
-int64_t PHASECreateSoundEventRandomNode(RandomNodeEntry* inRandomEntries, uint32_t inNumRandomEntries);
+int64_t PHASECreateSoundEventRandomNode(RandomNodeEntry* inRandomEntries, uint32_t inNumRandomEntries, int64_t inUniqueSelectionQueueLength);
 
 /*
  Creates a sound event blend node

@@ -187,10 +187,11 @@ namespace Apple.PHASE
         /// <param name="inEnableEarlyReflections"> Set true to enable the early reflections modeler. </param>
         /// <param name="inEnableLateReverb"> Set true to enable the late reverb modeler. </param>
         /// <param name="inCullDistance"> Value representing the distance at which the system no longer processes sound for this object. A value of 0 disables culling. </param>
+        /// <param name="inRolloffFactor"> A roll-off effect changes the frequencies of a sound as it dissipates with distance. A value of 0.0 disables the roll-off effect. A value of 0.5 halves the roll-off. The default value is 1.0, which produces a realistic roll-off effect. A value of 2.0 amplifies the roll-off effect. </param>
         /// <param name="sourceDirectivityModelParameters"> Directivity parameters for associated sources.</param>
         /// <param name="listenerDirectivityModelParameters"> Directiviy parameters for the associated listener. </param>
         /// <returns> The unique ID of this mixer, returns <c>InvalidId</c> on failure. </returns>
-        [DllImport(PluginDllName)] public static extern long PHASECreateSpatialMixer(string inMixerName, bool inEnableDirectPath, bool inEnableEarlyReflections, bool inEnableLateReverb, float inCullDistance, DirectivityModelParameters sourceDirectivityModelParameters, DirectivityModelParameters listenerDirectivityModelParameters);
+        [DllImport(PluginDllName)] public static extern long PHASECreateSpatialMixer(string inMixerName, bool inEnableDirectPath, bool inEnableEarlyReflections, bool inEnableLateReverb, float inCullDistance, float inRolloffFactor, DirectivityModelParameters sourceDirectivityModelParameters, DirectivityModelParameters listenerDirectivityModelParameters);
 
         /// <summary>
         /// Destroy the given mixer from the PHASE engine.
@@ -357,8 +358,9 @@ namespace Apple.PHASE
         /// </summary>
         /// <param name="inRandomEntries"> Array of random entries. </param>
         /// <param name="inNumRandomEntries"> Number of random entries. </param>
+        /// <param name="inUniqueSelectionQueueLength"> Subtrees will not be repeated until after this random node is activated uniqueSelectionQueueLength number of times. </param>
         /// <returns> The unique ID of this node, or <c>InvalidId</c> on failure. </returns>
-        [DllImport(PluginDllName)] public static extern long PHASECreateSoundEventRandomNode([In] IntPtr inRandomEntries, uint inNumRandomEntries);
+        [DllImport(PluginDllName)] public static extern long PHASECreateSoundEventRandomNode([In] IntPtr inRandomEntries, uint inNumRandomEntries, int inUniqueSelectionQueueLength);
 
         /// <summary>
         /// Create a sound event container node with the PHASE engine.

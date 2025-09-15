@@ -30,8 +30,7 @@ public func GKAccessPoint_Trigger
 )
 {
     if #available(iOS 14.0, macOS 11.0, tvOS 14.0, visionOS 1.0, *) {
-        let target = Unmanaged<GKAccessPoint>.fromOpaque(pointer).takeUnretainedValue();
-
+        let target: GKAccessPoint = pointer.takeUnretainedValue();
         if (!target.isPresentingGameCenter) {
             target.trigger(handler: {
                 onSuccess(taskId);
@@ -55,8 +54,7 @@ public func GKAccessPoint_TriggerWithState
 )
 {
     if #available(iOS 14.0, macOS 11.0, tvOS 14.0, visionOS 1.0, *) {
-        let target = Unmanaged<GKAccessPoint>.fromOpaque(pointer).takeUnretainedValue();
-
+        let target: GKAccessPoint = pointer.takeUnretainedValue();
         if (!target.isPresentingGameCenter) {
             if let stateEnum = GKGameCenterViewControllerState(rawValue: Int(truncatingIfNeeded: state)) {
                 target.trigger(
@@ -190,6 +188,139 @@ public func GKAccessPoint_TriggerWithPlayer
         onError(taskId, NSError(code: GKErrorCodeExtension.unsupportedOperationForOSVersion).passRetainedUnsafeMutablePointer());
     }
 }
+
+#if os(iOS) || os(macOS)
+@_cdecl("GKAccessPoint_TriggerForPlayTogether")
+public func GKAccessPoint_TriggerForPlayTogether
+(
+    pointer: UnsafeMutableRawPointer, // GKAccessPoint
+    taskId: Int64,
+    onSuccess: @escaping SuccessTaskCallback,
+    onError: @escaping NSErrorTaskCallback
+)
+{
+    if #available(iOS 26.0, macOS 26.0, *) {
+        let target: GKAccessPoint = pointer.takeUnretainedValue();
+        if (!target.isPresentingGameCenter) {
+            target.triggerForPlayTogether(handler: {
+                onSuccess(taskId);
+            });
+        } else {
+            onError(taskId, NSError(code: GKErrorCodeExtension.gameCenterDashboardAlreadyShown).passRetainedUnsafeMutablePointer());
+        }
+    } else {
+        onError(taskId, NSError(code: GKErrorCodeExtension.unsupportedOperationForOSVersion).passRetainedUnsafeMutablePointer());
+    }
+}
+#endif
+
+#if os(iOS) || os(macOS)
+@_cdecl("GKAccessPoint_TriggerForChallenges")
+public func GKAccessPoint_TriggerForChallenges
+(
+    pointer: UnsafeMutableRawPointer, // GKAccessPoint
+    taskId: Int64,
+    onSuccess: @escaping SuccessTaskCallback,
+    onError: @escaping NSErrorTaskCallback
+)
+{
+    if #available(iOS 26.0, macOS 26.0, *) {
+        let target: GKAccessPoint = pointer.takeUnretainedValue();
+        if (!target.isPresentingGameCenter) {
+            target.triggerForChallenges(handler: {
+                onSuccess(taskId);
+            });
+        } else {
+            onError(taskId, NSError(code: GKErrorCodeExtension.gameCenterDashboardAlreadyShown).passRetainedUnsafeMutablePointer());
+        }
+    } else {
+        onError(taskId, NSError(code: GKErrorCodeExtension.unsupportedOperationForOSVersion).passRetainedUnsafeMutablePointer());
+    }
+}
+#endif
+
+#if os(iOS) || os(macOS)
+@_cdecl("GKAccessPoint_TriggerWithChallengeDefinitionID")
+public func GKAccessPoint_TriggerWithChallengeDefinitionID
+(
+    pointer: UnsafeMutableRawPointer, // GKAccessPoint
+    challengeDefinitionIDPtr: UnsafeMutablePointer<NSString>,
+    taskId: Int64,
+    onSuccess: @escaping SuccessTaskCallback,
+    onError: @escaping NSErrorTaskCallback
+)
+{
+    if #available(iOS 26.0, macOS 26.0, *) {
+        let target: GKAccessPoint = pointer.takeUnretainedValue();
+        let challengeDefinitionID = challengeDefinitionIDPtr.takeUnretainedValue() as String;
+        if (!target.isPresentingGameCenter) {
+            target.trigger(
+                challengeDefinitionID: challengeDefinitionID,
+                handler: {
+                    onSuccess(taskId);
+                });
+        } else {
+            onError(taskId, NSError(code: GKErrorCodeExtension.gameCenterDashboardAlreadyShown).passRetainedUnsafeMutablePointer());
+        }
+    } else {
+        onError(taskId, NSError(code: GKErrorCodeExtension.unsupportedOperationForOSVersion).passRetainedUnsafeMutablePointer());
+    }
+}
+#endif
+
+#if os(iOS) || os(macOS)
+@_cdecl("GKAccessPoint_TriggerWithGameActivityDefinitionID")
+public func GKAccessPoint_TriggerWithGameActivityDefinitionID
+(
+    pointer: UnsafeMutableRawPointer, // GKAccessPoint
+    gameActivityDefinitionIDPtr: UnsafeMutablePointer<NSString>,
+    taskId: Int64,
+    onSuccess: @escaping SuccessTaskCallback,
+    onError: @escaping NSErrorTaskCallback
+)
+{
+    if #available(iOS 26.0, macOS 26.0, *) {
+        let target: GKAccessPoint = pointer.takeUnretainedValue();
+        let gameActivityDefinitionID = gameActivityDefinitionIDPtr.takeUnretainedValue() as String;
+        if (!target.isPresentingGameCenter) {
+            target.trigger(
+                gameActivityDefinitionID: gameActivityDefinitionID,
+                handler: {
+                    onSuccess(taskId);
+                });
+        } else {
+            onError(taskId, NSError(code: GKErrorCodeExtension.gameCenterDashboardAlreadyShown).passRetainedUnsafeMutablePointer());
+        }
+    } else {
+        onError(taskId, NSError(code: GKErrorCodeExtension.unsupportedOperationForOSVersion).passRetainedUnsafeMutablePointer());
+    }
+}
+#endif
+
+#if os(iOS) || os(macOS)
+@_cdecl("GKAccessPoint_TriggerForFriending")
+public func GKAccessPoint_TriggerForFriending
+(
+    pointer: UnsafeMutableRawPointer, // GKAccessPoint
+    taskId: Int64,
+    onSuccess: @escaping SuccessTaskCallback,
+    onError: @escaping NSErrorTaskCallback
+)
+{
+    if #available(iOS 26.0, macOS 26.0, *) {
+        let target: GKAccessPoint = pointer.takeUnretainedValue();
+        if (!target.isPresentingGameCenter) {
+            target.triggerForFriending(handler: {
+                onSuccess(taskId);
+            });
+        } else {
+            onError(taskId, NSError(code: GKErrorCodeExtension.gameCenterDashboardAlreadyShown).passRetainedUnsafeMutablePointer());
+        }
+    } else {
+        onError(taskId, NSError(code: GKErrorCodeExtension.unsupportedOperationForOSVersion).passRetainedUnsafeMutablePointer());
+    }
+}
+#endif
 
 @_cdecl("GKAccessPoint_GetLocation")
 public func GKAccessPoint_GetLocation

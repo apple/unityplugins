@@ -37,6 +37,7 @@ namespace Apple.PHASE
         /// <returns> True if succesful, false otherwise. </returns>
         public override bool Create()
         {
+            if (_parameterId != Helpers.InvalidId) return true;
             _parameterId = Helpers.PHASECreateSoundEventParameterStr(_parameterName, _defaultValue);
             if (_parameterId == Helpers.InvalidId)
             {

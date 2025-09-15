@@ -23,7 +23,6 @@ namespace Apple.GameKit.Sample
         void Start()
         {
             _refreshButton.onClick.AddListener(RefreshButtonAction);
-            ShouldDestroyWhenPopped = IsPrefabInstance;
         }
 
         async void OnEnable()
@@ -51,12 +50,10 @@ namespace Apple.GameKit.Sample
                     {
                         foreach (var leaderboard in leaderboards)
                         {
-                            var button = _leaderboardButtonPrefab.Instantiate(_listContent);
-                            button.Leaderboard = leaderboard;
+                            var button = _leaderboardButtonPrefab.Instantiate(_listContent, leaderboard);
                             button.ButtonClick += (sender, args) =>
                             {
-                                var leaderboardPanel = _leaderboardPanelPrefab.Instantiate(GameKitSample.Instance.PanelArea);
-                                leaderboardPanel.Leaderboard = leaderboard;
+                                var leaderboardPanel = _leaderboardPanelPrefab.Instantiate(GameKitSample.Instance.PanelArea, leaderboard);
                                 GameKitSample.Instance.PushPanel(leaderboardPanel.gameObject);
                             };
                         }

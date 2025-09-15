@@ -82,7 +82,7 @@ public func GKChallenge_Decline
 public func GKChallenge_LoadReceivedChallenges
 (
     taskId: Int64,
-    onSuccess: @escaping SuccessTaskPtrCallback,
+    onSuccess: @escaping SuccessTaskPtrCallback<NSArray>, // NSArray<GKChallenge>
     onError: @escaping NSErrorTaskCallback
 )
 {

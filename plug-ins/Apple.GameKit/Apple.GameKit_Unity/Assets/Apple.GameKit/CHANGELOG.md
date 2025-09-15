@@ -1,6 +1,17 @@
 # CHANGELOG
 All notable changes to this project will be documented in this file.
 
+## [4.0.1] - 2025-09-15
+- Bump SDK version numbers to iOS26, macOS26, tvOS26 and visionOS26 for all new APIs from this year.
+- Added more description for the APIs of how to authenticate a local player and how to set up the listener callbacks of the listener.
+
+## [4.0.0] - 2025-06-09
+- Add support for the new GameKit features in iOS 19 and macOS 16, including:
+  - [Game activities](https://developer.apple.com/documentation/gamekit/creating-activities-for-your-game)
+  - [Challenges for leaderboards](https://developer.apple.com/documentation/gamekit/creating-engaging-challenges-from-leaderboards)
+  - New methods for triggering the [access point](https://developer.apple.com/documentation/gamekit/gkaccesspoint)
+- Xcode 17 Beta 1 or better is required to use the new features.
+
 ## [3.0.2] - 2025-01-29
 - Remove references to some unused packages.
 

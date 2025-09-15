@@ -27,11 +27,17 @@ namespace Apple.GameKit
         /// <summary>
         /// Handles when data changes in a saved game file.
         /// </summary>
+        /// <remarks>
+        /// Register for this event before calling GKLocalPlayer.Authenticate() to avoid missing events.
+        /// </remarks>
         public static event SavedGameModifiedHandler SavedGameModified;
 
         /// <summary>
         /// Chooses the correct game data from the saved games that contain conflicts.
         /// </summary>
+        /// <remarks>
+        /// Register for this event before calling GKLocalPlayer.Authenticate() to avoid missing events.
+        /// </remarks>
         public static event SavedGamesConflictingHandler SavedGamesConflicting;
         #endregion
 
@@ -63,7 +69,7 @@ namespace Apple.GameKit
         /// The name of the device that the player uses to save the game.
         /// </summary>
         /// <symbol>c:objc(cs)GKSavedGame(py)deviceName</symbol>
-        public NSString DeviceName => Interop.GKSavedGame_GetDeviceName(Pointer);
+        public string DeviceName => Interop.GKSavedGame_GetDeviceName(Pointer);
 
         /// <summary>
         /// The date when you saved the game data or modified it.
@@ -75,7 +81,7 @@ namespace Apple.GameKit
         /// The name of the saved game.
         /// </summary>
         /// <symbol>c:objc(cs)GKSavedGame(py)name</symbol>
-        public NSString Name => Interop.GKSavedGame_GetName(Pointer);
+        public string Name => Interop.GKSavedGame_GetName(Pointer);
         public override string ToString() => Name.ToString();
 
         /// <summary>
