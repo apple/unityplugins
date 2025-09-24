@@ -269,6 +269,38 @@ public func GKAccessPoint_TriggerWithChallengeDefinitionID
 #endif
 
 #if os(iOS) || os(macOS)
+@_cdecl("GKAccessPoint_TriggerWithGameActivity")
+public func GKAccessPoint_TriggerWithGameActivity
+(
+    pointer: UnsafeMutableRawPointer, // GKAccessPoint
+    gameActivityPointer: UnsafeMutableRawPointer, // GKGameActivity
+    taskId: Int64,
+    onSuccess: @escaping SuccessTaskCallback,
+    onError: @escaping NSErrorTaskCallback
+)
+{
+    
+    guard #available(iOS 26.0, macOS 26.0, *) else {
+        onError(taskId, NSError(code: GKErrorCodeExtension.unsupportedOperationForOSVersion).passRetainedUnsafeMutablePointer());
+        return;
+    }
+    
+    let target: GKAccessPoint = pointer.takeUnretainedValue();
+    let gameActivity = gameActivityPointer.takeUnretainedValue() as GKGameActivity;
+    if (!target.isPresentingGameCenter) {
+        target.trigger(
+            gameActivity: gameActivity,
+            handler: {
+                onSuccess(taskId);
+            });
+    } else {
+        onError(taskId, NSError(code: GKErrorCodeExtension.gameCenterDashboardAlreadyShown).passRetainedUnsafeMutablePointer());
+    }
+}
+
+#endif
+
+#if os(iOS) || os(macOS)
 @_cdecl("GKAccessPoint_TriggerWithGameActivityDefinitionID")
 public func GKAccessPoint_TriggerWithGameActivityDefinitionID
 (

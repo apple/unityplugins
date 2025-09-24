@@ -9,6 +9,7 @@ namespace Apple.GameKit.Sample
     public class ActivityPanel : PanelBase<ActivityPanel>
     {
         [SerializeField] private ActivityDefinitionButton _activityDefinitionButton = default;
+        [SerializeField] private ActivityDefinitionButton _activityButton = default;
         [SerializeField] private AchievementPanel _achievementPanelPrefab = default;
         [SerializeField] private AchievementButton _achievementButtonPrefab = default;
         [SerializeField] private ActivityAchievementButtons _activityAchievementButtonsPrefab = default;
@@ -61,6 +62,14 @@ namespace Apple.GameKit.Sample
                 if (Activity?.ActivityDefinition != null)
                 {
                     await GKAccessPoint.Shared.TriggerWithGameActivityDefinitionID(Activity.ActivityDefinition.Identifier);
+                }
+            };
+
+            _activityButton.ButtonClick += async (sender, args) =>
+            {
+                if (Activity != null)
+                {
+                    await GKAccessPoint.Shared.TriggerWithGameActivity(Activity);
                 }
             };
 
@@ -245,13 +254,15 @@ namespace Apple.GameKit.Sample
             {
                 return
                     _activityDefinitionButton.Interactable &&
-                    _refreshButton.interactable;
+                    _refreshButton.interactable &&
+                    _activityButton.Interactable;
             }
 
             set
             {
                 _activityDefinitionButton.Interactable = value;
                 _refreshButton.interactable = value;
+                _activityButton.Interactable = value;
             }
         }
 
@@ -272,6 +283,7 @@ namespace Apple.GameKit.Sample
                 {
                     var definition = activity.ActivityDefinition;
                     _activityDefinitionButton.ActivityDefinition = definition;
+                    _activityButton.ActivityDefinition = definition;
 
                     _propertyButtonPrefab.Instantiate(_propertiesListContent, "Identifier", activity.Identifier);
                     _propertyButtonPrefab.Instantiate(_propertiesListContent, "State", activity.State.ToString());

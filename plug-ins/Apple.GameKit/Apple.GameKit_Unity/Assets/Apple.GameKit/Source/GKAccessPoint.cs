@@ -244,6 +244,21 @@ namespace Apple.GameKit
         }
 #endif
 
+#if UNITY_IOS || UNITY_STANDALONE_OSX
+        /// <summary>
+        /// Brings up the game activity play together flow for the provided definition.
+        /// </summary>
+        /// <symbol>c:objc(cs)GKAccessPoint(im)triggerAccessPointWithGameActivityDefinitionID:handler:</symbol>
+        [Unavailable(RuntimeOperatingSystem.tvOS, RuntimeOperatingSystem.visionOS)]
+        [Introduced(iOS: "26.0.0", macOS: "26.0.0")]
+        public Task TriggerWithGameActivity(GKGameActivity activity)
+        {
+            var tcs = InteropTasks.Create<bool>(out var taskId);
+            Interop.GKAccessPoint_TriggerWithGameActivity(Pointer, activity.Pointer, taskId, OnTriggerSuccess, OnTriggerError);
+            return tcs.Task;
+        }
+#endif
+
         /// <summary>
         /// Specifies the corner of the screen to display the access point.
         /// </summary>
@@ -321,6 +336,8 @@ namespace Apple.GameKit
             public static extern void GKAccessPoint_TriggerWithGameActivityDefinitionID(IntPtr pointer, IntPtr gameActivityDefinitionIDPtr, long taskId, SuccessTaskCallback onSuccess, NSErrorTaskCallback onError);
             [DllImport(InteropUtility.DLLName)]
             public static extern void GKAccessPoint_TriggerForFriending(IntPtr pointer, long taskId, SuccessTaskCallback onSuccess, NSErrorTaskCallback onError);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKAccessPoint_TriggerWithGameActivity(IntPtr pointer, IntPtr gameActivityPtr, long taskId, SuccessTaskCallback onSuccess, NSErrorTaskCallback onError);
 #endif
         }
 
