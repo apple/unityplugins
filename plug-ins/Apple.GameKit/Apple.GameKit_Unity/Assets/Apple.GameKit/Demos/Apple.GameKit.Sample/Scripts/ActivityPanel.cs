@@ -57,6 +57,7 @@ namespace Apple.GameKit.Sample
 
         void Start()
         {
+            #if UNITY_IOS || UNITY_STANDALONE_OSX
             _activityDefinitionButton.ButtonClick += async (sender, args) =>
             {
                 if (Activity?.ActivityDefinition != null)
@@ -64,6 +65,7 @@ namespace Apple.GameKit.Sample
                     await GKAccessPoint.Shared.TriggerWithGameActivityDefinitionID(Activity.ActivityDefinition.Identifier);
                 }
             };
+            #endif
 
             _activityButton.ButtonClick += async (sender, args) =>
             {

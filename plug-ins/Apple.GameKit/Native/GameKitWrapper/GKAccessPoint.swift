@@ -480,9 +480,12 @@ public func GKAccessPoint_SetIsActive
     if #available(iOS 14.0, macOS 11.0, tvOS 14.0, visionOS 1.0, *) {
         let target: GKAccessPoint = pointer.takeUnretainedValue();
 
+        // TODO: rdar://161110369 add a way to set parentWindow from Unity
+        #if os(visionOS) // visionOS will not show unless a parentWindow is set
         if value {
             target.parentWindow = UiUtilities.defaultWindow()
         }
+        #endif
 
         target.isActive = value;
     } else {

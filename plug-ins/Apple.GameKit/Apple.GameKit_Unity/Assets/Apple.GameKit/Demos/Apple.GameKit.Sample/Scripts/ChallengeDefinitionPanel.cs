@@ -37,6 +37,7 @@ namespace Apple.GameKit.Sample
 
         void Start()
         {
+            #if UNITY_IOS || UNITY_STANDALONE_OSX
             _challengeDefinitionButton.ButtonClick += async (sender, args) =>
             {
                 if (ChallengeDefinition != null)
@@ -44,6 +45,7 @@ namespace Apple.GameKit.Sample
                     await GKAccessPoint.Shared.TriggerWithChallengeDefinitionID(ChallengeDefinition.Identifier);
                 }
             };
+            #endif
 
             _refreshButton.onClick.AddListener(RefreshButtonAction);
         }
