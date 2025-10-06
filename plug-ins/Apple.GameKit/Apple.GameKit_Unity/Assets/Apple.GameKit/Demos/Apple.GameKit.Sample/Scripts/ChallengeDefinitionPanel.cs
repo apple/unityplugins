@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Apple.Core.Runtime;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -96,12 +97,10 @@ namespace Apple.GameKit.Sample
                     _propertyButtonPrefab.Instantiate(_propertiesListContent, "IsRepeatable", ChallengeDefinition.IsRepeatable ? "yes" : "no");
 
                     // duration options
-                    _propertyButtonPrefab.Instantiate(_propertiesListContent, "Duration Options", 
-                        ChallengeDefinition.DurationOptions != null ?
-                            string.Join("\n", ChallengeDefinition.DurationOptions
-                                .Where(dateComponents => dateComponents.ValidDate)
-                                .Select(dateComponents => dateComponents.Date.ToString("u"))) :
-                            string.Empty);
+                    _propertyButtonPrefab.Instantiate(_propertiesListContent, "Duration Options",
+                        ChallengeDefinition.DurationOptions != null
+                            ? FormatDurationOptions(ChallengeDefinition.DurationOptions) 
+                            : "Null");
 
                     // hasActiveChallenges
                     _propertyButtonPrefab.Instantiate(_propertiesListContent, "Has Active Challenges", (await ChallengeDefinition.HasActiveChallenges()) ? "yes" : "no");
@@ -132,6 +131,19 @@ namespace Apple.GameKit.Sample
             }
 
             return numEntries;
+        }
+
+        private static string FormatDurationOptions(NSArray<NSDateComponents> durationOptions)
+        {
+            if (durationOptions.Count == 0)
+            {
+                return "Empty";
+            }
+
+            return string.Join("\n", durationOptions
+                    .Select(dateComponents => dateComponents.ValidDate
+                        ? dateComponents.Date.ToString("u")
+                        : $"{dateComponents.Day} day"));
         }
 
         private void Clear()
