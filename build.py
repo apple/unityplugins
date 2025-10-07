@@ -32,7 +32,7 @@ argument_parser.add_argument("-b", "--build-action", dest="build_actions", nargs
 argument_parser.add_argument("-bc","--build-config", dest="build_config", default=ConfigID.ALL, help=f"Sets the build configuration to compile. Possible values are: {ConfigID.RELEASE}, {ConfigID.DEBUG}, or {ConfigID.ALL} which builds all other configs. Default is: {ConfigID.ALL}")
 argument_parser.add_argument("-c", "--codesign-identity", dest="codesign_identity", default=str(), help=f"Signs compiled native libraries with provided code signing identity hash or prompts the user to select from a list of identities on the system when {CodeSignActionID.PROMPT} is passed.")
 argument_parser.add_argument("-u", "--unity-installation-root", dest="unity_installation_root", default="", help="Root path to search for Unity installations when building tests. Note: performs a full recursive search of the given directory.")
-argument_parser.add_argument("-o", "--output-path", dest="output_path", default=CTX.build_output_path, help=f"Build result path for final packages. Default: {CTX.build_output_path}")
+argument_parser.add_argument("-o", "--output-path", dest="output_path", default=CTX.build_path, help=f"Build result path for final packages. Default: {CTX.build_path}")
 argument_parser.add_argument("-k", "--clean-action", dest="clean_actions", nargs='*', default=[CleanActionID.NONE], help=f"Sets the clean actions for the selected plug-ins. Possible values are: {CleanActionID.NATIVE}, {CleanActionID.PACKAGES}, {CleanActionID.TESTS}, {CleanActionID.NONE}, or {CleanActionID.ALL}. Defaults to no clean action.")
 argument_parser.add_argument("-f", "--force", dest="force_clean", action="store_true", help="Setting this option will not prompt user on file deletion during clean operations.")
 argument_parser.add_argument("-t", "--test", dest="build_tests", action="store_true", help="Builds Unity tests for each plug-in.")
@@ -311,7 +311,7 @@ def Main():
     CTX.printer.SectionHeading("Configure Build Paths")
 
     # Configure build paths for packages
-    CTX.build_path = pathlib.Path(build_args.output_path)
+    CTX.build_path = pathlib.Path(build_args.output_path).resolve()
 
     if CTX.clean_actions[CleanActionID.PACKAGES] and CTX.build_path.exists():
         CTX.printer.StatusMessage("Cleaning packages.", "\n")
