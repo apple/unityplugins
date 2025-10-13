@@ -127,7 +127,7 @@ enum PHASEMixerType
             mixerId = PHASECreateChannelMixer(mixerName, ChannelLayoutTypeMono);
             break;
         case PHASEMixerType::SpatialMixer:
-            mixerId = PHASECreateSpatialMixer(mixerName, true, true, true, 0.0f, mDirectivityModelParameters, mDirectivityModelParameters);
+            mixerId = PHASECreateSpatialMixer(mixerName, true, true, true, 0.0f, 1.0f, mDirectivityModelParameters, mDirectivityModelParameters);
             break;
     }
     
@@ -248,7 +248,7 @@ enum PHASEMixerType
             mixerId = PHASECreateChannelMixer(mixerName, ChannelLayoutTypeMono);
             break;
         case PHASEMixerType::SpatialMixer:
-            mixerId = PHASECreateSpatialMixer(mixerName, true, true, true, 0.0f, mDirectivityModelParameters, mDirectivityModelParameters);
+            mixerId = PHASECreateSpatialMixer(mixerName, true, true, true, 0.0f, 1.0f, mDirectivityModelParameters, mDirectivityModelParameters);
             break;
     }
    
@@ -1282,7 +1282,7 @@ enum PHASEMixerType
 {
     char mixerName[] = "TestSpatialMixerName";
     int64_t mixer =
-      PHASECreateSpatialMixer(mixerName, true, true, true, 0.0f, mDirectivityModelParameters, mDirectivityModelParameters);
+      PHASECreateSpatialMixer(mixerName, true, true, true, 0.0f, 1.0f, mDirectivityModelParameters, mDirectivityModelParameters);
     XCTAssert(mixer != PHASEInvalidInstanceHandle);
 }
 
@@ -1296,7 +1296,7 @@ enum PHASEMixerType
 
     char mixerName[] = "TestMixerName";
     int64_t mixerId =
-      PHASECreateSpatialMixer(mixerName, true, true, true, 10.0f, mDirectivityModelParameters, mDirectivityModelParameters);
+      PHASECreateSpatialMixer(mixerName, true, true, true, 10.0f, 1.0f, mDirectivityModelParameters, mDirectivityModelParameters);
     XCTAssert(mixerId != PHASEInvalidInstanceHandle);
 
     int64_t samplerId = PHASECreateSoundEventSamplerNode(assetName, mixerId, true, CalibrationModeRelativeSpl, 1);
@@ -1356,7 +1356,7 @@ void MyOneShotCompletionHandler(StartHandlerReason reason, int64_t source, int64
 
     char mixerName[] = "TestMixername";
     int64_t mixerId =
-      PHASECreateSpatialMixer(mixerName, true, true, true, 0.0f, mDirectivityModelParameters, mDirectivityModelParameters);
+      PHASECreateSpatialMixer(mixerName, true, true, true, 0.0f, 1.0f, mDirectivityModelParameters, mDirectivityModelParameters);
     XCTAssert(mixerId != PHASEInvalidInstanceHandle);
 
     int64_t samplerId = PHASECreateSoundEventSamplerNode(assetName, mixerId, false, CalibrationModeRelativeSpl, 1);
@@ -1412,7 +1412,7 @@ void MyOneShotCompletionHandler(StartHandlerReason reason, int64_t source, int64
 
     char mixerName[] = "TestMixername";
     int64_t mixerId =
-      PHASECreateSpatialMixer(mixerName, true, true, true, 0.0f, mDirectivityModelParameters, mDirectivityModelParameters);
+      PHASECreateSpatialMixer(mixerName, true, true, true, 0.0f, 1.0f, mDirectivityModelParameters, mDirectivityModelParameters);
     XCTAssert(mixerId != PHASEInvalidInstanceHandle);
 
     int64_t samplerId = PHASECreateSoundEventSamplerNode(assetName, mixerId, true, CalibrationModeRelativeSpl, 1);
@@ -1605,7 +1605,7 @@ void MyOneShotCompletionHandler(StartHandlerReason reason, int64_t source, int64
 
     char mixerName[] = "TestMixerName";
     int64_t mixerId =
-      PHASECreateSpatialMixer(mixerName, true, true, true, 0.0f, mDirectivityModelParameters, mDirectivityModelParameters);
+      PHASECreateSpatialMixer(mixerName, true, true, true, 0.0f, 1.0f, mDirectivityModelParameters, mDirectivityModelParameters);
     XCTAssert(mixerId != PHASEInvalidInstanceHandle);
 
     // Create a sampler node
@@ -1675,7 +1675,7 @@ void MyOneShotCompletionHandler(StartHandlerReason reason, int64_t source, int64
 
     char mixerName[] = "TestMixername";
     int64_t mixerId =
-      PHASECreateSpatialMixer(mixerName, true, true, true, 0.0f, mDirectivityModelParameters, mDirectivityModelParameters);
+      PHASECreateSpatialMixer(mixerName, true, true, true, 0.0f, 1.0f, mDirectivityModelParameters, mDirectivityModelParameters);
     XCTAssert(mixerId != PHASEInvalidInstanceHandle);
 
     int64_t samplerId = PHASECreateSoundEventSamplerNode(assetName, mixerId, true, CalibrationModeRelativeSpl, 1);
@@ -1683,7 +1683,7 @@ void MyOneShotCompletionHandler(StartHandlerReason reason, int64_t source, int64
 
     char mixerName2[] = "TestMixername2";
     int64_t mixerId2 =
-      PHASECreateSpatialMixer(mixerName2, true, false, false, 0.0f, mDirectivityModelParameters, mDirectivityModelParameters);
+      PHASECreateSpatialMixer(mixerName2, true, false, false, 0.0f, 1.0f, mDirectivityModelParameters, mDirectivityModelParameters);
     XCTAssert(mixerId2 != PHASEInvalidInstanceHandle);
 
     int64_t samplerId2 = PHASECreateSoundEventSamplerNode(assetName, mixerId2, true, CalibrationModeRelativeSpl, 1);
@@ -1691,7 +1691,7 @@ void MyOneShotCompletionHandler(StartHandlerReason reason, int64_t source, int64
 
     char mixerName3[] = "TestMixername3";
     int64_t mixerId3 =
-      PHASECreateSpatialMixer(mixerName3, false, true, true, 0.0f, mDirectivityModelParameters, mDirectivityModelParameters);
+      PHASECreateSpatialMixer(mixerName3, false, true, true, 0.0f, 1.0f, mDirectivityModelParameters, mDirectivityModelParameters);
     XCTAssert(mixerId3 != PHASEInvalidInstanceHandle);
 
     int64_t samplerId3 = PHASECreateSoundEventSamplerNode(assetName, mixerId3, true, CalibrationModeRelativeSpl, 1);
@@ -1807,7 +1807,7 @@ void MyOneShotCompletionHandler(StartHandlerReason reason, int64_t source, int64
 
     char mixerName[] = "TestMixername";
     int64_t mixerId =
-      PHASECreateSpatialMixer(mixerName, true, true, true, 0.0f, mDirectivityModelParameters, mDirectivityModelParameters);
+      PHASECreateSpatialMixer(mixerName, true, true, true, 0.0f, 1.0f, mDirectivityModelParameters, mDirectivityModelParameters);
     XCTAssert(mixerId != PHASEInvalidInstanceHandle);
 
     int64_t samplerId = PHASECreateSoundEventSamplerNode(assetName, mixerId, true, CalibrationModeRelativeSpl, 1);
@@ -1866,7 +1866,7 @@ void MyOneShotCompletionHandler(StartHandlerReason reason, int64_t source, int64
 
     char mixerName[] = "TestMixername";
     int64_t mixerId =
-      PHASECreateSpatialMixer(mixerName, true, true, true, 0.0f, mDirectivityModelParameters, mDirectivityModelParameters);
+      PHASECreateSpatialMixer(mixerName, true, true, true, 0.0f, 1.0f, mDirectivityModelParameters, mDirectivityModelParameters);
     XCTAssert(mixerId != PHASEInvalidInstanceHandle);
 
     int64_t samplerId = PHASECreateSoundEventSamplerNode(assetName, mixerId, true, CalibrationModeRelativeSpl, 1);
@@ -1939,7 +1939,7 @@ void MyOneShotCompletionHandler(StartHandlerReason reason, int64_t source, int64
                               initWithStreamDescription:&desc
                               channelLayout:layout];
 
-    PHASEWrapperRingBuffer* mRingBuffer = [[PHASEWrapperRingBuffer alloc] initWithFrameSize:length numberOfBuffers:1 format:format];
+    PHASEWrapperRingBuffer* mRingBuffer = [[PHASEWrapperRingBuffer alloc] initWithFrameSize:length numberOfBuffers:2 format:format];
 
     // Generate different sine tone for each channel inter-leaved
     for (int j = 0; j < 2; j++)

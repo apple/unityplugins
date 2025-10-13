@@ -93,6 +93,7 @@ int64_t PHASECreateSpatialMixer(const char* inName,
                                 bool inEnableEarlyReflections,
                                 bool inEnableLateReverb,
                                 float inCullDistance,
+                                float inRolloffFactor,
                                 DirectivityModelParameters inSourceDirectivityModelParameters,
                                 DirectivityModelParameters inListenerDirectivityModelParameters)
 {
@@ -109,7 +110,7 @@ int64_t PHASECreateSpatialMixer(const char* inName,
                                enableEarlyReflections:inEnableEarlyReflections
                                      enableLateReverb:inEnableLateReverb
                                          cullDistance:inCullDistance
-                                        rolloffFactor:1.0f
+                                        rolloffFactor:inRolloffFactor
                      sourceDirectivityModelParameters:inSourceDirectivityModelParameters
                    listenerDirectivityModelParameters:inListenerDirectivityModelParameters];
 }
@@ -296,7 +297,7 @@ int64_t PHASECreateSoundEventSwitchNode(int64_t inSwitchParameterId, SwitchNodeE
     }
 }
 
-int64_t PHASECreateSoundEventRandomNode(RandomNodeEntry* inRandomEntries, uint32_t inNumRandomEntries)
+int64_t PHASECreateSoundEventRandomNode(RandomNodeEntry* inRandomEntries, uint32_t inNumRandomEntries, int64_t inUniqueSelectionQueueLength)
 {
     NSMutableDictionary* randomEntries = [[NSMutableDictionary alloc] initWithCapacity:inNumRandomEntries];
     for (uint32_t entryIdx = 0; entryIdx < inNumRandomEntries; ++entryIdx)
@@ -309,7 +310,7 @@ int64_t PHASECreateSoundEventRandomNode(RandomNodeEntry* inRandomEntries, uint32
     @try
     {
         PHASEEngineWrapper* engineWrapper = [PHASEEngineWrapper sharedInstance];
-        return [engineWrapper createSoundEventRandomNodeWithEntries:randomEntries];
+        return [engineWrapper createSoundEventRandomNodeWithEntries:randomEntries uniqueSelectionQueueLength:inUniqueSelectionQueueLength];
     }
     @catch (NSException* e)
     {

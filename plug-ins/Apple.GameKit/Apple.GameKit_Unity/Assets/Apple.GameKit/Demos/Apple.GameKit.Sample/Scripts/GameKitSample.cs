@@ -28,12 +28,16 @@ namespace Apple.GameKit.Sample
         [SerializeField] private AccessPointPanel _accessPointPanel = default;
         [SerializeField] private FriendsPanel _friendsPanel = default;
         [SerializeField] private AchievementsPanel _achievementsPanel = default;
+        [SerializeField] private ActivitiesPanel _activitiesPanel = default;
+        [SerializeField] private ChallengesPanel _challengesPanel = default;
         [SerializeField] private NearbyPlayersPanel _nearbyPlayersPanel = default;
         [SerializeField] private LeaderboardSetsPanel _leaderboardSetsPanel = default;
         [SerializeField] private LeaderboardsPanel _leaderboardsPanel = default;
         [SerializeField] private TurnBasedMatchesPanel _turnBasedMatchesPanel = default;
         [SerializeField] private RealtimeMatchRequestPanel _realtimeMatchRequestPanel = default;
         [SerializeField] private RealtimeMatchStatusPanel _realtimeMatchStatusPanel = default;
+
+        [SerializeField] private ActivityPanel _activityPanelPrefab = default;
 
 #pragma warning disable CS0414 // prevent unused variable warnings on tvOS
         [SerializeField] private SavedGamesPanel _savedGamesPanel = default;
@@ -47,6 +51,8 @@ namespace Apple.GameKit.Sample
         [SerializeField] private Button _accessPointButton = default;
         [SerializeField] private Button _friendsButton = default;
         [SerializeField] private Button _showAchievementsBtn = default;
+        [SerializeField] private Button _showActivitiesButton = default;
+        [SerializeField] private Button _showChallengesButton = default;
         [SerializeField] private Button _leaderboardSetsButton = default;
         [SerializeField] private Button _leaderboardsButton = default;
         [SerializeField] private Button _nearbyPlayersButton = default;
@@ -68,10 +74,12 @@ namespace Apple.GameKit.Sample
                 // Send Unity log messages to NSLog.
                 _ = new AppleLogger();
 
-                _authenticateBtn.onClick.AddListener(OnAuthenticate);
+                _authenticateBtn.onClick.AddListener(OnAuthenticateButtonAction);
                 _accessPointButton.onClick.AddListener(OnShowAccessPointPanel);
                 _friendsButton.onClick.AddListener(OnShowFriendsPanel);
                 _showAchievementsBtn.onClick.AddListener(OnShowAchievements);
+                _showActivitiesButton.onClick.AddListener(OnShowActivities);
+                _showChallengesButton.onClick.AddListener(OnShowChallenges);
                 _leaderboardSetsButton.onClick.AddListener(OnShowLeaderboardSets);
                 _leaderboardsButton.onClick.AddListener(OnShowLeaderboards);
                 _nearbyPlayersButton.onClick.AddListener(OnShowNearbyPlayersPanel);
@@ -88,6 +96,11 @@ namespace Apple.GameKit.Sample
 
                 GKInvite.InviteAccepted += OnInviteAccepted;
 
+                if (Availability.IsTypeAvailable<GKGameActivity>())
+                {
+                    GKGameActivity.WantsToPlay += OnWantsToPlay;
+                }
+
                 // Hide all of the interchangeable panels to start.
                 for (int i = 0; i < _panelArea.transform.childCount; i++)
                 {
@@ -96,6 +109,9 @@ namespace Apple.GameKit.Sample
 
                 // Make the main button layout be the one visible panel.
                 PushPanel(_mainButtonLayout);
+
+                // Start the authentication process
+                _ = OnAuthenticate();
             }
             catch (Exception ex)
             {
@@ -103,8 +119,20 @@ namespace Apple.GameKit.Sample
             }
         }
 
-        private async void OnAuthenticate()
+        void OnDisable()
         {
+            _playerPhotoImage.DestroyTexture();
+        }
+
+        private async void OnAuthenticateButtonAction()
+        {
+            await OnAuthenticate();
+        }
+
+        private async Task<bool> OnAuthenticate()
+        {
+            bool result = false;
+
             try
             {
                 _authenticateBtnText.text = "Authenticating...";
@@ -118,6 +146,7 @@ namespace Apple.GameKit.Sample
                 }
 
                 await GKLocalPlayer.Authenticate();
+                result = true;
             }
             catch (GameKitException)
             {
@@ -128,6 +157,8 @@ namespace Apple.GameKit.Sample
                 // Any other kind of exception is fatal.
                 GKErrorCodeExtensions.LogException(ex);
             }
+
+            return result;
         }
 
         private async void OnAuthenticateUpdate(GKLocalPlayer localPlayer)
@@ -152,7 +183,7 @@ namespace Apple.GameKit.Sample
                 try
                 {
                     var texture = await _localPlayer.LoadPhoto(GKPlayer.PhotoSize.Normal);
-                    _playerPhotoImage.texture = (texture != null) ? texture : Texture2D.whiteTexture;
+                    _playerPhotoImage.DestroyTextureAndAssign(texture);
                 }
                 catch (Exception ex)
                 {
@@ -292,9 +323,26 @@ namespace Apple.GameKit.Sample
 
         public void ReturnToRootPanel()
         {
-            while (PanelStack.Count > 1)
+            if (PanelStack.Count > 1)
             {
-                PopPanel();
+                while (PanelStack.Count > 1)
+                {
+                    var oldPanel = PanelStack.Pop();
+                    if (oldPanel != null)
+                    {
+                        var panelBase = oldPanel.GetComponent<PanelBase>();
+                        if (panelBase != null && panelBase.ShouldDestroyWhenPopped)
+                        {
+                            panelBase.Destroy();
+                        }
+                    }
+                }
+
+                if (PanelStack.Count > 0)
+                {
+                    PanelStack.Peek().SetActive(true);
+                }
+                _backButtonArea.SetActive(false);
             }
         }
 
@@ -323,6 +371,28 @@ namespace Apple.GameKit.Sample
         private void OnShowAchievements()
         {
             PushPanel(_achievementsPanel.gameObject);
+        }
+
+        private void OnShowActivities()
+        {
+            PushPanel(_activitiesPanel.gameObject);
+        }
+
+        private async Task<bool> OnWantsToPlay(GKPlayer player, GKGameActivity activity)
+        {
+            // Pop everything off the panel stack.
+            ReturnToRootPanel();
+
+            // Switch to the requested activity.
+            var activityPanel = _activityPanelPrefab.Instantiate(PanelArea, activity);
+            PushPanel(activityPanel.gameObject);
+
+            return true;
+        }
+        
+        private void OnShowChallenges()
+        {
+            PushPanel(_challengesPanel.gameObject);
         }
 
         private void OnShowNearbyPlayersPanel()

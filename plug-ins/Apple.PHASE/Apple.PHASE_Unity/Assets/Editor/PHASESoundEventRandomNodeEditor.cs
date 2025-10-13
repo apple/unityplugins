@@ -14,7 +14,9 @@ public class PHASESoundEventRandomNodeEditor : NodeEditor
 
         serializedObject.Update();
 
+        EditorGUIUtility.labelWidth = 150;
         NodeEditorGUILayout.PortField(node.GetInputPort("ParentNode"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("UniqueSelectionQueueLength"));
 
         for (var i = 0; i < node.Entries.Count; i++)
         {
@@ -27,6 +29,7 @@ public class PHASESoundEventRandomNodeEditor : NodeEditor
             else
             {
                 EditorGUILayout.BeginVertical();
+                EditorGUIUtility.labelWidth = 75;
                 var entry = serializedObject.FindProperty("Entries").GetArrayElementAtIndex(i);
                 EditorGUILayout.PropertyField(entry.FindPropertyRelative("Weight"));
                 NodeEditorGUILayout.PortField(new GUIContent("Child Node"), node.GetPort(node.Entries[i].PortName));

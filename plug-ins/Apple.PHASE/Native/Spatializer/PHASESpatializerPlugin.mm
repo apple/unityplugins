@@ -47,7 +47,7 @@ namespace PHASESpatializer
         // Engine wraper cache
         PHASEEngineWrapper* mEngineWrapper;
         
-        bool reverbInit = true;
+        bool reverbInit = false;
     };
 
     inline bool IsHostCompatible(UnityAudioEffectState* state)
@@ -59,6 +59,7 @@ namespace PHASESpatializer
             state->hostapiversion >= 0x010300;
     }
 
+    // TODO: Review parameters
     int InternalRegisterEffectDefinition(UnityAudioEffectDefinition& definition)
     {
         int numparams = P_NUM;
@@ -90,9 +91,11 @@ namespace PHASESpatializer
         PHASEEngineWrapper* engineWrapper = [PHASEEngineWrapper sharedInstance];
         
         // Create a point source
+        // TODO: Support volumetrics?
         effectData->mSourceId = [engineWrapper createSource];
         
         // Create the mixer
+        auto rolloffFactor = TARGET_OS_VISION ? 1.0f : 0.0f; // On visionOS rolloff is automatically controlled
         effectData->mMixerName = [kSpatialMixerBaseName stringByAppendingFormat:@"%lld",effectData->mSourceId];
         DirectivityModelParameters sourceDirectivity { DirectivityType::None, 0, nullptr };
         DirectivityModelParameters listenerDirectivity { DirectivityType::None, 0, nullptr };
@@ -101,7 +104,7 @@ namespace PHASESpatializer
                                                    enableEarlyReflections:true
                                                          enableLateReverb:true
                                                              cullDistance:state->spatializerdata->maxDistance
-                                                            rolloffFactor:0.0 // Disable rolloff since Unity is doing distance attenuation
+                                                            rolloffFactor:rolloffFactor
                                          sourceDirectivityModelParameters:sourceDirectivity
                                        listenerDirectivityModelParameters:listenerDirectivity];
         
@@ -110,6 +113,7 @@ namespace PHASESpatializer
         effectData->mLateReverbSendMetaParameterName = [effectData->mMixerName stringByAppendingFormat:@"%s", "LateReverbSend"];
         
         // Create the pull stream node
+        // TODO: Support calibration + SPL?
         AVAudioChannelLayout* layout = [[AVAudioChannelLayout alloc] initWithLayoutTag:kAudioChannelLayoutTag_Stereo];
         AudioStreamBasicDescription desc = { 0 };
         desc.mSampleRate = state->samplerate;
@@ -191,13 +195,46 @@ namespace PHASESpatializer
             return noErr;
         };
         
+        @try
+        {
+            effectData->mSoundEventId = [engineWrapper playSoundEventWithName:effectData->mAssetName
+                                                                      sourceId:effectData->mSourceId
+                                                                      mixerIds:&effectData->mMixerId
+                                                                     numMixers:1
+                                                                    streamName:effectData->mPullStreamNodeName
+                                                                   renderBlock:effectData->mPullStreamRenderBlock
+                                                        completionHandlerBlock:^(PHASESoundEventStartHandlerReason reason, int64_t sourceId, int64_t soundEventId) {
+                NSLog(@"PHASE Spatializer Plugin: Finished playing back sound event with reason %ld, sourceId %llu, soundEventId %llu.",  static_cast<long>(reason), sourceId, soundEventId);
+                
+                if (nil != effectData)
+                {
+                    PHASEEngineWrapper* engineWrapper = [PHASEEngineWrapper sharedInstance];
+                    [engineWrapper destroySourceWithId:effectData->mSourceId];
+                    [engineWrapper destroyMixerWithId:effectData->mMixerId];
+                    [engineWrapper unregisterSoundEventWithName:effectData->mAssetName];
+                    effectData->mRingBuffer = nil;
+                    delete effectData;
+                }
+            }];
+        }
+        @catch (NSException* exception)
+        {
+            NSLog(@"PHASE Spatializer Plugin: Unable to play Sound Event with asset %@ due to exception: %@.", effectData->mAssetName, exception);
+            return UNITY_AUDIODSP_ERR_UNSUPPORTED;
+        }
+
         // Cache the engine wrapper
         effectData->mEngineWrapper = engineWrapper;
+        
+        // Trigger an update to flush as quick as possible
+        [effectData->mEngineWrapper update];
         
         // Register distance attenuation callback
         if (IsHostCompatible(state))
             state->spatializerdata->distanceattenuationcallback = DistanceAttenuationCallback;
         AudioPluginUtil::InitParametersFromDefinitions(InternalRegisterEffectDefinition, effectData->p);
+        
+        NSLog(@"PHASE Spatializer Plugin: Started sound event %@. Sample rate: %u", effectData->mAssetName, state->samplerate);
         
         return UNITY_AUDIODSP_OK;
     }
@@ -254,42 +291,6 @@ namespace PHASESpatializer
         
         EffectData* effectData = state->GetEffectData<EffectData>();
         
-        // Play the sound event here so we can start pulling immediately
-        bool wasInitialized = (effectData->mSoundEventId != PHASEInvalidInstanceHandle);
-        if (false == wasInitialized)
-        {
-            if ([effectData->mEngineWrapper isInitialized])
-            {
-                @try
-                {
-                    effectData->mSoundEventId = [effectData->mEngineWrapper playSoundEventWithName:effectData->mAssetName
-                                                                                          sourceId:effectData->mSourceId
-                                                                                          mixerIds:&effectData->mMixerId
-                                                                                         numMixers:1
-                                                                                        streamName:effectData->mPullStreamNodeName
-                                                                                       renderBlock:effectData->mPullStreamRenderBlock
-                                                                            completionHandlerBlock:^(PHASESoundEventStartHandlerReason reason, int64_t sourceId, int64_t soundEventId) {
-                        NSLog(@"Finished playing back sound event with reason %ld, sourceId %llu, soundEventId %llu.",  static_cast<long>(reason), sourceId, soundEventId);
-                        if (nil != effectData)
-                        {
-                            PHASEEngineWrapper* engineWrapper = [PHASEEngineWrapper sharedInstance];
-                            [engineWrapper destroySourceWithId:effectData->mSourceId];
-                            [engineWrapper destroyMixerWithId:effectData->mMixerId];
-                            [engineWrapper unregisterSoundEventWithName:effectData->mAssetName];
-                            effectData->mRingBuffer = nil;
-                            delete effectData;
-                        }
-                        
-                    }];
-                }
-                @catch (NSException* exception)
-                {
-                    NSLog(@"Unable to play Sound Event with asset %@ due to exception: %@.", effectData->mAssetName, exception);\
-                    return UNITY_AUDIODSP_ERR_UNSUPPORTED;
-                }
-            }
-        }
-        
         // Set source position
         float* sourceMatrix = &state->spatializerdata->sourcematrix[0];
         simd_float4x4 sourceTransform = {
@@ -298,34 +299,31 @@ namespace PHASESpatializer
             simd_float4{ sourceMatrix[8], sourceMatrix[9], sourceMatrix[10], sourceMatrix[11] },
             simd_mul(simd_float4{ sourceMatrix[12], sourceMatrix[13], sourceMatrix[14], sourceMatrix[15] }, kRhMatrix)
         };
-        
         if (NO == [effectData->mEngineWrapper setSourceTransformWithId:effectData->mSourceId transform:sourceTransform])
         {
+            NSLog(@"PHASE Spatializer Plugin: Unable to set transform for asset %@.", effectData->mAssetName);
             return UNITY_AUDIODSP_ERR_UNSUPPORTED;
         }
         
         // Set reverb levels
-        if (NO == [effectData->mEngineWrapper setMetaParameterWithId:effectData->mSoundEventId parameterName:effectData->mEarlyReflectionsSendMetaParameterName doubleValue:effectData->reverbInit?1.0:state->spatializerdata->reverbzonemix])
+        const auto reverbSend = effectData->reverbInit ? 1.0 : state->spatializerdata->reverbzonemix;
+        if (NO == [effectData->mEngineWrapper setMetaParameterWithId:effectData->mSoundEventId parameterName:effectData->mEarlyReflectionsSendMetaParameterName doubleValue:reverbSend])
         {
+            NSLog(@"PHASE Spatializer Plugin: Unable to set early reflections for asset %@.", effectData->mAssetName);
             return UNITY_AUDIODSP_ERR_UNSUPPORTED;
         }
+        if (NO == [effectData->mEngineWrapper setMetaParameterWithId:effectData->mSoundEventId parameterName:effectData->mLateReverbSendMetaParameterName doubleValue:reverbSend])
+        {
+            NSLog(@"PHASE Spatializer Plugin: Unable to set reverb for asset %@.", effectData->mAssetName);
+            return UNITY_AUDIODSP_ERR_UNSUPPORTED;
+        }
+        effectData->reverbInit = true;
         
-        if (NO == [effectData->mEngineWrapper setMetaParameterWithId:effectData->mSoundEventId parameterName:effectData->mLateReverbSendMetaParameterName doubleValue:effectData->reverbInit?1.0:state->spatializerdata->reverbzonemix])
-        {
-            return UNITY_AUDIODSP_ERR_UNSUPPORTED;
-        }
-        effectData->reverbInit = false;
-        // If we just initialized trigger an update so we start the sound faster and flush the correct source position
-        if (false == wasInitialized)
-        {
-            [effectData->mEngineWrapper update];
-        }
-
         // Write into our buffers
         [effectData->mRingBuffer write:inbuffer frameCount:length];
-        // return silence to unity
-        memset(outbuffer, 0, sizeof(float) * length * outchannels);
         
+        // Return silence to unity
+        memset(outbuffer, 0, sizeof(float) * length * outchannels);
         return UNITY_AUDIODSP_OK;
     }
 }

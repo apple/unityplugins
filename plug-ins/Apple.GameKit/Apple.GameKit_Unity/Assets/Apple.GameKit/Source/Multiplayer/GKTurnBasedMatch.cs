@@ -35,30 +35,51 @@ namespace Apple.GameKit.Multiplayer
         /// <summary>
         /// Called when the exchange is cancelled by the sender.
         /// </summary>
+        /// <remarks>
+        /// Register for this event before calling GKLocalPlayer.Authenticate() to avoid missing events.
+        /// </remarks>
         public static event ExchangeCanceledHandler ExchangeCanceled;
         /// <summary>
         /// Called when a player receives an exchange request from another player.
         /// </summary>
+        /// <remarks>
+        /// Register for this event before calling GKLocalPlayer.Authenticate() to avoid missing events.
+        /// </remarks>
         public static event ExchangeReceivedHandler ExchangeReceived;
         /// <summary>
         /// Called when the exchange is completed.
         /// </summary>
+        /// <remarks>
+        /// Register for this event before calling GKLocalPlayer.Authenticate() to avoid missing events.
+        /// </remarks>
         public static event ExchangeCompletedHandler ExchangeCompleted;
         /// <summary>
         /// Initiates a match from Game Center with the requested players.
         /// </summary>
+        /// <remarks>
+        /// Register for this event before calling GKLocalPlayer.Authenticate() to avoid missing events.
+        /// </remarks>
         public static event MatchRequestedWithOtherPlayersHandler MatchRequestedWithOtherPlayers;
         /// <summary>
         /// Called when the match has ended.
         /// </summary>
+        /// <remarks>
+        /// Register for this event before calling GKLocalPlayer.Authenticate() to avoid missing events.
+        /// </remarks>
         public static event MatchEndedHandler MatchEnded;
         /// <summary>
         /// Activates the player's turn.
         /// </summary>
+        /// <remarks>
+        /// Register for this event before calling GKLocalPlayer.Authenticate() to avoid missing events.
+        /// </remarks>
         public static event TurnEventReceivedHandler TurnEventReceived;
         /// <summary>
         /// Indicates that the current player wants to quit the current match.
         /// </summary>
+        /// <remarks>
+        /// Register for this event before calling GKLocalPlayer.Authenticate() to avoid missing events.
+        /// </remarks>
         public static event PlayerWantsToQuitMatchHandler PlayerWantsToQuit;
         #endregion
         
@@ -407,15 +428,14 @@ namespace Apple.GameKit.Multiplayer
         /// <param name="matchData">A serialized blob of data reflecting the current state for the match.</param>
         /// <param name="exchanges">An array of GKTurnBasedExchange objects that contains the resolved exchanges.</param>
         /// <returns></returns>
-        public Task SaveMergedMatch(byte[] matchData, params GKTurnBasedExchange[] exchanges)
+        public Task SaveMergedMatch(byte[] matchData, NSArray<GKTurnBasedExchange> exchanges)
         {
-            // Prepare exchanges...
-            var mutable = new NSMutableArray<GKTurnBasedExchange>(exchanges);
-            
             var tcs = InteropTasks.Create<bool>(out var taskId);
-            Interop.GKTurnBasedMatch_SaveMergedMatch(Pointer, taskId, new NSData(matchData).Pointer, mutable.Pointer, OnSaveMergedMatch, OnSaveMergedMatchError);
+            Interop.GKTurnBasedMatch_SaveMergedMatch(Pointer, taskId, new NSData(matchData).Pointer, exchanges.Pointer, OnSaveMergedMatch, OnSaveMergedMatchError);
             return tcs.Task;
         }
+        public Task SaveMergedMatch(byte[] matchData, params GKTurnBasedExchange[] exchanges) =>
+            SaveMergedMatch(matchData, new NSMutableArray<GKTurnBasedExchange>(exchanges));
         
         [MonoPInvokeCallback(typeof(SuccessTaskCallback))]
         private static void OnSaveMergedMatch(long taskId)

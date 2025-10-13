@@ -18,7 +18,7 @@ import GameKit
 var _mostRecentAuthenticatePlayer : GKLocalPlayer? = nil;
 var _mostRecentAuthenticateError : NSError? = nil;
 
-var _onAuthenticate : SuccessTaskPtrCallback? = nil;
+var _onAuthenticate : SuccessTaskPtrCallback<GKLocalPlayer>? = nil;
 var _onAuthenticateError : NSErrorTaskCallback? = nil;
 
 // Collection of pending auth requests.
@@ -28,7 +28,7 @@ var _pendingAuthTasks = Array<Int64>();
 public func GKLocalPlayer_SetAuthenticateHandler
 (
     taskId: Int64,
-    onAuthenticate: @escaping SuccessTaskPtrCallback,
+    onAuthenticate: @escaping SuccessTaskPtrCallback<GKLocalPlayer>,
     onAuthenticateError: @escaping NSErrorTaskCallback
 )
 {
@@ -156,7 +156,7 @@ public func GKLocalPlayer_LoadFriends
 (
     pointer: UnsafeMutablePointer<GKLocalPlayer>,
     taskId: Int64,
-    onSuccess: @escaping SuccessTaskPtrCallback,
+    onSuccess: @escaping SuccessTaskPtrCallback<NSArray>, // NSArray<GKPlayer>
     onError: @escaping NSErrorTaskCallback
 )
 {
@@ -181,7 +181,7 @@ public func GKLocalPlayer_LoadFriendsWithIdentifiers
     gkLocalPlayerPtr: UnsafeMutablePointer<GKLocalPlayer>,
     taskId: Int64,
     identifiersPtr: UnsafeMutablePointer<NSArray>, // NSArray<NSString *> *
-    onSuccess: @escaping SuccessTaskPtrCallback,
+    onSuccess: @escaping SuccessTaskPtrCallback<NSArray>, // NSArray<GKPlayer>
     onError: @escaping NSErrorTaskCallback
 )
 {
@@ -207,7 +207,7 @@ public func GKLocalPlayer_LoadChallengableFriends
 (
     pointer: UnsafeMutablePointer<GKLocalPlayer>,
     taskId: Int64,
-    onSuccess: @escaping SuccessTaskPtrCallback,
+    onSuccess: @escaping SuccessTaskPtrCallback<NSArray>, // NSArray<GKPlayer>
     onError: @escaping NSErrorTaskCallback
 )
 {
@@ -227,7 +227,7 @@ public func GKLocalPlayer_LoadRecentPlayers
 (
     pointer: UnsafeMutablePointer<GKLocalPlayer>,
     taskId: Int64,
-    onSuccess: @escaping SuccessTaskPtrCallback,
+    onSuccess: @escaping SuccessTaskPtrCallback<NSArray>, // NSArray<GKPlayer>
     onError: @escaping NSErrorTaskCallback
 )
 {
@@ -306,7 +306,7 @@ public func GKLocalPlayer_LoadDefaultLeaderboardIdentifier
 (
     gkLocalPlayerPtr: UnsafeMutablePointer<GKLocalPlayer>,
     taskId: Int64,
-    onSuccess: @escaping SuccessTaskPtrCallback,
+    onSuccess: @escaping SuccessTaskPtrCallback<NSString>,
     onError: @escaping NSErrorTaskCallback
 )
 {
@@ -351,7 +351,7 @@ public func GKLocalPlayer_SaveGameData
     taskId: Int64,
     nsDataPtr: UnsafeMutablePointer<NSData>,
     name: char_p,
-    onSuccess: @escaping SuccessTaskPtrCallback,
+    onSuccess: @escaping SuccessTaskPtrCallback<GKSavedGame>,
     onError: @escaping NSErrorTaskCallback
 )
 {
@@ -374,7 +374,7 @@ public func GKLocalPlayer_FetchSavedGames
 (
     gkLocalPlayerPtr: UnsafeMutablePointer<GKLocalPlayer>,
     taskId: Int64,
-    onSuccess: @escaping SuccessTaskPtrCallback,
+    onSuccess: @escaping SuccessTaskPtrCallback<NSArray>, // NSArray<GKSavedGame>
     onError: @escaping NSErrorTaskCallback
 )
 {
@@ -398,7 +398,7 @@ public func GKLocalPlayer_ResolveConflictingSavedGames
     taskId: Int64,
     conflictingSavedGamesPtr: UnsafeMutablePointer<NSArray>, // NSArray<GKSavedGame>
     nsDataPtr: UnsafeMutablePointer<NSData>,
-    onSuccess: @escaping SuccessTaskPtrCallback,
+    onSuccess: @escaping SuccessTaskPtrCallback<NSArray>, // NSArray<GKSavedGame>
     onError: @escaping NSErrorTaskCallback
 )
 {

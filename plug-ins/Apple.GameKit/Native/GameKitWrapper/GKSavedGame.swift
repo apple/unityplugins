@@ -51,7 +51,7 @@ public func GKSavedGame_LoadData
 (
     gkSavedGamePtr: UnsafeMutablePointer<GKSavedGame>,
     taskId: Int64,
-    onSuccess: @escaping SuccessTaskPtrCallback,
+    onSuccess: @escaping SuccessTaskPtrCallback<NSData>,
     onError: @escaping NSErrorTaskCallback
 )
 {

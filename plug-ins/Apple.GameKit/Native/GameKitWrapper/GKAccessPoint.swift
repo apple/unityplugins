@@ -30,8 +30,7 @@ public func GKAccessPoint_Trigger
 )
 {
     if #available(iOS 14.0, macOS 11.0, tvOS 14.0, visionOS 1.0, *) {
-        let target = Unmanaged<GKAccessPoint>.fromOpaque(pointer).takeUnretainedValue();
-
+        let target: GKAccessPoint = pointer.takeUnretainedValue();
         if (!target.isPresentingGameCenter) {
             target.trigger(handler: {
                 onSuccess(taskId);
@@ -55,8 +54,7 @@ public func GKAccessPoint_TriggerWithState
 )
 {
     if #available(iOS 14.0, macOS 11.0, tvOS 14.0, visionOS 1.0, *) {
-        let target = Unmanaged<GKAccessPoint>.fromOpaque(pointer).takeUnretainedValue();
-
+        let target: GKAccessPoint = pointer.takeUnretainedValue();
         if (!target.isPresentingGameCenter) {
             if let stateEnum = GKGameCenterViewControllerState(rawValue: Int(truncatingIfNeeded: state)) {
                 target.trigger(
@@ -191,6 +189,171 @@ public func GKAccessPoint_TriggerWithPlayer
     }
 }
 
+#if os(iOS) || os(macOS)
+@_cdecl("GKAccessPoint_TriggerForPlayTogether")
+public func GKAccessPoint_TriggerForPlayTogether
+(
+    pointer: UnsafeMutableRawPointer, // GKAccessPoint
+    taskId: Int64,
+    onSuccess: @escaping SuccessTaskCallback,
+    onError: @escaping NSErrorTaskCallback
+)
+{
+    if #available(iOS 26.0, macOS 26.0, *) {
+        let target: GKAccessPoint = pointer.takeUnretainedValue();
+        if (!target.isPresentingGameCenter) {
+            target.triggerForPlayTogether(handler: {
+                onSuccess(taskId);
+            });
+        } else {
+            onError(taskId, NSError(code: GKErrorCodeExtension.gameCenterDashboardAlreadyShown).passRetainedUnsafeMutablePointer());
+        }
+    } else {
+        onError(taskId, NSError(code: GKErrorCodeExtension.unsupportedOperationForOSVersion).passRetainedUnsafeMutablePointer());
+    }
+}
+#endif
+
+#if os(iOS) || os(macOS)
+@_cdecl("GKAccessPoint_TriggerForChallenges")
+public func GKAccessPoint_TriggerForChallenges
+(
+    pointer: UnsafeMutableRawPointer, // GKAccessPoint
+    taskId: Int64,
+    onSuccess: @escaping SuccessTaskCallback,
+    onError: @escaping NSErrorTaskCallback
+)
+{
+    if #available(iOS 26.0, macOS 26.0, *) {
+        let target: GKAccessPoint = pointer.takeUnretainedValue();
+        if (!target.isPresentingGameCenter) {
+            target.triggerForChallenges(handler: {
+                onSuccess(taskId);
+            });
+        } else {
+            onError(taskId, NSError(code: GKErrorCodeExtension.gameCenterDashboardAlreadyShown).passRetainedUnsafeMutablePointer());
+        }
+    } else {
+        onError(taskId, NSError(code: GKErrorCodeExtension.unsupportedOperationForOSVersion).passRetainedUnsafeMutablePointer());
+    }
+}
+#endif
+
+#if os(iOS) || os(macOS)
+@_cdecl("GKAccessPoint_TriggerWithChallengeDefinitionID")
+public func GKAccessPoint_TriggerWithChallengeDefinitionID
+(
+    pointer: UnsafeMutableRawPointer, // GKAccessPoint
+    challengeDefinitionIDPtr: UnsafeMutablePointer<NSString>,
+    taskId: Int64,
+    onSuccess: @escaping SuccessTaskCallback,
+    onError: @escaping NSErrorTaskCallback
+)
+{
+    if #available(iOS 26.0, macOS 26.0, *) {
+        let target: GKAccessPoint = pointer.takeUnretainedValue();
+        let challengeDefinitionID = challengeDefinitionIDPtr.takeUnretainedValue() as String;
+        if (!target.isPresentingGameCenter) {
+            target.trigger(
+                challengeDefinitionID: challengeDefinitionID,
+                handler: {
+                    onSuccess(taskId);
+                });
+        } else {
+            onError(taskId, NSError(code: GKErrorCodeExtension.gameCenterDashboardAlreadyShown).passRetainedUnsafeMutablePointer());
+        }
+    } else {
+        onError(taskId, NSError(code: GKErrorCodeExtension.unsupportedOperationForOSVersion).passRetainedUnsafeMutablePointer());
+    }
+}
+#endif
+
+#if os(iOS) || os(macOS)
+@_cdecl("GKAccessPoint_TriggerWithGameActivity")
+public func GKAccessPoint_TriggerWithGameActivity
+(
+    pointer: UnsafeMutableRawPointer, // GKAccessPoint
+    gameActivityPointer: UnsafeMutableRawPointer, // GKGameActivity
+    taskId: Int64,
+    onSuccess: @escaping SuccessTaskCallback,
+    onError: @escaping NSErrorTaskCallback
+)
+{
+    
+    guard #available(iOS 26.0, macOS 26.0, *) else {
+        onError(taskId, NSError(code: GKErrorCodeExtension.unsupportedOperationForOSVersion).passRetainedUnsafeMutablePointer());
+        return;
+    }
+    
+    let target: GKAccessPoint = pointer.takeUnretainedValue();
+    let gameActivity = gameActivityPointer.takeUnretainedValue() as GKGameActivity;
+    if (!target.isPresentingGameCenter) {
+        target.trigger(
+            gameActivity: gameActivity,
+            handler: {
+                onSuccess(taskId);
+            });
+    } else {
+        onError(taskId, NSError(code: GKErrorCodeExtension.gameCenterDashboardAlreadyShown).passRetainedUnsafeMutablePointer());
+    }
+}
+
+#endif
+
+#if os(iOS) || os(macOS)
+@_cdecl("GKAccessPoint_TriggerWithGameActivityDefinitionID")
+public func GKAccessPoint_TriggerWithGameActivityDefinitionID
+(
+    pointer: UnsafeMutableRawPointer, // GKAccessPoint
+    gameActivityDefinitionIDPtr: UnsafeMutablePointer<NSString>,
+    taskId: Int64,
+    onSuccess: @escaping SuccessTaskCallback,
+    onError: @escaping NSErrorTaskCallback
+)
+{
+    if #available(iOS 26.0, macOS 26.0, *) {
+        let target: GKAccessPoint = pointer.takeUnretainedValue();
+        let gameActivityDefinitionID = gameActivityDefinitionIDPtr.takeUnretainedValue() as String;
+        if (!target.isPresentingGameCenter) {
+            target.trigger(
+                gameActivityDefinitionID: gameActivityDefinitionID,
+                handler: {
+                    onSuccess(taskId);
+                });
+        } else {
+            onError(taskId, NSError(code: GKErrorCodeExtension.gameCenterDashboardAlreadyShown).passRetainedUnsafeMutablePointer());
+        }
+    } else {
+        onError(taskId, NSError(code: GKErrorCodeExtension.unsupportedOperationForOSVersion).passRetainedUnsafeMutablePointer());
+    }
+}
+#endif
+
+#if os(iOS) || os(macOS)
+@_cdecl("GKAccessPoint_TriggerForFriending")
+public func GKAccessPoint_TriggerForFriending
+(
+    pointer: UnsafeMutableRawPointer, // GKAccessPoint
+    taskId: Int64,
+    onSuccess: @escaping SuccessTaskCallback,
+    onError: @escaping NSErrorTaskCallback
+)
+{
+    if #available(iOS 26.0, macOS 26.0, *) {
+        let target: GKAccessPoint = pointer.takeUnretainedValue();
+        if (!target.isPresentingGameCenter) {
+            target.triggerForFriending(handler: {
+                onSuccess(taskId);
+            });
+        } else {
+            onError(taskId, NSError(code: GKErrorCodeExtension.gameCenterDashboardAlreadyShown).passRetainedUnsafeMutablePointer());
+        }
+    } else {
+        onError(taskId, NSError(code: GKErrorCodeExtension.unsupportedOperationForOSVersion).passRetainedUnsafeMutablePointer());
+    }
+}
+#endif
+
 @_cdecl("GKAccessPoint_GetLocation")
 public func GKAccessPoint_GetLocation
 (
@@ -317,9 +480,12 @@ public func GKAccessPoint_SetIsActive
     if #available(iOS 14.0, macOS 11.0, tvOS 14.0, visionOS 1.0, *) {
         let target: GKAccessPoint = pointer.takeUnretainedValue();
 
+        // TODO: rdar://161110369 add a way to set parentWindow from Unity
+        #if os(visionOS) // visionOS will not show unless a parentWindow is set
         if value {
             target.parentWindow = UiUtilities.defaultWindow()
         }
+        #endif
 
         target.isActive = value;
     } else {

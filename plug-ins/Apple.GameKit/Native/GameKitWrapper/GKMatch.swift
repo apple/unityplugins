@@ -112,7 +112,7 @@ public func GKMatch_ChooseBestHostingPlayer
 (
     pointer: UnsafeMutablePointer<GKMatch>,
     taskId: Int64,
-    onSuccess: @escaping SuccessTaskPtrCallback,
+    onSuccess: @escaping SuccessTaskPtrCallback<GKPlayer>,
     onError: @escaping NSErrorTaskCallback
 )
 {
@@ -139,7 +139,7 @@ public func GKMatch_Rematch
 (
     pointer: UnsafeMutablePointer<GKMatch>,
     taskId: Int64,
-    onSuccess: @escaping SuccessTaskPtrCallback,
+    onSuccess: @escaping SuccessTaskPtrCallback<GKMatch>,
     onError: @escaping NSErrorTaskCallback
 )
 {

@@ -1,0 +1,4 @@
+#include "GameKit.xcconfig"
+
+// SYSTEM_FRAMEWORK_SEARCH_PATHS = /Users/adamszofran/Downloads/luxon-sdk-iphoneos19.0.internal-f295b870-37fc-11f0-fe5f-57761b20d5c2/System/Library/Frameworks
+// SDKROOT = iphoneos.internal

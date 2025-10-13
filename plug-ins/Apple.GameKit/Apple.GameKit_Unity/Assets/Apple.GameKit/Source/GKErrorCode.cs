@@ -1,4 +1,5 @@
 ﻿using System;
+using Apple.Core;
 
 namespace Apple.GameKit
 {
@@ -40,7 +41,10 @@ namespace Apple.GameKit
         NotSupported = 16,
         InvalidParameter = 17,
         UnexpectedConnection = 18,
+
+        [Deprecated("Deprecated", iOS: "26.0.0", macOS: "26.0.0", tvOS: "26.0.0", visionOS: "26.0.0")]
         ChallengeInvalid = 19,
+
         TurnBasedMatchDataTooLarge = 20,
         TurnBasedTooManySessions = 21,
         TurnBasedInvalidParticipant = 22,
@@ -66,15 +70,38 @@ namespace Apple.GameKit
         GameSessionRequestInvalid = 29,
         RestrictedToAutomatch = 30,
         APINotAvailable = 31,
+
+        [Introduced(iOS: "14.0.0", macOS: "11.0.0", tvOS: "14.0.0")]
         NotAuthorized = 32,
+
+        [Introduced(iOS: "14.0.0", macOS: "11.0.0", tvOS: "14.0.0")]
         ConnectionTimeout = 33,
+
+        [Introduced(iOS: "14.0.0", macOS: "11.0.0", tvOS: "14.0.0", visionOS: "1.0.0")]
         APIObsolete = 34,
+
+        [Introduced(iOS: "17.2.0", macOS: "14.2.0", tvOS: "17.2.0", visionOS: "1.1.0")]
         ICloudUnavailable = 35,
+
+        [Introduced(iOS: "17.2.0", macOS: "14.2.0", tvOS: "17.2.0", visionOS: "1.1.0")]
         LockdownMode = 36,
-        
+
+        [Introduced(iOS: "17.4.0", macOS: "14.4.0", tvOS: "17.4.0", visionOS: "1.1.0")]
+        AppUnlisted = 37,
+
+        [Introduced(iOS: "18.4.0", macOS: "15.4.0", tvOS: "18.4.0", visionOS: "2.4.0")]
+        DebugMode = 38,
+
+        [Introduced(iOS: "14.5.0", macOS: "11.3.0", tvOS: "14.5.0")]
         FriendListDescriptionMissing = 100,
+
+        [Introduced(iOS: "14.5.0", macOS: "11.3.0", tvOS: "14.5.0")]
         FriendListRestricted = 101,
+
+        [Introduced(iOS: "14.5.0", macOS: "11.3.0", tvOS: "14.5.0")]
         FriendListDenied = 102,
+
+        [Introduced(iOS: "15.0.0", macOS: "12.0.0", tvOS: "15.0.0")]
         FriendRequestNotAvailable = 103,
     }
 }

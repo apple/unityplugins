@@ -29,6 +29,7 @@ public class PHASESpatialMixerNodeEditor : NodeEditor
         EditorGUILayout.PropertyField(serializedObject.FindProperty("_earlyReflectionModeler"));
         EditorGUILayout.PropertyField(serializedObject.FindProperty("_lateReverbModeler"));
         EditorGUILayout.PropertyField(serializedObject.FindProperty("_cullDistance"));
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("_rolloffFactor"));
 
         EditorGUILayout.Space();
         EditorGUILayout.LabelField("Listener Directivity Properties");

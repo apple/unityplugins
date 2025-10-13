@@ -93,7 +93,7 @@ public func GKTurnBasedMatch_LoadMatchData
 (
     pointer: UnsafeMutablePointer<GKTurnBasedMatch>,
     taskId: Int64,
-    onSuccess: @escaping SuccessTaskPtrCallback,
+    onSuccess: @escaping SuccessTaskPtrCallback<NSData>,
     onError: @escaping NSErrorTaskCallback
 )
 {
@@ -278,7 +278,7 @@ public func GKTurnBasedMatch_SendExchange
     localizableMessageKey: char_p,
     argumentsPtr: UnsafeMutablePointer<NSArray>, // NSArray<NSString>
     timeout: Double,
-    onSuccess: @escaping SuccessTaskPtrCallback,
+    onSuccess: @escaping SuccessTaskPtrCallback<GKTurnBasedExchange>,
     onError: @escaping NSErrorTaskCallback
 )
 {
@@ -427,7 +427,7 @@ public func GKTurnBasedMatch_SetLocalizableMessageWithKey
 public func GKTurnBasedMatch_LoadMatches
 (
     taskId: Int64,
-    onSuccess: @escaping SuccessTaskPtrCallback,
+    onSuccess: @escaping SuccessTaskPtrCallback<NSArray>, // NSArray<GKTurnBasedMatch>
     onError: @escaping NSErrorTaskCallback
 )
 {
@@ -445,7 +445,7 @@ public func GKTurnBasedMatch_Load
 (
     taskId: Int64,
     matchId: char_p,
-    onSuccess: @escaping SuccessTaskPtrCallback,
+    onSuccess: @escaping SuccessTaskPtrCallback<GKTurnBasedMatch>,
     onError: @escaping NSErrorTaskCallback
 )
 {
@@ -464,7 +464,7 @@ public func GKTurnBasedMatch_Find
 (
     taskId: Int64,
     matchRequestPtr: UnsafeMutablePointer<GKMatchRequest>,
-    onSuccess: @escaping SuccessTaskPtrCallback,
+    onSuccess: @escaping SuccessTaskPtrCallback<GKTurnBasedMatch>,
     onError: @escaping NSErrorTaskCallback
 )
 {
@@ -485,7 +485,7 @@ public func GKTurnBasedMatch_AcceptInvite
 (
     pointer: UnsafeMutablePointer<GKTurnBasedMatch>,
     taskId: Int64,
-    onSuccess: @escaping SuccessTaskPtrCallback,
+    onSuccess: @escaping SuccessTaskPtrCallback<GKTurnBasedMatch>,
     onError: @escaping NSErrorTaskCallback
 )
 {
@@ -525,7 +525,7 @@ public func GKTurnBasedMatch_Rematch
 (
     pointer: UnsafeMutablePointer<GKTurnBasedMatch>,
     taskId: Int64,
-    onSuccess: @escaping SuccessTaskPtrCallback,
+    onSuccess: @escaping SuccessTaskPtrCallback<GKTurnBasedMatch>,
     onError: @escaping NSErrorTaskCallback
 )
 {

@@ -18,12 +18,17 @@ namespace Apple.GameKit.Sample
             });
         }
 
+        void OnDisable()
+        {
+            _image.DestroyTexture();
+        }
+
         public event EventHandler ButtonClick;
 
         public Texture2D Image
         {
             get => _image.texture as Texture2D;
-            set => _image.texture = value;
+            set => _image.DestroyTextureAndAssign(value);
         }
 
         public string Title
