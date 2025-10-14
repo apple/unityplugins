@@ -3,6 +3,9 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using AOT;
+#if APPLECOREHAPTICS
+using Apple.CoreHaptics;
+#endif
 
 namespace Apple.GameController.Controller
 {
@@ -173,6 +176,66 @@ namespace Apple.GameController.Controller
             }
         }
 
+        public Quaternion GetAttitude()
+        {
+            double[] value = InputState.Attitude;
+
+            return new Quaternion() {
+                x = (float)value[0],
+                y = (float)value[1],
+                z = (float)value[2],
+                w = (float)value[3]
+            };
+        }
+
+        public Vector3 GetRotationRate()
+        {
+            double[] value = InputState.RotationRate;
+
+            return new Vector3()
+            {
+                x = (float)value[0],
+                y = (float)value[1],
+                z = (float)value[2]
+            };
+        }
+
+        public Vector3 GetAcceleration()
+        {
+            double[] value = InputState.Acceleration;
+
+            return new Vector3()
+            {
+                x = (float)value[0],
+                y = (float)value[1],
+                z = (float)value[2]
+            };
+        }
+
+        public Vector3 GetGravity()
+        {
+            double[] value = InputState.Gravity;
+
+            return new Vector3()
+            {
+                x = (float)value[0],
+                y = (float)value[1],
+                z = (float)value[2]
+            };
+        }
+
+        public Vector3 GetUserAcceleration()
+        {
+            double[] value = InputState.UserAcceleration;
+
+            return new Vector3()
+            {
+                x = (float)value[0],
+                y = (float)value[1],
+                z = (float)value[2]
+            };
+        }
+
         public void Poll()
         {
             _previousButtonPressStates = new Dictionary<GCControllerInputName, bool>(_buttonPressStates);            
@@ -190,5 +253,17 @@ namespace Apple.GameController.Controller
         {
             GCControllerService.SetControllerLightColor(Handle, red, green, blue);
         }
+
+#if APPLECOREHAPTICS
+        public CHHapticEngine CreateHapticsEngine()
+        {
+            return GCControllerService.CreateHapticsEngine(Handle);
+        }
+#endif
+
+        public void SetSensorsActive(bool flag)
+        {
+            GCControllerService.SetSensorsActive(Handle, flag);
+        }
     }
-} 
+}

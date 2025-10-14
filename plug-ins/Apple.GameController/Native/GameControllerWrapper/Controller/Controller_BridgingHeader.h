@@ -72,6 +72,18 @@ typedef struct {
     //Battery
     float batteryLevel;
     int batteryState;
+    
+    // motion
+    bool hasAttitude;
+    bool hasRotationRate;
+    bool hasGravityAndUserAcceleration;
+    bool sensorsRequireManualActivation;
+    bool sensorsActive;
+    double attitude[4];
+    double rotationRate[3];
+    double acceleration[3];
+    double gravity[3];
+    double userAcceleration[3];
 } GCWControllerInputState;
 
 typedef struct {
