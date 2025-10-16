@@ -1,4 +1,2 @@
 #include "GameKit.xcconfig"
 
-// SYSTEM_FRAMEWORK_SEARCH_PATHS = /Users/adamszofran/Downloads/luxon-sdk-xros3.0.internal-e2c26645-347e-11f0-92ba-dde387003540/System/Library/Frameworks /Users/adamszofran/Downloads/luxon-sdk-xros3.0.internal-e2c26645-347e-11f0-92ba-dde387003540/System/Library/PrivateFrameworks
-// SDKROOT = xros.internal
