@@ -1,6 +1,9 @@
 # CHANGELOG
 All notable changes to this project will be documented in this file.
 
+## [3.2.0] - 2025-10-13
+- Added wrappers around NSCalendarUnit and NSDateComponents
+
 ## [3.1.8] - 2025-01-29
 - Remove references to some unused packages.
 
