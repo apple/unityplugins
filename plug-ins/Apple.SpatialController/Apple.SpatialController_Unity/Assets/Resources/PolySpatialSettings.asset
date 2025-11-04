@@ -1,0 +1,92 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 019d9e67133646548a506370e966316a, type: 3}
+  m_Name: PolySpatialSettings
+  m_EditorClassIdentifier: 
+  m_PackageVersion: 2.3.1
+  m_EnableStatistics: 0
+  m_ColliderSyncLayerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  m_ParticleMode: 0
+  m_DefaultVisionOSLighting: 0
+  m_DefaultVisionOSShadowBiasOffset: 0.95
+  m_DefaultVisionOSDirectionalShadowMaxDistance: 5
+  m_TrackLightAndReflectionProbes: 1
+  m_DisableTrackingMask:
+    serializedVersion: 2
+    m_Bits: 0
+  m_DisabledTrackers: []
+  m_AdditionalTextureFormats: 
+  m_DefaultVolumeCameraWindowConfiguration: {fileID: 11400000, guid: a3998c4e505bb493993f3bad9d0437e8, type: 2}
+  m_AutoCreateVolumeCamera: 1
+  m_TransmitDebugInfo: 0
+  m_EnableFallbackShaderConversion: 1
+  m_EnableGPUMeshTransfer: 1
+  m_EnableGPUTextureTransfer: 1
+  m_EnableRuntimeValidation: 0
+  m_RuntimeValidationFrameCount: 10
+  m_BackingObjectsDestroyImmediate: 1
+  m_UtpUdpServerPort: 8777
+  m_UtpTcpServerPort: 8778
+  m_ConnectionDiscoveryPort: 9877
+  m_ConnectionDiscoverySendInterval: 30
+  m_ConnectionDiscoveryTimeOutDuration: 5
+  m_DeviceDisplayProviderParameters:
+    dimensions: {x: 1830, y: 1600}
+    leftEyePose:
+      position: {x: -0.033, y: -0.02, z: -0.01}
+      rotation: {x: 0, y: 0, z: 0, w: 1}
+    rightEyePose:
+      position: {x: -0.033, y: -0.02, z: -0.01}
+      rotation: {x: 0, y: 0, z: 0, w: 1}
+    leftProjectionHalfAngles:
+      left: -1.73205
+      right: 1
+      top: 1
+      bottom: -1.19175
+    rightProjectionHalfAngles:
+      left: -1.73205
+      right: 1
+      top: 1
+      bottom: -1.19175
+  m_MaterialSwapSets: []
+  m_EnablePolySpatialRaycaster: 1
+  m_SelectedValidationType: 1
+  m_ShowWarningsForShaderGraphsInPackages: 1
+  m_MinifyShaderGraphNodeNames: 1
+  m_PreviewUseBackgroundColor: 1
+  m_PreviewBackgroundColor: {r: 0.192, g: 0.301, b: 0.474, a: 1}
+  m_RuntimeMode: 0
+  m_EnableTransformVerification: 0
+  m_EnableProgressiveMipStreaming: 0
+  m_MaxMipByteSizePerCycle: 128000
+  m_RuntimeFlags: 0
+  m_EnableInEditorPreview: 1
+  m_HidePolySpatialPreviewObjectsInScene: 1
+  m_AlwaysLinkPolySpatialRuntime: 0
+  m_PolySpatialNetworkingMode: 0
+  m_EnableHostCameraControl: 0
+  m_ConnectionTimeout: 2
+  m_EnableClipping: 0
+  m_SerializedServerAddresses:
+  - 127.0.0.1
+  m_SerializedIgnoredScenePaths: []
+  m_MockBackend: 0
+  m_EnableGenericComponentTracker: 0
+  m_EnableTransformDeltas: 0
+  m_DisableTransformDeltaEpsilonComparison: 0
+  m_TransformDeltaPositionEpsilon: 0.0001
+  m_TransformDeltaRotationEpsilon: 0.0001
+  m_TransformDeltaScaleEpsilon: 0.0001
+  m_SimulatedLatencyMilliseconds: 0
+  m_SimulatedJitterMilliseconds: 0
