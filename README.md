@@ -29,4 +29,4 @@ To get started with integration of these plug-ins into your Unity projects, run 
 
 
 ## Leaving Feedback
-See the [Feedback](Documentation/Feedback.md) documentation for more information.
+Leave an issue for the community or see the [Feedback](Documentation/Feedback.md) documentation for more information.
