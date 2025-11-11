@@ -2,7 +2,8 @@
     "name": "apple.accessorytracking.Editor",
     "rootNamespace": "",
     "references": [
-        "GUID:ba36ca5f0f3ef4f5088c4db4d992d728"
+        "GUID:ba36ca5f0f3ef4f5088c4db4d992d728",
+        "Apple.Core"
     ],
     "includePlatforms": [
         "Editor"
