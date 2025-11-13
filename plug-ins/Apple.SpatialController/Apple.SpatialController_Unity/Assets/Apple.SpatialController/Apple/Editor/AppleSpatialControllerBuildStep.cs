@@ -16,7 +16,7 @@ namespace Apple.SpatialController.Editor
         public bool SupportsSpatialGamePad => true;
 
         public override string DisplayName => "Apple.SpatialController";
-        public override BuildTarget[] SupportedTargets => new BuildTarget[] {BuildTarget.VisionOS};
+        public override BuildTarget[] SupportedTargets => new BuildTarget[] { BuildTarget.VisionOS };
 #if (UNITY_EDITOR_OSX && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX || UNITY_VISIONOS))
         public override void OnProcessInfoPlist(AppleBuildProfile _, BuildTarget buildTarget, string pathToBuiltTarget, PlistDocument infoPlist)
         {
