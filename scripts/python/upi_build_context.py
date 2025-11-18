@@ -29,7 +29,7 @@ class BuildContext:
     def __init__(self, root_path : Path) -> None:
         # Required Paths
         self.script_root = root_path
-        self.build_output_path = root_path.joinpath("Build")
+        self.build_path = root_path.joinpath("Build")
         self.plugin_root = root_path.joinpath("plug-ins")
         self.test_build_root = root_path.joinpath("TestBuilds")
         self.unity_install_root = Path("/Applications/Unity")
