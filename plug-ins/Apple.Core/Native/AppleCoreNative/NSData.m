@@ -40,3 +40,14 @@ const void * NSData_GetBytes(void * nsDataPtr, void (* exceptionCallback)(void *
     }
     return 0;
 }
+
+const void * NSData_Empty(void (*exceptionCallback)(void * nsExceptionPtr)) {
+    @try {
+        NSData *data = [NSData data];
+        return (__bridge_retained const void *)data;
+    }
+    @catch (NSException * e) {
+        exceptionCallback((void *)CFBridgingRetain(e));
+    }
+    return NULL;
+}
