@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 using Apple.Core;
+using UnityEngine.Scripting;
 
 namespace Apple.GameKit
 {
@@ -11,6 +12,7 @@ namespace Apple.GameKit
     [Deprecated("Deprecated", iOS: "26.0.0", macOS: "26.0.0", tvOS: "26.0.0", visionOS: "26.0.0")]
     public class GKAchievementChallenge : GKChallenge
     {
+        [Preserve]
         internal GKAchievementChallenge(IntPtr pointer) : base(pointer)
         {
         }
