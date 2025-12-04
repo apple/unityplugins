@@ -5,12 +5,14 @@ using AOT;
 using Apple.Core;
 using Apple.Core.Runtime;
 using Apple.GameKit.Leaderboards;
+using UnityEngine.Scripting;
 
 namespace Apple.GameKit
 {
     [Deprecated("Deprecated", iOS: "26.0.0", macOS: "26.0.0", tvOS: "26.0.0", visionOS: "26.0.0")]
     public class GKGameCenterViewController : NSObject
     {
+        [Preserve]
         public GKGameCenterViewController(IntPtr pointer) : base(pointer)
         {
         }

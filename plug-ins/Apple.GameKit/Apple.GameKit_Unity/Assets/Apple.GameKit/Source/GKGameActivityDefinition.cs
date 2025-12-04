@@ -7,6 +7,7 @@ using Apple.Core;
 using Apple.Core.Runtime;
 using Apple.GameKit.Leaderboards;
 using UnityEngine;
+using UnityEngine.Scripting;
 
 namespace Apple.GameKit
 {
@@ -14,6 +15,7 @@ namespace Apple.GameKit
     [Introduced(iOS: "26.0.0", macOS: "26.0.0", tvOS: "26.0.0", visionOS: "26.0.0")]
     public class GKGameActivityDefinition : NSObject
     {
+        [Preserve]
         internal GKGameActivityDefinition(IntPtr pointer) : base(pointer)
         {
         }

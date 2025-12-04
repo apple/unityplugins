@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AOT;
 using Apple.Core;
 using Apple.Core.Runtime;
+using UnityEngine.Scripting;
 
 #if !UNITY_TVOS
 
@@ -61,6 +62,7 @@ namespace Apple.GameKit
         }
         #endregion
 
+        [Preserve]
         internal GKSavedGame(IntPtr pointer) : base(pointer)
         {
         }
