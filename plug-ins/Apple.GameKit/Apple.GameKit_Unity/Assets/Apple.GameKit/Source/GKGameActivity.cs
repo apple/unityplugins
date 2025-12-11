@@ -32,7 +32,10 @@ namespace Apple.GameKit
 
         static GKGameActivity()
         {
-            Interop.GKGameActivity_SetWantsToPlayCallback(OnWantsToPlay);
+            if (Availability.IsTypeAvailable<GKGameActivity>())
+            {
+                Interop.GKGameActivity_SetWantsToPlayCallback(OnWantsToPlay);
+            }
         }
 
 #if IOS_19_BETA_1_WANTSTOPLAY_MAIN_THREAD_WORKAROUND
