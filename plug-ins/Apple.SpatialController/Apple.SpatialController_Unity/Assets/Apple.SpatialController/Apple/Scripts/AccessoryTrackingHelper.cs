@@ -11,7 +11,6 @@ using TMPro;
 namespace Apple.visionOS.AccessoryTracking
 {
     using SpatialController;
-    using Unity.PolySpatial;
 
     public class AccessoryTrackingHelper : MonoBehaviour
     {
@@ -50,13 +49,9 @@ namespace Apple.visionOS.AccessoryTracking
         [SerializeField] private LocationOption RightLocation = LocationOption.origin;
         public TMP_Text RightControllerText;
 
-
         [Header("Controller Events")]
         public UnityEvent<string> ControllerConnectedEvent;
         public UnityEvent<string> ControllerDisconnectedEvent;
-        
-        [Header("A Reference To The Volume Camera")]
-        public GameObject _volumeCamera;
 
         /// <summary>
         /// An array of accessories that have been polled
@@ -119,27 +114,6 @@ namespace Apple.visionOS.AccessoryTracking
                 worldOriginAxis.transform.position = new Vector3(0, 0, 0);
             }
 
-            /// find the Volume Camera in the scene
-            _volumeCamera = GameObject.Find("VolumeCamera");
-            //confirm the volume camera object we found is not null
-            if (_volumeCamera != null)
-            {
-                //confirm we have the correct object and script
-                var volumeCameraScript = GetComponent<VolumeCamera>();
-                if (volumeCameraScript != null)
-                {
-                    //find a reference to the volume camera so we can make sure we aren't in bounded
-                    //bounded is not supported at this moment
-                    if (volumeCameraScript.WindowConfiguration.Mode == VolumeCamera.PolySpatialVolumeCameraMode.Bounded)
-                    {
-                        Debug.LogWarning("Apple - Accessory Tracking Plugin does not support Bounded: " + volumeCameraScript.WindowConfiguration.Mode.ToString());
-                    }
-                }
-                else
-                {
-                    Debug.LogWarning("Apple - Accessory Tracking Plugin unable to determine what mode app is in. Bounded not supported.");
-                }
-            }
         }
 
         void OnDisable()
