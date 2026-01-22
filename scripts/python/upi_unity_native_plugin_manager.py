@@ -5,6 +5,7 @@ import os, shutil, json
 
 import scripts.python.upi_utility as utility
 import scripts.python.upi_toolchain as toolchain
+import scripts.python.upi_asmdef_validator as asmdef_validator
 
 from scripts.python.upi_cli_argument_options import ConfigID
 
@@ -394,57 +395,77 @@ class NativeUnityPluginManager:
     
     # Packs plug-ins with tar and moves the resulting package to the currently configured build output folder.
     def GeneratePlugInPackages(self) -> None:
+        # Check if all platforms are being built
+        all_platforms_built = all(CTX.platforms.values())
+
+        # Only initialize validator if not building all platforms
+        validator = None
+        if not all_platforms_built:
+            validator = asmdef_validator.AsmdefPlatformValidator(CTX.printer)
+            CTX.printer.StatusMessage("Building for subset of platforms - will validate assembly definitions")
+        else:
+            CTX.printer.StatusMessage("Building for all platforms - skipping assembly definition validation")
+
         # Cache to return; tar should be invoked from the folder containing the associated package.json
         working_dir = os.getcwd()
-        for  plugin_id, native_plugin in self.native_unity_plugin_table.items():
-            CTX.printer.StatusMessageWithContext("Packing plug-in: ", f"{plugin_id}", "\n")
-            
-            os.chdir(native_plugin.unity_project.path)
 
-            # Not all Unity projects keep their package.json file in the same location, so get all the paths to any package.json under the current folder hierarchy
-            # TODO: This will break if there's more than one package.json in the folder tree - with the exception of those in PackageCache, which are filtered.
-            package_json_file_paths = list(native_plugin.unity_project.path.glob('**/package.json'))
+        try:
+            for  plugin_id, native_plugin in self.native_unity_plugin_table.items():
+                CTX.printer.StatusMessageWithContext("Packing plug-in: ", f"{plugin_id}", "\n")
 
-            # Ignore anything in the current project's package cache
-            target_package_json_path = Path()
-            for curr_package_json_path in package_json_file_paths:
-                if str(curr_package_json_path).find("PackageCache") != -1:
-                    continue
+                # Validate and fix asmdef files before packaging (only if not building all platforms)
+                if validator:
+                    validator.validate_plugin_before_packaging(native_plugin.unity_project.path, CTX.platforms)
+
+                os.chdir(native_plugin.unity_project.path)
+
+                # Not all Unity projects keep their package.json file in the same location, so get all the paths to any package.json under the current folder hierarchy
+                # TODO: This will break if there's more than one package.json in the folder tree - with the exception of those in PackageCache, which are filtered.
+                package_json_file_paths = list(native_plugin.unity_project.path.glob('**/package.json'))
+
+                # Ignore anything in the current project's package cache
+                target_package_json_path = Path()
+                for curr_package_json_path in package_json_file_paths:
+                    if str(curr_package_json_path).find("PackageCache") != -1:
+                        continue
+                    else:
+                        target_package_json_path = curr_package_json_path
+                        break
+
+                # If /Demos exists in same folder, rename to Demos~ folder as needed
+                curr_demo_path = target_package_json_path.parent.joinpath("Demos")
+                curr_demo_meta_path = target_package_json_path.parent.joinpath("Demos.meta")
+                dest_demo_path = target_package_json_path.parent.joinpath("Demos~")
+                dest_demo_meta_path = target_package_json_path.parent.joinpath("../Demos.meta")
+
+                if curr_demo_path.exists():
+                    utility.RunCommand(["mv", curr_demo_path, dest_demo_path])
+                    utility.RunCommand(["mv", curr_demo_meta_path, dest_demo_meta_path])
+
+                # get the package name and version
+                package_json_file = open(target_package_json_path)
+                package_json_data = json.load(package_json_file)
+                tgz_filename = f"{package_json_data['name']}" "-" f"{package_json_data['version']}" ".tgz"
+                package_json_file.close()
+
+                # using tar:
+                pack_command = ["tar", "--auto-compress", "--create", "--file", f"{CTX.build_output_path.joinpath(tgz_filename)}", "--directory", f"{target_package_json_path.parent}", "-s", "/./package/", "." ]
+
+                CTX.printer.MessageWithContext("Project package.json path: ", f"{target_package_json_path}", CTX.printer.Indent(1))
+                CTX.printer.MessageWithContext("Pack command: ", f"{(' '.join(pack_command))}", CTX.printer.Indent(1))
+
+                pack_command_output = utility.RunCommand(pack_command)
+
+                if pack_command_output.returncode != 0:
+                    CTX.printer.WarningMessage(f"Pack command completed with non-zero return code.\n\nSTDOUT:\n{pack_command_output.stdout}")
                 else:
-                    target_package_json_path = curr_package_json_path
-                    break
+                    CTX.printer.StatusMessage(f"Pack completed.")
 
-            # If /Demos exists in same folder, rename to Demos~ folder as needed
-            curr_demo_path = target_package_json_path.parent.joinpath("Demos")
-            curr_demo_meta_path = target_package_json_path.parent.joinpath("Demos.meta")
-            dest_demo_path = target_package_json_path.parent.joinpath("Demos~")
-            dest_demo_meta_path = target_package_json_path.parent.joinpath("../Demos.meta")
-
-            if curr_demo_path.exists():
-                utility.RunCommand(["mv", curr_demo_path, dest_demo_path])
-                utility.RunCommand(["mv", curr_demo_meta_path, dest_demo_meta_path])
-
-            # get the package name and version
-            package_json_file = open(target_package_json_path)
-            package_json_data = json.load(package_json_file)
-            tgz_filename = f"{package_json_data['name']}" "-" f"{package_json_data['version']}" ".tgz"
-            package_json_file.close()
-
-            # using tar:
-            pack_command = ["tar", "--auto-compress", "--create", "--file", f"{CTX.build_output_path.joinpath(tgz_filename)}", "--directory", f"{target_package_json_path.parent}", "-s", "/./package/", "." ]
-
-            CTX.printer.MessageWithContext("Project package.json path: ", f"{target_package_json_path}", CTX.printer.Indent(1))
-            CTX.printer.MessageWithContext("Pack command: ", f"{(' '.join(pack_command))}", CTX.printer.Indent(1))
-            
-            pack_command_output = utility.RunCommand(pack_command)
-            
-            if pack_command_output.returncode != 0:
-                CTX.printer.WarningMessage(f"Pack command completed with non-zero return code.\n\nSTDOUT:\n{pack_command_output.stdout}")
-            else:
-                CTX.printer.StatusMessage(f"Pack completed.")
-
-            if dest_demo_path.exists():
-                utility.RunCommand(["mv", dest_demo_path, curr_demo_path])
-                utility.RunCommand(["mv", dest_demo_meta_path, curr_demo_meta_path])
-
-        os.chdir(working_dir)
+                if dest_demo_path.exists():
+                    utility.RunCommand(["mv", dest_demo_path, curr_demo_path])
+                    utility.RunCommand(["mv", dest_demo_meta_path, curr_demo_meta_path])
+        finally:
+            # Always restore asmdef files to their original state, even if packaging fails
+            if validator:
+                validator.restore_asmdef_files()
+            os.chdir(working_dir)
