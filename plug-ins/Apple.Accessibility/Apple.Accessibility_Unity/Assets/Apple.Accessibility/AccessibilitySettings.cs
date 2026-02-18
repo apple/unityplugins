@@ -483,6 +483,28 @@ namespace Apple.Accessibility
             }
         }
 
+
+        public delegate void IsAudioDescriptionEnabledChangedHandler();
+        /// <summary>
+        /// A notification that gets posted when the system's Audio Descriptions setting changes.
+        /// </summary>
+        public static IsAudioDescriptionEnabledChangedHandler onIsAudioDescriptionEnabledChanged;
+
+        /// <summary>
+        /// A Boolean value that indicates whether the Audio Descriptions setting is in an enabled state.
+        /// </summary>
+        public static bool IsAudioDescriptionEnabled
+        {
+            get
+            {
+#if (UNITY_IOS || UNITY_TVOS) && !UNITY_EDITOR
+                return _UnityAX_UIAccessibilityIsAudioDescriptionEnabled();
+#else
+                return false;
+#endif
+            }
+        }
+
 #region Native Bridge
 
         private static bool __registered = false;
@@ -512,6 +534,7 @@ namespace Apple.Accessibility
                 _UnityAX_registerAccessibilityIsShakeToUndoEnabledDidChangeNotification(_UnityAX_UIAccessibilityIsShakeToUndoEnabledDidChangeNotification);
                 _UnityAX_registerAccessibilityShouldDifferentiateWithoutColorDidChangeNotification(_UnityAX_UIAccessibilityShouldDifferentiateWithoutColorDidChangeNotification);
                 _UnityAX_registerAccessibilityIsOnOffSwitchLabelsEnabledDidChangeNotification(_UnityAX_UIAccessibilityIsOnOffSwitchLabelsEnabledDidChangeNotification);
+                _UnityAX_registerAccessibilityIsAudioDescriptionEnabledDidChangeNotification(_UnityAX_UIAccessibilityIsAudioDescriptionEnabledDidChangeNotification);
 #endif
                 __registered = true;
             }
@@ -777,6 +800,19 @@ namespace Apple.Accessibility
         private static void _UnityAX_UIAccessibilityIsOnOffSwitchLabelsEnabledDidChangeNotification()
         {
             onIsOnOffSwitchLabelsEnabledChanged?.Invoke();
+        }
+#endif
+
+#if (UNITY_IOS || UNITY_TVOS) && !UNITY_EDITOR
+        private delegate void UIAccessibilityIsAudioDescriptionEnabledDidChangeNotificationDelegate();
+
+        [DllImport("__Internal")] private static extern bool _UnityAX_UIAccessibilityIsAudioDescriptionEnabled();
+        [DllImport("__Internal")] private static extern void _UnityAX_registerAccessibilityIsAudioDescriptionEnabledDidChangeNotification(UIAccessibilityIsAudioDescriptionEnabledDidChangeNotificationDelegate actionDelegate);
+
+        [AOT.MonoPInvokeCallback(typeof(UIAccessibilityIsAudioDescriptionEnabledDidChangeNotificationDelegate))]
+        private static void _UnityAX_UIAccessibilityIsAudioDescriptionEnabledDidChangeNotification()
+        {
+            onIsAudioDescriptionEnabledChanged?.Invoke();
         }
 #endif
 

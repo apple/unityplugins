@@ -7,6 +7,7 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import <MediaAccessibility/MediaAccessibility.h>
 #import <AppleAccessibility/AppleAccessibility.h>
 #import <TargetConditionals.h>
 #import "AppleAccessibilitySafeOverride.h"
@@ -365,6 +366,20 @@ APPLE_ACCESSIBILITY_EXTERN bool _UnityAX_UIAccessibilityIsOnOffSwitchLabelsEnabl
     }
 }
 
+static AccessibilityNotificationDelegate __axIsAudioDescriptionEnabledDidChangeNotificationDelegate = NULL;
+APPLE_ACCESSIBILITY_EXTERN void _UnityAX_registerAccessibilityIsAudioDescriptionEnabledDidChangeNotification(AccessibilityNotificationDelegate delegate) { __axIsAudioDescriptionEnabledDidChangeNotificationDelegate = delegate; }
+APPLE_ACCESSIBILITY_EXTERN bool _UnityAX_UIAccessibilityIsAudioDescriptionEnabled(void)
+{
+    CFArrayRef characteristics = MAAudibleMediaCopyPreferredCharacteristics();
+    if ( characteristics == NULL )
+    {
+        return false;
+    }
+    bool enabled = CFArrayContainsValue(characteristics, CFRangeMake(0, CFArrayGetCount(characteristics)), MAMediaCharacteristicDescribesVideoForAccessibility);
+    CFRelease(characteristics);
+    return enabled;
+}
+
 
 APPLE_ACCESSIBILITY_HIDDEN
 @interface _AppleAccessibilityNotificationObserver: NSObject
@@ -548,6 +563,14 @@ APPLE_ACCESSIBILITY_HIDDEN
             return;
         }
     }
+    if ( [notification.name isEqualToString:(__bridge NSString *)kMAAudibleMediaSettingsChangedNotification] )
+    {
+        if ( __axIsAudioDescriptionEnabledDidChangeNotificationDelegate != NULL )
+        {
+            __axIsAudioDescriptionEnabledDidChangeNotificationDelegate();
+        }
+        return;
+    }
 }
 @end
 
@@ -601,6 +624,7 @@ APPLE_ACCESSIBILITY_EXTERN void _UnityAX_InitializeAXRuntime(void)
         {
             [center addObserver:_observer selector:@selector(_accessibilityStatusChangedCallback:) name:UIAccessibilityOnOffSwitchLabelsDidChangeNotification object:nil];
         }
+        [center addObserver:_observer selector:@selector(_accessibilityStatusChangedCallback:) name:(__bridge NSString *)kMAAudibleMediaSettingsChangedNotification object:nil];
 
         [AppleAccessibilityRuntime.sharedInstance setUnityAccessibilityFrame:^CGRect(NSNumber *identifier) {
             if ( __axFrameDelegate == NULL )
