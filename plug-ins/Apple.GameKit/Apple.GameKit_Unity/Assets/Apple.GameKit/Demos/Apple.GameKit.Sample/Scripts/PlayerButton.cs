@@ -36,12 +36,17 @@ namespace Apple.GameKit.Sample
             return button;
         }
 
+        void OnDisable()
+        {
+            _playerPhotoImage.DestroyTexture();
+        }
+
         private async Task UpdatePlayerImage()
         {
             try
             {
                 var texture = (Player != null) ? await Player.LoadPhoto(GKPlayer.PhotoSize.Normal) : null;
-                _playerPhotoImage.texture = (texture != null) ? texture : Texture2D.whiteTexture;
+                _playerPhotoImage.DestroyTextureAndAssign(texture);
             }
             catch (Exception ex)
             {

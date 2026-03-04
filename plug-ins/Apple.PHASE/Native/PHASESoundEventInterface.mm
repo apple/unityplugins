@@ -93,6 +93,7 @@ int64_t PHASECreateSpatialMixer(const char* inName,
                                 bool inEnableEarlyReflections,
                                 bool inEnableLateReverb,
                                 float inCullDistance,
+                                float inRolloffFactor,
                                 DirectivityModelParameters inSourceDirectivityModelParameters,
                                 DirectivityModelParameters inListenerDirectivityModelParameters)
 {
@@ -109,6 +110,7 @@ int64_t PHASECreateSpatialMixer(const char* inName,
                                enableEarlyReflections:inEnableEarlyReflections
                                      enableLateReverb:inEnableLateReverb
                                          cullDistance:inCullDistance
+                                        rolloffFactor:inRolloffFactor
                      sourceDirectivityModelParameters:inSourceDirectivityModelParameters
                    listenerDirectivityModelParameters:inListenerDirectivityModelParameters];
 }
@@ -295,7 +297,7 @@ int64_t PHASECreateSoundEventSwitchNode(int64_t inSwitchParameterId, SwitchNodeE
     }
 }
 
-int64_t PHASECreateSoundEventRandomNode(RandomNodeEntry* inRandomEntries, uint32_t inNumRandomEntries)
+int64_t PHASECreateSoundEventRandomNode(RandomNodeEntry* inRandomEntries, uint32_t inNumRandomEntries, int64_t inUniqueSelectionQueueLength)
 {
     NSMutableDictionary* randomEntries = [[NSMutableDictionary alloc] initWithCapacity:inNumRandomEntries];
     for (uint32_t entryIdx = 0; entryIdx < inNumRandomEntries; ++entryIdx)
@@ -308,7 +310,7 @@ int64_t PHASECreateSoundEventRandomNode(RandomNodeEntry* inRandomEntries, uint32
     @try
     {
         PHASEEngineWrapper* engineWrapper = [PHASEEngineWrapper sharedInstance];
-        return [engineWrapper createSoundEventRandomNodeWithEntries:randomEntries];
+        return [engineWrapper createSoundEventRandomNodeWithEntries:randomEntries uniqueSelectionQueueLength:inUniqueSelectionQueueLength];
     }
     @catch (NSException* e)
     {
@@ -385,7 +387,26 @@ int64_t PHASEPlaySoundEvent(const char* inName,
                                             sourceId:inSourceId
                                             mixerIds:inMixerIds
                                            numMixers:inNumMixers
-                                   completionHandler:completionHandler];
+                                          streamName:nil
+                                         renderBlock:nil
+                              completionHandlerBlock:^(PHASESoundEventStartHandlerReason reason, int64_t sourceId, int64_t soundEventId) {
+                                  if (completionHandler)
+                                  {
+                                      switch (reason)
+                                      {
+                                          default:
+                                          case PHASESoundEventStartHandlerReasonFailure:
+                                              completionHandler(StartHandlerReasonFailure, sourceId, soundEventId);
+                                              break;
+                                          case PHASESoundEventStartHandlerReasonTerminated:
+                                              completionHandler(StartHandlerReasonTerminated, sourceId, soundEventId);
+                                              break;
+                                          case PHASESoundEventStartHandlerReasonFinishedPlaying:
+                                              completionHandler(StartHandlerReasonFinishedPlaying, sourceId, soundEventId);
+                                              break;
+                                      }
+                                  }
+        }];
     }
     @catch (NSException* exception)
     {

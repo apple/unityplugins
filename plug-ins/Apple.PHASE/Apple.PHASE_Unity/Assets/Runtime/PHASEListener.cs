@@ -23,14 +23,19 @@ namespace Apple.PHASE
         /// Dynamically controlled gain scalar value of the listener
         /// </summary>
         [Range(0.0f, 1.0f)]
-        [SerializeField] private double _gain = 1.0f;
-        private double _lastGain;
+        [SerializeField] private double _gain = 1.0;
 
         /// <summary>
         /// Global default reverb setting.
         /// </summary>
         [SerializeField] private Helpers.ReverbPresets _reverbPreset = Helpers.ReverbPresets.MediumRoom;
         private Helpers.ReverbPresets _lastReverb;
+
+        /// <summary>
+        /// Automatic Listener Head-Tracking Enabled
+        /// </summary>
+        [SerializeField] private bool _automaticHeadTrackingEnabled = false;
+        private bool _lastAutomaticHeadTrackingEnabled;
 
         // Is this listener registered with PHASE?
         private bool _registered = false;
@@ -45,6 +50,8 @@ namespace Apple.PHASE
             }
 
             CreateListener();
+            
+            Helpers.PHASESetListenerHeadTracking(_automaticHeadTrackingEnabled);
 
             // Store the transform object (transform itself gets updated).
             _transform = GetComponent<Transform>();
@@ -77,6 +84,8 @@ namespace Apple.PHASE
                         Debug.LogError("Failed to set transform on listener");
                     }
                 }
+                
+                UpdateListener();
 
                 UpdateGain();
 
@@ -144,14 +153,10 @@ namespace Apple.PHASE
 
         private void UpdateGain()
         {
-            if (_lastGain != _gain)
+            var result = Helpers.PHASESetListenerGain(_gain);
+            if (result == false)
             {
-                _lastGain = _gain;
-                bool result = Helpers.PHASESetListenerGain(_gain);
-                if (result == false)
-                {
-                    Debug.LogError("Failed to set gain on listener");
-                }
+                Debug.LogError("Failed to set gain on listener");
             }
         }
 
@@ -170,9 +175,9 @@ namespace Apple.PHASE
         /// <param name="gain"> The value of the new gain. </param>
         public void SetGain(double gain)
         {
-            if (_gain < 0.0f || _gain > 1.0f)
+            if (gain < 0.0 || gain > 1.0)
             {
-                Debug.LogWarning("Listener gain {_gain} is not within [0, 1], value will be clamped to valid range in PHASE Engine.");
+                Debug.LogWarning("Listener gain {gain} you are trying to set is not within [0, 1], value will be clamped to valid range in PHASE Engine.");
             }
             _gain = gain;
 
@@ -190,6 +195,42 @@ namespace Apple.PHASE
             {
                 _lastReverb = _reverbPreset;
                 Helpers.PHASESetSceneReverbPreset((int)_reverbPreset);
+            }
+        }
+
+        /// <summary>
+        /// Set the automatic listener head-tracking to the given value.
+        /// </summary>
+        /// <param name="automaticHeadTrackingEnabled"> Is automaticHeadTrackingEnabled. </param>
+        public void SetAutomaticListenerHeadTracking(bool automaticHeadTrackingEnabled)
+        {
+            _lastAutomaticHeadTrackingEnabled = _automaticHeadTrackingEnabled;
+            _automaticHeadTrackingEnabled = automaticHeadTrackingEnabled;
+            bool result = Helpers.PHASESetListenerHeadTracking(_automaticHeadTrackingEnabled);
+            if (result == false)
+            {
+                Debug.LogError("Failed to set listener head-tracking.");
+            }
+            else
+            {
+                Debug.Log($"Set automatic listener head-tracking: {_automaticHeadTrackingEnabled}");
+            }
+        }
+
+        /// <summary>
+        /// Get the current automatic listener head-tracking value.
+        /// </summary>
+        /// <returns> A <c>bool</c> representing if head-tracking is enabled. </returns>
+        public bool GetAutomaticListenerHeadTracking()
+        {
+            return _automaticHeadTrackingEnabled;
+        }
+
+        private void UpdateListener()
+        {
+            if (_lastAutomaticHeadTrackingEnabled != _automaticHeadTrackingEnabled)
+            {
+                SetAutomaticListenerHeadTracking(_automaticHeadTrackingEnabled);
             }
         }
 

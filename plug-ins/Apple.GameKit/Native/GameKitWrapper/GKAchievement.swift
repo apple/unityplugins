@@ -66,21 +66,21 @@ public func GKAchievement_GetPlayer
 public func GKAchievement_GetPercentComplete
 (
     pointer: UnsafeMutablePointer<GKAchievement>
-) -> Float
+) -> Double
 {
     let achievement = pointer.takeUnretainedValue();
-    return Float(achievement.percentComplete);
+    return achievement.percentComplete;
 }
 
 @_cdecl("GKAchievement_SetPercentComplete")
 public func GKAchievement_SetPercentComplete
 (
     pointer: UnsafeMutablePointer<GKAchievement>,
-    value: Float
+    value: Double
 )
 {
     let achievement = pointer.takeUnretainedValue();
-    achievement.percentComplete = Double(value);
+    achievement.percentComplete = value;
 }
 
 @_cdecl("GKAchievement_GetIsCompleted")
@@ -166,7 +166,7 @@ public func GKAchievement_ResetAchievements
 public func GKAchievement_LoadAchievements
 (
     taskId: Int64,
-    onSuccess: @escaping SuccessTaskPtrCallback,
+    onSuccess: @escaping SuccessTaskPtrCallback<NSArray>, // NSArray<GKAchievement>
     onError: @escaping NSErrorTaskCallback
 )
 {
@@ -185,8 +185,8 @@ public func GKAchievement_SelectChallengeablePlayers
 (
     pointer: UnsafeMutablePointer<GKAchievement>,
     taskId: Int64,
-    playersPtr: UnsafeMutablePointer<NSArray>,
-    onSuccess: @escaping SuccessTaskPtrCallback,
+    playersPtr: UnsafeMutablePointer<NSArray>, // NSArray<GKPlayer>
+    onSuccess: @escaping SuccessTaskPtrCallback<NSArray>, // NSArray<GKPlayer>
     onError: @escaping NSErrorTaskCallback
 )
 {

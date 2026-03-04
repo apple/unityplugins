@@ -61,17 +61,32 @@ namespace Apple.PHASE.Editor
                     pbxProject.AddFrameworkToProject(pbxProject.GetUnityFrameworkTargetGuid(), "PHASE.framework", false);
                     pbxProject.AddFrameworkToProject(pbxProject.GetUnityFrameworkTargetGuid(), "ModelIO.framework", false);
                     pbxProject.AddFrameworkToProject(pbxProject.GetUnityFrameworkTargetGuid(), "AVFoundation.framework", false);
+                    pbxProject.AddFrameworkToProject(pbxProject.GetUnityFrameworkTargetGuid(), "Accelerate.framework", false);
                 }
                 else
                 {
                     AppleNativeLibraryUtility.AddPlatformFrameworkDependency("PHASE.framework", false, buildTarget, pbxProject);
                     AppleNativeLibraryUtility.AddPlatformFrameworkDependency("ModelIO.framework", false, buildTarget, pbxProject);
+                    AppleNativeLibraryUtility.AddPlatformFrameworkDependency("Accelerate.framework", false, buildTarget, pbxProject);
                 }
             }
             else
             {
                 Debug.LogWarning($"[{DisplayName}] No native library defined for Unity build target {buildTarget.ToString()}. Skipping.");
             }
+        }
+
+        public override void OnProcessEntitlements(AppleBuildProfile _, BuildTarget buildTarget, string _1,
+            PlistDocument entitlements)
+        {
+            entitlements.root.SetBoolean("com.apple.developer.spatial-audio.profile-access", true);
+            entitlements.root.SetBoolean("com.apple.developer.coremotion.head-pose", true);
+        }
+
+        public override void OnProcessInfoPlist(AppleBuildProfile _, BuildTarget buildTarget, string pathToBuiltTarget,
+            PlistDocument infoPlist)
+        {
+            infoPlist.root.SetBoolean("AVGameBypassSystemSpatialAudio", true);
         }
 #endif // (UNITY_EDITOR_OSX && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX || UNITY_VISIONOS))
     }

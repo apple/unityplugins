@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Apple.Core;
 using Apple.GameKit.Leaderboards;
@@ -12,7 +13,14 @@ namespace Apple.GameKit.Sample
         [SerializeField] private LeaderboardButton _leaderboardButton = default;
 
         [SerializeField] private LeaderboardEntryButton _leaderboardEntryButtonPrefab = default;
-        [SerializeField] private GameObject _listContent = default;
+        [SerializeField] private PropertyButton _propertyButtonPrefab = default;
+
+        [SerializeField] private Dropdown _contentSelectorDropdown = default;
+        [SerializeField] private GameObject _entriesPane = default;
+        [SerializeField] private GameObject _propertiesPane = default;
+
+        [SerializeField] private GameObject _entriesListContent = default;
+        [SerializeField] private GameObject _propertiesListContent = default;
         
         [SerializeField] private Dropdown _playerScopeDropdown = default;
         [SerializeField] private Dropdown _timeScopeDropdown = default;
@@ -50,6 +58,15 @@ namespace Apple.GameKit.Sample
 
         private readonly bool IsViewControllerAvailableForPlayer = Availability.IsMethodAvailable<GKGameCenterViewController>(nameof(GKGameCenterViewController.InitWithPlayer));
 
+        public LeaderboardPanel Instantiate(GameObject parent, GKLeaderboard leaderboard)
+        {
+            var panel = base.Instantiate(parent);
+
+            panel.Leaderboard = leaderboard;
+
+            return panel;
+        }
+
         void Start()
         {
             _leaderboardButton.ButtonClick += async (sender, args) =>
@@ -67,12 +84,14 @@ namespace Apple.GameKit.Sample
                 _useAccessPoint = !_useAccessPoint;
             };
 
+            _contentSelectorDropdown.onValueChanged.AddListener(OnContentSelectorChanged);
+            _contentSelectorDropdown.value = 0;
+            OnContentSelectorChanged(_contentSelectorDropdown.value);
+
             _refreshButton.onClick.AddListener(RefreshButtonAction);
             _prevButton.onClick.AddListener(PrevButtonAction);
             _nextButton.onClick.AddListener(NextButtonAction);
             _submitScoreButton.onClick.AddListener(SubmitScoreAction);
-
-            ShouldDestroyWhenPopped = IsPrefabInstance;
         }
 
         async void OnEnable()
@@ -80,6 +99,15 @@ namespace Apple.GameKit.Sample
             _playerScopeDropdown.value = (int)PlayerScope;
             _timeScopeDropdown.value = (int)TimeScope;
             await Refresh();
+        }
+
+        private void OnContentSelectorChanged(Int32 newValue)
+        {
+            _entriesPane.SetActive(newValue == 0);
+            _prevButton.gameObject.SetActive(newValue == 0);
+            _nextButton.gameObject.SetActive(newValue == 0);
+
+            _propertiesPane.SetActive(newValue == 1);
         }
 
         public async void OnPlayerScopeChanged(Int32 newValue)
@@ -170,13 +198,14 @@ namespace Apple.GameKit.Sample
 
                 if (Leaderboard != null)
                 {
+                    // entries
                     var response = await Leaderboard.LoadEntries(PlayerScope, TimeScope, FirstEntry, FirstEntry + NumEntriesPerPage - 1);
                     if (response.Entries.Count > 0)
                     {
                         numEntries = response.Entries.Count;
                         foreach (var entry in response.Entries)
                         {
-                            var button = _leaderboardEntryButtonPrefab.Instantiate(_listContent, entry);
+                            var button = _leaderboardEntryButtonPrefab.Instantiate(_entriesListContent, entry);
                             if (IsViewControllerAvailableForPlayer)
                             {
                                 button.ButtonClick += async (sender, args) =>
@@ -187,6 +216,31 @@ namespace Apple.GameKit.Sample
                             }
                         }
                     }
+
+                    // properties
+                    Action<string, Func<string>> addPropertyButton = (name, getValue) =>
+                    {
+                        string value = Availability.IsPropertyAvailable<GKLeaderboard>(name) ? getValue() : "Not available";
+                        _propertyButtonPrefab.Instantiate(_propertiesListContent, name, value);
+                    };
+                    
+                    addPropertyButton(nameof(GKLeaderboard.Title), () => Leaderboard.Title);
+                    addPropertyButton(nameof(GKLeaderboard.BaseLeaderboardId), () => Leaderboard.BaseLeaderboardId);
+                    addPropertyButton(nameof(GKLeaderboard.GroupIdentifier), () => Leaderboard.GroupIdentifier);
+                    addPropertyButton(nameof(GKLeaderboard.Type), () => Leaderboard.Type.ToString());
+                    addPropertyButton(nameof(GKLeaderboard.ReleaseState), () => Leaderboard.ReleaseState.ToString());
+                    addPropertyButton(nameof(GKLeaderboard.IsHidden), () => Leaderboard.IsHidden.ToString());
+                    addPropertyButton(nameof(GKLeaderboard.StartDate), () => Leaderboard.StartDate.UtcDateTime.ToString("o"));
+                    addPropertyButton(nameof(GKLeaderboard.NextStartDate), () => Leaderboard.NextStartDate.UtcDateTime.ToString("o"));
+                    addPropertyButton(nameof(GKLeaderboard.Duration), () => Leaderboard.Duration.ToString("g"));
+                    addPropertyButton(nameof(GKLeaderboard.ActivityIdentifier), () => Leaderboard.ActivityIdentifier);
+                    addPropertyButton(nameof(GKLeaderboard.ActivityProperties), () =>
+                        Leaderboard.ActivityProperties != null ?
+                            string.Join("\n", Leaderboard.ActivityProperties
+                                .OrderBy(kvp => kvp.Key)
+                                .Select(kvp => $"\"{kvp.Key}\" : \"{kvp.Value}\"")) :
+                            string.Empty);
+                    addPropertyButton(nameof(GKLeaderboard.LeaderboardDescription), () => Leaderboard.LeaderboardDescription);
                 }
             }
             catch (Exception ex)
@@ -194,7 +248,7 @@ namespace Apple.GameKit.Sample
                 GKErrorCodeExtensions.LogException(ex);
 
                 // show the exception text
-                var errorButton = _errorMessagePrefab.Instantiate(_listContent);
+                var errorButton = _errorMessagePrefab.Instantiate(_entriesListContent);
                 errorButton.Text = $"{ex.Message}";
             }
             finally
@@ -207,7 +261,8 @@ namespace Apple.GameKit.Sample
 
         private void Clear()
         {
-            DestroyChildren(_listContent);
+            DestroyChildren(_entriesListContent);
+            DestroyChildren(_propertiesListContent);
         }
     }
 }

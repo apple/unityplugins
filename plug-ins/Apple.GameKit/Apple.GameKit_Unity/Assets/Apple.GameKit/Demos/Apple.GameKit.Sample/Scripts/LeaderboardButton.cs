@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 using Apple.GameKit.Leaderboards;
+using Apple.Core;
 
 namespace Apple.GameKit.Sample
 {
@@ -26,13 +27,11 @@ namespace Apple.GameKit.Sample
         [SerializeField] private RawImage _image = default;
 #pragma warning restore CS0414
 
-        [SerializeField] private Text _baseLeaderboardIdText = default;
+        [SerializeField] private Text _baseIdText = default;
+        [SerializeField] private Text _groupIdText = default;
         [SerializeField] private Text _titleText = default;
         [SerializeField] private Text _leaderboardTypeText = default;
-        [SerializeField] private Text _groupIdentifierText = default;
-        [SerializeField] private Text _startDateText = default;
-        [SerializeField] private Text _nextStartDateText = default;
-        [SerializeField] private Text _durationText = default;
+        [SerializeField] private Text _releaseStateText = default;
 
         public LeaderboardButton Instantiate(GameObject parent, GKLeaderboard leaderboard)
         {
@@ -43,13 +42,18 @@ namespace Apple.GameKit.Sample
             return button;
         }
 
+        void OnDisable()
+        {
+            _image.DestroyTexture();
+        }
+
 #if !UNITY_TVOS
         private async Task UpdateImage()
         {
             try
             {
                 var texture = (Leaderboard != null) ? await Leaderboard.LoadImage() : null;
-                _image.texture = (texture != null) ? texture : Texture2D.whiteTexture;
+                _image.DestroyTextureAndAssign(texture);
             }
             catch (Exception ex)
             {
@@ -60,13 +64,14 @@ namespace Apple.GameKit.Sample
 
         private void UpdateDisplay()
         {
-            _baseLeaderboardIdText.text = Leaderboard?.BaseLeaderboardId ?? string.Empty;
-            _titleText.text = Leaderboard?.Title ?? string.Empty;
-            _leaderboardTypeText.text = Leaderboard?.Type.ToString() ?? string.Empty;
-            _groupIdentifierText.text = Leaderboard?.GroupIdentifier ?? string.Empty;
-            _startDateText.text = Leaderboard?.StartDate.ToString() ?? string.Empty;
-            _nextStartDateText.text = Leaderboard?.NextStartDate.ToString() ?? string.Empty;
-            _durationText.text = Leaderboard?.Duration.ToString() ?? string.Empty;
+            Func<string, Func<string>, string> formatPropertyValue = (propertyName, getValue) =>
+                Availability.IsPropertyAvailable<GKLeaderboard>(propertyName) ? getValue() : "Not available";
+
+            _baseIdText.text = formatPropertyValue(nameof(GKLeaderboard.BaseLeaderboardId), () => Leaderboard?.BaseLeaderboardId ?? string.Empty);
+            _groupIdText.text = formatPropertyValue(nameof(GKLeaderboard.GroupIdentifier), () => Leaderboard?.GroupIdentifier ?? string.Empty);
+            _titleText.text = formatPropertyValue(nameof(GKLeaderboard.Title), () => Leaderboard?.Title ?? string.Empty);
+            _leaderboardTypeText.text = formatPropertyValue(nameof(GKLeaderboard.Type), () => Leaderboard?.Type.ToString() ?? string.Empty);
+            _releaseStateText.text = formatPropertyValue(nameof(GKLeaderboard.ReleaseState), () => Leaderboard?.ReleaseState.ToString() ?? string.Empty);
         }
     }
 }

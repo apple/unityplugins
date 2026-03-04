@@ -12,7 +12,7 @@ See the [Quick-Start Guide](../../../../../../Documentation/Quickstart.md) for g
 Since most calls to GameKit are asynchronous, the public methods are `Task`, or `Task<>` based. For a comprehensive guide to GameKit on Apple devices, please see [GameKit Developer Documentation](https://developer.apple.com/documentation/gamekit/)
 
 ### Exceptions
-If there is any error reported from GameKit, it will be reported by throwing a `GameKitException`. In all cases, a `try -catch` should be used to properly handle exceptions.
+If there is any error reported from GameKit, it will be reported by throwing a `GameKitException`. In all cases, a `try-catch` should be used to properly handle exceptions.
 
 ```C#
 private async Task Start()
@@ -37,7 +37,8 @@ private async Task Start()
 6. [Leaderboards](#6-leaderboards)
 7. [Access Point](#7-accesspoint)
 8. [Challenges](#8-challenges)
-9. [Invites](#9-invites)
+9. [Activities](#9-activities)
+10. [Invites](#10-invites)
 
 ### 1. Players
 ##### [GKLocalPlayer - Apple Developer Documentation](https://developer.apple.com/documentation/gamekit/gklocalplayer)
@@ -48,7 +49,12 @@ var player = await GKLocalPlayer.Authenticate();
 Debug.Log($"GameKit Authentication: isAuthenticated => {player.IsAuthenticated}");
 ```
 
-You can also use the following events to be notified of subsequent changes to the local player's authentication status after the initial request completes.
+> [!IMPORTANT]
+> Before calling `GKLocalPlayer.Authenticate()` make sure that callbacks related to
+> user being authenticated are hooked up (such as `GKChallenge.ChallengeReceived`) to 
+> ensure no events are missed.
+
+Use the following events to be notified of changes to the local player's authentication status after the initial request completes.
 ```csharp
 GKLocalPlayer.AuthenticateSuccess += (GKLocalPlayer localPlayer) {
   // handle newly authenticated (or re-authenticated) player
@@ -72,7 +78,7 @@ if(!localPlayer.IsUnderage) {
 #### 1.3 Loading Player Photo
 Each call to LoadPlayerPhoto generates a new Texture2D so ensure you cache as necessary per your own use-case.
 ```csharp
-var player = await GKLocalPlayer.Local;
+var player = GKLocalPlayer.Local;
 
 // Resolves a new instance of the players photo as a Texture2D.
 var photo = await player.LoadPhoto(size);
@@ -102,7 +108,7 @@ var publicKeyUrl = fetchItemsResponse.PublicKeyUrl;
 var timestamp = fetchItemsResponse.Timestamp;
 ```
 
-### 2 Achievements
+### 2. Achievements
 ##### [GKAchievement - Apple Developer Documentation](https://developer.apple.com/documentation/gamekit/gkachievement)
 ##### [GKAchievementDescription - Apple Developer Documentation](https://developer.apple.com/documentation/gamekit/gkachievementdescription)
 
@@ -124,7 +130,7 @@ var descriptions = await GKAchievementDescription.LoadAchievementDescriptions();
 
 foreach (var d in descriptions) 
 {
-  Debug.Log($"Achievement: {a.Identifier}, Unachieved Description: {d.UnachievedDescription}, Achieved Description: {d.AchievedDescription}");
+  Debug.Log($"Achievement: {d.Identifier}, Unachieved Description: {d.UnachievedDescription}, Achieved Description: {d.AchievedDescription}");
 }
 ```
 
@@ -174,7 +180,7 @@ await GKAchievement.ResetAchievements();
 #### 3.1 Show Achievements, Leaderboards and LeaderboardSets, Challenges, and Player Details Dialog
 The Task will resolve when the dialog has been closed.
 ```csharp
-var gameCenter = GKGameCenterViewController.Init(GKGameCenterViewController.GKGameCenterViewControllerState.Achievement);'
+var gameCenter = GKGameCenterViewController.Init(GKGameCenterViewController.GKGameCenterViewControllerState.Achievement);
 // await for user to dismiss...
 await gameCenter.Present();
 ```
@@ -192,7 +198,7 @@ matchRequest.MaxPlayers = 2;
 GKMatch match = await GKMatchmakerViewController.Request(matchRequest);
 
 match.Delegate.DataReceived += OnMatchDataReceived;
-match.Delegate.DataReceivedForPlayer ++ OnMatchDataReceivedForPlayer;
+match.Delegate.DataReceivedForPlayer += OnMatchDataReceivedForPlayer;
 match.Delegate.DidFailWithError += OnMatchErrorReceived;
 match.Delegate.PlayerConnectionChanged += OnMatchPlayerConnectionChanged;
 match.Delegate.ShouldReinviteDisconnectedPlayer += OnShouldReinviteDisconnectedPlayer;
@@ -217,7 +223,7 @@ private void OnMatchPlayerConnectionChanged(GKPlayer player, GKPlayerConnectionS
   // Handle state change
 }
 
-private bool ShouldReinviteDisconnectedPlayerHandler(GKPlayer player)
+private bool OnShouldReinviteDisconnectedPlayer(GKPlayer player)
 {
   // Reinvite disconnected player
 }
@@ -270,7 +276,7 @@ await GKMatchmaker.Shared.AddPlayers(match, request);
 var numMatchRequests = await GKMatchmaker.Shared.QueryActivity();
 
 // Finds the number of players, across player groups, who recently requested a match via the specified rule-based matchmaking queue.
-var numMatchRequests = await.GKMatchmaker.Shared.QueryQueueActivity("NameOfYourQueue");
+var numMatchRequests = await GKMatchmaker.Shared.QueryQueueActivity("NameOfYourQueue");
 
 // Finds the number of players in a player group who recently requested a match.
 var numMatchRequestsInGroup = await GKMatchmaker.Shared.QueryPlayerGroupActivity(playerGroupId);
@@ -294,28 +300,12 @@ var data = Encoding.UTF8.GetBytes("Hello World");
 match.Send(data, GKMatch.GKSendDataMode.Reliable);
 ```
 
-#### 4.4 Send To Players
+#### 4.5 Send To Players
 Sends a message to the selected players
 ```csharp
 var players = new GKPlayer[] { ... };
 var data = Encoding.UTF8.GetBytes("Hello World");
 match.SendToPlayers(data, players, GKMatch.GKSendDataMode.Reliable);
-```
-
-#### 4.5 GKVoiceChat
-##### [GKVoiceChat - Apple Developer Documentation](https://developer.apple.com/documentation/gamekit/gkvoicechat)
-
-##### 4.5.1 
-```csharp
-// Creates the channel
-var channel = match.VoiceChat("myChannelName");
-channel.Start();
-
-// Enable to sample microphone
-if(TalkToPlayers)
-  channel.IsActive = true;
-else 
-  channel.IsActive = false;
 ```
 
 ### 5. Turn Based Matchmaking
@@ -438,7 +428,7 @@ private void OnExchangeCanceled(GKPlayer player, GKTurnBasedExchange exchange, G
 
 ##### 5.5.2 Send Exchange
 ```csharp
-// Creates and sends the exchange to the patricipants
+// Creates and sends the exchange to the participants
 var exchange = await turnBasedMatch.SendExchange(participants, data, localizableMessageKey, arguments, GKTurnBasedMatch.ExchangeTimeoutDefault);
 ```
 
@@ -474,13 +464,13 @@ var leaderboard = leaderboards.FirstOrDefault();
 await leaderboard.SubmitScore(score, context, GKLocalPlayer.Local);
 ```
 
-#### 6.3 Load Leaderboards
+#### 6.2 Load Leaderboards
 ```csharp
 var allLeaderboards = await GKLeaderboard.LoadLeaderboards();
 var filteredLeaderboards = await GKLeaderboard.LoadLeaderboards("lb1", "lb3");
 ```
 
-#### 6.4 Load Scores
+#### 6.3 Load Scores
 Using a leaderboard reference, you can load the entries:
 
 ```csharp
@@ -492,7 +482,7 @@ var rankMax = 100;
 var scores = await leaderboard.LoadEntries(playerScope, timeScope, rankMin, rankMax);
 ```
 
-#### 6.5 Load Leaderboard Image
+#### 6.4 Load Leaderboard Image
 ```csharp
 // Unsupported on tvOS
 var image = await leaderboard.LoadImage();
@@ -502,7 +492,7 @@ var image = await leaderboard.LoadImage();
 ##### [GKAccessPoint - Apple Developer Documentation](https://developer.apple.com/documentation/gamekit/gkaccesspoint)
 
 #### 7.1 Game Center Visibility
-If you need to check whether the GameCenter / AccessPoint overlay is currently visble, you can query the following api call.
+If you need to check whether the GameCenter / AccessPoint overlay is currently visible, you can query the following API call.
 ```csharp
 private void Update()
 {
@@ -516,7 +506,7 @@ private void Update()
 #### 7.2 Show & Hide
 **Note:** This call is not asynchronous.
 ```csharp
-GKAccessPoint.Shared.Location = GKAcessPoint.GKAccessPointLocation.TopLeading;
+GKAccessPoint.Shared.Location = GKAccessPoint.GKAccessPointLocation.TopLeading;
 GKAccessPoint.Shared.ShowHighlights = true; 
 GKAccessPoint.Shared.IsActive = true; // or false to hide.
 ```
@@ -527,29 +517,130 @@ GKAccessPoint.Shared.IsActive = true; // or false to hide.
 await GKAccessPoint.Shared.Trigger();
 ```
 
-### 8. Challenges
-##### [GKChallenge - Apple Developer Documentation](https://developer.apple.com/documentation/gamekit/gkchallenge)
-
-#### 8.1 Load Received Challenges
+Trigger also supports triggering for different scenarios. See the `TriggerWith*` and `TriggerFor*` methods that match the [trigger instance methods](https://developer.apple.com/documentation/gamekit/gkaccesspoint#Instance-Methods) in GameKit.
 ```csharp
-var challenges = await GKChallenge.LoadReceivedChallenges();
-
-foreach (var c in challenges) 
-{
-  // Deprecated as GKScore was deprecated in < iOS 14, tvOS 14, and macOS 11
-  if(c is GKScoreChallenge) {
-    // Kept for historical purposes
-  }
-
-  if(c is GKAchievementChallenge achievementChallenge) {
-    Debug.Log($"Achievement Challenge: {achievementChallenge.Achievement?.Identifier}");
-  }
-}
+await GKAccessPoint.Shared.TriggerWithChallengeDefinitionId(GKChallengeDefinition.Identifier)
 ```
-### 9. Invites
+
+### 8. Challenges
+##### [Creating engaging challenges from leaderboards - Apple Developer Documentation](https://developer.apple.com/documentation/gamekit/creating-engaging-challenges-from-leaderboards)
+Note: The older [`GKChallenge`](https://developer.apple.com/documentation/gamekit/gkchallenge) has been deprecated.
+
+#### 8.1 Get the object that represents the challenge
+```csharp
+// Load all challenges for a game.
+var challengeDefinitions = await GKChallengeDefinition.LoadChallengeDefinitions();
+const string challengeID = "com.example.mygame.challenge.sprint";
+const string leaderboardID = "com.example.mygame.leaderboard.highscore";
+
+// Find a challenge definition by using an identifier.
+var challenge = challengeDefinitions?.Where(def => def.Identifier == challengeID).FirstOrDefault();
+
+// Find a leaderboard you associate with a challenge.
+var leaderboard = challengeDefinitions?.Where(def => def.Leaderboard?.BaseLeaderboardId == leaderboardID).FirstOrDefault();
+```
+
+#### 8.2 Create a challenge
+Present the default system UI that shows the available challenges for your game.
+```csharp
+// Show the system UI to show a list of available challenges the player selects from.
+await GKAccessPoint.Shared.TriggerForPlayTogether();
+```
+
+Present the system UI for a specific challenge.
+```csharp
+// Show the system UI to create a challenge based on the configuration.
+await GKAccessPoint.Shared.TriggerWithChallengeDefinitionID(challenge.Identifier);
+```
+
+### 9. Activities
+##### [Creating activities for your game - Apple Developer Documentation](https://developer.apple.com/documentation/gamekit/creating-activities-for-your-game)
+
+#### 9.1 Get the object that represents the activity
+```csharp
+// Load the game’s activities.
+var activityDescriptions = await GKGameActivityDefinition.LoadGameActivityDefinitions();
+const string activityID = "com.example.mygame.score_attack_mode";
+
+// Find an activity by using an identifier.
+var activityDescription = activityDescriptions?.Where(act => act.Identifier == activityID).FirstOrDefault();
+```
+Load the associated leaderboards or achievements that you configure to use with the activity:
+```csharp
+// Load the resources associated with the activity.
+var achievementDescription = await activityDescription.LoadAchievementDescriptions();
+var leaderboards = await activityDescription.LoadLeaderboards();
+```
+
+#### 9.2 Handle deep linking through activity listener
+```csharp
+GKGameActivity.WantsToPlay += async (GKPlayer player, GKGameActivity activity) =>
+{
+    if (activity.Identifier == "com.example.mygame.score_attack_mode")
+    {
+        await StartScoreAttackMode(activity);
+        return true;
+    }
+    else if (activity.Identifier == "com.example.mygame.versus_mode")
+    {
+        await StartMultiplayerMode(activity, activity.PartyCode);
+        return true;
+    }
+
+    return false;
+};
+```
+```csharp
+// Start matchmaking to find a match.
+var match = await activity.FindMatch();
+sampleGameUI.StartGame(match);
+```
+
+#### 9.3 Start a game activity life cycle
+```csharp
+// Start the activity with a party code.
+var activity = GKGameActivity.Start(activityDescription, partyCode: "2345-CFGH");
+```
+Setting a score on a leaderboard or progress on an achievement.
+```csharp
+Leaderboards.GKLeaderboard leaderboard = null;
+GKAchievement achievement = null;
+// Set the score on a leaderboard for the local player.
+long score = 100;
+ulong context = 1;
+activity.SetScoreOnLeaderboard(leaderboard, score, context);
+
+// Set the progress on an achievement to 60 percent.
+activity.SetProgressOnAchievement(achievement, percentComplete: 60);
+```
+
+#### 9.4 Report progress for an activity
+```csharp
+// Start the activity
+public void Init(GKGameActivity activity)
+{
+    this.activity = activity;
+    activity.Start();
+}
+
+// Handle tracking score updates at the local level.
+public long CurrentScore
+{
+    get => activity.GetScoreOnLeaderboard(leaderboard)?.Value ?? 0;
+    set => activity.SetScoreOnLeaderboard(leaderboard, value);
+}
+
+// End the activity to submit the score on your behalf.
+void Deinit()
+{
+    activity.End();
+}        
+```
+
+### 10. Invites
 ##### [GKInvite - Apple Developer Documentation](https://developer.apple.com/documentation/gamekit/gkinvite)
 
-#### 9.1 Checking for Accepted Invites on Start
+#### 10.1 Checking for Accepted Invites on Start
 ```csharp
 GKInvite.InviteAccepted += OnInviteAccepted;
 

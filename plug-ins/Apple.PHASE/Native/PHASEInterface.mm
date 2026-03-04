@@ -109,6 +109,12 @@ bool PHASEDestroyListener()
     return [engineWrapper destroyListener];
 }
 
+bool PHASESetListenerHeadTracking(bool inHeadTrack)
+{
+    PHASEEngineWrapper* engineWrapper = [PHASEEngineWrapper sharedInstance];
+    return [engineWrapper setListenerHeadTracking:inHeadTrack];
+}
+
 int64_t PHASECreateVolumetricSource(int inVertCount,
                                     const float* inPositions,
                                     const float* inNormals,
@@ -243,6 +249,12 @@ bool PHASEStart()
 {
     PHASEEngineWrapper* engineWrapper = [PHASEEngineWrapper sharedInstance];
     return [engineWrapper start];
+}
+
+void PHASEPause()
+{
+    PHASEEngineWrapper* engineWrapper = [PHASEEngineWrapper sharedInstance];
+    [engineWrapper pause];
 }
 
 void PHASEStop()

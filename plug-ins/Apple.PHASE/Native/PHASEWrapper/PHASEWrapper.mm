@@ -11,15 +11,22 @@
 #include "PHASEWrapper.h"
 #include <mutex>
 
+// For UI application background notifications
+#if !TARGET_OS_OSX
+#include <UIKit/UIApplication.h>
+#endif //!TARGET_OS_OSX
+
+NS_HEADER_AUDIT_BEGIN(nullability)
+
 @interface PHASEEngineWrapper () {
     PHASEEngine* mEngine;
     PHASEListener* mListener;
     NSMutableDictionary<NSNumber*, PHASESource*>* mSources;
     NSMutableDictionary<NSNumber*, PHASEOccluder*>* mOccluders;
     NSMutableDictionary<NSNumber*, PHASESoundEvent*>* mSoundEvents;
+    NSMutableDictionary<NSNumber*, PHASESoundEvent*>* mSuspendedSoundEvents;
     NSMutableDictionary<NSString*, PHASEMaterial*>* mMaterials;
     
-
     // Keep track of the number of sound events playing an sound event asset
     // For destruction purposes
     NSMutableDictionary<NSString*, NSNumber*>* mActiveSoundEventAssets;
@@ -43,12 +50,140 @@
     return wrapper;
 }
 
+- (BOOL)isInitialized
+{
+    return (nil != mEngine && nil != mListener && mEngine.renderingState == PHASERenderingStateStarted);
+}
+
+#if !TARGET_OS_OSX
+- (void)pauseSoundEvents
+{
+    NSLog(@"Phase Wrapper: Suspending sound events after application resign active notification");
+    @synchronized(self->mSoundEvents)
+    {
+        // Go through all sound events and suspend / pause the ones that are playing.
+        for(id key in self->mSoundEvents)
+        {
+            PHASESoundEvent* soundevent = [self->mSoundEvents objectForKey:key];
+            if ([soundevent renderingState] == PHASERenderingStateStarted)
+            {
+                [soundevent pause];
+                self->mSuspendedSoundEvents[key] = soundevent;
+            }
+            
+        }
+    }
+}
+
+- (void)resumeSoundEvents {
+    NSLog(@"Phase Wrapper: Resuming sound events after application active notification");
+    @synchronized(self->mSoundEvents)
+    {
+        // Go through all sound events and resume the ones that were suspended.
+        for(id key in self->mSuspendedSoundEvents)
+        {
+            PHASESoundEvent* soundevent = [self->mSuspendedSoundEvents objectForKey:key];
+            [soundevent resume];
+        }
+        
+        // Remove all suspended sound events
+        [self->mSuspendedSoundEvents removeAllObjects];
+    }
+}
+
+- (void)setupAudioSession
+{
+    NSError* error = nil;
+    
+    // Configure the audio session
+    AVAudioSession *sessionInstance = [AVAudioSession sharedInstance];
+    
+    // set the session category to ambient (implicitly sets the session to mix with others)
+    bool success = [sessionInstance setCategory:AVAudioSessionCategoryAmbient mode:AVAudioSessionModeDefault options:AVAudioSessionCategoryOptionMixWithOthers error:&error];
+    if (!success)
+    {
+        NSLog(@"Phase Wrapper: Error setting AVAudioSession category! %@\n", [error localizedDescription]);
+    }
+     
+    // add AVAudioSession interruption handler
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(handleAudioSessionInterruption:)
+                                                 name:AVAudioSessionInterruptionNotification
+                                               object:sessionInstance];
+    
+    // add handler when application goes to the background
+    [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationWillResignActiveNotification object:nil queue:nil usingBlock:^(NSNotification *notification)
+     {
+        [[AVAudioSession sharedInstance] setActive:FALSE error:nil];
+        [self pauseSoundEvents];
+    }];
+         
+    // add handler when application returns from the background
+    [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidBecomeActiveNotification object:nil queue:nil usingBlock:^(NSNotification *notification)
+     {
+        [[AVAudioSession sharedInstance] setActive:TRUE error:nil];
+        [self resumeSoundEvents];
+    }];
+    
+    // On visionOS the system automatically virtualizes the output from the window anchor so disable that behavior here.
+    // Note: This plugin currently only supports fully immersive visionOS scenes.
+    
+#if TARGET_OS_VISION
+    [sessionInstance setIntendedSpatialExperience:AVAudioSessionSpatialExperienceBypassed options:nil error:nil];
+#endif
+    
+    // activate the audio session
+    success = [sessionInstance setActive:YES error:&error];
+    if (!success) NSLog(@"Phase Wrapper: Error setting session active! %@\n", [error localizedDescription]);
+}
+
+- (void)handleAudioSessionInterruption:(NSNotification *)notification
+{
+    UInt8 interruptionType = [[notification.userInfo valueForKey:AVAudioSessionInterruptionTypeKey] intValue];
+    
+    NSLog(@"Phase Wrapper: Session interrupted > --- %s ---\n", interruptionType == AVAudioSessionInterruptionTypeBegan ? "Begin Interruption" : "End Interruption");
+
+    if (interruptionType == AVAudioSessionInterruptionTypeBegan)
+    {
+        [self pauseSoundEvents];
+    }
+    
+    if (interruptionType == AVAudioSessionInterruptionTypeEnded)
+    {
+        NSError *error;
+        bool success = [[AVAudioSession sharedInstance] setActive:YES error:&error];
+        if (!success)
+        {
+            NSLog(@"Phase Wrapper: AVAudioSession set active failed with error: %@", [error localizedDescription]);
+        }
+        else
+        {
+            [self resumeSoundEvents];
+        }
+    }
+}
+#endif // !TARGET_OS_OSX
+
 - (id)init
 {
     if (self = [super init])
     {
+#if !TARGET_OS_MAC
+        // Setup the audio session
+        [self setupAudioSession];
+#endif // !TARGET_OS_MAC
+        
         // Create engine
-        mEngine = [[PHASEEngine alloc] initWithUpdateMode:PHASEUpdateModeManual];
+#if TARGET_OS_VISION
+        if (@available(visionOS 26, *))
+        {
+            mEngine = [[PHASEEngine alloc] initWithUpdateMode:PHASEUpdateModeManual renderingMode:PHASERenderingModeClient];
+        }
+        else
+#endif
+        {
+            mEngine = [[PHASEEngine alloc] initWithUpdateMode:PHASEUpdateModeManual];
+        }
 
         // Create sources dictionary
         mSources = [[NSMutableDictionary<NSNumber*, PHASESource*> alloc] init];
@@ -58,6 +193,9 @@
 
         // Create sound events dictionary
         mSoundEvents = [[NSMutableDictionary<NSNumber*, PHASESoundEvent*> alloc] init];
+        
+        // Create suspended sound events array
+        mSuspendedSoundEvents = [[NSMutableDictionary<NSNumber*, PHASESoundEvent*> alloc] init];
         
         // Create materials dictionary
         mMaterials = [[NSMutableDictionary<NSString*, PHASEMaterial*> alloc] init];
@@ -79,8 +217,16 @@
 
         // Set default preset
         [mEngine setDefaultReverbPreset:PHASEReverbPresetMediumRoom];
-
-        NSLog(@"Engine created successfully.");
+        
+        [self createListener];
+     
+        // On visionOS the default spatialization mode is channels since the system will auto virtualize the output.
+        // We've configured the audio session to bypass system spatialization so we can set the mode to binaural.
+#if TARGET_OS_VISION
+        [mEngine setOutputSpatializationMode:PHASESpatializationModeAlwaysUseBinaural];
+#endif
+        
+        NSLog(@"Phase Wrapper: Engine created successfully.");
         return self;
     }
 
@@ -91,15 +237,15 @@
 {
     if (mListener != nil)
     {
-        NSLog(@"Listener already exists.");
-        return NO;
+        NSLog(@"Phase Wrapper: Listener already exists.");
+        return YES;
     }
 
     // Create the listener object
     mListener = [[PHASEListener alloc] initWithEngine:mEngine];
     if (mListener == nil)
     {
-        NSLog(@"Failed to create Listener.");
+        NSLog(@"Phase Wrapper: Failed to create Listener.");
         return NO;
     }
 
@@ -107,35 +253,41 @@
     const BOOL result = [mEngine.rootObject addChild:mListener error:&errorRef];
     if (!result)
     {
-        NSLog(@"Failed to add listener to the scene %@.", errorRef);
+        NSLog(@"Phase Wrapper: Failed to add listener to the scene %@.", errorRef);
         return NO;
     }
 
-    NSLog(@"Listener created successfully.");
+    NSLog(@"Phase Wrapper: Listener created successfully.");
     return YES;
 }
 
 - (BOOL)setListenerTransform:(simd_float4x4)listenerTransform
 {
+#if !TARGET_OS_VISION
     if (mListener == nil)
     {
-        NSLog(@"Listener does not exist.");
+        NSLog(@"Phase Wrapper: Listener does not exist.");
         return NO;
     }
 
     mListener.transform = listenerTransform;
+#endif //!TARGET_OS_VISION
+    
     return YES;
 }
 
 - (BOOL)setListenerGain:(double)listenerGain
 {
+#if !TARGET_OS_VISION
     if (mListener == nil)
     {
-        NSLog(@"Listener does not exist.");
+        NSLog(@"Phase Wrapper: Listener does not exist.");
         return NO;
     }
 
     mListener.gain = listenerGain;
+#endif //!TARGET_OS_VISION
+    
     return YES;
 }
 
@@ -143,18 +295,45 @@
 {
     if (mListener == nil)
     {
-        NSLog(@"Listener does not exist.");
+        NSLog(@"Phase Wrapper: Listener does not exist.");
         return 0.f;
     }
 
     return mListener.gain;
 }
 
+- (BOOL)setListenerHeadTracking:(BOOL)headTrackingEnabled
+{
+    if (mListener == nil)
+    {
+        NSLog(@"Phase Wrapper: Listener does not exist.");
+        return false;
+    }
+    
+#if !TARGET_OS_VISION
+    if (@available(macOS 15.0, iOS 18.0, tvOS 18.0, *)) {
+        if (headTrackingEnabled)
+        {
+            mListener.automaticHeadTrackingFlags = PHASEAutomaticHeadTrackingFlagOrientation;
+        }
+        else
+        {
+            mListener.automaticHeadTrackingFlags = 0;
+        }
+        
+        return true;
+    }
+#endif
+    
+    NSLog(@"Phase Wrapper: Listener head-tracking is only available as of MacOS 15.0, iOS 18.0, tvOS 18.0");
+    return false;
+}
+
 - (BOOL)destroyListener
 {
     if (mListener == nil)
     {
-        NSLog(@"Listener does not exist.");
+        NSLog(@"Phase Wrapper: Listener does not exist.");
         return NO;
     }
 
@@ -163,7 +342,7 @@
 
     mListener = nil;
 
-    NSLog(@"Listener destroyed successfully.");
+    NSLog(@"Phase Wrapper: Listener destroyed successfully.");
     return YES;
 }
 
@@ -222,7 +401,7 @@
     PHASESource* source = [mSources objectForKey:[NSNumber numberWithLongLong:sourceId]];
     if (source == nil)
     {
-        NSLog(@"Failed to find PHASE Source to set transform on.");
+        NSLog(@"Phase Wrapper: Failed to find PHASE Source to set transform on.");
         return NO;
     }
 
@@ -235,7 +414,7 @@
     PHASESource* source = [mSources objectForKey:[NSNumber numberWithLongLong:sourceId]];
     if (source == nil)
     {
-        NSLog(@"Failed to find PHASE Source to set gain on.");
+        NSLog(@"Phase Wrapper: Failed to find PHASE Source to set gain on.");
         return NO;
     }
     
@@ -248,7 +427,7 @@
     PHASESource* source = [mSources objectForKey:[NSNumber numberWithLongLong:sourceId]];
     if (source == nil)
     {
-        NSLog(@"Failed to find PHASE Source to get gain for.");
+        NSLog(@"Phase Wrapper: Failed to find PHASE Source to get gain for.");
         return 0.f;
     }
     
@@ -371,7 +550,7 @@
 
     if (material == nil)
     {
-        NSLog(@"Failed to create material from preset.");
+        NSLog(@"Phase Wrapper: Failed to create material from preset.");
         return NO;
     }
     [mMaterials setObject:material forKey:name];
@@ -401,10 +580,10 @@
     // If we get PHASEAssetErrorAlreadyExists, just return YES.
     if (error && error.code == PHASEAssetErrorAlreadyExists)
     {
-        NSLog(@"Asset %@ already registered with PHASE.", uid);
+        NSLog(@"Phase Wrapper: Asset %@ already registered with PHASE.", uid);
     } else if (error)
     {
-        NSLog(@"Failed to register audio buffer with error %@.", error);
+        NSLog(@"Phase Wrapper: Failed to register audio buffer with error %@.", error);
         return NO;
     }
 
@@ -423,7 +602,7 @@
 
     if (error)
     {
-        NSLog(@"Failed to register audio asset with error %@.", error);
+        NSLog(@"Phase Wrapper: Failed to register audio asset with error %@.", error);
         return NO;
     }
 
@@ -440,6 +619,7 @@
                enableEarlyReflections:(BOOL)enableEarlyReflections
                      enableLateReverb:(BOOL)enableLateReverb
                          cullDistance:(double)cullDistance
+                        rolloffFactor:(float)rolloffFactor
      sourceDirectivityModelParameters:(DirectivityModelParameters)sourceDirectivityModelParameters
    listenerDirectivityModelParameters:(DirectivityModelParameters)listenerDirectivityModelParameters
 {
@@ -485,6 +665,7 @@
     // Create geometric distance model.
     PHASEGeometricSpreadingDistanceModelParameters* geometricSpreadingDistanceModelParameters =
       [[PHASEGeometricSpreadingDistanceModelParameters alloc] init];
+    geometricSpreadingDistanceModelParameters.rolloffFactor = rolloffFactor;
 
     // Create distance model fade if we have fades
     if (cullDistance > 0.0f)
@@ -626,7 +807,7 @@
             layoutTag = kAudioChannelLayoutTag_MPEG_7_1_B;
             break;
         default:
-            NSLog(@"Failed to get channel layout tag for unsuported channel layout.");
+            NSLog(@"Phase Wrapper: Failed to get channel layout tag for unsuported channel layout.");
     }
     return layoutTag;
 }
@@ -680,13 +861,13 @@
     PHASESoundEvent* soundEvent = mSoundEvents[[NSNumber numberWithLongLong:instanceId]];
     if (soundEvent == nil)
     {
-        NSLog(@"Error: Failed to retrieve sound event associated with instance %@. Unable to get value for parameter %@", [NSNumber numberWithLongLong: instanceId], parameterName);
+        NSLog(@"Phase Wrapper: Error: Failed to retrieve sound event associated with instance %@. Unable to get value for parameter %@", [NSNumber numberWithLongLong: instanceId], parameterName);
         return 0;
     }
     
     if (soundEvent.metaParameters[parameterName] == nil)
     {
-        NSLog(@"Error: Failed to retrieve meta parameter from sound event associated with instance %@. Unable to get value for parameter %@.", [NSNumber numberWithLongLong: instanceId], parameterName);
+        NSLog(@"Phase Wrapper: Error: Failed to retrieve meta parameter from sound event associated with instance %@. Unable to get value for parameter %@.", [NSNumber numberWithLongLong: instanceId], parameterName);
         return 0;
     }
     
@@ -696,7 +877,7 @@
     }
     else
     {
-        NSLog(@"Warning: PHASE API misuse, cannot get class %@ with value of type int.",
+        NSLog(@"Phase Wrapper: Warning: PHASE API misuse, cannot get class %@ with value of type int.",
               [soundEvent.metaParameters[parameterName] class]);
         return 0;
     }
@@ -715,7 +896,7 @@
         PHASENumberMetaParameter* param = (PHASENumberMetaParameter*)soundEvent.metaParameters[parameterName];
         if (intValue < param.minimum || intValue > param.maximum)
         {
-            NSLog(@"Warning: Failed to set value of meta parameter %@ to %@. Value is out of its min/max range of [%@,%@] and will be clamped", parameterName, [NSNumber numberWithInt:intValue], [NSNumber numberWithInt:param.minimum],
+            NSLog(@"Phase Wrapper: Warning: Failed to set value of meta parameter %@ to %@. Value is out of its min/max range of [%@,%@] and will be clamped", parameterName, [NSNumber numberWithInt:intValue], [NSNumber numberWithInt:param.minimum],
                   [NSNumber numberWithInt:param.maximum]);
         }
         
@@ -724,7 +905,7 @@
     }
     else
     {
-        NSLog(@"Warning: PHASE API misuse, cannot set class %@ with value of type int.",
+        NSLog(@"Phase Wrapper: Warning: PHASE API misuse, cannot set class %@ with value of type int.",
               [soundEvent.metaParameters[parameterName] class]);
         return NO;
     }
@@ -751,13 +932,13 @@
     PHASESoundEvent* soundEvent = mSoundEvents[[NSNumber numberWithLongLong:instanceId]];
     if (soundEvent == nil)
     {
-        NSLog(@"Error: Failed to retrieve sound event associated with instance %@. Unable to get value for parameter %@", [NSNumber numberWithLongLong: instanceId], parameterName);
+        NSLog(@"Phase Wrapper: Error: Failed to retrieve sound event associated with instance %@. Unable to get value for parameter %@", [NSNumber numberWithLongLong: instanceId], parameterName);
         return 0;
     }
     
     if (soundEvent.metaParameters[parameterName] == nil)
     {
-        NSLog(@"Error: Failed to retrieve meta parameter from sound event associated with instance %@. Unable to get value for parameter %@.", [NSNumber numberWithLongLong: instanceId], parameterName);
+        NSLog(@"Phase Wrapper: Error: Failed to retrieve meta parameter from sound event associated with instance %@. Unable to get value for parameter %@.", [NSNumber numberWithLongLong: instanceId], parameterName);
         return 0;
     }
     
@@ -767,7 +948,7 @@
     }
     else
     {
-        NSLog(@"Warning: PHASE API misuse, cannot get class %@ with value of type int.",
+        NSLog(@"Phase Wrapper: Warning: PHASE API misuse, cannot get class %@ with value of type int.",
               [soundEvent.metaParameters[parameterName] class]);
         return 0;
     }
@@ -786,7 +967,7 @@
         PHASENumberMetaParameter* param = (PHASENumberMetaParameter*)soundEvent.metaParameters[parameterName];
         if (doubleValue < param.minimum || doubleValue > param.maximum)
         {
-            NSLog(@"Warning: Failed to set value of meta parameter %@ to %@. Value is out of its min/max range of [%@,%@] and will be clamped.", parameterName, [NSNumber numberWithDouble:doubleValue], [NSNumber numberWithDouble: param.minimum],
+            NSLog(@"Phase Wrapper: Warning: Failed to set value of meta parameter %@ to %@. Value is out of its min/max range of [%@,%@] and will be clamped.", parameterName, [NSNumber numberWithDouble:doubleValue], [NSNumber numberWithDouble: param.minimum],
                   [NSNumber numberWithDouble:param.maximum]);
         }
         
@@ -795,7 +976,7 @@
     }
     else
     {
-        NSLog(@"Warning: PHASE API misuse, cannot set class %@ with value of type double.",
+        NSLog(@"Phase Wrapper: Warning: PHASE API misuse, cannot set class %@ with value of type double.",
               [soundEvent.metaParameters[parameterName] class]);
         return NO;
     }
@@ -820,13 +1001,13 @@
     PHASESoundEvent* soundEvent = mSoundEvents[[NSNumber numberWithLongLong:instanceId]];
     if (soundEvent == nil)
     {
-        NSLog(@"Error: Failed to retrieve sound event associated with instance %@. Unable to get value for parameter %@", [NSNumber numberWithLongLong: instanceId], parameterName);
+        NSLog(@"Phase Wrapper: Error: Failed to retrieve sound event associated with instance %@. Unable to get value for parameter %@", [NSNumber numberWithLongLong: instanceId], parameterName);
         return nil;
     }
     
     if (soundEvent.metaParameters[parameterName] == nil)
     {
-        NSLog(@"Error: Failed to retrieve meta parameter from sound event associated with instance %@. Unable to get value for parameter %@.", [NSNumber numberWithLongLong: instanceId], parameterName);
+        NSLog(@"Phase Wrapper: Error: Failed to retrieve meta parameter from sound event associated with instance %@. Unable to get value for parameter %@.", [NSNumber numberWithLongLong: instanceId], parameterName);
         return nil;
     }
     
@@ -836,7 +1017,7 @@
     }
     else
     {
-        NSLog(@"Warning: PHASE API misuse, cannot get class %@ with value of type string.",
+        NSLog(@"Phase Wrapper: Warning: PHASE API misuse, cannot get class %@ with value of type string.",
               [soundEvent.metaParameters[parameterName] class]);
         return nil;
     }
@@ -857,7 +1038,7 @@
     }
     else
     {
-        NSLog(@"Warning: PHASE API misuse, cannot set class %@ with value of type string.",
+        NSLog(@"Phase Wrapper: Warning: PHASE API misuse, cannot set class %@ with value of type string.",
               [soundEvent.metaParameters[parameterName] class]);
         return NO;
     }
@@ -875,7 +1056,7 @@
     
     if (gainMetaParameter == nil)
     {
-        NSLog(@"Error: Failed to retrieve parameter with id %@, unable to set the parameter on the mixer with id %@.",
+        NSLog(@"Phase Wrapper: Error: Failed to retrieve parameter with id %@, unable to set the parameter on the mixer with id %@.",
               [NSNumber numberWithLongLong:parameterId], [NSNumber numberWithLongLong:mixerId]);
         return NO;
     }
@@ -884,7 +1065,7 @@
     PHASEMixerDefinition* mixer = [mSoundEventMixerDefinitions objectForKey:[NSNumber numberWithLongLong:mixerId]];
     if (mixer == nil)
     {
-        NSLog(@"Error: Failed to retrieve mixer with id %@, unable to set parameter with id %@ on the mixer.",
+        NSLog(@"Phase Wrapper: Error: Failed to retrieve mixer with id %@, unable to set parameter with id %@ on the mixer.",
               [NSNumber numberWithLongLong:mixerId], [NSNumber numberWithLongLong:parameterId]);
         return NO;
     }
@@ -996,7 +1177,7 @@
           [mSoundEventMetaParameterDefinitions objectForKey:[NSNumber numberWithLongLong:rateParameterId]];
         if (rateMetaParameter == nil)
         {
-            NSLog(@"Error: Failed to retrieve rate parameter with id %@, unable to set the parameter on the sampler with id %@.",
+            NSLog(@"Phase Wrapper: Error: Failed to retrieve rate parameter with id %@, unable to set the parameter on the sampler with id %@.",
                   [NSNumber numberWithLongLong:rateParameterId], [NSNumber numberWithLongLong: samplerId]);
         }
         else
@@ -1008,6 +1189,50 @@
     
     [mSoundEventNodeDefinitions setObject:sampler forKey:[NSNumber numberWithLongLong:samplerId]];
     return samplerId;
+}
+
+- (int64_t)createSoundEventPullStreamNodeWithAsset:(NSString*)assetName
+                                           mixerId:(int64_t)mixerId
+                                            format:(AVAudioFormat*)format
+                                   calibrationMode:(CalibrationMode)calibrationMode
+                                             level:(double)level
+{
+    if (@available(macOS 15.0, iOS 18.0, tvOS 18.0, visionOS 2.0, *)) {
+        // Find the mixer
+        PHASEMixerDefinition* mixer = [mSoundEventMixerDefinitions objectForKey:[NSNumber numberWithLongLong:mixerId]];
+        if (mixer == nil)
+        {
+            [NSException raise:@"Mixer invalid" format:@"Failed to create pull stream node."];
+        }
+
+        // Create the pull stream
+        PHASEPullStreamNodeDefinition* pullStream = [[PHASEPullStreamNodeDefinition alloc] initWithMixerDefinition:mixer format:format identifier:assetName];
+        pullStream.rate = 1;
+
+        PHASECalibrationMode outCalibrationMode;
+        switch (calibrationMode)
+        {
+            case CalibrationModeNone:
+                outCalibrationMode = PHASECalibrationModeNone;
+                break;
+            case CalibrationModeAbsoluteSpl:
+                outCalibrationMode = PHASECalibrationModeAbsoluteSpl;
+                break;
+            case CalibrationModeRelativeSpl:
+                outCalibrationMode = PHASECalibrationModeRelativeSpl;
+                break;
+        }
+        [pullStream setCalibrationMode:outCalibrationMode level:level];
+
+        const int64_t pullStreamId = reinterpret_cast<int64_t>(pullStream);
+        [mSoundEventNodeDefinitions setObject:pullStream forKey:[NSNumber numberWithLongLong:pullStreamId]];
+        return pullStreamId;
+    }
+    else
+    {
+        [NSException raise:@"Pull stream unavailable" format:@"Pull stream is only available macOS 15.0, iOS 18.0, tvOS 18.0 and visionOS 2.0 and higher."];
+    }
+    return PHASEInvalidInstanceHandle;
 }
 
 - (int64_t)createSoundEventSwitchNodeWithParameter:(int64_t)parameterId switchEntries:(NSDictionary*)switchEntries
@@ -1040,7 +1265,7 @@
     return switchId;
 }
 
-- (int64_t)createSoundEventRandomNodeWithEntries:(NSDictionary*)randomEntries
+- (int64_t)createSoundEventRandomNodeWithEntries:(NSDictionary*)randomEntries uniqueSelectionQueueLength:(int64_t)uniqueSelectionQueueLength
 {
     PHASERandomNodeDefinition* randomNode = [[PHASERandomNodeDefinition alloc] init];
     if (randomNode == nil)
@@ -1058,6 +1283,8 @@
         NSNumber* weight = [randomEntries objectForKey:entry];
         [randomNode addSubtree:node weight:weight];
     }
+    
+    randomNode.uniqueSelectionQueueLength = uniqueSelectionQueueLength;
 
     const int64_t randomId = reinterpret_cast<int64_t>(randomNode);
     [mSoundEventNodeDefinitions setObject:randomNode forKey:[NSNumber numberWithLongLong:randomId]];
@@ -1177,7 +1404,7 @@
     PHASESoundEventNodeDefinition* rootNode = [mSoundEventNodeDefinitions objectForKey:[NSNumber numberWithLongLong:rootNodeId]];
     if (rootNode == nil)
     {
-        NSLog(@"Root node not found.");
+        NSLog(@"Phase Wrapper: Root node not found.");
         return NO;
     }
 
@@ -1186,7 +1413,7 @@
     [mEngine.assetRegistry registerSoundEventAssetWithRootNode:rootNode identifier:name error:&error];
     if (error)
     {
-        NSLog(@"Failed to register sound event with error %@.", error);
+        NSLog(@"Phase Wrapper: Failed to register sound event with error %@.", error);
         return NO;
     }
 
@@ -1199,17 +1426,18 @@
                                               completion:^(bool success) {
                                                 if (!success)
                                                 {
-                                                    NSLog(@"Failed to unregister SoundEvent with name: %@", name);
+                                                    NSLog(@"Phase Wrapper: Failed to unregister SoundEvent with name: %@", name);
                                                 }
                                               }];
 }
 
 - (int64_t)playSoundEventWithName:(NSString*)name
-                         sourceId:(int64_t)sourceId
-                         mixerIds:(int64_t*)mixerIds
-                        numMixers:(uint64_t)numMixers
-                completionHandler:
-                  (void (*)(StartHandlerReason reason, int64_t sourceId, int64_t soundEventId))completionHandler
+                      sourceId:(int64_t)sourceId
+                      mixerIds:(int64_t*)mixerIds
+                     numMixers:(int64_t)numMixers
+                    streamName:(nullable NSString*)streamName
+                   renderBlock:(nullable PHASEPullStreamRenderBlock)renderBlock
+             completionHandlerBlock:(void (^_Nullable)(PHASESoundEventStartHandlerReason reason, int64_t sourceId, int64_t soundEventId))completionHandlerBlock
 {
     PHASESource* source = [mSources objectForKey:[NSNumber numberWithLongLong:sourceId]];
     if (source == nil)
@@ -1245,7 +1473,7 @@
     }
     if (error != nil)
     {
-        NSLog(@"Error creating sound event: %@", name);
+        NSLog(@"Phase Wrapper: Error creating sound event: %@", name);
         NSLog(@"%@", error);
     }
     if (soundEvent == nil)
@@ -1253,26 +1481,23 @@
         [NSException raise:@"Sound event invalid." format:@"Failed to create sound event from sound event."];
     }
     const int64_t soundEventId = reinterpret_cast<int64_t>(soundEvent);
+   
+    if (nil != streamName && nil != renderBlock)
+    {
+        if (@available(macOS 15.0, iOS 18.0, tvOS 18.0, visionOS 2.0, *)) {
+            soundEvent.pullStreamNodes[streamName].renderBlock = renderBlock;
+        } else {
+            NSLog(@"Phase Wrapper: Pull Stream is only available on macOS 15.0, iOS 18.0, tvOS 18.0 and visionOS 2.0 and higher.");
+            return PHASEInvalidInstanceHandle;
+        }
+    }
     
     [soundEvent startWithCompletion:^(PHASESoundEventStartHandlerReason reason) {
       @synchronized(self->mSoundEvents)
       {
-          StartHandlerReason handlerReason;
-          switch (reason)
+          if (completionHandlerBlock != nil)
           {
-              case PHASESoundEventStartHandlerReasonFailure:
-                  handlerReason = StartHandlerReasonFailure;
-                  break;
-              case PHASESoundEventStartHandlerReasonTerminated:
-                  handlerReason = StartHandlerReasonTerminated;
-                  break;
-              case PHASESoundEventStartHandlerReasonFinishedPlaying:
-                  handlerReason = StartHandlerReasonFinishedPlaying;
-                  break;
-          }
-          if (completionHandler != nil)
-          {
-              completionHandler(handlerReason, sourceId, soundEventId);
+              completionHandlerBlock(reason, sourceId, soundEventId);
           }
           [self->mSoundEvents removeObjectForKey:[NSNumber numberWithLongLong:soundEventId]];
 
@@ -1310,10 +1535,15 @@
     BOOL startErrorRet = [mEngine startAndReturnError:&startErrorRef];
     if (!startErrorRet)
     {
-        NSLog(@"Failed to start PHASEEngine with error %@.", startErrorRef);
+        NSLog(@"Phase Wrapper: Failed to start PHASEEngine with error %@.", startErrorRef);
     }
 
     return startErrorRet;
+}
+
+- (void)pause
+{
+    [mEngine pause];
 }
 
 - (void)stop
@@ -1325,5 +1555,7 @@
 {
     [mEngine update];
 }
+
+NS_HEADER_AUDIT_END(nullability)
 
 @end

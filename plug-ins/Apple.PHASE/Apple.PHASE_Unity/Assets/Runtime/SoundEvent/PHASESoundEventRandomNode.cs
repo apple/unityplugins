@@ -29,6 +29,11 @@ namespace Apple.PHASE
         public List<Entry> Entries = new List<Entry>();
 
         /// <summary>
+        /// An <c>Int</c> representing the length of the unique selection queue.
+        /// </summary>
+        [SerializeField] [Min(0)] public int UniqueSelectionQueueLength = 0;
+
+        /// <summary>
         /// Create the random node in the PHASE engine.
         /// </summary>
         /// <returns>Returns true on success, false otherwise.</returns>
@@ -55,7 +60,7 @@ namespace Apple.PHASE
 
             // Now create the random node with all the entries. 
             GCHandle gcEntries = GCHandle.Alloc(entries, GCHandleType.Pinned);
-            m_nodeId = Helpers.PHASECreateSoundEventRandomNode(gcEntries.AddrOfPinnedObject(), (uint)entries.Length);
+            m_nodeId = Helpers.PHASECreateSoundEventRandomNode(gcEntries.AddrOfPinnedObject(), (uint)entries.Length, UniqueSelectionQueueLength);
             if (m_nodeId == Helpers.InvalidId)
             {
                 Debug.LogError("Failed to create PHASE random node.");

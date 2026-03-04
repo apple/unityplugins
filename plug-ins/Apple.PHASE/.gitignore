@@ -1,19 +1,4 @@
 # Git ignore file
-/[Ll]ibrary/
-/[Tt]emp/
-/[Oo]bj/
-/[Bb]uild/
-/[Bb]uilds/
-/[Ll]ogs/
-/[Uu]ser[Ss]ettings/
-**/[Ll]ibrary/
-**/[Tt]emp/
-**/[Oo]bj/
-**/[Bb]uild/
-**/[Bb]uilds/
-**/[Ll]ogs/
-**/[Uu]ser[Ss]ettings/
-
 # Mac OS X Finder
 .DS_Store
 
@@ -27,6 +12,7 @@
 
 # Xcode 4 and later
 xcuserdata/
+*.xcworkspace
 *.xcscmblueprint
 
 # Generated files
@@ -61,14 +47,27 @@ dist/
 build/
 
 # Unity
-Apple.PHASE_Unity/Library/*
-Apple.PHASE_Unity/Temp/*
-Apple.PHASE_Unity/Builds/*
+Apple.PHASE_Unity/[Ll]ibrary/*
+Apple.PHASE_Unity/[Ll]ogs/*
+Apple.PHASE_Unity/[Tt]emp/*
+Apple.PHASE_Unity/[Bb]uilds/*
+Apple.PHASE_Unity/[Uu]serSettings/*
+Apple.PHASE_Unity/Assets/InitTestScene*.unity
+Apple.PHASE_Unity/Assets/InitTestScene*.meta
+Apple.PHASE_Unity/obj/*
+Apple.PHASE_Unity/.idea/
+
+# PHASE build
+*AudioPluginPHASE.a
+*AudioPluginPHASE.a.meta
+*AudioPluginPHASE.bundle/*
+*AudioPluginPHASE.bundle.meta
+*com.apple.unityplugin.phase*.tgz
+
 .vs
 *.sln
 *.csproj
 *.cache
-!Apple.PHASE_Unity/Assets/Runtime/Plugins/iOS/AudioPluginPHASE.a.meta
 Apple.PHASE_Unity/.vscode/launch.json
 Apple.PHASE_Unity/.vscode/settings.json
 Apple.PHASE_Unity/Builds.meta

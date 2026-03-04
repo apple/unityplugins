@@ -37,8 +37,6 @@ namespace Apple.GameKit.Sample
 #if !UNITY_TVOS
         void Start()
         {
-            ShouldDestroyWhenPopped = IsPrefabInstance;
-
             _saveButton.onClick.AddListener(BeginSave);
             _refreshButton.onClick.AddListener(RefreshButtonAction);
 

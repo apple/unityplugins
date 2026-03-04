@@ -1,0 +1,461 @@
+{
+  "meta" : {
+    "version" : "2024-11-15"
+  },
+  "resources" : {
+    "achievementImages" : {
+      "Achievement1-en-US" : [
+        {
+          "localID" : "Achievement1-en-US",
+          "url" : "en-US\/AchievementImage-Achievement1-en-US.png"
+        }
+      ],
+      "Achievement2-en-US" : [
+        {
+          "localID" : "Achievement2-en-US",
+          "url" : "en-US\/AchievementImage-Achievement2-en-US.png"
+        }
+      ],
+      "Achievement3-en-US" : [
+        {
+          "localID" : "Achievement3-en-US",
+          "url" : "en-US\/AchievementImage-Achievement3-en-US.png"
+        }
+      ]
+    },
+    "achievementLocalizations" : {
+      "Achievement1" : [
+        {
+          "afterEarnedDescription" : "You earned Achievement 1!",
+          "beforeEarnedDescription" : "This is Achievement 1.",
+          "locale" : "en-US",
+          "localID" : "Achievement1-en-US",
+          "name" : "Achievement 1"
+        }
+      ],
+      "Achievement2" : [
+        {
+          "afterEarnedDescription" : "You earned Achievement 2!",
+          "beforeEarnedDescription" : "This is Achievement 2",
+          "locale" : "en-US",
+          "localID" : "Achievement2-en-US",
+          "name" : "Achievement 2"
+        }
+      ],
+      "Achievement3" : [
+        {
+          "afterEarnedDescription" : "You earned Achievement 3!",
+          "beforeEarnedDescription" : "This is Achievement 3.",
+          "locale" : "en-US",
+          "localID" : "Achievement3-en-US",
+          "name" : "Achievement 3"
+        }
+      ]
+    },
+    "achievements" : [
+      {
+        "activityProperties" : {
+          "Property1" : "This is Property 1"
+        },
+        "archived" : false,
+        "points" : 100,
+        "referenceName" : "Achievement 1",
+        "repeatable" : true,
+        "showBeforeEarned" : true,
+        "vendorIdentifier" : "Achievement1"
+      },
+      {
+        "activityProperties" : {
+          "Property2" : "This is Property 2"
+        },
+        "archived" : false,
+        "points" : 100,
+        "referenceName" : "Achievement 2",
+        "repeatable" : true,
+        "showBeforeEarned" : true,
+        "vendorIdentifier" : "Achievement2"
+      },
+      {
+        "activityProperties" : {
+          "Property1" : "This is property #1",
+          "Property2" : "This is property #2"
+        },
+        "archived" : false,
+        "points" : 1,
+        "referenceName" : "Achievement 3",
+        "repeatable" : false,
+        "showBeforeEarned" : true,
+        "vendorIdentifier" : "Achievement3"
+      }
+    ],
+    "challengeDefaultImages" : {
+      "Challenge.1" : {
+        "localID" : "Challenge.1",
+        "url" : "ChallengeImage-Challenge.1.png"
+      },
+      "Challenge.2" : {
+        "localID" : "Challenge.2",
+        "url" : "ChallengeImage-Challenge.2.png"
+      },
+      "Challenge.3" : {
+        "localID" : "Challenge.3",
+        "url" : "ChallengeImage-Challenge.3.png"
+      }
+    },
+    "challengeImages" : {
+      "Challenge.1-en-US" : [
+        {
+          "localID" : "Challenge.1-en-US",
+          "url" : "en-US\/ChallengeImage-Challenge.1-en-US.png"
+        }
+      ],
+      "Challenge.2-en-US" : [
+        {
+          "localID" : "Challenge.2-en-US",
+          "url" : "en-US\/ChallengeImage-Challenge.2-en-US.png"
+        }
+      ],
+      "Challenge.3-en-US" : [
+        {
+          "localID" : "Challenge.3-en-US",
+          "url" : "en-US\/ChallengeImage-Challenge.3-en-US.png"
+        }
+      ]
+    },
+    "challengeLeaderboardRelationships" : {
+      "Challenge.1" : [
+        {
+          "leaderboardLocalID" : "Leaderboard1",
+          "localID" : "Challenge.1"
+        }
+      ],
+      "Challenge.2" : [
+        {
+          "leaderboardLocalID" : "Leaderboard2",
+          "localID" : "Challenge.2"
+        }
+      ],
+      "Challenge.3" : [
+        {
+          "leaderboardLocalID" : "Leaderboard3",
+          "localID" : "Challenge.3"
+        }
+      ]
+    },
+    "challengeLocalizations" : {
+      "Challenge.1" : [
+        {
+          "description" : "This is Challenge 1",
+          "locale" : "en-US",
+          "localID" : "Challenge.1-en-US",
+          "name" : "Challenge 1"
+        }
+      ],
+      "Challenge.2" : [
+        {
+          "description" : "This is Challenge 2.",
+          "locale" : "en-US",
+          "localID" : "Challenge.2-en-US",
+          "name" : "Challenge 2"
+        }
+      ],
+      "Challenge.3" : [
+        {
+          "description" : "This is Challenge 3",
+          "locale" : "en-US",
+          "localID" : "Challenge.3-en-US",
+          "name" : "Challenge 3"
+        }
+      ]
+    },
+    "challenges" : [
+      {
+        "allowedDurations" : [
+          "ONE_DAY",
+          "THREE_DAYS",
+          "ONE_WEEK"
+        ],
+        "archived" : false,
+        "challengeType" : "LEADERBOARD",
+        "referenceName" : "Challenge 1",
+        "repeatable" : true,
+        "vendorIdentifier" : "Challenge.1"
+      },
+      {
+        "allowedDurations" : [
+          "ONE_DAY",
+          "THREE_DAYS",
+          "ONE_WEEK"
+        ],
+        "archived" : false,
+        "challengeType" : "LEADERBOARD",
+        "referenceName" : "Challenge 2",
+        "repeatable" : true,
+        "vendorIdentifier" : "Challenge.2"
+      },
+      {
+        "allowedDurations" : [
+
+        ],
+        "archived" : false,
+        "challengeType" : "LEADERBOARD",
+        "referenceName" : "Challenge 3",
+        "repeatable" : true,
+        "vendorIdentifier" : "Challenge.3"
+      }
+    ],
+    "gameActivities" : [
+      {
+        "archived" : false,
+        "maximumPlayersCount" : 4,
+        "minimumPlayersCount" : 2,
+        "properties" : {
+
+        },
+        "referenceName" : "Activity 2",
+        "supportsPartyCode" : false,
+        "vendorIdentifier" : "Activity.2"
+      },
+      {
+        "archived" : false,
+        "maximumPlayersCount" : 5,
+        "minimumPlayersCount" : 2,
+        "properties" : {
+          "Property1" : "This is Property 1",
+          "Property2" : "This is Property 2"
+        },
+        "referenceName" : "Activity 1",
+        "supportsPartyCode" : false,
+        "vendorIdentifier" : "Activity.1"
+      },
+      {
+        "archived" : false,
+        "maximumPlayersCount" : 10,
+        "minimumPlayersCount" : 2,
+        "properties" : {
+
+        },
+        "referenceName" : "Activity 3",
+        "supportsPartyCode" : true,
+        "vendorIdentifier" : "Activity.3"
+      }
+    ],
+    "gameActivityAssociatedResources" : [
+      "Leaderboard",
+      {
+        "Activity.1" : [
+          "Leaderboard1"
+        ],
+        "Activity.2" : [
+          "Leaderboard2"
+        ],
+        "Activity.3" : [
+          "Leaderboard3"
+        ]
+      },
+      "Achievement",
+      {
+        "Activity.1" : [
+          "Achievement1"
+        ],
+        "Activity.2" : [
+          "Achievement2"
+        ],
+        "Activity.3" : [
+          "Achievement3"
+        ]
+      }
+    ],
+    "gameActivityDefaultImages" : {
+      "Activity.1" : {
+        "localID" : "Activity.1",
+        "url" : "GameActivityImage-Activity.1.png"
+      },
+      "Activity.2" : {
+        "localID" : "Activity.2",
+        "url" : "GameActivityImage-Activity.2.png"
+      },
+      "Activity.3" : {
+        "localID" : "Activity.3",
+        "url" : "GameActivityImage-Activity.3.png"
+      }
+    },
+    "gameActivityFallbackURLs" : {
+      "Activity.1" : "https:\/\/activity1",
+      "Activity.2" : "https:\/\/activity2",
+      "Activity.3" : "https:\/\/activity3",
+      "com.apple.as.minigolf" : "https:\/\/foobar"
+    },
+    "gameActivityImages" : {
+      "Activity.1-en-US" : [
+        {
+          "localID" : "Activity.1-en-US",
+          "url" : "en-US\/GameActivityImage-Activity.1-en-US.png"
+        }
+      ],
+      "Activity.2-en-US" : [
+        {
+          "localID" : "Activity.2-en-US",
+          "url" : "en-US\/GameActivityImage-Activity.2-en-US.png"
+        }
+      ],
+      "Activity.3-en-US" : [
+        {
+          "localID" : "Activity.3-en-US",
+          "url" : "en-US\/GameActivityImage-Activity.3-en-US.png"
+        }
+      ]
+    },
+    "gameActivityLocalizations" : {
+      "Activity.1" : [
+        {
+          "description" : "This is Activity 1.",
+          "locale" : "en-US",
+          "localID" : "Activity.1-en-US",
+          "name" : "Activity 1"
+        }
+      ],
+      "Activity.2" : [
+        {
+          "description" : "This is Activity 2",
+          "locale" : "en-US",
+          "localID" : "Activity.2-en-US",
+          "name" : "Activity 2"
+        }
+      ],
+      "Activity.3" : [
+        {
+          "description" : "This is Activity 3.",
+          "locale" : "en-US",
+          "localID" : "Activity.3-en-US",
+          "name" : "Activity 3"
+        }
+      ]
+    },
+    "leaderboardImages" : {
+      "Leaderboard1-en-US" : [
+        {
+          "localID" : "Leaderboard1-en-US",
+          "url" : "en-US\/LeaderboardImage-Leaderboard1-en-US.png"
+        }
+      ],
+      "Leaderboard2-en-US" : [
+        {
+          "localID" : "Leaderboard2-en-US",
+          "url" : "en-US\/LeaderboardImage-Leaderboard2-en-US.png"
+        }
+      ],
+      "Leaderboard3-en-US" : [
+        {
+          "localID" : "Leaderboard3-en-US",
+          "url" : "en-US\/LeaderboardImage-Leaderboard3-en-US.png"
+        }
+      ]
+    },
+    "leaderboardLocalizations" : {
+      "Leaderboard1" : [
+        {
+          "description" : "This is Leaderboard 1.",
+          "formatterSuffix" : "",
+          "formatterSuffixSingular" : "",
+          "locale" : "en-US",
+          "localID" : "Leaderboard1-en-US",
+          "name" : "Leaderboard 1"
+        }
+      ],
+      "Leaderboard2" : [
+        {
+          "description" : "This is Leaderboard 2.",
+          "formatterSuffix" : "",
+          "formatterSuffixSingular" : "",
+          "locale" : "en-US",
+          "localID" : "Leaderboard2-en-US",
+          "name" : "Leaderboard 2"
+        }
+      ],
+      "Leaderboard3" : [
+        {
+          "description" : "This is Leaderboard 3.",
+          "formatterSuffix" : "",
+          "formatterSuffixSingular" : "",
+          "locale" : "en-US",
+          "localID" : "Leaderboard3-en-US",
+          "name" : "Leaderboard 3"
+        }
+      ]
+    },
+    "leaderboards" : [
+      {
+        "archived" : false,
+        "defaultFormatter" : "INTEGER",
+        "referenceName" : "Leaderboard 1",
+        "scoreRangeEnd" : null,
+        "scoreRangeStart" : null,
+        "scoreSortType" : "ASC",
+        "submissionType" : "BEST_SCORE",
+        "vendorIdentifier" : "Leaderboard1",
+        "visibility" : "SHOW_FOR_ALL"
+      },
+      {
+        "archived" : false,
+        "defaultFormatter" : "INTEGER",
+        "referenceName" : "Leaderboard 2",
+        "scoreRangeEnd" : null,
+        "scoreRangeStart" : null,
+        "scoreSortType" : "ASC",
+        "submissionType" : "BEST_SCORE",
+        "vendorIdentifier" : "Leaderboard2",
+        "visibility" : "SHOW_FOR_ALL"
+      },
+      {
+        "archived" : false,
+        "defaultFormatter" : "INTEGER",
+        "recurrenceDuration" : "PT5M",
+        "recurrenceRule" : "FREQ=MINUTELY;INTERVAL=5",
+        "recurrenceStartDate" : "2025-05-28T19:00:55Z",
+        "referenceName" : "Leaderboard 3",
+        "scoreRangeEnd" : null,
+        "scoreRangeStart" : null,
+        "scoreSortType" : "DESC",
+        "submissionType" : "BEST_SCORE",
+        "vendorIdentifier" : "Leaderboard3",
+        "visibility" : "SHOW_FOR_ALL"
+      }
+    ],
+    "leaderboardSetImages" : {
+      "LeaderboardSet1-en-US" : [
+        {
+          "localID" : "LeaderboardSet1-en-US",
+          "url" : "en-US\/LeaderboardSetImage-LeaderboardSet1-en-US.png"
+        }
+      ]
+    },
+    "leaderboardSetLocalizations" : {
+      "LeaderboardSet1" : [
+        {
+          "locale" : "en-US",
+          "localID" : "LeaderboardSet1-en-US",
+          "name" : "Leaderboard Set 1"
+        }
+      ]
+    },
+    "leaderboardSetMemberships" : {
+      "LeaderboardSet1" : [
+        {
+          "leaderboardLocalIDs" : [
+            "Leaderboard2",
+            "Leaderboard1",
+            "Leaderboard3"
+          ],
+          "localID" : "LeaderboardSet1"
+        }
+      ]
+    },
+    "leaderboardSets" : [
+      {
+        "referenceName" : "Leaderboard Set 1",
+        "vendorIdentifier" : "LeaderboardSet1"
+      }
+    ]
+  }
+}

@@ -16,8 +16,10 @@ public typealias NSErrorCallback = @convention(c) (UnsafeMutablePointer<NSError>
 // async task completion callbacks
 public typealias NSErrorTaskCallback = @convention(c) (Int64 /*taskId*/, UnsafeMutablePointer<NSError> /*nsErrorPtr*/) -> Void;
 public typealias SuccessTaskCallback = @convention(c) (Int64 /*taskId*/) -> Void;
-public typealias SuccessTaskPtrCallback = @convention(c) (Int64 /*taskId*/, UnsafeMutableRawPointer?) -> Void;
+public typealias SuccessTaskRawPtrCallback = @convention(c) (Int64 /*taskId*/, UnsafeMutableRawPointer?) -> Void;
+public typealias SuccessTaskPtrCallback<T> = @convention(c) (Int64 /*taskId*/, UnsafeMutableRawPointer?) -> Void;
 public typealias SuccessTaskIntCallback = @convention(c) (Int64 /*taskId*/, Int) -> Void;
+public typealias SuccessTaskBoolCallback = @convention(c) (Int64 /*taskId*/, Bool) -> Void;
 public typealias SuccessTaskImageCallback = @convention(c) (Int64 /*taskId*/, UnsafeMutablePointer<NSData>? /*nsDataPtr*/) -> Void;
 
 public extension NSObjectProtocol where Self : NSObjectProtocol {

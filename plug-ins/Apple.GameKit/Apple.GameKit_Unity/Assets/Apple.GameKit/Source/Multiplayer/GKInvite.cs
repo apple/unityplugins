@@ -16,6 +16,9 @@ namespace Apple.GameKit.Multiplayer
         /// <summary>
         /// Handles the event when the local player accepts an invitation from another player.
         /// </summary>
+        /// <remarks>
+        /// Register for this event before calling GKLocalPlayer.Authenticate() to avoid missing events.
+        /// </remarks>
         public static event InviteAcceptedHandler InviteAccepted;
 
         static GKInvite()

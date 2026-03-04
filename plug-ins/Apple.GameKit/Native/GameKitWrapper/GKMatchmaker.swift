@@ -22,7 +22,7 @@ public func GKMatchmaker_MatchForInvite
     pointer: UnsafeMutablePointer<GKMatchmaker>,
     taskId: Int64,
     invitePtr: UnsafeMutablePointer<GKInvite>,
-    onSuccess: @escaping SuccessTaskPtrCallback,
+    onSuccess: @escaping SuccessTaskPtrCallback<GKMatch>,
     onError: @escaping NSErrorTaskCallback
 )
 {
@@ -48,7 +48,7 @@ public func GKMatchmaker_FindMatch
     pointer: UnsafeMutablePointer<GKMatchmaker>,
     taskId: Int64,
     matchRequestPtr: UnsafeMutablePointer<GKMatchRequest>,
-    onSuccess: @escaping SuccessTaskPtrCallback,
+    onSuccess: @escaping SuccessTaskPtrCallback<GKMatch>,
     onError: @escaping NSErrorTaskCallback
 )
 {
@@ -97,7 +97,7 @@ public func GKMatchmaker_FindPlayers
     pointer: UnsafeMutablePointer<GKMatchmaker>,
     taskId: Int64,
     matchRequestPtr: UnsafeMutablePointer<GKMatchRequest>,
-    onSuccess: @escaping SuccessTaskPtrCallback,
+    onSuccess: @escaping SuccessTaskPtrCallback<NSArray>, // NSArray<GKPlayer>
     onError: @escaping NSErrorTaskCallback
 )
 {
@@ -119,7 +119,7 @@ public func GKMatchMaker_FindMatchedPlayers
     gkMatchmakerPtr: UnsafeMutablePointer<GKMatchmaker>,
     taskId: Int64,
     gkMatchRequestPtr: UnsafeMutablePointer<GKMatchRequest>,
-    onSuccess: @escaping SuccessTaskPtrCallback,
+    onSuccess: @escaping SuccessTaskRawPtrCallback, // GKMatchedPlayers
     onError: @escaping NSErrorTaskCallback
 )
 {

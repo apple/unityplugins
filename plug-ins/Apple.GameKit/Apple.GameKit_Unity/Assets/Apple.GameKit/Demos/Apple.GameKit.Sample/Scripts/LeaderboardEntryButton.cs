@@ -38,6 +38,11 @@ namespace Apple.GameKit.Sample
             return button;
         }
 
+        void OnDisable()
+        {
+            _image.DestroyTexture();
+        }
+
         public GKPlayer Player => LeaderboardEntry?.Player;
 
         private async Task UpdateImage()
@@ -45,7 +50,7 @@ namespace Apple.GameKit.Sample
             try
             {
                 var texture = (LeaderboardEntry?.Player != null) ? await LeaderboardEntry.Player.LoadPhoto(GKPlayer.PhotoSize.Normal) : null;
-                _image.texture = (texture != null) ? texture : Texture2D.whiteTexture;
+                _image.DestroyTextureAndAssign(texture);
             }
             catch (Exception ex)
             {

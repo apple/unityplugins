@@ -2,13 +2,17 @@ using System;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using AOT;
+using Apple.Core;
 using Apple.Core.Runtime;
+using UnityEngine.Scripting;
 
 namespace Apple.GameKit
 {
     /// <summary>
     /// A challenge issued by the local player to another player.
     /// </summary>
+    /// <symbol>c:objc(cs)GKChallenge</symbol>
+    [Deprecated("Deprecated", iOS: "26.0.0", macOS: "26.0.0", tvOS: "26.0.0", visionOS: "26.0.0")]
     public class GKChallenge : NSObject
     {
         #region Delegates
@@ -29,21 +33,33 @@ namespace Apple.GameKit
         /// <summary>
         /// Handles when the local player issues a challenge but the other player doesn't want to respond immediately.
         /// </summary>
+        /// <remarks>
+        /// Register for this event before calling GKLocalPlayer.Authenticate() to avoid missing events.
+        /// </remarks>
         public static event ChallengeReceivedHandler ChallengeReceived;
 
         /// <summary>
         /// Handles when the local player issues a challenge and the other player accepts.
         /// </summary>
+        /// <remarks>
+        /// Register for this event before calling GKLocalPlayer.Authenticate() to avoid missing events.
+        /// </remarks>
         public static event ChallengeOtherPlayerAcceptedHandler ChallengeOtherPlayerAccepted;
 
         /// <summary>
         /// Handles when the local player completes a challenge that a friend issues.
         /// </summary>
+        /// <remarks>
+        /// Register for this event before calling GKLocalPlayer.Authenticate() to avoid missing events.
+        /// </remarks>
         public static event ChallengeCompletedHandler ChallengeCompleted;
 
         /// <summary>
         /// Handles when a friend completes a challenge that the local player issues.
         /// </summary>
+        /// <remarks>
+        /// Register for this event before calling GKLocalPlayer.Authenticate() to avoid missing events.
+        /// </remarks>
         public static event ChallengeOtherPlayerCompletedHandler ChallengeOtherPlayerCompleted;
         #endregion
         
@@ -81,6 +97,7 @@ namespace Apple.GameKit
         }
         #endregion
         
+        [Preserve]
         internal GKChallenge(IntPtr pointer) : base(pointer)
         {
         }

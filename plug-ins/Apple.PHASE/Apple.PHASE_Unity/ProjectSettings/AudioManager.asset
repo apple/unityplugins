@@ -8,11 +8,12 @@ AudioManager:
   Rolloff Scale: 1
   Doppler Factor: 1
   Default Speaker Mode: 2
-  m_SampleRate: 0
+  m_SampleRate: 48000
   m_DSPBufferSize: 1024
   m_VirtualVoiceCount: 512
   m_RealVoiceCount: 32
-  m_SpatializerPlugin: 
+  m_EnableOutputSuspension: 1
+  m_SpatializerPlugin: PHASE Spatializer
   m_AmbisonicDecoderPlugin: 
   m_DisableAudio: 0
   m_VirtualizeEffects: 1

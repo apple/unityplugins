@@ -5,24 +5,28 @@ using UnityEngine.UI;
 
 namespace Apple.GameKit.Sample
 {
-    public class AchievementButton : MonoBehaviour
+    public class AchievementButton : ListItemButtonBase<AchievementButton>
     {
         [SerializeField] private RawImage _image = default;
         [SerializeField] private Text _titleText = default;
         [SerializeField] private Text _identifierText = default;
         [SerializeField] private Text _completionText = default;
         [SerializeField] private Text _lastReportedDateText = default;
-        [SerializeField] private Button _button = default;
 
-        void Start()
+        public AchievementButton Instantiate(GameObject parent, GKAchievementDescription description, GKAchievement achievement = null)
         {
-            _button.onClick.AddListener(() =>
-            {
-                ButtonClick?.Invoke(this, EventArgs.Empty);
-            });
+            var button = base.Instantiate(parent);
+
+            button.Description = description;
+            button.Achievement = achievement;
+
+            return button;
         }
 
-        public event EventHandler ButtonClick;
+        void OnDisable()
+        {
+            _image.DestroyTexture();
+        }
 
         private GKAchievementDescription _achievementDescription;
         public GKAchievementDescription Description
@@ -58,7 +62,7 @@ namespace Apple.GameKit.Sample
             try
             {
                 var texture = (Description != null) ? await Description.LoadImage() : null;
-                _image.texture = (texture != null) ? texture : Texture2D.whiteTexture;
+                _image.DestroyTextureAndAssign(texture);
             }
             catch (Exception ex)
             {
@@ -66,7 +70,7 @@ namespace Apple.GameKit.Sample
             }
         }
 
-        private void UpdateAchievementProperties()
+        public void UpdateAchievementProperties()
         {
             if (Achievement != null)
             {

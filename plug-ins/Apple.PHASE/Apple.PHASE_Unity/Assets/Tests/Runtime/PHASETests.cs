@@ -389,5 +389,181 @@ namespace Apple.PHASE.UnitTests
             yield return new WaitForFixedUpdate();
             UnityEngine.Assertions.Assert.IsNull(sourceObject, "Failed to destroy PHASE Source");
         }
+
+        // Spatializer Tests
+        [UnityTest]
+        public IEnumerator PHASETestSpatializer()
+        {
+            GameObject spatializedSource =
+                Object.Instantiate(Resources.Load<GameObject>(m_testResourcesDir + "SpatializedSource"));
+
+            Assert.That(spatializedSource, "Failed to instantiate Spatialized Source.");
+
+            AudioSource source = spatializedSource.GetComponent<AudioSource>();
+            yield return new WaitForFixedUpdate();
+            source.Play();
+            yield return new WaitForSeconds(1f);
+            Assert.That(source.isPlaying, "Spatialized source failed to play.");
+            source.Stop();
+            yield return new WaitForSeconds(0.01f);
+            Assert.That(!source.isPlaying, "Failed to stop spatialized AudioSource.");
+
+            Object.Destroy(source);
+            yield return new WaitForFixedUpdate();
+            UnityEngine.Assertions.Assert.IsNull(source, "Failed to destroy PHASE Source");
+        }
+
+        [UnityTest]
+        public IEnumerator PHASETestSpatializerRestart()
+        {
+            GameObject spatializedSource =
+                Object.Instantiate(Resources.Load<GameObject>(m_testResourcesDir + "SpatializedSource"));
+
+            Assert.That(spatializedSource, "Failed to instantiate Spatialized Source.");
+
+            AudioSource source = spatializedSource.GetComponent<AudioSource>();
+            yield return new WaitForFixedUpdate();
+            source.Play();
+            yield return new WaitForSeconds(1f);
+            Assert.That(source.isPlaying, "Spatialized source failed to play.");
+            source.Stop();
+            yield return new WaitForSeconds(0.01f);
+            Assert.That(!source.isPlaying, "Failed to stop spatialized AudioSource.");
+            source.Play();
+            yield return new WaitForSeconds(1f);
+            Assert.That(source.isPlaying, "Spatialized source failed to play 2nd time.");
+            source.Stop();
+            yield return new WaitForSeconds(0.01f);
+            Assert.That(!source.isPlaying, "Failed to stop spatialized AudioSource.");
+
+            Object.Destroy(source);
+            yield return new WaitForFixedUpdate();
+            UnityEngine.Assertions.Assert.IsNull(source, "Failed to destroy PHASE Source");
+        }
+
+        [UnityTest]
+        public IEnumerator PHASETestTwoSpatializedSources()
+        {
+            GameObject spatializedSource1 =
+                Object.Instantiate(Resources.Load<GameObject>(m_testResourcesDir + "SpatializedSource"));
+            GameObject spatializedSource2 =
+                Object.Instantiate(Resources.Load<GameObject>(m_testResourcesDir + "SpatializedSource"));
+
+            Assert.That(spatializedSource1, "Failed to instantiate Spatialized Source.");
+            Assert.That(spatializedSource2, "Failed to instantiate Spatialized Source.");
+
+            AudioSource source1 = spatializedSource1.GetComponent<AudioSource>();
+            AudioSource source2 = spatializedSource2.GetComponent<AudioSource>();
+            yield return new WaitForFixedUpdate();
+            source1.Play();
+            yield return new WaitForSeconds(1f);
+            Assert.That(source1.isPlaying, "Spatialized source failed to play.");
+            source2.Play();
+            yield return new WaitForSeconds(1f);
+            Assert.That(source2.isPlaying, "Spatialized source failed to play.");
+            source1.Stop();
+            yield return new WaitForSeconds(0.01f);
+            Assert.That(!source1.isPlaying, "Failed to stop spatialized AudioSource.");
+            source2.Stop();
+            yield return new WaitForSeconds(0.01f);
+            Assert.That(!source2.isPlaying, "Failed to stop spatialized AudioSource.");
+
+            Object.Destroy(source1);
+            yield return new WaitForFixedUpdate();
+
+            Object.Destroy(source2);
+            yield return new WaitForFixedUpdate();
+            UnityEngine.Assertions.Assert.IsNull(source2, "Failed to destroy PHASE Source");
+        }
+
+        [UnityTest]
+        public IEnumerator PHASETestSourceSpatializeWhilePlaying()
+        {
+            GameObject spatializedSource =
+                Object.Instantiate(Resources.Load<GameObject>(m_testResourcesDir + "SpatializedSource"));
+
+            Assert.That(spatializedSource, "Failed to instantiate Spatialized Source.");
+
+            AudioSource source = spatializedSource.GetComponent<AudioSource>();
+            source.spatialize = false;
+            yield return new WaitForFixedUpdate();
+            source.Play();
+            yield return new WaitForSeconds(1f);
+            source.spatialize = true;
+            yield return new WaitForSeconds(1f);
+            Assert.That(source.isPlaying, "Spatialized source failed to play.");
+            source.Stop();
+            yield return new WaitForSeconds(0.01f);
+            Assert.That(!source.isPlaying, "Failed to stop spatialized AudioSource.");
+
+            Object.Destroy(source);
+            yield return new WaitForFixedUpdate();
+            UnityEngine.Assertions.Assert.IsNull(source, "Failed to destroy PHASE Source");
+        }
+
+        [UnityTest]
+        public IEnumerator PHASETestSpatializedSourceDestroyAndReload()
+        {
+            GameObject spatializedSource =
+                Object.Instantiate(Resources.Load<GameObject>(m_testResourcesDir + "SpatializedSource"));
+
+            Assert.That(spatializedSource, "Failed to instantiate Spatialized Source.");
+
+            AudioSource source = spatializedSource.GetComponent<AudioSource>();
+            yield return new WaitForFixedUpdate();
+            source.Play();
+            yield return new WaitForSeconds(1f);
+            Assert.That(source.isPlaying, "Spatialized source failed to play.");
+            source.Stop();
+            yield return new WaitForSeconds(0.01f);
+            Assert.That(!source.isPlaying, "Failed to stop spatialized AudioSource.");
+
+            Object.Destroy(source);
+            yield return new WaitForFixedUpdate();
+
+            spatializedSource = Object.Instantiate(Resources.Load<GameObject>(m_testResourcesDir + "SpatializedSource"));
+            Assert.That(spatializedSource, "Failed to re-instantiate Spatialized Source.");
+
+            source = spatializedSource.GetComponent<AudioSource>();
+            yield return new WaitForFixedUpdate();
+            source.Play();
+            yield return new WaitForSeconds(1f);
+            Assert.That(source.isPlaying, "Spatialized source failed to play.");
+            source.Stop();
+            yield return new WaitForSeconds(0.01f);
+            Assert.That(!source.isPlaying, "Failed to stop spatialized AudioSource.");
+
+            Object.Destroy(source);
+            yield return new WaitForFixedUpdate();
+            UnityEngine.Assertions.Assert.IsNull(source, "Failed to destroy AudioSource");
+        }
+
+        [UnityTest]
+        public IEnumerator PHASETestSpatializerOneShots()
+        {
+            GameObject spatializedSource =
+                Object.Instantiate(Resources.Load<GameObject>(m_testResourcesDir + "SpatializedSource"));
+
+            Assert.That(spatializedSource, "Failed to instantiate Spatialized Source.");
+
+            AudioSource source = spatializedSource.GetComponent<AudioSource>();
+            yield return new WaitForFixedUpdate();
+            AudioClip testClip = Resources.Load<AudioClip>(m_testResourcesDir + "Wood_creak_loop");
+            Assert.That(testClip, "Failed to load test audio file.");
+            source.PlayOneShot(testClip);
+            yield return new WaitForFixedUpdate();
+            Assert.That(source.isPlaying, "Failed to play OneShot spatialized AudioSource.");
+            yield return new WaitForSeconds(1f);
+
+            source.spatialize = false;
+            source.PlayOneShot(testClip);
+            yield return new WaitForFixedUpdate();
+            Assert.That(source.isPlaying, "Failed to play OneShot AudioSource.");
+            yield return new WaitForSeconds(1f);
+
+            Object.Destroy(source);
+            yield return new WaitForFixedUpdate();
+            UnityEngine.Assertions.Assert.IsNull(source, "Failed to destroy PHASE Source");
+        }
     }
 }

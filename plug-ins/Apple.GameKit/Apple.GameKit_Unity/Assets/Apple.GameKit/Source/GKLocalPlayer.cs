@@ -5,11 +5,13 @@ using AOT;
 using Apple.Core;
 using Apple.Core.Runtime;
 using Apple.GameKit.Players;
+using UnityEngine.Scripting;
 
 namespace Apple.GameKit
 {
     public class GKLocalPlayer : GKPlayer
     {
+        [Preserve]
         internal GKLocalPlayer(IntPtr pointer) : base(pointer) {}
 
         /// <summary>
@@ -109,6 +111,9 @@ namespace Apple.GameKit
         /// handler may be assigned. Subsequent calls will simply return the most recent result.
         /// Otherwise use the static GKLocalPlayer.Local property.
         /// </summary>
+        /// <remarks>
+        /// IMPORTANT: Register for all GameKit static events BEFORE calling this method to avoid missing events. 
+        /// </remarks>
         /// <returns></returns>
         public static Task<GKLocalPlayer> Authenticate()
         {

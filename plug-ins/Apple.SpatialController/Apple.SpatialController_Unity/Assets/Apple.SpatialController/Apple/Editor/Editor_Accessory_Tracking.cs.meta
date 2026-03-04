@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: 5522ffa92d8ec49f88a0ae7a96a1129e
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - m_ViewDataDictionary: {instanceID: 0}
+  - accessoryTrackingPrefab: {fileID: 1079393668320121545, guid: ebfae37291ca94cdf9480d0a1622a2a0, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

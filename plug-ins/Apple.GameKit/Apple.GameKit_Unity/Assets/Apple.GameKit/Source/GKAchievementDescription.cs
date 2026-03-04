@@ -5,6 +5,7 @@ using AOT;
 using Apple.Core;
 using Apple.Core.Runtime;
 using UnityEngine;
+using UnityEngine.Scripting;
 
 namespace Apple.GameKit
 {
@@ -13,6 +14,7 @@ namespace Apple.GameKit
     /// </summary>
     public class GKAchievementDescription : NSObject
     {
+        [Preserve]
         internal GKAchievementDescription(IntPtr pointer) : base(pointer)
         {
         }
@@ -62,6 +64,27 @@ namespace Apple.GameKit
         /// </summary>
         [Introduced(iOS: "17", macOS: "14", tvOS: "17")]
         public double RarityPercent => Interop.GKAchievementDescription_GetRarityPercent(Pointer);
+
+        /// <summary>
+        /// The identifier of the game activity associated with this achievement, as configured by the developer in App Store Connect.
+        /// </summary>
+        /// <symbol>c:objc(cs)GKAchievementDescription(py)activityIdentifier</symbol>
+        [Introduced(iOS: "26.0.0", macOS: "26.0.0", tvOS: "26.0.0", visionOS: "26.0.0")]
+        public string ActivityIdentifier => Interop.GKAchievementDescription_GetActivityIdentifier(Pointer);
+
+        /// <summary>
+        /// The properties when associating this achievement with a game activity, as configured by the developer in App Store Connect.
+        /// </summary>
+        /// <symbol>c:objc(cs)GKAchievementDescription(py)activityProperties</symbol>
+        [Introduced(iOS: "26.0.0", macOS: "26.0.0", tvOS: "26.0.0", visionOS: "26.0.0")]
+        public NSDictionary<NSString, NSString> ActivityProperties => PointerCast<NSDictionary<NSString, NSString>>(Interop.GKAchievementDescription_GetActivityProperties(Pointer));
+
+        /// <summary>
+        /// The release state of the achievement in App Store Connect.
+        /// </summary>
+        /// <symbol>c:objc(cs)GKAchievementDescription(py)releaseState</symbol>
+        [Introduced(iOS: "18.4.0", macOS: "15.4.0", tvOS: "18.4.0", visionOS: "2.4.0")]
+        public GKReleaseState ReleaseState => Interop.GKAchievementDescription_GetReleaseState(Pointer);
 
         #region LoadAchievementDescriptions
 
@@ -128,8 +151,7 @@ namespace Apple.GameKit
         /// <remarks>
         /// Note: Customization of this symbol image is not supported yet in Unity.
         /// </remarks>
-        public static Texture2D IncompleteAchievementImage => _incompleteAchievementImage ??= Texture2DExtensions.CreateFromNSDataPtr(Interop.GKAchievementDescription_GetIncompleteAchievementImage());
-        private static Texture2D _incompleteAchievementImage = null;
+        public static Texture2D IncompleteAchievementImage => Texture2DExtensions.CreateFromNSDataPtr(Interop.GKAchievementDescription_GetIncompleteAchievementImage());
 
         /// <summary>
         /// A placeholder image that you can display when the player completes the achievement.
@@ -137,8 +159,7 @@ namespace Apple.GameKit
         /// <remarks>
         /// Note: Customization of this symbol image is not supported yet in Unity.
         /// </remarks>
-        public static Texture2D PlaceholderCompletedAchievementImage => _placeholderCompletedAchievementImage ??= Texture2DExtensions.CreateFromNSDataPtr(Interop.GKAchievementDescription_GetPlaceholderCompletedAchievementImage());
-        private static Texture2D _placeholderCompletedAchievementImage = null;
+        public static Texture2D PlaceholderCompletedAchievementImage => Texture2DExtensions.CreateFromNSDataPtr(Interop.GKAchievementDescription_GetPlaceholderCompletedAchievementImage());
 
         private static class Interop
         {
@@ -168,6 +189,12 @@ namespace Apple.GameKit
             public static extern IntPtr GKAchievementDescription_GetIncompleteAchievementImage();
             [DllImport(InteropUtility.DLLName)]
             public static extern IntPtr GKAchievementDescription_GetPlaceholderCompletedAchievementImage();
+            [DllImport(InteropUtility.DLLName)]
+            public static extern string GKAchievementDescription_GetActivityIdentifier(IntPtr pointer);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern IntPtr GKAchievementDescription_GetActivityProperties(IntPtr pointer);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern GKReleaseState GKAchievementDescription_GetReleaseState(IntPtr pointer);
         }
     }
 }

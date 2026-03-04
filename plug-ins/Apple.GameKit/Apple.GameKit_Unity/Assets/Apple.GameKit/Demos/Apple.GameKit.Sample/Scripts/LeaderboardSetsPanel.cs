@@ -17,7 +17,6 @@ namespace Apple.GameKit.Sample
         void Start()
         {
             _refreshButton.onClick.AddListener(RefreshButtonAction);
-            ShouldDestroyWhenPopped = IsPrefabInstance;
         }
 
         async void OnEnable()

@@ -43,7 +43,7 @@ public func GKLeaderboardSet_LoadLeaderboards
 (
     pointer: UnsafeMutablePointer<GKLeaderboardSet>,
     taskId: Int64,
-    onSuccess: @escaping SuccessTaskPtrCallback,
+    onSuccess: @escaping SuccessTaskPtrCallback<NSArray>, // NSArray<GKLeaderboard>
     onError: @escaping NSErrorTaskCallback
 )
 {
@@ -66,7 +66,7 @@ public func GKLeaderboardSet_LoadLeaderboards
 public func GKLeaderboardSet_LoadLeaderboardSets
 (
     taskId: Int64,
-    onSuccess: @escaping SuccessTaskPtrCallback,
+    onSuccess: @escaping SuccessTaskPtrCallback<NSArray>, // NSArray<GKLeaderboardSet>
     onError: @escaping NSErrorTaskCallback
 )
 {

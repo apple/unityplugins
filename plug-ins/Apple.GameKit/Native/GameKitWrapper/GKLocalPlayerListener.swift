@@ -31,4 +31,6 @@ public class GKWLocalPlayerListener : NSObject, GKLocalPlayerListener {
     public var SavedGameModified : SavedGameModifiedCallback? = nil;
     public var SavedGamesConflicting : SavedGamesConflictingCallback? = nil;
 #endif
+
+    public var WantsToPlayActivity : WantsToPlayActivityCallback? = nil;
 }

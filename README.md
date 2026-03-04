@@ -16,16 +16,17 @@ To get started with integration of these plug-ins into your Unity projects, run 
 | Apple.GameController | Exposes Apple's GameController framework to Unity developers allowing for rich controller features in macOS, iOS, and tvOS apps. |
 | Apple.GameKit | Allows Unity developers to easily integrate GameKit features such as leaderboards, achievements, and match making. |
 | Apple.PHASE | The PHASE plug-in allows Unity developers to take full advantage of Apple's new geometry and material aware spatial audio system. |
+| Apple.SpatialController | Exposes Apple's AccessoryTracking and GameController frameworks to Unity developers on visionOS allowing for spatial controller features in visionOS apps. Requires visionOS 26.0 |
 
 ## Minimum Supported OS Versions
 | OS | Version |
 | :- | :------ |
-| iOS | 13.0 |
-| macOS | 10.15 |
-| tvOS | 13.0 |
-| visionOS | 1.0 |
+| iOS | 15.6 |
+| macOS | 11.5 |
+| tvOS | 15.6 |
+| visionOS | 1.3 |
 | watchOS | not supported |
 
 
 ## Leaving Feedback
-See the [Feedback](Documentation/Feedback.md) documentation for more information.
+Leave an issue for the community or see the [Feedback](Documentation/Feedback.md) documentation for more information.

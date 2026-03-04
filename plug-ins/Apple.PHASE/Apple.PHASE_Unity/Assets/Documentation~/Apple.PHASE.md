@@ -26,6 +26,12 @@ Please find an introduction to using the PHASE Unity Plug-in below. For an overv
 For documentation of PHASE's C# API see [PHASEHelpers](../Runtime/PHASEHelpers.cs). 
 
 ### Table of Contents
+[Spatializer](#Spatializer)
+
+* [1. Enable PHASE Spatializer](#1-Enable-PHASE-Spatializer)
+* [2. Add a PHASEListener to the Scene](#2-Add-a-PHASEListener-to-the-Scene)
+* [3. Spatialize Unity AudioSources](#3-Spatialize-Unity-AudioSources)
+
 [PHASE](#PHASE)
 
 * [1. Create a PHASEListener](#1-Create-a-PHASEListener)  
@@ -49,8 +55,16 @@ For documentation of PHASE's C# API see [PHASEHelpers](../Runtime/PHASEHelpers.c
 * [2. Channel Mixer](#2-Channel-Mixer)  
 * [3. Ambient Mixer](#3-Ambient-Mixer)  
 
-[Sample Project](#Sample-Project)
-* [1. Sample Project](#1-Sample-Project)
+## Spatializer
+### 1. Enable PHASE Spatializer
+Enable the PHASE Spatializer within your Unity project by navigating to `Edit > Project Settings > Audio` and selecting `PHASE Spatializer` from the `Spatializer Plugin` dropdown menu.
+
+### 2. Add a PHASEListener to the Scene.
+In order for PHASE to render the spatialized sound, your scene must include a PHASEListener. For most use-cases, simply add a PHASEListener component to the GameObject that contains your main Unity AudioListener.
+
+### 3. Spatialize Unity AudioSources
+To spatialize a Unity AudioSource, the `Spatialize` setting must be set to true and the `Spatial Blend` setting should be set to 1.
+
 
 ## PHASE
 

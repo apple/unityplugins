@@ -1,6 +1,9 @@
 # CHANGELOG
 All notable changes to this project will be documented in this file.
 
+## [1.2.4] - 2025-01-29
+- Remove references to some unused packages.
+
 ## [1.2.3] - 2024-12-10
 - Add Apache 2.0 license file.
 

@@ -2,7 +2,7 @@
 //  PHASE.xcconfig
 //  AudioPluginPHASE
 //
-//  Copyright © 2024 Apple, Inc. All rights reserved.
+//  Copyright © 2025 Apple, Inc. All rights reserved.
 //
 //  This file defines custom build settings for the Apple.Core plug-in's native libraries
 //
@@ -25,9 +25,9 @@ NATIVE_LIBRARY_ROOT_FOLDER_NAME=Runtime
 // ------------------
 
 GENERATE_INFOPLIST_FILE = YES
-CURRENT_PROJECT_VERSION = 1.2.3
+CURRENT_PROJECT_VERSION = 1.2.5
 MARKETING_VERSION = $CURRENT_PROJECT_VERSION
 VERSIONING_SYSTEM = apple-generic
-INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2021 - 2024 Apple, Inc. All rights reserved."
+INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2021 - 2025 Apple, Inc. All rights reserved."
 INFOPLIST_OUTPUT_FORMAT[config=Debug] = XML
 INFOPLIST_OUTPUT_FORMAT[config=Release] = binary
