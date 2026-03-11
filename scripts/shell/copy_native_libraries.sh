@@ -46,7 +46,7 @@ fi
 NATIVE_LIBRARY_DST_ROOT="$PROJECT_DIR/../$UNITY_PROJECT_FOLDER_NAME/Assets/$NATIVE_LIBRARY_ROOT_FOLDER_NAME"
 
 # Make sure that the native library destination folder exists
-if [ ! -d $NATIVE_LIBRARY_DST_ROOT ]; then
+if [ ! -d "$NATIVE_LIBRARY_DST_ROOT" ]; then
     printf "\nerror: Native library destination root does not exist at supplied path: $NATIVE_LIBRARY_DST_ROOT\n"
     exit 1
 fi
@@ -62,25 +62,25 @@ dsym_src="$src.dSYM"
 dsym_dst="$dst.dSYM"
 
 # Make sure there's something at the source path
-if [ -e $src ]; then
+if [ -e "$src" ]; then
     # If there's already something at the destination path, remove it
-    if [ -e $dst ]; then
+    if [ -e "$dst" ]; then
         printf "\nRemoving existing library at: $dst\n"
-        rm -rf $dst
+        rm -rf "$dst"
     fi
 
     printf "\nCopying Library:\n  Source: $src\n  Destination: $dst\n"
-    ditto $src $dst
+    ditto "$src" "$dst"
   
     # If we're in a release build and there's a dSYM, copy it as well.
-    if [[ $CONFIGURATION == "Release" && -e $dsym_src ]]; then
+    if [[ $CONFIGURATION == "Release" && -e "$dsym_src" ]]; then
         # If there's already a .dSYM, remove it
-        if [ -e $dsym_dst ]; then
+        if [ -e "$dsym_dst" ]; then
             printf "\nRemoving existing .dSYM at: $dsym_dst\n"
-            rm -rf $dsym_dst
+            rm -rf "$dsym_dst"
         fi
     
         printf "\nCopying dSYM:\n  Source: $dsym_src\n  Destination: $dsym_dst\n"
-        ditto $dsym_src $dsym_dst
+        ditto "$dsym_src" "$dsym_dst"
     fi
 fi
