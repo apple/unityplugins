@@ -244,6 +244,18 @@ namespace Apple.GameKit
         }
 #endif
 
+        /// <summary>
+        /// Brings up the arcade view.
+        /// </summary>
+        /// <symbol>c:objc(cs)GKAccessPoint(im)triggerAccessPointForArcadeWithHandler:</symbol>
+        [Introduced(iOS: "26.2.0", macOS: "26.2.0")]
+        public Task TriggerForArcade()
+        {
+            var tcs = InteropTasks.Create<bool>(out var taskId);
+            Interop.GKAccessPoint_TriggerForArcade(Pointer, taskId, OnTriggerSuccess, OnTriggerError);
+            return tcs.Task;
+        }
+
 #if UNITY_IOS || UNITY_STANDALONE_OSX
         /// <summary>
         /// Brings up the game activity play together flow for the provided definition.
@@ -338,6 +350,8 @@ namespace Apple.GameKit
             public static extern void GKAccessPoint_TriggerForFriending(IntPtr pointer, long taskId, SuccessTaskCallback onSuccess, NSErrorTaskCallback onError);
             [DllImport(InteropUtility.DLLName)]
             public static extern void GKAccessPoint_TriggerWithGameActivity(IntPtr pointer, IntPtr gameActivityPtr, long taskId, SuccessTaskCallback onSuccess, NSErrorTaskCallback onError);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKAccessPoint_TriggerForArcade(IntPtr pointer, long taskId, SuccessTaskCallback onSuccess, NSErrorTaskCallback onError);
 #endif
         }
 
