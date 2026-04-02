@@ -529,6 +529,7 @@ namespace Apple.Core
             bool librariesCopied = false;
 
             // Copy current
+            List<string> copiedAssetPaths = new List<string>();
             foreach (AppleUnityPackage applePackage in _appleUnityPackages.Values)
             {
                 if (applePackage.PlayModeSupportLibrary.IsValid)
@@ -536,7 +537,9 @@ namespace Apple.Core
                     librariesCopied = true;
                     AppleNativeLibrary pmsLibrary = applePackage.PlayModeSupportLibrary;
                     summary += $"\n  <b>{pmsLibrary.FileName}</b>";
-                    FileUtil.CopyFileOrDirectory(pmsLibrary.FullPath, $"{UnityProjectPath}/{ApplePlugInSupportPlayModeSupportPath}/{pmsLibrary.FileName}");
+                    string assetPath = $"{ApplePlugInSupportPlayModeSupportPath}/{pmsLibrary.FileName}";
+                    FileUtil.CopyFileOrDirectory(pmsLibrary.FullPath, $"{UnityProjectPath}/{assetPath}");
+                    copiedAssetPaths.Add(assetPath);
                 }
             }
 
@@ -546,6 +549,15 @@ namespace Apple.Core
             }
 
             AssetDatabase.Refresh();
+
+            // When Unity detects new asset files, it will default to creating a minimal metadata file.
+            // The full data isn't serialized to the metadata until someone touches it or we force it to reserialize.
+            // We want the full metadata serialized, otherwise the metadata will keep ping-ponging between full
+            // and partial depending on someone touches the asset.
+            if(copiedAssetPaths.Count > 0)
+            {
+                AssetDatabase.ForceReserializeAssets(copiedAssetPaths, ForceReserializeAssetsOptions.ReserializeMetadata);
+            }
         }
 
         /// <summary>
