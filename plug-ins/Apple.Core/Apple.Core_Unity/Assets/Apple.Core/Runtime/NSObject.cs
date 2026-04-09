@@ -38,8 +38,7 @@ namespace Apple.Core.Runtime
             var typeName = type.Name;
 
             // Special case for types that provide a custom interop type name.
-            if (type.GetProperty("InteropTypeName", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
-                    ?.GetValue(null) is string customTypeName)
+            if(type.GetCustomAttribute<InteropTypeNameAttribute>()?.TypeName is string customTypeName)
             {
                 typeName = customTypeName;
             }
