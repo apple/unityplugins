@@ -58,13 +58,11 @@ namespace Apple.GameKit.Leaderboards
         /// <summary>
         /// Information about a single score by a player on a leaderboard.
         /// </summary>
+        [InteropTypeName("GKLeaderboardEntry")]
         [Introduced(iOS: "14.0", macOS: "11.0", tvOS: "14.0", visionOS: "1.0")]
         public class Entry : NSObject
         {
             internal Entry(IntPtr pointer) : base(pointer) {}
-
-            // This allows interop to work with the Objective-C type which has a different name: GKLeaderboardEntry.
-            internal static string InteropTypeName => "GKLeaderboardEntry";
 
             /// <summary>
             /// An integer value that your game uses.
