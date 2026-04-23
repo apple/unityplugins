@@ -244,10 +244,12 @@ namespace Apple.GameKit
         }
 #endif
 
+#if UNITY_IOS || UNITY_STANDALONE_OSX
         /// <summary>
         /// Brings up the arcade view.
         /// </summary>
         /// <symbol>c:objc(cs)GKAccessPoint(im)triggerAccessPointForArcadeWithHandler:</symbol>
+        [Unavailable(RuntimeOperatingSystem.tvOS, RuntimeOperatingSystem.visionOS)]
         [Introduced(iOS: "26.2.0", macOS: "26.2.0")]
         public Task TriggerForArcade()
         {
@@ -255,6 +257,7 @@ namespace Apple.GameKit
             Interop.GKAccessPoint_TriggerForArcade(Pointer, taskId, OnTriggerSuccess, OnTriggerError);
             return tcs.Task;
         }
+#endif
 
 #if UNITY_IOS || UNITY_STANDALONE_OSX
         /// <summary>
@@ -307,20 +310,25 @@ namespace Apple.GameKit
             [DllImport(InteropUtility.DLLName)]
             public static extern GKAccessPointFrameInScreenCoordinates GKAccessPoint_GetFrameInUnitCoordinates(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
+            [return: MarshalAs(UnmanagedType.I1)]
             public static extern bool GKAccessPoint_GetIsActive(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
-            public static extern void GKAccessPoint_SetIsActive(IntPtr pointer, bool isActive);
+            public static extern void GKAccessPoint_SetIsActive(IntPtr pointer, [MarshalAs(UnmanagedType.I1)] bool isActive);
             [DllImport(InteropUtility.DLLName)]
+            [return: MarshalAs(UnmanagedType.I1)]
             public static extern bool GKAccessPoint_GetIsPresentingGameCenter(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
+            [return: MarshalAs(UnmanagedType.I1)]
             public static extern bool GKAccessPoint_GetIsVisible(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
+            [return: MarshalAs(UnmanagedType.I1)]
             public static extern bool GKAccessPoint_GetShowHighlights(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
-            public static extern void GKAccessPoint_SetShowHighlights(IntPtr pointer, bool isActive);
+            public static extern void GKAccessPoint_SetShowHighlights(IntPtr pointer, [MarshalAs(UnmanagedType.I1)] bool isActive);
 
 #if UNITY_TVOS
             [DllImport(InteropUtility.DLLName)]
+            [return: MarshalAs(UnmanagedType.I1)]
             public static extern bool GKAccessPoint_GetIsFocused(IntPtr pointer);
 #endif
 

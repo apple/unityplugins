@@ -48,40 +48,45 @@ namespace Apple.CoreHaptics
         #region NotifyWhenPlayersFinished
 
         [DllImport(CHInteropUtility.DllName, EntryPoint = "CoreHaptics_CHHapticEngine_NotifyWhenPlayersFinished")]
-        internal static extern void NotifyWhenPlayersFinished(IntPtr enginePointer, bool leaveEngineRunning, CHHapticEngine.AllPlayersFinishedStatic onFinished, ErrorWithPointerCallback onError);
+        internal static extern void NotifyWhenPlayersFinished(IntPtr enginePointer, [MarshalAs(UnmanagedType.I1)] bool leaveEngineRunning, CHHapticEngine.AllPlayersFinishedStatic onFinished, ErrorWithPointerCallback onError);
         #endregion
 
         #region HardwareSupportsHaptics
         [DllImport(CHInteropUtility.DllName, EntryPoint = "CoreHaptics_CHHapticEngine_HardwareSupportsHaptics")]
+        [return: MarshalAs(UnmanagedType.I1)]
         internal static extern bool HardwareSupportsHaptics();
         #endregion
         
         #region PlayHapticsOnly
         [DllImport(CHInteropUtility.DllName, EntryPoint = "CoreHaptics_CHHapticEngine_Get_PlaysHapticsOnly")]
+        [return: MarshalAs(UnmanagedType.I1)]
         internal static extern bool Get_PlaysHapticsOnly(IntPtr enginePointer);
         [DllImport(CHInteropUtility.DllName, EntryPoint = "CoreHaptics_CHHapticEngine_Set_PlaysHapticsOnly")]
-        internal static extern void Set_PlaysHapticsOnly(IntPtr enginePointer, bool playsHapticsOnly);
+        internal static extern void Set_PlaysHapticsOnly(IntPtr enginePointer, [MarshalAs(UnmanagedType.I1)] bool playsHapticsOnly);
         #endregion
 
         #region IsMutedForAudio
         [DllImport(CHInteropUtility.DllName, EntryPoint = "CoreHaptics_CHHapticEngine_Get_IsMutedForAudio")]
+        [return: MarshalAs(UnmanagedType.I1)]
         internal static extern bool Get_IsMutedForAudio(IntPtr enginePointer);
         [DllImport(CHInteropUtility.DllName, EntryPoint = "CoreHaptics_CHHapticEngine_Set_IsMutedForAudio")]
-        internal static extern void Set_IsMutedForAudio(IntPtr enginePointer, bool isMutedForAudio);
+        internal static extern void Set_IsMutedForAudio(IntPtr enginePointer, [MarshalAs(UnmanagedType.I1)] bool isMutedForAudio);
         #endregion
 
         #region IsMutedForHaptics
         [DllImport(CHInteropUtility.DllName, EntryPoint = "CoreHaptics_CHHapticEngine_Get_IsMutedForHaptics")]
+        [return: MarshalAs(UnmanagedType.I1)]
         internal static extern bool Get_IsMutedForHaptics(IntPtr enginePointer);
         [DllImport(CHInteropUtility.DllName, EntryPoint = "CoreHaptics_CHHapticEngine_Set_IsMutedForHaptics")]
-        internal static extern void Set_IsMutedForHaptics(IntPtr enginePointer, bool isMutedForHaptics);
+        internal static extern void Set_IsMutedForHaptics(IntPtr enginePointer, [MarshalAs(UnmanagedType.I1)] bool isMutedForHaptics);
         #endregion
         
         #region IsAutoShutdownEnabled
         [DllImport(CHInteropUtility.DllName, EntryPoint = "CoreHaptics_CHHapticEngine_Get_IsAutoShutdownEnabled")]
+        [return: MarshalAs(UnmanagedType.I1)]
         internal static extern bool Get_IsAutoShutdownEnabled(IntPtr enginePointer);
         [DllImport(CHInteropUtility.DllName, EntryPoint = "CoreHaptics_CHHapticEngine_Set_IsAutoShutdownEnabled")]
-        internal static extern void Set_IsAutoShutdownEnabled(IntPtr enginePointer, bool isAutoShutdownEnabled);
+        internal static extern void Set_IsAutoShutdownEnabled(IntPtr enginePointer, [MarshalAs(UnmanagedType.I1)] bool isAutoShutdownEnabled);
         #endregion
         
         #region CurrentTime

@@ -269,8 +269,10 @@ namespace Apple.GameKit
             [DllImport(InteropUtility.DLLName)]
             public static extern GKReleaseState GKGameActivityDefinition_GetReleaseState(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
+            [return: MarshalAs(UnmanagedType.I1)]
             public static extern bool GKGameActivityDefinition_GetSupportsPartyCode(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
+            [return: MarshalAs(UnmanagedType.I1)]
             public static extern bool GKGameActivityDefinition_GetSupportsUnlimitedPlayers(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
             public static extern string GKGameActivityDefinition_GetTitle(IntPtr pointer);

@@ -449,6 +449,7 @@ namespace Apple.GameKit.Leaderboards
             [DllImport(InteropUtility.DLLName)]
             public static extern GKReleaseState GKLeaderboard_GetReleaseState(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
+            [return: MarshalAs(UnmanagedType.I1)]
             public static extern bool GKLeaderboard_IsHidden(IntPtr pointer);
 
         }
