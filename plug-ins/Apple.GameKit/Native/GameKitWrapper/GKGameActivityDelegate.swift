@@ -19,9 +19,8 @@ class WantsToPlayActivityCompletionHandlerContainer : NSObject {
     public var completionHandler : WantsToPlayActivityCompletionHandler? = nil;
 }
 
+@available(iOS 26.0, macOS 26.0, tvOS 26.0, visionOS 26.0, *)
 extension GKWLocalPlayerListener : GKGameActivityListener {
-
-    @available(iOS 26.0, macOS 26.0, tvOS 26.0, visionOS 26.0, *)
     public func player(_ player: GKPlayer, wantsToPlay activity: GKGameActivity, completionHandler completion: @escaping WantsToPlayActivityCompletionHandler) {
         guard let wantsToPlayActivity = WantsToPlayActivity else {
             completion(false);
