@@ -1,10 +1,8 @@
-using Unity.VisualScripting;
 using UnityEngine;
 //include the namespace so we can access accessory tracking
 using Apple.visionOS.AccessoryTracking;
 using Apple.visionOS.SpatialController;
 using UnityEngine.Events;
-using UnityEditor;
 using System.Text;
 
 public class ExampleUsage : MonoBehaviour

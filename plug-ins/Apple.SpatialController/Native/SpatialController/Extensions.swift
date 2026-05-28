@@ -481,6 +481,7 @@ extension SCAccessory {
         usdzFile = nil
         description.deallocate()
         description = nil
+        locations.deallocate()
         source.deallocate()
     }
 }
@@ -727,6 +728,8 @@ extension SCControllerState {
         input.deallocate()
         anchors.deallocate()
         if accessory != nil {
+            var a = accessory.pointee
+            a.deallocate()
             accessory.deallocate()
             accessory = nil
         }
