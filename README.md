@@ -22,7 +22,7 @@ To get started with integration of these plug-ins into your Unity projects, run 
 | OS | Version |
 | :- | :------ |
 | iOS | 15.6 |
-| macOS | 11.5 |
+| macOS | 12.0 |
 | tvOS | 15.6 |
 | visionOS | 1.3 |
 | watchOS | not supported |
