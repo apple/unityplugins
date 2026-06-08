@@ -11,6 +11,7 @@ class PluginID:
     SPATIAL_CONTROLLER = "SpatialController"
     GAME_KIT = "GameKit"
     PHASE = "PHASE"
+    STORE_KIT = "StoreKit"
     ALL = "all"
 
 # Platform Identifiers (-m, --platforms)

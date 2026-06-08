@@ -23,6 +23,8 @@ void * NSObject_As(void * nsObjectPtr, const char * targetClassName) {
             NSObject * nsObject = (__bridge NSObject *)nsObjectPtr;
             if ([nsObject isKindOfClass:targetClass]) {
                 return (void *)CFBridgingRetain(nsObject);
+            } else {
+                NSLog(@"NSObject_As: Object at %@ is not of target class %@", nsObjectPtr, targetClass);
             }
         }
     }

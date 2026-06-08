@@ -1,0 +1,83 @@
+{
+  "appPolicies" : {
+    "eula" : "",
+    "policies" : [
+      {
+        "locale" : "en_US",
+        "policyText" : "",
+        "policyURL" : ""
+      }
+    ]
+  },
+  "identifier" : "1F99CA41",
+  "nonRenewingSubscriptions" : [
+    {
+      "displayPrice" : "0.99",
+      "familyShareable" : false,
+      "internalID" : "B106A740",
+      "localizations" : [
+        {
+          "description" : "A test subscription",
+          "displayName" : "Subscription",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "Unity.StoreKit.Subscription",
+      "referenceName" : "Subscription",
+      "type" : "NonRenewingSubscription"
+    }
+  ],
+  "products" : [
+    {
+      "displayPrice" : "0.99",
+      "familyShareable" : false,
+      "internalID" : "5C31AC89",
+      "localizations" : [
+        {
+          "description" : "100 Coins for in game purchasing",
+          "displayName" : "100 Coins",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "Unity.StoreKit.Consumable",
+      "referenceName" : "Consumable",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "1.99",
+      "familyShareable" : false,
+      "internalID" : "6B8ECA0E",
+      "localizations" : [
+        {
+          "description" : "A test non consumable product",
+          "displayName" : "Test NonConsumable",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "Unity.StoreKit.NonConsumable",
+      "referenceName" : "NonConsumable",
+      "type" : "NonConsumable"
+    }
+  ],
+  "settings" : {
+    "_askToBuyEnabled" : false,
+    "_billingGracePeriodEnabled" : false,
+    "_billingIssuesEnabled" : false,
+    "_disableDialogs" : false,
+    "_failTransactionsEnabled" : false,
+    "_locale" : "en_US",
+    "_renewalBillingIssuesEnabled" : false,
+    "_storefront" : "USA",
+    "_storeKitErrors" : [
+
+    ],
+    "_timeRate" : 0
+  },
+  "subscriptionGroups" : [
+
+  ],
+  "version" : {
+    "major" : 4,
+    "minor" : 0
+  }
+}

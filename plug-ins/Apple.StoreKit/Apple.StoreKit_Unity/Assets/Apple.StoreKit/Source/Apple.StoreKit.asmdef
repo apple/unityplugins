@@ -1,0 +1,22 @@
+{
+	"name": "Apple.StoreKit",
+	"rootNamespace": "Apple.StoreKit",
+	"references": [
+		"Apple.Core"
+	],
+	"includePlatforms": [
+		"Editor",
+		"iOS",
+		"macOSStandalone",
+		"tvOS",
+		"VisionOS"
+	],
+	"excludePlatforms": [],
+	"allowUnsafeCode": false,
+	"overrideReferences": false,
+	"precompiledReferences": [],
+	"autoReferenced": true,
+	"defineConstraints": [],
+	"versionDefines": [],
+	"noEngineReferences": false
+}
