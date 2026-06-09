@@ -61,15 +61,15 @@ foreach (var product in products)
 // Purchase a product
 var result = await product.Purchase();
 
-if (result.Result == PurchaseResult.Success)
+if (result.Result == PurchaseResult.ResultEnum.Success)
 {
-    var transaction = result.VerificationResult.Transaction;
+    var transaction = result.TransactionVerification.SafePayload;
     Debug.Log($"Purchase successful! Transaction ID: {transaction.Id}");
 
     // Finish the transaction
-    await transaction.Finish();
+    transaction.Finish();
 }
-else if (result.Result == PurchaseResult.UserCancelled)
+else if (result.Result == PurchaseResult.ResultEnum.UserCancelled)
 {
     Debug.Log("User cancelled the purchase");
 }
@@ -92,8 +92,12 @@ var result = await product.Purchase(options);
 ### Retrieving Transactions
 ```csharp
 // Get all transactions for the current user
-await foreach (var transaction in Transaction.GetAll())
+await foreach (var verificationResult in Transaction.GetAll())
 {
+    if (!verificationResult.IsVerified)
+        continue;
+
+    var transaction = verificationResult.SafePayload;
     Debug.Log($"Transaction ID: {transaction.Id}");
     Debug.Log($"Product ID: {transaction.ProductId}");
     Debug.Log($"Purchase Date: {transaction.PurchaseDate}");
@@ -106,20 +110,20 @@ await foreach (var transaction in Transaction.GetAll())
 ### Listening for Transaction Updates
 ```csharp
 // Listen for new transactions (purchases from other devices, renewals, etc.)
-await foreach (var verificationResult in Transaction.Updates())
+Transaction.Updates += (sender, verificationResult) =>
 {
-    if (verificationResult.IsVerified)
-    {
-        var transaction = verificationResult.Transaction;
-        Debug.Log($"New transaction: {transaction.ProductId}");
+    if (!verificationResult.IsVerified)
+        return;
 
-        // Deliver content to user
-        // ...
+    var transaction = verificationResult.SafePayload;
+    Debug.Log($"New transaction: {transaction.ProductId}");
 
-        // Finish the transaction
-        await transaction.Finish();
-    }
-}
+    // Deliver content to user
+    // ...
+
+    // Finish the transaction
+    transaction.Finish();
+};
 ```
 
 ## Best Practices
@@ -128,31 +132,32 @@ await foreach (var verificationResult in Transaction.Updates())
 Always verify transactions before delivering content:
 ```csharp
 var result = await product.Purchase();
-if (result.VerificationResult.IsVerified)
+if (result.Result == PurchaseResult.ResultEnum.Success && result.TransactionVerification.IsVerified)
 {
     // Transaction is authentic, deliver content
-    var transaction = result.VerificationResult.Transaction;
+    var transaction = result.TransactionVerification.SafePayload;
     DeliverContent(transaction.ProductId);
-    await transaction.Finish();
+    transaction.Finish();
 }
 ```
 
 ### Finishing Transactions
 Always finish transactions after processing:
 ```csharp
-await transaction.Finish();
+transaction.Finish();
 ```
 Unfinished transactions will be re-delivered on app launch.
 
 ### Handling Updates
 Set up transaction update listeners early in your app lifecycle:
 ```csharp
-async void Start()
+void Start()
 {
-    await foreach (var result in Transaction.Updates())
+    Transaction.Updates += (sender, result) =>
     {
-        ProcessTransaction(result.Transaction);
-    }
+        if (result.IsVerified)
+            ProcessTransaction(result.SafePayload);
+    };
 }
 ```
 
@@ -173,16 +178,26 @@ catch (StoreKitException ex)
 
 ## Testing
 
-### Xcode StoreKit Configuration
-A sample StoreKit configuration file is included at `Demos/Apple.StoreKit.Sample/Sample.storekit`. To use it when running on device or in the Xcode Simulator:
+### Running in the iOS Simulator
+1. Build the plug-in's native libraries **with the simulator slice** — a device-only build won't link in the Simulator:
+   ```sh
+   python3 build.py -p Core StoreKit -m macOS iOS iPhoneSimulator
+   ```
+2. In Unity, open **Project Settings → Player → iOS → Other Settings** and set:
+   - **Target SDK** = Simulator SDK
+   - **Simulator Architecture** = ARM64
+   - **Target minimum iOS Version** = 15.0
 
-1. Build your Unity project for iOS/macOS to generate the Xcode project.
-2. Open the generated `.xcodeproj` in Xcode.
-3. In the menu bar choose **Product → Scheme → Edit Scheme…**
-4. Select the **Run** action in the left panel.
-5. Open the **Options** tab.
-6. Set **StoreKit Configuration** to `Sample.storekit` (use the file picker to locate it in the project).
-7. Close the scheme editor and run the app.
+   (Field locations vary across Unity 2022.3 through 6.x; see Unity's "iOS Player settings" manual page.)
+3. **File → Build and Run**.
+
+### Testing Purchases with a StoreKit Configuration File
+Local testing runs purchases against a `.storekit` file instead of the live App Store.
+
+1. Use the bundled `Demos/Apple.StoreKit.Sample/Sample.storekit`, or create your own: in Xcode, choose **File → New → File → StoreKit Configuration File**, then add your products using the **same product IDs** your app requests.
+2. Attach it to your scheme: **Product → Scheme → Edit Scheme… → Run → Options → StoreKit Configuration → [your file]**.
+3. Run the app. Without this step, StoreKit calls fail with `StoreKit.StoreKitError Code=2` "Unable to Complete Request" (underlying `SKInternalErrorDomain Code=12`).
+4. Use **Debug → StoreKit → Manage Transactions** in Xcode to test refunds, renewals, and revocations (e.g. refunding a transaction fires `Transaction.Updates`).
 
 Purchases will be processed against the local configuration file rather than the live App Store.
 
