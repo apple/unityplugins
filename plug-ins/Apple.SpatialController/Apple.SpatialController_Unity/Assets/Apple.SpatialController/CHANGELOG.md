@@ -1,8 +1,11 @@
+1.0.5
+
+- Spatial Stylus controllers now supported
+
 1.0.4
 
 - Controllers with Motion Sensors now supported
 - Cleaned up C# and Native code to make it easier to read
-
 
 1.0.3
 

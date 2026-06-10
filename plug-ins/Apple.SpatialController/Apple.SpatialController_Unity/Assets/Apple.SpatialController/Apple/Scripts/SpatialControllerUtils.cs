@@ -130,6 +130,22 @@ public static class SpatialControllerUtils
         return accessory.inherentChirality == AccessoryChirality.Right;
     }
 
+    /// <summary>
+    /// Determines if the specified accessory is a spatial stylus.
+    /// </summary>
+    /// <param name="accessory">The Accessory to check</param>
+    /// <returns>True if the accessory is a spatial stylus, false otherwise</returns>
+    public static bool IsStylus(Accessory accessory)
+    {
+        if (accessory.inherentChirality != AccessoryChirality.Unspecified)
+        {
+            return false;
+        }
+        // This is not be the safest possible assumption, but the native plugin
+        // does not currently expose a direct way to check if a Controller is a Stylus
+        // and checking productCategory or vendorName seems restrictive.
+        return true;
+    }
 
     /// <summary>
     /// Calculates the optimal time value for predicting accessory anchor positions.
