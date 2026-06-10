@@ -314,18 +314,18 @@ def Main():
     CTX.printer.SectionHeading("Configure Build Paths")
 
     # Configure build paths for packages
-    CTX.build_path = pathlib.Path(build_args.output_path)
+    CTX.build_output_path = pathlib.Path(build_args.output_path)
 
-    if CTX.clean_actions[CleanActionID.PACKAGES] and CTX.build_path.exists():
+    if CTX.clean_actions[CleanActionID.PACKAGES] and CTX.build_output_path.exists():
         CTX.printer.StatusMessage("Cleaning packages.", "\n")
-        CTX.printer.StatusMessageWithContext("Removing folder at path:",  f"{CTX.build_path}")
-        utility.RemoveFolder(CTX.build_path, prompt= not build_args.force_clean, printer= CTX.printer)
+        CTX.printer.StatusMessageWithContext("Removing folder at path:",  f"{CTX.build_output_path}")
+        utility.RemoveFolder(CTX.build_output_path, prompt= not build_args.force_clean, printer= CTX.printer)
 
     if CTX.build_actions[BuildActionID.BUILD] or CTX.build_actions[BuildActionID.PACK]:
-        if not CTX.build_path.exists():
+        if not CTX.build_output_path.exists():
             CTX.printer.Message(f"Build output path not found.", "\n")
-            CTX.printer.StatusMessageWithContext("Creating: ", f"{CTX.build_path}")
-            CTX.build_path.mkdir()
+            CTX.printer.StatusMessageWithContext("Creating: ", f"{CTX.build_output_path}")
+            CTX.build_output_path.mkdir()
 
     # Configure and optionally clean paths for test builds
     test_build_root_path = pathlib.Path(build_args.test_output_path)
