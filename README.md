@@ -12,6 +12,7 @@ To get started with integration of these plug-ins into your Unity projects, run 
 | :------ | :---------- |
 | Apple.Core | Provides integrated build post process management and Editor UI.<br/>**Note:** Apple.Core is a dependency of all Apple Unity plug-ins.|
 | Apple.Accessibility | Provides Apple's accessibility to Unity developers allowing adding supports to Apple's built-in assistive technologies such as VoiceOver.|
+| Apple.BackgroundAssets | Brings Apple's Background Assets framework to Unity developers, enabling distribution of additional downloadable content as asset packs on the App Store or from your own server.|
 | Apple.CoreHaptics | Brings Apple's Core Haptics framework to Unity developers, enabling for customizable haptic patterns and in-depth playback control on supported devices. This Plug-In also includes UIKit's UIFeedbackGenerator API.|
 | Apple.GameController | Exposes Apple's GameController framework to Unity developers allowing for rich controller features in macOS, iOS, and tvOS apps. |
 | Apple.GameKit | Allows Unity developers to easily integrate GameKit features such as leaderboards, achievements, and match making. |

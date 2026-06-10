@@ -19,6 +19,8 @@ The first step is to download or clone the [Apple-Unity Plug-ins repository](htt
 | Apple.GameController | [Apple.GameController Documentation](../plug-ins/Apple.GameController/Apple.GameController_Unity/Assets/Apple.GameController/Documentation~/Apple.GameController.md) | 
 | Apple.GameKit | [Apple.GameKit Documentation](../plug-ins/Apple.GameKit/Apple.GameKit_Unity/Assets/Apple.GameKit/Documentation~/Apple.GameKit.md) | 
 | Apple.PHASE | [Apple.PHASE Documentation](../plug-ins/Apple.PHASE/Apple.PHASE_Unity/Assets/Documentation~/Apple.PHASE.md) | 
+| Apple.SpatialController | [Apple.SpatialController Documentation](../plug-ins/Apple.SpatialController/README.md) |
+| Apple.StoreKit | [Apple.StoreKit Documentation](../plug-ins/Apple.StoreKit/Apple.StoreKit_Unity/Assets/Apple.StoreKit/Documentation~/Apple.StoreKit.md) |
 
 ## 2. Build
 After downloading the plug-in(s), you will need to build the native libraries. If you are familiar with Unity plug-ins, these are compiled assets found in a Unity project's `Assets/.../Plugins/{iOS, macOS, tvOS}/` directories. Along with some C# bridging scripts, they enable communication with Apple devices' native technologies.
