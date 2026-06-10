@@ -1,6 +1,6 @@
 {
   "name": "com.apple.unityplugin.spatialcontroller",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "displayName": "Apple.SpatialController",
   "description": "A Unity plugin for AccessoryTracking + GameController for spatial controllers on visionOS",
   "unity": "6000.1",

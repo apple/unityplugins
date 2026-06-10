@@ -11,21 +11,22 @@ import GameController
 /// A thread-safe dictionary for managing game controllers.
 ///
 /// Uses a concurrent dispatch queue with barrier operations to ensure thread safety
-/// when storing and accessing `GCController` instances by string identifiers.
+/// when storing and accessing `GCController` and `GCStylus` `GCDevice` instances by
+/// string identifiers.
 class ControllerDictionary {
   
     /// Concurrent queue for thread-safe dictionary access.
     private let _queue = DispatchQueue(label: "ControllerDictionary.queue", attributes: .concurrent)
     
     /// Internal dictionary storing controller mappings.
-    private var _elements = [String : GCController]()
+    private var _elements = [String : GCDevice]()
 
     /// Thread-safe copy of all controller mappings.
     ///
     /// - Returns: A snapshot of the current controller dictionary.
-    var elements: [String : GCController] {
-        var result = [String: GCController]()
-        
+    var elements: [String : GCDevice] {
+        var result = [String: GCDevice]()
+
         _queue.sync {
             result = _elements
         }
@@ -38,7 +39,7 @@ class ControllerDictionary {
     /// - Parameters:
     ///   - value: The controller to store.
     ///   - forKey: The identifier for the controller.
-    func updateValue(_ value: GCController, forKey: String) {
+    func updateValue(_ value: GCDevice, forKey: String) {
         _queue.async(flags: .barrier) {
             self._elements.updateValue(value, forKey: forKey)
         }
