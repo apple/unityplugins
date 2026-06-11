@@ -18,6 +18,7 @@ To get started with integration of these plug-ins into your Unity projects, run 
 | Apple.PHASE | The PHASE plug-in allows Unity developers to take full advantage of Apple's new geometry and material aware spatial audio system. |
 | Apple.SpatialController | Exposes Apple's AccessoryTracking and GameController frameworks to Unity developers on visionOS allowing for spatial controller features in visionOS apps. Requires visionOS 26.0 |
 | Apple.StoreKit | Exposes Apple's StoreKit 2 framework to Unity developers, enabling in-app purchases, subscriptions, and transaction management with modern async/await patterns. |
+| Apple.BackgroundAssets | Exposes Apple’s Background Assets framework to Unity developers, enabling out-of-band delivery of asset packs from Apple or third-party servers. The plug-in also automatically configures generated Xcode projects with a downloader extension and everything else that’s necessary to use Background Assets. |
 
 ## Minimum Supported OS Versions
 | OS | Version |
