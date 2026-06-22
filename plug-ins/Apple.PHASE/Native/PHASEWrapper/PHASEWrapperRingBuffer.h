@@ -2,7 +2,7 @@
 //  PHASEWrapperRingBuffer.h
 //  AudioPluginPHASE
 //
-//  Copyright © 2024 Apple Inc. All rights reserved.
+//  Copyright © 2024, 2026 Apple Inc.
 //
 
 #ifndef PHASEWrapperRingBuffer_h
@@ -19,6 +19,8 @@ NS_HEADER_AUDIT_BEGIN(nullability)
                                     format:(AVAudioFormat*)format;
 - (BOOL)read:(AudioBufferList*)output frameCount:(AVAudioFrameCount)frameCount;
 - (BOOL)write:(float*)input frameCount:(AVAudioFrameCount)frameCount;
+- (BOOL)isEmpty;
+- (uint64_t)consumeAndResetUnderrunCount;
 @end
 
 NS_HEADER_AUDIT_END(nullability)
