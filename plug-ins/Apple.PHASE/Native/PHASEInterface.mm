@@ -163,6 +163,12 @@ bool PHASESetSourceTransform(int64_t inSourceId, Matrix4x4 inTransform)
     return [engineWrapper setSourceTransformWithId:inSourceId transform:sourceTransform];
 }
 
+bool PHASESetSourceListenerAnchored(int64_t inSourceId, bool inAnchored)
+{
+    PHASEEngineWrapper* engineWrapper = [PHASEEngineWrapper sharedInstance];
+    return [engineWrapper setSourceListenerAnchoredWithId:inSourceId anchored:inAnchored];
+}
+
 bool PHASESetSourceGain(int64_t inSourceId, double inGain)
 {
     PHASEEngineWrapper* engineWrapper = [PHASEEngineWrapper sharedInstance];
