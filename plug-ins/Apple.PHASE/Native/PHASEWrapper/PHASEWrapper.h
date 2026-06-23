@@ -197,6 +197,14 @@ enum CalibrationMode
 */
 - (BOOL)setSourceTransformWithId:(int64_t)sourceId transform:(simd_float4x4)transform;
 
+/*! @method setSourceListenerAnchoredWithId
+    @abstract Parents a source under the listener or back under the scene root.
+    @param sourceId source ID to re-parent
+    @param anchored true to parent under the listener, false to parent under root
+    @return true on success, false otherwise
+*/
+- (BOOL)setSourceListenerAnchoredWithId:(int64_t)sourceId anchored:(BOOL)anchored;
+
 /*! @method setSourceGainWithId
     @abstract Sets the gain linear scale value of the source, range of [0,1]. Given gain values outside of this range will be clamped.
     @param sourceId  source ID to update gain for

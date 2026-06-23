@@ -104,6 +104,14 @@ namespace Apple.PHASE
         [DllImport(PluginDllName)] public static extern bool PHASESetSourceTransform(long inSourceId, Matrix4x4 inTransform);
 
         /// <summary>
+        /// Parents a source under the listener or back under the scene root.
+        /// </summary>
+        /// <param name="inSourceId"> The unique ID representing the source. </param>
+        /// <param name="inAnchored"> True to parent under the listener, false to parent under root. </param>
+        /// <returns> True on success, false otherwise. </returns>
+        [DllImport(PluginDllName)] public static extern bool PHASESetSourceListenerAnchored(long inSourceId, bool inAnchored);
+
+        /// <summary>
         /// Set the gain of the source in the PHASE engine.
         /// </summary>
         /// <param name="inSourceId"> The unique ID representing the source. </param>
@@ -819,6 +827,17 @@ namespace Apple.PHASE
             phaseTransform.m32 = position.z;
             phaseTransform.m33 = 1.0f;
             return phaseTransform;
+        }
+
+        /// <summary>
+        /// Converts a Unity matrix to a PHASE transform (Left-Handed to Right-Handed).
+        /// </summary>
+        /// <param name="inTransform"> Unity based matrix to convert to PHASE coordinates. </param>
+        /// <returns> A <c>Matrix4x4</c> representing a transform in PHASE coordinates. </returns>
+        static public Matrix4x4 GetPhaseTransform(Matrix4x4 inTransform)
+        {
+            // RhConversionMat (S) * M * S, passed transposed because the native side reads it that way.
+            return RhConversionMat * inTransform.transpose * RhConversionMat;
         }
 
         static private Vector3 GetCombinedHierachyScale(Transform inTransform)
