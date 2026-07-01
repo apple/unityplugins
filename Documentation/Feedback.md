@@ -2,7 +2,7 @@
 | :---: | :---: | :---: | :---: |
 
 # Feedback
-Apple Unity Plug-Ins are developed in the open and all technical or administrative topics about the plug-ins should be directed through [Feedback Assistant](https://feedbackassistant.apple.com)
+If you're having a Unity specific issue or question please file an issue on [GitHub](https://github.com/apple/unityplugins/issues). 
+Other issues related to platform SDKs and behaviors should go through [Feedback Assistant](https://feedbackassistant.apple.com).
 
 * Source code for all Apple Unity Plug-In projects can be found at GitHub [here](https://github.com/apple/unityplugins).
-* Bug and issue tracking is handled with [Feedback Assistant](https://feedbackassistant.apple.com).
