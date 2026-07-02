@@ -65,7 +65,6 @@ namespace Apple.GameKit.Sample
                     await GKAccessPoint.Shared.TriggerWithGameActivityDefinitionID(Activity.ActivityDefinition.Identifier);
                 }
             };
-            #endif
 
             _activityButton.ButtonClick += async (sender, args) =>
             {
@@ -74,6 +73,7 @@ namespace Apple.GameKit.Sample
                     await GKAccessPoint.Shared.TriggerWithGameActivity(Activity);
                 }
             };
+            #endif
 
             _startButton.onClick.AddListener(StartButtonAction);
             _pauseButton.onClick.AddListener(PauseButtonAction);

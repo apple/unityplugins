@@ -30,6 +30,7 @@ namespace Apple.GameKit
         /// </remarks>
         public static event WantsToPlayHandler WantsToPlay;
 
+#if !UNITY_EDITOR_WIN
         static GKGameActivity()
         {
             if (Availability.IsTypeAvailable<GKGameActivity>())
@@ -37,6 +38,7 @@ namespace Apple.GameKit
                 Interop.GKGameActivity_SetWantsToPlayCallback(OnWantsToPlay);
             }
         }
+#endif
 
 #if IOS_19_BETA_1_WANTSTOPLAY_MAIN_THREAD_WORKAROUND
         // In iOS 19 beta 1, the wantsToPlay callback isn't dispatched on the main thread.
