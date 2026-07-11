@@ -180,7 +180,7 @@ namespace Apple.PHASE
             _mixers = _soundEvent.GetMixers();
             long[] mixerIds = GetMixerIds();
 
-            var instanceId = Helpers.PHASEPlaySoundEvent(_soundEvent.name, _sourceId, mixerIds, (uint)mixerIds.Length, SoundEventCallback);
+            var instanceId = Helpers.PHASEPlaySoundEvent("SoundEvent_" + _soundEvent.GetInstanceID().ToString(), _sourceId, mixerIds, (uint)mixerIds.Length, SoundEventCallback);
             if (instanceId == Helpers.InvalidId)
             {
                 Debug.LogError($"Failed to play sound event: {_soundEvent.name}.");
