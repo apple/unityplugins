@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Apple.GameController;
 using Apple.GameController.Controller;
+using Apple.CoreHaptics;
 
 public class SampleLogic : MonoBehaviour
 {
@@ -23,7 +24,8 @@ public class SampleLogic : MonoBehaviour
     // UI Elements
     public UIText titleText;
     public UIText batteryText;
-    
+    public UIText motionText;
+
     public UISlider leftTrigger;
     public UISlider rightTrigger;
     
@@ -58,6 +60,20 @@ public class SampleLogic : MonoBehaviour
     GCController _controller;
     GCControllerType _controllerType;
 
+    [Space()]
+
+    public CHHapticEngine _hapticEngine;
+
+    [SerializeField] private TextAsset _AHAP0;
+    [SerializeField] private TextAsset _AHAP1;
+    [SerializeField] private TextAsset _AHAP2;
+    [SerializeField] private TextAsset _AHAP3;
+
+    private CHHapticPatternPlayer _hapticPlayer0;
+    private CHHapticPatternPlayer _hapticPlayer1;
+    private CHHapticPatternPlayer _hapticPlayer2;
+    private CHHapticPatternPlayer _hapticPlayer3;
+
     System.Random _rand;
 
     // Start is called before the first frame update
@@ -83,10 +99,34 @@ public class SampleLogic : MonoBehaviour
         GCControllerService.ControllerDisconnected += _onControllerDisconnected;
     }
 
+    public void OnApplicationPause(bool pause)
+    {
+        if (_hapticEngine == null)
+            return;
+
+        if (pause)
+        {
+            _hapticEngine.Stop();
+        }
+        else
+        {
+            _hapticEngine.Start();
+        }
+    }
+
+    private void OnApplicationQuit()
+    {
+        // stop listening or Unity Editor crashes
+        GCControllerService.ControllerConnected -= _onControllerConnected;
+        GCControllerService.ControllerDisconnected -= _onControllerDisconnected;
+        _controller = null;
+    }
+
     // --
     private void _setController(GCController c)
     {
         _controller = c;
+
         _controller.SetLightColor(_rand.Next(20,256)/255f, _rand.Next(20,256)/255f, _rand.Next(20,256)/255f);
         
         titleText.SetText(_controller.Handle.ProductCategory);
@@ -121,6 +161,26 @@ public class SampleLogic : MonoBehaviour
                 buttonXImage.SetTexture(_controller.GetSymbolForInputName(GCControllerInputName.ButtonWest, GCControllerSymbolScale.Medium, GCControllerRenderingMode.AlwaysTemplate));
                 buttonYImage.SetTexture(_controller.GetSymbolForInputName(GCControllerInputName.ButtonNorth, GCControllerSymbolScale.Medium, GCControllerRenderingMode.AlwaysTemplate));
                 break;
+        }
+
+        if (_controller.Handle.HasHaptics)
+        {
+            try
+            {
+                _hapticEngine = _controller.CreateHapticsEngine();
+                _hapticEngine.Start();
+
+                _hapticPlayer0 = _hapticEngine.MakePlayer(new CHHapticPattern(_AHAP0));
+                _hapticPlayer1 = _hapticEngine.MakePlayer(new CHHapticPattern(_AHAP1));
+                _hapticPlayer2 = _hapticEngine.MakePlayer(new CHHapticPattern(_AHAP2));
+                _hapticPlayer3 = _hapticEngine.MakePlayer(new CHHapticPattern(_AHAP3));
+            }
+            catch (Exception ex)
+            {
+                Debug.LogException(ex);
+            }
+
+
         }
     }
 
@@ -328,6 +388,50 @@ public class SampleLogic : MonoBehaviour
             {
                 batteryText.SetText("");
             }
+
+            if (_controller.Handle.HasHaptics)
+            {
+                if (_controller.GetButton(GCControllerInputName.ShoulderLeftFront))
+                {
+                    _hapticPlayer0.Start();
+                }
+                if (_controller.GetButton(GCControllerInputName.ShoulderRightFront))
+                {
+                    _hapticPlayer1.Start();
+                }
+                if (_controller.GetButton(GCControllerInputName.ThumbstickLeftButton))
+                {
+                    _hapticPlayer2.Start();
+                }
+                if (_controller.GetButton(GCControllerInputName.ThumbstickRightButton))
+                {
+                    _hapticPlayer3.Start();
+                }
+            }
+
+            if (!_controller.InputState.SensorsActive)
+            {
+                motionText.SetText("Motion: sensors not active");
+            }
+            else
+            {
+                string feedback = "Motion: ";
+
+                if (_controller.InputState.HasAttitude)
+                    feedback += $"\nattitude: = {_controller.GetAttitude():f3}";
+
+                if (_controller.InputState.HasRotationRate)
+                    feedback += $"\nrotationRate: = {_controller.GetRotationRate():f3}";
+
+                if (_controller.InputState.HasGravityAndUserAcceleration)
+                    feedback += $"\ngravity: = {_controller.GetGravity():f3}";
+
+                feedback += $"\nacceleration: = {_controller.GetAcceleration():f3}";
+
+                motionText.SetText(feedback);
+            }
+
+            _controller.SetSensorsActive(_controller.GetInputValue(GCControllerInputName.ShoulderLeftBack) > 0.51f);
         }
     }
 }

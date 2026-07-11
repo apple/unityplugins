@@ -155,6 +155,21 @@ public func GameControllerWrapper_SetControllerLightColor
     }
 }
 
+@_cdecl("GameControllerWrapper_SetSensorsActive")
+public func GameControllerWrapper_SetSensorsActive
+(
+    uniqueId : char_p,
+    flag : Bool
+)
+{
+    if #available(macOS 11, iOS 14, tvOS 14, *) {
+        let controller = _controllerMapping.elements[uniqueId.toString()];
+        if let motion = controller?.motion {
+            motion.sensorsActive = flag;
+        }
+    }
+}
+
 @available(OSX 11.00, tvOS 14, iOS 14.0, *)
 fileprivate func _getSymbolNameForExtendedInput(inputName : GCWControllerInputName, profile : GCExtendedGamepad) -> String? {
     
@@ -310,6 +325,42 @@ fileprivate func _pollExtendedController
     state.thumbstickRightButton = profile.rightThumbstickButton?.value ?? 0;
     state.batteryLevel = 0;
     state.batteryState = -1;
+
+    if #available(macOS 11.0, tvOS 14, iOS 14, *) , 
+        let motion = profile.controller?.motion {
+        state.sensorsActive = motion.sensorsActive;
+        state.sensorsRequireManualActivation = motion.sensorsRequireManualActivation;
+
+        state.hasAttitude = motion.hasAttitude;
+        if (motion.hasAttitude)
+        {
+            state.attitude = motion.attitude.toDoubleArray();
+        }
+
+        state.hasRotationRate = motion.hasRotationRate;
+        if (motion.hasRotationRate)
+        {
+            state.rotationRate = motion.rotationRate.toDoubleArray();
+        }
+        
+        state.hasGravityAndUserAcceleration = motion.hasGravityAndUserAcceleration;
+        
+        if (motion.hasGravityAndUserAcceleration)
+        {
+            state.gravity = motion.gravity.toDoubleArray();
+            state.userAcceleration = motion.userAcceleration.toDoubleArray();
+        }
+        
+        state.acceleration = motion.acceleration.toDoubleArray();
+    }
+    else
+    {
+        state.sensorsActive = false;
+        state.sensorsRequireManualActivation = false;
+        state.hasAttitude = false;
+        state.hasRotationRate = false;
+        state.hasGravityAndUserAcceleration = false;
+    }
     
     if #available(iOS 14, macOS 10.16, tvOS 14, *) {
         if let dualshockProfile = profile as? GCDualShockGamepad {
@@ -366,6 +417,42 @@ fileprivate func _pollMicroController
     state.buttonX = profile.buttonX.isPressed.toFloat();
     state.dpadHorizontal = profile.dpad.xAxis.value;
     state.dpadVertical = profile.dpad.yAxis.value;
+    
+    if #available(macOS 11.0, tvOS 14, iOS 14, *) ,
+        let motion = profile.controller?.motion {
+        state.sensorsActive = motion.sensorsActive;
+        state.sensorsRequireManualActivation = motion.sensorsRequireManualActivation;
+
+        state.hasAttitude = motion.hasAttitude;
+        if (motion.hasAttitude)
+        {
+            state.attitude = motion.attitude.toDoubleArray();
+        }
+
+        state.hasRotationRate = motion.hasRotationRate;
+        if (motion.hasRotationRate)
+        {
+            state.rotationRate = motion.rotationRate.toDoubleArray();
+        }
+        
+        state.hasGravityAndUserAcceleration = motion.hasGravityAndUserAcceleration;
+        
+        if (motion.hasGravityAndUserAcceleration)
+        {
+            state.gravity = motion.gravity.toDoubleArray();
+            state.userAcceleration = motion.userAcceleration.toDoubleArray();
+        }
+        
+        state.acceleration = motion.acceleration.toDoubleArray();
+    }
+    else
+    {
+        state.sensorsActive = false;
+        state.sensorsRequireManualActivation = false;
+        state.hasAttitude = false;
+        state.hasRotationRate = false;
+        state.hasGravityAndUserAcceleration = false;
+    }
 }
 
 class GCWNotificationHandler : NSObject  {
