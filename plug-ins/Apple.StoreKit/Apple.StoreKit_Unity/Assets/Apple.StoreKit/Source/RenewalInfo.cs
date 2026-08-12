@@ -73,6 +73,10 @@ namespace Apple.StoreKit
             }
         }
 
+        /// <summary>Advanced Commerce / Partner Billing info summary for the renewal, or empty. iOS 18.4+.</summary>
+        [Introduced(iOS: "18.4", macOS: "15.4", tvOS: "18.4", visionOS: "2.4")]
+        public string AdvancedCommerceInfoSummary => Interop.RenewalInfo_GetAdvancedCommerceInfoSummary(Pointer);
+
         private static class Interop
         {
             [DllImport(InteropUtility.DLLName)]
@@ -100,6 +104,9 @@ namespace Apple.StoreKit
 
             [DllImport(InteropUtility.DLLName)]
             public static extern long RenewalInfo_GetGracePeriodExpirationDate(IntPtr pointer);
+
+            [DllImport(InteropUtility.DLLName)]
+            public static extern string RenewalInfo_GetAdvancedCommerceInfoSummary(IntPtr pointer);
         }
     }
 }

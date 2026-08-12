@@ -155,3 +155,47 @@ public func AppStore_GetDeviceVerificationID() -> char_p?
     return AppStore.deviceVerificationID?.uuidString.toCharPCopy()
 }
 
+// PaymentMethodBinding (iOS only). Lives here rather than a new file so it's part of an
+// Xcode target already in the project (no pbxproj changes needed).
+#if os(iOS)
+@available(iOS 16.4, *)
+@_cdecl("PaymentMethodBinding_Bind")
+public func PaymentMethodBinding_Bind(
+    inAppPinningId: char_p,
+    taskId: Int64,
+    onSuccess: @escaping SuccessTaskCallback,
+    onError: @escaping NSErrorTaskCallback
+)
+{
+    let pinningId = inAppPinningId.toString()
+    Task {
+        do {
+            let binding = try await PaymentMethodBinding(id: pinningId)
+            try await binding.bind()
+            onSuccess(taskId)
+        } catch {
+            onError(taskId, (error as NSError).passRetainedUnsafeMutableRawPointer())
+        }
+    }
+}
+#endif
+
+// Age rating code (AppStore.ageRatingCode → Int?). iOS 26.2+; returns -1 when nil/unsupported.
+@available(iOS 16.0, macOS 13.0, tvOS 16.0, visionOS 2.2, *)
+@_cdecl("AppStore_GetAgeRatingCode")
+public func AppStore_GetAgeRatingCode(
+    taskId: Int64,
+    onSuccess: @escaping SuccessTaskIntCallback,
+    onError: @escaping NSErrorTaskCallback
+)
+{
+    if #available(iOS 26.2, macOS 26.2, tvOS 26.2, visionOS 26.2, *) {
+        Task {
+            let code = await AppStore.ageRatingCode
+            onSuccess(taskId, code ?? -1)
+        }
+    } else {
+        onError(taskId, NSError(domain: "StoreKitWrapper", code: -1, userInfo: [NSLocalizedDescriptionKey: "ageRatingCode requires iOS 26.2+"]).passRetainedUnsafeMutableRawPointer())
+    }
+}
+

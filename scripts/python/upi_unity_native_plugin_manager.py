@@ -188,7 +188,7 @@ class NativeUnityPluginManager:
 
         # Build
         # TODO: (Jared) Interrogate build machine for SDKs
-        build_commands = CTX.GenerateXcodeBuildCommands()
+        build_commands = CTX.GenerateXcodeBuildCommands(plugin_id)
 
         for platform, command_set in build_commands.items():
             for config, command in command_set.items():

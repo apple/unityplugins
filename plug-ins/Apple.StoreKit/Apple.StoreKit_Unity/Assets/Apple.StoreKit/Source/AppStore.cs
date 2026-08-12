@@ -168,6 +168,33 @@ namespace Apple.StoreKit
 #endif
             }
         }
+
+        [MonoPInvokeCallback(typeof(SuccessTaskCallback<int>))]
+        private static void OnGetAgeRatingCodeSuccess(long taskId, int code)
+        {
+            InteropTasks.TrySetResultAndRemove(taskId, code);
+        }
+
+        [MonoPInvokeCallback(typeof(NSErrorTaskCallback))]
+        private static void OnGetAgeRatingCodeError(long taskId, IntPtr errorPointer)
+        {
+            InteropTasks.TrySetExceptionAndRemove<int>(taskId, new StoreKitException(errorPointer));
+        }
+
+        /// <summary>
+        /// Fetches the app's age rating code. Returns -1 when nil/unavailable. iOS 26.2+.
+        /// </summary>
+        [Introduced(iOS: "26.2", macOS: "26.2", tvOS: "26.2", visionOS: "26.2")]
+        public static Task<int> GetAgeRatingCode()
+        {
+#if UNITY_EDITOR
+            return Task.FromResult(-1);
+#else
+            var tcs = InteropTasks.Create<int>(out var taskId);
+            Interop.AppStore_GetAgeRatingCode(taskId, OnGetAgeRatingCodeSuccess, OnGetAgeRatingCodeError);
+            return tcs.Task;
+#endif
+        }
         #endregion
 
         #region Interop
@@ -177,6 +204,12 @@ namespace Apple.StoreKit
             public static extern void AppStore_PresentOfferCodeRedeemSheet(
                 long taskId,
                 SuccessTaskCallback onSuccess,
+                NSErrorTaskCallback onError);
+
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void AppStore_GetAgeRatingCode(
+                long taskId,
+                SuccessTaskCallback<int> onSuccess,
                 NSErrorTaskCallback onError);
 
             [DllImport(InteropUtility.DLLName)]

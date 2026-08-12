@@ -65,6 +65,43 @@ namespace Apple.StoreKit
 #endif
         }
 
+        private static EventHandler<Storefront> _updatesEventHandler;
+        private static long _currentTaskId;
+
+        /// <summary>Fires when the device's App Store storefront changes (Storefront.updates).</summary>
+        public static event EventHandler<Storefront> Updates
+        {
+            add
+            {
+                if (_updatesEventHandler == null) StartUpdates();
+                _updatesEventHandler += value;
+            }
+            remove
+            {
+                _updatesEventHandler -= value;
+                if (_updatesEventHandler == null)
+                    InteropTasks.TrySetResultAndRemove(_currentTaskId, IntPtr.Zero);
+            }
+        }
+
+        private static void StartUpdates()
+        {
+#if !UNITY_EDITOR
+            InteropTasks.Create<IntPtr>(out _currentTaskId);
+            Interop.Storefront_Updates(_currentTaskId, OnStorefrontUpdate);
+#endif
+        }
+
+        [MonoPInvokeCallback(typeof(SuccessTaskBoolReturningCallback<IntPtr>))]
+        [return: MarshalAs(UnmanagedType.I1)]
+        private static bool OnStorefrontUpdate(long taskId, IntPtr ptr)
+        {
+            if (!InteropTasks.TryGet<IntPtr>(taskId, out var task) || task.Task.IsCompleted)
+                return false;
+            _updatesEventHandler?.Invoke(null, new Storefront(ptr));
+            return true;
+        }
+
         private static class Interop
         {
             [DllImport(InteropUtility.DLLName)]
@@ -75,6 +112,11 @@ namespace Apple.StoreKit
                 long taskId,
                 SuccessTaskCallback<IntPtr> onSuccess,
                 NSErrorTaskCallback onError);
+
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void Storefront_Updates(
+                long taskId,
+                SuccessTaskBoolReturningCallback<IntPtr> onUpdate);
 
             [DllImport(InteropUtility.DLLName)]
             public static extern string Storefront_GetId(IntPtr pointer);

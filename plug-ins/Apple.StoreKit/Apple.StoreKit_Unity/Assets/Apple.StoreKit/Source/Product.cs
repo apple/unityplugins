@@ -190,6 +190,14 @@ namespace Apple.StoreKit
             return new PurchaseOption(pointer);
         }
 
+        /// <summary>Billing plan type purchase option (iOS 26.4+).</summary>
+        [Introduced(iOS: "26.4", macOS: "26.4", tvOS: "26.4", visionOS: "26.4")]
+        public static PurchaseOption BillingPlanType(string rawValue)
+        {
+            IntPtr pointer = Interop.PurchaseOption_BillingPlanType(rawValue);
+            return new PurchaseOption(pointer);
+        }
+
         public static PurchaseOption SimulatesAskToBuyInSandbox(bool value)
         {
             IntPtr pointer = Interop.PurchaseOption_SimulatesAskToBuyInSandbox(value);
@@ -249,6 +257,9 @@ namespace Apple.StoreKit
 
             [DllImport(InteropUtility.DLLName)]
             public static extern IntPtr PurchaseOption_Quantity(int quantity);
+
+            [DllImport(InteropUtility.DLLName)]
+            public static extern IntPtr PurchaseOption_BillingPlanType(string rawValue);
 
             [DllImport(InteropUtility.DLLName)]
             public static extern IntPtr PurchaseOption_SimulatesAskToBuyInSandbox([MarshalAs(UnmanagedType.I1)] bool value);
@@ -408,6 +419,21 @@ namespace Apple.StoreKit
             InteropTasks.TrySetExceptionAndRemove<SubscriptionStatus[]>(taskId, new StoreKitException(errorPointer));
         }
 
+        /// <summary>Billing plan type raw values from the subscription's pricing terms (iOS 26.4+).</summary>
+        [Introduced(iOS: "26.4", macOS: "26.4", tvOS: "26.4", visionOS: "26.4")]
+        public string[] BillingPlanTypes
+        {
+            get
+            {
+                string raw = Interop.SubscriptionInfo_GetBillingPlanTypes(Pointer);
+                return string.IsNullOrEmpty(raw) ? Array.Empty<string>() : raw.Split(',');
+            }
+        }
+
+        /// <summary>Human-readable summary of the subscription's pricing terms (iOS 26.4+).</summary>
+        [Introduced(iOS: "26.4", macOS: "26.4", tvOS: "26.4", visionOS: "26.4")]
+        public string PricingTermsSummary => Interop.SubscriptionInfo_GetPricingTermsSummary(Pointer);
+
         public Task<SubscriptionStatus[]> GetStatus()
         {
 #if UNITY_EDITOR
@@ -447,6 +473,12 @@ namespace Apple.StoreKit
 
             [DllImport(InteropUtility.DLLName)]
             public static extern void SubscriptionInfo_GetStatus(IntPtr pointer, long taskId, SuccessTaskArrayCallback onSuccess, NSErrorTaskCallback onError);
+
+            [DllImport(InteropUtility.DLLName)]
+            public static extern string SubscriptionInfo_GetBillingPlanTypes(IntPtr pointer);
+
+            [DllImport(InteropUtility.DLLName)]
+            public static extern string SubscriptionInfo_GetPricingTermsSummary(IntPtr pointer);
         }
     }
 

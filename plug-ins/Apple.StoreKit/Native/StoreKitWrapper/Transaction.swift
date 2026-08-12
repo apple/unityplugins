@@ -685,6 +685,31 @@ public func Transaction_Updates
     }
 }
 
+// Advanced Commerce / Partner Billing info on a transaction (iOS 18.4+). Returns a formatted
+// summary string, or empty if the transaction has no advanced-commerce info.
+@available(iOS 15.0, macOS 12.0, tvOS 15.0, visionOS 2.2, *)
+@_cdecl("Transaction_GetAdvancedCommerceInfoSummary")
+public func Transaction_GetAdvancedCommerceInfoSummary(
+    pointer: UnsafeMutableRawPointer
+) -> char_p
+{
+    if #available(iOS 18.4, macOS 15.4, tvOS 18.4, visionOS 2.4, *) {
+        let transaction = pointer.assumingMemoryBound(to: Transaction.self).pointee
+        if let aca = transaction.advancedCommerceInfo {
+            var s = "requestReferenceID: \(aca.requestReferenceID)\n"
+            s += "estimatedTax: \(aca.estimatedTax)\n"
+            s += "taxRate: \(aca.taxRate)\n"
+            s += "taxCode: \(aca.taxCode)\n"
+            s += "taxExclusivePrice: \(aca.taxExclusivePrice)\n"
+            if let displayName = aca.displayName { s += "displayName: \(displayName)\n" }
+            if let description = aca.description { s += "description: \(description)\n" }
+            s += "items: \(aca.items.count)"
+            return s.toCharPCopy()
+        }
+    }
+    return "".toCharPCopy()
+}
+
 // BeginRefund is not available on tvOS
 #if !os(tvOS)
 @available(iOS 15.0, macOS 12.0, visionOS 2.2, *)

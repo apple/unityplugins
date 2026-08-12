@@ -3,7 +3,7 @@
 
 from pathlib import Path
 from scripts.python.upi_utility import Printer
-from scripts.python.upi_cli_argument_options import PlatformID
+from scripts.python.upi_cli_argument_options import PlatformID, PluginID
 
 # --
 class BuildInfo:
@@ -48,7 +48,15 @@ class BuildContext:
 
     # Helper method creates an xcodebuild command for each target platform
     # Returns as a dictionary mapping a supported platform string to a list of strings ready to pass to subprocess.run()
-    def GenerateXcodeBuildCommands(self) -> dict[str, dict[str, list[str]]]:        
+    #
+    # Every plug-in's native Xcode project references AppleCoreNative.xcodeproj as a project dependency, and AppleCoreNative
+    # defines its own schemes with these same "<platform> - <config>" names. Xcode's scheme lookup by name is not scoped to a
+    # single project when project references are involved, so passing an ambiguous name here would let xcodebuild resolve to
+    # either project's scheme non-deterministically. AppleCoreNative's own schemes carry the "AppleCoreNative - " prefix to
+    # keep every plug-in's build command unambiguous; this call only needs that prefix when building AppleCoreNative itself.
+    def GenerateXcodeBuildCommands(self, plugin_id : str) -> dict[str, dict[str, list[str]]]:
+        scheme_prefix = "AppleCoreNative - " if plugin_id == PluginID.CORE else ""
+
         build_commands = dict()
         for platform, platform_enabled in self.platforms.items():
             if platform_enabled:
@@ -56,6 +64,6 @@ class BuildContext:
                 currBuildInfo = BUILD_INFO_TABLE[platform]
                 for config, config_enabled in self.build_configs.items():
                     if config_enabled:
-                        command = ["xcodebuild", "-scheme", f"{currBuildInfo.platform_root} - {config}", "-destination", f"{currBuildInfo.build_destination}", "clean", "build"]
+                        command = ["xcodebuild", "-scheme", f"{scheme_prefix}{currBuildInfo.platform_root} - {config}", "-destination", f"{currBuildInfo.build_destination}", "clean", "build"]
                         build_commands[platform][config] = command
         return build_commands

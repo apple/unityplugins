@@ -55,3 +55,23 @@ public func Storefront_GetCountryCode(
     let storefront = pointer.assumingMemoryBound(to: Storefront.self).pointee
     return storefront.countryCode.toCharPCopy()
 }
+
+// Storefront update stream (mirrors Transaction_Updates).
+@available(iOS 15.0, macOS 12.0, tvOS 15.0, visionOS 2.2, *)
+@_cdecl("Storefront_Updates")
+public func Storefront_Updates(
+    taskId: Int64,
+    onAdd: @escaping SuccessTaskBoolReturningCallback
+)
+{
+    Task {
+        for await storefront in Storefront.updates {
+            let ptr = UnsafeMutablePointer<Storefront>.allocate(capacity: 1)
+            ptr.initialize(to: storefront)
+            let shouldContinue = onAdd(taskId, ptr.getRawPointer())
+            if (!shouldContinue) {
+                return
+            }
+        }
+    }
+}

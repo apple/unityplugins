@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
+using AOT;
 using Apple.Core;
 using Apple.Core.Runtime;
 
@@ -39,6 +40,43 @@ namespace Apple.StoreKit
             }
         }
 
+        private static EventHandler<SubscriptionStatus> _updatesEventHandler;
+        private static long _currentTaskId;
+
+        /// <summary>Fires on subscription status changes (Product.SubscriptionInfo.Status.updates).</summary>
+        public static event EventHandler<SubscriptionStatus> Updates
+        {
+            add
+            {
+                if (_updatesEventHandler == null) StartUpdates();
+                _updatesEventHandler += value;
+            }
+            remove
+            {
+                _updatesEventHandler -= value;
+                if (_updatesEventHandler == null)
+                    InteropTasks.TrySetResultAndRemove(_currentTaskId, IntPtr.Zero);
+            }
+        }
+
+        private static void StartUpdates()
+        {
+#if !UNITY_EDITOR
+            InteropTasks.Create<IntPtr>(out _currentTaskId);
+            Interop.SubscriptionStatus_Updates(_currentTaskId, OnStatusUpdate);
+#endif
+        }
+
+        [MonoPInvokeCallback(typeof(SuccessTaskBoolReturningCallback<IntPtr>))]
+        [return: MarshalAs(UnmanagedType.I1)]
+        private static bool OnStatusUpdate(long taskId, IntPtr ptr)
+        {
+            if (!InteropTasks.TryGet<IntPtr>(taskId, out var task) || task.Task.IsCompleted)
+                return false;
+            _updatesEventHandler?.Invoke(null, new SubscriptionStatus(ptr));
+            return true;
+        }
+
         private static class Interop
         {
             [DllImport(InteropUtility.DLLName)]
@@ -52,6 +90,11 @@ namespace Apple.StoreKit
 
             [DllImport(InteropUtility.DLLName)]
             public static extern IntPtr SubscriptionStatus_GetTransaction(IntPtr pointer);
+
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void SubscriptionStatus_Updates(
+                long taskId,
+                SuccessTaskBoolReturningCallback<IntPtr> onUpdate);
         }
     }
 }

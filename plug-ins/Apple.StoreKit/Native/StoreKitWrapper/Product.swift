@@ -344,8 +344,36 @@ public func SubscriptionInfo_GetWinBackOfferAt(
     return nil
 }
 
-// MARK: - SubscriptionInfo.Status
+// MARK: - SubscriptionInfo billing plans (iOS 26.4+)
 
+// Comma-separated billing plan type raw values for the subscription's pricing terms.
+@available(iOS 15.0, macOS 12.0, tvOS 15.0, visionOS 2.2, *)
+@_cdecl("SubscriptionInfo_GetBillingPlanTypes")
+public func SubscriptionInfo_GetBillingPlanTypes(pointer: UnsafeMutableRawPointer) -> char_p {
+    if #available(iOS 26.4, macOS 26.4, tvOS 26.4, visionOS 26.4, *) {
+        let info = pointer.assumingMemoryBound(to: Product.SubscriptionInfo.self).pointee
+        let types = info.pricingTerms.map { $0.billingPlanType.rawValue }
+        return types.joined(separator: ",").toCharPCopy()
+    }
+    return "".toCharPCopy()
+}
+
+// Multi-line summary of the subscription's pricing terms (plan + billing display price).
+@available(iOS 15.0, macOS 12.0, tvOS 15.0, visionOS 2.2, *)
+@_cdecl("SubscriptionInfo_GetPricingTermsSummary")
+public func SubscriptionInfo_GetPricingTermsSummary(pointer: UnsafeMutableRawPointer) -> char_p {
+    if #available(iOS 26.4, macOS 26.4, tvOS 26.4, visionOS 26.4, *) {
+        let info = pointer.assumingMemoryBound(to: Product.SubscriptionInfo.self).pointee
+        var s = ""
+        for term in info.pricingTerms {
+            s += "\(term.billingPlanType.rawValue): \(term.billingDisplayPrice)\n"
+        }
+        return s.toCharPCopy()
+    }
+    return "".toCharPCopy()
+}
+
+// MARK: - SubscriptionInfo.Status
 @available(iOS 15.0, macOS 12.0, tvOS 15.0, visionOS 2.2, *)
 @_cdecl("SubscriptionInfo_GetStatus")
 public func SubscriptionInfo_GetStatus(
@@ -409,6 +437,26 @@ public func SubscriptionStatus_GetTransaction(pointer: UnsafeMutableRawPointer) 
     let ptr = UnsafeMutablePointer<VerificationResult<Transaction>>.allocate(capacity: 1)
     ptr.initialize(to: status.transaction)
     return ptr.getRawPointer()
+}
+
+// Subscription status update stream (mirrors Transaction_Updates). Yields the same
+// Product.SubscriptionInfo.Status pointers the SubscriptionStatus_* getters consume.
+@available(iOS 15.0, macOS 12.0, tvOS 15.0, visionOS 2.2, *)
+@_cdecl("SubscriptionStatus_Updates")
+public func SubscriptionStatus_Updates(
+    taskId: Int64,
+    onAdd: @escaping SuccessTaskBoolReturningCallback
+) {
+    Task {
+        for await status in Product.SubscriptionInfo.Status.updates {
+            let ptr = UnsafeMutablePointer<Product.SubscriptionInfo.Status>.allocate(capacity: 1)
+            ptr.initialize(to: status)
+            let shouldContinue = onAdd(taskId, ptr.getRawPointer())
+            if (!shouldContinue) {
+                return
+            }
+        }
+    }
 }
 
 // MARK: - VerificationResult<RenewalInfo>
@@ -521,6 +569,26 @@ public func RenewalInfo_GetGracePeriodExpirationDate(pointer: UnsafeMutableRawPo
     let info = pointer.assumingMemoryBound(to: Product.SubscriptionInfo.RenewalInfo.self).pointee
     guard let date = info.gracePeriodExpirationDate else { return 0 }
     return Int64(date.timeIntervalSince1970)
+}
+
+// Advanced Commerce / Partner Billing info on a renewal (iOS 18.4+). Summary string, or empty.
+@available(iOS 15.0, macOS 12.0, tvOS 15.0, visionOS 2.2, *)
+@_cdecl("RenewalInfo_GetAdvancedCommerceInfoSummary")
+public func RenewalInfo_GetAdvancedCommerceInfoSummary(pointer: UnsafeMutableRawPointer) -> char_p {
+    if #available(iOS 18.4, macOS 15.4, tvOS 18.4, visionOS 2.4, *) {
+        let info = pointer.assumingMemoryBound(to: Product.SubscriptionInfo.RenewalInfo.self).pointee
+        if let aca = info.advancedCommerceInfo {
+            var s = "consistencyToken: \(aca.consistencyToken)\n"
+            s += "requestReferenceID: \(aca.requestReferenceID)\n"
+            s += "taxCode: \(aca.taxCode)\n"
+            s += "displayName: \(aca.displayName)\n"
+            s += "description: \(aca.description)\n"
+            s += "period: \(String(describing: aca.period))\n"
+            s += "items: \(aca.items.count)"
+            return s.toCharPCopy()
+        }
+    }
+    return "".toCharPCopy()
 }
 
 // MARK: - SubscriptionOffer
@@ -815,6 +883,26 @@ public func PurchaseOption_Quantity
 ) -> UnsafeMutableRawPointer
 {
     let option = Product.PurchaseOption.quantity(Int(quantity))
+    let ptr = UnsafeMutablePointer<Product.PurchaseOption>.allocate(capacity: 1)
+    ptr.initialize(to: option)
+    return ptr.getRawPointer()
+}
+
+// Billing plan type purchase option (iOS 26.4+). Falls back to a custom option on older OSes.
+@available(iOS 15.0, macOS 12.0, tvOS 15.0, visionOS 2.2, *)
+@_cdecl("PurchaseOption_BillingPlanType")
+public func PurchaseOption_BillingPlanType
+(
+    rawValue: char_p
+) -> UnsafeMutableRawPointer
+{
+    let raw = rawValue.toString()
+    let option: Product.PurchaseOption
+    if #available(iOS 26.4, macOS 26.4, tvOS 26.4, visionOS 26.4, *) {
+        option = Product.PurchaseOption.billingPlanType(.init(rawValue: raw))
+    } else {
+        option = Product.PurchaseOption.custom(key: "billingPlanType", value: raw)
+    }
     let ptr = UnsafeMutablePointer<Product.PurchaseOption>.allocate(capacity: 1)
     ptr.initialize(to: option)
     return ptr.getRawPointer()

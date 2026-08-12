@@ -403,6 +403,13 @@ namespace Apple.StoreKit
             }
         }
 
+        /// <summary>
+        /// Advanced Commerce / Partner Billing info summary for the transaction, or empty if the
+        /// transaction has no advanced-commerce info. iOS 18.4+.
+        /// </summary>
+        [Introduced(iOS: "18.4", macOS: "15.4", tvOS: "18.4", visionOS: "2.4")]
+        public string AdvancedCommerceInfoSummary => Interop.Transaction_GetAdvancedCommerceInfoSummary(Pointer);
+
         private static EventHandler<VerificationResult<Transaction>> _updatesEventHandler;
         private static long _currentTaskId;
         public static event EventHandler<VerificationResult<Transaction>> Updates
@@ -585,6 +592,9 @@ namespace Apple.StoreKit
         {
             [DllImport(InteropUtility.DLLName)]
             public static extern void Transaction_Free(IntPtr pointer);
+
+            [DllImport(InteropUtility.DLLName)]
+            public static extern string Transaction_GetAdvancedCommerceInfoSummary(IntPtr pointer);
 
             [DllImport(InteropUtility.DLLName)]
             public static extern ulong Transaction_GetId(IntPtr pointer);
