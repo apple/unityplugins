@@ -558,10 +558,21 @@ namespace Apple.StoreKit
             return tcs.Task;
         }
 
-        [MonoPInvokeCallback(typeof(SuccessTaskCallback<int>))]
-        private static void OnBeginRefundRequestSuccess(long taskId, int refundRequestStatus)
+        [MonoPInvokeCallback(typeof(SuccessTaskCallback<IntPtr>))]
+        private static void OnBeginRefundRequestSuccess(long taskId, IntPtr statusPointer)
         {
-            InteropTasks.TrySetResultAndRemove(taskId, (RefundRequestStatus)refundRequestStatus);
+            if (statusPointer == IntPtr.Zero)
+            {
+                InteropTasks.TrySetExceptionAndRemove<RefundRequestStatus>(taskId,
+                    new InvalidOperationException("BeginRefundRequest succeeded but returned a null status pointer."));
+                return;
+            }
+
+            // The native side hands back a heap-allocated Transaction.RefundRequestStatus.
+            // Read its value through the accessor, then free the allocation to avoid leaking it.
+            int rawValue = Interop.RefundRequestStatus_GetRawValue(statusPointer);
+            Interop.RefundRequestStatus_Free(statusPointer);
+            InteropTasks.TrySetResultAndRemove(taskId, (RefundRequestStatus)rawValue);
         }
 
         [MonoPInvokeCallback(typeof(NSErrorTaskCallback))]
@@ -691,10 +702,16 @@ namespace Apple.StoreKit
             public static extern void Transaction_Finish(IntPtr pointer);
 
             [DllImport(InteropUtility.DLLName)]
+            public static extern int RefundRequestStatus_GetRawValue(IntPtr pointer);
+
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void RefundRequestStatus_Free(IntPtr pointer);
+
+            [DllImport(InteropUtility.DLLName)]
             public static extern void Transaction_BeginRefund(
                 IntPtr transactionPointer,
                 long taskId,
-                SuccessTaskCallback<int> onSuccess,
+                SuccessTaskCallback<IntPtr> onSuccess,
                 NSErrorTaskCallback onError);
 
             [DllImport(InteropUtility.DLLName)]
@@ -732,7 +749,7 @@ namespace Apple.StoreKit
             public static extern void Transaction_BeginRefundWithId(
                 ulong transactionId,
                 long taskId,
-                SuccessTaskCallback<int> onSuccess,
+                SuccessTaskCallback<IntPtr> onSuccess,
                 NSErrorTaskCallback onError
             );
         }
