@@ -99,6 +99,15 @@ public func GKLocalPlayer_SetAuthenticateHandler
     }
 }
 
+@_cdecl("GKLocalPlayer_RegisterLocalPlayerListener")
+public func GKLocalPlayer_RegisterLocalPlayerListener
+(
+)
+{
+    GKLocalPlayer.local.unregisterAllListeners();
+    GKLocalPlayer.local.register(_localPlayerListener);
+}
+
 @_cdecl("GKLocalPlayer_GetLocal")
 public func GKLocalPlayer_GetLocal
 (
