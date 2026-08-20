@@ -473,8 +473,6 @@ namespace Apple.GameKit
             public static extern void GKLocalPlayer_LoadDefaultLeaderboardIdentifier(IntPtr pointer, long taskId, SuccessTaskCallback<IntPtr> onSuccess, NSErrorTaskCallback onError);
             [DllImport(InteropUtility.DLLName)]
             public static extern void GKLocalPlayer_SetDefaultLeaderboardIdentifier(IntPtr pointer, long taskId, IntPtr identifierPtr, SuccessTaskCallback onSuccess, NSErrorTaskCallback onError);
-            [DllImport(InteropUtility.DLLName)]
-            public static extern void GKLocalPlayer_RegisterLocalPlayerListener();
 #if !UNITY_TVOS
             [DllImport(InteropUtility.DLLName)]
             public static extern void GKLocalPlayer_SaveGameData(IntPtr pointer, long taskId, IntPtr nsDataPtr, string name, SuccessTaskCallback<IntPtr> onSuccess, NSErrorTaskCallback onError);
