@@ -9,8 +9,7 @@ namespace Apple.Accessibility.UnitTests
         private static extern bool _UnityAX_RuniOSSideUnitTestWithName(string name);
 
         [DllImport("__Internal")]
-        private static extern bool _UnityAX_RuniOSSideUnitTestWithKeyPathExpectingStringResult(int identifier, string keyPath, string expected);
-
+        private static extern bool _UnityAX_RuniOSSideUnitTestWithKeyPathExpectingStringResult(ulong identifier, string keyPath, string expected);
 
         public static bool RuniOSUnitTestWithName(string name)
         {
@@ -21,10 +20,10 @@ namespace Apple.Accessibility.UnitTests
 #endif
         }
 
-        public static bool RuniOSSideUnitTestWithKeyPathExpectingStringResult(int identifier, string keyPath, string expected)
+        public static bool RuniOSSideUnitTestWithKeyPathExpectingStringResult(ulong identifier, string keyPath, string expected)
         {
 #if (UNITY_IOS || UNITY_TVOS) && !UNITY_EDITOR
-            return _UnityAX_RuniOSSideUnitTestWithKeyPathExpectingStringResult( identifier, keyPath, expected);
+            return _UnityAX_RuniOSSideUnitTestWithKeyPathExpectingStringResult(identifier, keyPath, expected);
 #else
             return true;
 #endif

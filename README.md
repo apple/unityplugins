@@ -1,5 +1,9 @@
 # Apple Unity Plug-Ins
 
+## 27 Beta
+
+27 beta is now live! Watch the [WWDC26 video](https://developer.apple.com/videos/play/wwdc2026/378/) for information and check out the `27-beta` branch to test it out. 
+
 ## Overview
 The Apple Unity Plug-Ins expose a selection of Apple platform frameworks to Unity developers.
 

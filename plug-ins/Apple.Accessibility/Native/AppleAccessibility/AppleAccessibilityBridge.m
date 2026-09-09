@@ -42,78 +42,77 @@ APPLE_ACCESSIBILITY_EXTERN void _UnityAX_PostPageScrolledNotification(const char
 
 #pragma mark Elements
 
-typedef char *(* AccessibilityFrameDelegate)(int32_t);
+typedef char *(* AccessibilityFrameDelegate)(uint64_t);
 static AccessibilityFrameDelegate __axFrameDelegate = NULL;
 APPLE_ACCESSIBILITY_EXTERN void _UnityAX_registerAccessibilityFrame(AccessibilityFrameDelegate delegate) { __axFrameDelegate = delegate; }
 
-typedef char *(* AccessibilityLabelDelegate)(int32_t);
+typedef char *(* AccessibilityLabelDelegate)(uint64_t);
 static AccessibilityLabelDelegate __axLabelDelegate = NULL;
 APPLE_ACCESSIBILITY_EXTERN void _UnityAX_registerAccessibilityLabel(AccessibilityLabelDelegate delegate) { __axLabelDelegate = delegate; }
 
-typedef uint64_t (* AccessibilityTraitsDelegate)(int32_t);
+typedef uint64_t (* AccessibilityTraitsDelegate)(uint64_t);
 static AccessibilityTraitsDelegate __axTraitsDelegate = NULL;
 APPLE_ACCESSIBILITY_EXTERN void _UnityAX_registerAccessibilityTraits(AccessibilityTraitsDelegate delegate) { __axTraitsDelegate = delegate; }
 
-typedef bool (* AccessibilityIsElementDelegate)(int32_t);
+typedef bool (* AccessibilityIsElementDelegate)(uint64_t);
 static AccessibilityIsElementDelegate __axIsElementDelegate = NULL;
 APPLE_ACCESSIBILITY_EXTERN void _UnityAX_registerAccessibilityIsElement(AccessibilityIsElementDelegate delegate) { __axIsElementDelegate = delegate; }
 
-typedef char *(* AccessibilityHintDelegate)(int32_t);
+typedef char *(* AccessibilityHintDelegate)(uint64_t);
 static AccessibilityHintDelegate __axHintDelegate = NULL;
 APPLE_ACCESSIBILITY_EXTERN void _UnityAX_registerAccessibilityHint(AccessibilityHintDelegate delegate) { __axHintDelegate = delegate; }
 
-typedef char *(* AccessibilityValueDelegate)(int32_t);
+typedef char *(* AccessibilityValueDelegate)(uint64_t);
 static AccessibilityValueDelegate __axValueDelegate = NULL;
 APPLE_ACCESSIBILITY_EXTERN void _UnityAX_registerAccessibilityValue(AccessibilityValueDelegate delegate) { __axValueDelegate = delegate; }
 
-typedef char *(* AccessibilityIdentifierDelegate)(int32_t);
+typedef char *(* AccessibilityIdentifierDelegate)(uint64_t);
 static AccessibilityIdentifierDelegate __axIdentifierDelegate = NULL;
 APPLE_ACCESSIBILITY_EXTERN void _UnityAX_registerAccessibilityIdentifier(AccessibilityIdentifierDelegate delegate) { __axIdentifierDelegate = delegate; }
 
-typedef bool (* AccessibilityViewIsModalDelegate)(int32_t);
+typedef bool (* AccessibilityViewIsModalDelegate)(uint64_t);
 static AccessibilityViewIsModalDelegate __axViewIsModalDelegate = NULL;
 APPLE_ACCESSIBILITY_EXTERN void _UnityAX_registerAccessibilityViewIsModal(AccessibilityViewIsModalDelegate delegate) { __axViewIsModalDelegate = delegate; }
 
-typedef char *(* AccessibilityActivationPointDelegate)(int32_t);
+typedef char *(* AccessibilityActivationPointDelegate)(uint64_t);
 static AccessibilityActivationPointDelegate __axActivationPointDelegate = NULL;
 APPLE_ACCESSIBILITY_EXTERN void _UnityAX_registerAccessibilityActivationPoint(AccessibilityActivationPointDelegate delegate) { __axActivationPointDelegate = delegate; }
 
-typedef uint64_t (* AccessibilityCustomActionsCountDelegate)(int32_t);
+typedef uint64_t (* AccessibilityCustomActionsCountDelegate)(uint64_t);
 static AccessibilityCustomActionsCountDelegate __axCustomActionsCountDelegate = NULL;
 APPLE_ACCESSIBILITY_EXTERN void _UnityAX_registerAccessibilityCustomActionsCount(AccessibilityCustomActionsCountDelegate delegate) { __axCustomActionsCountDelegate = delegate; }
 
-typedef bool (* AccessibilityPerformCustomActionDelegate)(int32_t, int32_t);
+typedef bool (* AccessibilityPerformCustomActionDelegate)(uint64_t, int32_t);
 static AccessibilityPerformCustomActionDelegate __axPerformCustomActionDelegate = NULL;
 APPLE_ACCESSIBILITY_EXTERN void _UnityAX_registerAccessibilityPerformCustomAction(AccessibilityPerformCustomActionDelegate delegate) { __axPerformCustomActionDelegate = delegate; }
 
-typedef char *(* AccessibilityCustomActionNameDelegate)(int32_t, int32_t);
+typedef char *(* AccessibilityCustomActionNameDelegate)(uint64_t, int32_t);
 static AccessibilityCustomActionNameDelegate __axCustomActionNameDelegate = NULL;
 APPLE_ACCESSIBILITY_EXTERN void _UnityAX_registerAccessibilityCustomActionName(AccessibilityCustomActionNameDelegate delegate) { __axCustomActionNameDelegate = delegate; }
 
-typedef bool (* AccessibilityScrollDelegate)(int32_t, uint32_t);
+typedef bool (* AccessibilityScrollDelegate)(uint64_t, uint32_t);
 static AccessibilityScrollDelegate __axScrollDelegate = NULL;
 APPLE_ACCESSIBILITY_EXTERN void _UnityAX_registerAccessibilityScroll(AccessibilityScrollDelegate delegate) { __axScrollDelegate = delegate; }
 
-typedef bool (* AccessibilityPerformMagicTapDelegate)(int32_t);
+typedef bool (* AccessibilityPerformMagicTapDelegate)(uint64_t);
 static AccessibilityPerformMagicTapDelegate __axPerformMagicTapDelegate = NULL;
 APPLE_ACCESSIBILITY_EXTERN void _UnityAX_registerAccessibilityPerformMagicTap(AccessibilityPerformMagicTapDelegate delegate) { __axPerformMagicTapDelegate = delegate; }
 
-typedef bool (* AccessibilityPerformEscapeDelegate)(int32_t);
+typedef bool (* AccessibilityPerformEscapeDelegate)(uint64_t);
 static AccessibilityPerformEscapeDelegate __axPerformEscapeDelegate = NULL;
 APPLE_ACCESSIBILITY_EXTERN void _UnityAX_registerAccessibilityPerformEscape(AccessibilityPerformEscapeDelegate delegate) { __axPerformEscapeDelegate = delegate; }
 
-typedef bool (* AccessibilityActivateDelegate)(int32_t);
+typedef bool (* AccessibilityActivateDelegate)(uint64_t);
 static AccessibilityActivateDelegate __axActivateDelegate = NULL;
 APPLE_ACCESSIBILITY_EXTERN void _UnityAX_registerAccessibilityActivate(AccessibilityActivateDelegate delegate) { __axActivateDelegate = delegate; }
 
-typedef void (* AccessibilityIncrementDelegate)(int32_t);
+typedef void (* AccessibilityIncrementDelegate)(uint64_t);
 static AccessibilityIncrementDelegate __axIncrementDelegate = NULL;
 APPLE_ACCESSIBILITY_EXTERN void _UnityAX_registerAccessibilityIncrement(AccessibilityIncrementDelegate delegate) { __axIncrementDelegate = delegate; }
 
-typedef void (* AccessibilityDecrementDelegate)(int32_t);
+typedef void (* AccessibilityDecrementDelegate)(uint64_t);
 static AccessibilityDecrementDelegate __axDecrementDelegate = NULL;
 APPLE_ACCESSIBILITY_EXTERN void _UnityAX_registerAccessibilityDecrement(AccessibilityDecrementDelegate delegate) { __axDecrementDelegate = delegate; }
-
 
 #pragma mark Settings
 
@@ -631,7 +630,7 @@ APPLE_ACCESSIBILITY_EXTERN void _UnityAX_InitializeAXRuntime(void)
             {
                 return CGRectZero;
             }
-            char *rectStr = __axFrameDelegate((int32_t)identifier.integerValue);
+            char *rectStr = __axFrameDelegate((uint64_t)identifier.unsignedLongLongValue);
             return rectStr == NULL ? CGRectZero : CGRectFromString([NSString stringWithUTF8String:rectStr]);
         }];
         [AppleAccessibilityRuntime.sharedInstance setUnityAccessibilityLabel:^NSString *(NSNumber *identifier) {
@@ -639,7 +638,7 @@ APPLE_ACCESSIBILITY_EXTERN void _UnityAX_InitializeAXRuntime(void)
             {
                 return nil;
             }
-            char *str = __axLabelDelegate((int32_t)identifier.integerValue);
+            char *str = __axLabelDelegate((uint64_t)identifier.unsignedLongLongValue);
             return str == NULL ? nil : [NSString stringWithUTF8String:str];
         }];
         [AppleAccessibilityRuntime.sharedInstance setUnityAccessibilityTraits:^UIAccessibilityTraits(NSNumber *identifier) {
@@ -647,43 +646,21 @@ APPLE_ACCESSIBILITY_EXTERN void _UnityAX_InitializeAXRuntime(void)
             {
                 return (uint64_t)0;
             }
-            return __axTraitsDelegate((int32_t)identifier.integerValue);
-        }];
-        [AppleAccessibilityRuntime.sharedInstance setUnityAccessibilityCustomActionsCount:^uint64_t(NSNumber *identifier) {
-            if ( __axCustomActionsCountDelegate == NULL )
-            {
-                return (uint64_t)0;
-            }
-            return __axCustomActionsCountDelegate((int32_t)identifier.integerValue);
-        }];
-        [AppleAccessibilityRuntime.sharedInstance setUnityPerformCustomAction:^BOOL(NSNumber *identifier, NSNumber *idx) {
-            if ( __axPerformCustomActionDelegate == NULL )
-            {
-                return NO;
-            }
-            return __axPerformCustomActionDelegate((int32_t)identifier.integerValue, (int32_t)idx.integerValue);
-        }];
-        [AppleAccessibilityRuntime.sharedInstance setUnityCustomActionName:^NSString *(NSNumber *identifier, NSNumber *idx) {
-            if ( __axCustomActionNameDelegate == NULL )
-            {
-                return nil;
-            }
-            char *str = __axCustomActionNameDelegate((int32_t)identifier.integerValue, (int32_t)idx.integerValue);
-            return str == NULL ? nil : [NSString stringWithUTF8String:str];
+            return __axTraitsDelegate((uint64_t)identifier.unsignedLongLongValue);
         }];
         [AppleAccessibilityRuntime.sharedInstance setUnityIsAccessibilityElement:^BOOL(NSNumber *identifier) {
             if ( __axIsElementDelegate == NULL )
             {
                 return YES;
             }
-            return __axIsElementDelegate((int32_t)identifier.integerValue);
+            return __axIsElementDelegate((uint64_t)identifier.unsignedLongLongValue);
         }];
         [AppleAccessibilityRuntime.sharedInstance setUnityAccessibilityHint:^NSString *(NSNumber *identifier) {
             if ( __axHintDelegate == NULL )
             {
                 return nil;
             }
-            char *str = __axHintDelegate((int32_t)identifier.integerValue);
+            char *str = __axHintDelegate((uint64_t)identifier.unsignedLongLongValue);
             return str == NULL ? nil : [NSString stringWithUTF8String:str];
         }];
         [AppleAccessibilityRuntime.sharedInstance setUnityAccessibilityValue:^NSString *(NSNumber *identifier) {
@@ -691,23 +668,15 @@ APPLE_ACCESSIBILITY_EXTERN void _UnityAX_InitializeAXRuntime(void)
             {
                 return nil;
             }
-            char *str = __axValueDelegate((int32_t)identifier.integerValue);
+            char *str = __axValueDelegate((uint64_t)identifier.unsignedLongLongValue);
             return str == NULL ? nil : [NSString stringWithUTF8String:str];
-        }];
-        [AppleAccessibilityRuntime.sharedInstance setUnityAccessibilityActivationPoint:^CGPoint(NSNumber *identifier) {
-            if ( __axActivationPointDelegate == NULL )
-            {
-                return kAXCenterPointDefaultPoint;
-            }
-            char *pointStr = __axActivationPointDelegate((int32_t)identifier.integerValue);
-            return pointStr == NULL ? kAXCenterPointDefaultPoint : CGPointFromString([NSString stringWithUTF8String:pointStr]);
         }];
         [AppleAccessibilityRuntime.sharedInstance setUnityAccessibilityIdentifier:^NSString *(NSNumber *identifier) {
             if ( __axIdentifierDelegate == NULL )
             {
                 return nil;
             }
-            char *str = __axIdentifierDelegate((int32_t)identifier.integerValue);
+            char *str = __axIdentifierDelegate((uint64_t)identifier.unsignedLongLongValue);
             return str == NULL ? nil : [NSString stringWithUTF8String:str];
         }];
         [AppleAccessibilityRuntime.sharedInstance setUnityAccessibilityViewIsModal:^BOOL(NSNumber *identifier) {
@@ -715,49 +684,79 @@ APPLE_ACCESSIBILITY_EXTERN void _UnityAX_InitializeAXRuntime(void)
             {
                 return NO;
             }
-            return __axViewIsModalDelegate((int32_t)identifier.integerValue);
+            return __axViewIsModalDelegate((uint64_t)identifier.unsignedLongLongValue);
+        }];
+        [AppleAccessibilityRuntime.sharedInstance setUnityAccessibilityActivationPoint:^CGPoint(NSNumber *identifier) {
+            if ( __axActivationPointDelegate == NULL )
+            {
+                return kAXCenterPointDefaultPoint;
+            }
+            char *pointStr = __axActivationPointDelegate((uint64_t)identifier.unsignedLongLongValue);
+            return pointStr == NULL ? kAXCenterPointDefaultPoint : CGPointFromString([NSString stringWithUTF8String:pointStr]);
+        }];
+        [AppleAccessibilityRuntime.sharedInstance setUnityAccessibilityCustomActionsCount:^uint64_t(NSNumber *identifier) {
+            if ( __axCustomActionsCountDelegate == NULL )
+            {
+                return (uint64_t)0;
+            }
+            return __axCustomActionsCountDelegate((uint64_t)identifier.unsignedLongLongValue);
+        }];
+        [AppleAccessibilityRuntime.sharedInstance setUnityPerformCustomAction:^BOOL(NSNumber *identifier, NSNumber *idx) {
+            if ( __axPerformCustomActionDelegate == NULL )
+            {
+                return NO;
+            }
+            return __axPerformCustomActionDelegate((uint64_t)identifier.unsignedLongLongValue, (int32_t)idx.integerValue);
+        }];
+        [AppleAccessibilityRuntime.sharedInstance setUnityCustomActionName:^NSString *(NSNumber *identifier, NSNumber *idx) {
+            if ( __axCustomActionNameDelegate == NULL )
+            {
+                return nil;
+            }
+            char *str = __axCustomActionNameDelegate((uint64_t)identifier.unsignedLongLongValue, (int32_t)idx.integerValue);
+            return str == NULL ? nil : [NSString stringWithUTF8String:str];
         }];
         [AppleAccessibilityRuntime.sharedInstance setUnityAccessibilityScroll:^BOOL(NSNumber *identifier, UIAccessibilityScrollDirection direction) {
             if ( __axScrollDelegate == NULL )
             {
                 return NO;
             }
-            return __axScrollDelegate((int32_t)identifier.integerValue, (int32_t)direction);
+            return __axScrollDelegate((uint64_t)identifier.unsignedLongLongValue, (int32_t)direction);
         }];
         [AppleAccessibilityRuntime.sharedInstance setUnityAccessibilityPerformMagicTap:^BOOL(NSNumber *identifier) {
             if ( __axPerformMagicTapDelegate == NULL )
             {
                 return NO;
             }
-            return __axPerformMagicTapDelegate((int32_t)identifier.integerValue);
+            return __axPerformMagicTapDelegate((uint64_t)identifier.unsignedLongLongValue);
         }];
         [AppleAccessibilityRuntime.sharedInstance setUnityAccessibilityPerformEscape:^BOOL(NSNumber *identifier) {
             if ( __axPerformEscapeDelegate == NULL )
             {
                 return NO;
             }
-            return __axPerformEscapeDelegate((int32_t)identifier.integerValue);
+            return __axPerformEscapeDelegate((uint64_t)identifier.unsignedLongLongValue);
         }];
         [AppleAccessibilityRuntime.sharedInstance setUnityAccessibilityActivate:^BOOL(NSNumber *identifier) {
             if ( __axActivateDelegate == NULL )
             {
                 return NO;
             }
-            return __axActivateDelegate((int32_t)identifier.integerValue);
+            return __axActivateDelegate((uint64_t)identifier.unsignedLongLongValue);
         }];
         [AppleAccessibilityRuntime.sharedInstance setUnityAccessibilityIncrement:^void(NSNumber *identifier) {
             if ( __axIncrementDelegate == NULL )
             {
                 return;
             }
-            __axIncrementDelegate((int32_t)identifier.integerValue);
+            __axIncrementDelegate((uint64_t)identifier.unsignedLongLongValue);
         }];
         [AppleAccessibilityRuntime.sharedInstance setUnityAccessibilityDecrement:^void(NSNumber *identifier) {
             if ( __axDecrementDelegate == NULL )
             {
                 return;
             }
-            __axDecrementDelegate((int32_t)identifier.integerValue);
+            __axDecrementDelegate((uint64_t)identifier.unsignedLongLongValue);
         }];
     });
 }
@@ -767,12 +766,12 @@ APPLE_ACCESSIBILITY_EXTERN void _UnityAX_PostUnityViewChanged(void)
     UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification, nil);
 }
 
-APPLE_ACCESSIBILITY_EXTERN void _UnityAX_RegisterElementWithIdentifier(int32_t identifier, int32_t parentIdentifier, bool hasParent)
+APPLE_ACCESSIBILITY_EXTERN void _UnityAX_RegisterElementWithIdentifier(uint64_t identifier, uint64_t parentIdentifier, bool hasParent)
 {
     [AppleAccessibilityRuntime.sharedInstance registerAccessibilityElementWithIdentifier:@(identifier) parent: hasParent ? @(parentIdentifier) : nil hasParent:hasParent];
 }
 
-APPLE_ACCESSIBILITY_EXTERN void _UnityAX_UnregisterElementWithIdentifier(int32_t identifier)
+APPLE_ACCESSIBILITY_EXTERN void _UnityAX_UnregisterElementWithIdentifier(uint64_t identifier)
 {
     [AppleAccessibilityRuntime.sharedInstance unregisterAccessibilityElementWithIdentifier:@(identifier)];
 }
@@ -782,7 +781,7 @@ APPLE_ACCESSIBILITY_EXTERN bool _UnityAX_RuniOSSideUnitTestWithName(const char *
     return [AppleAccessibilityRuntime.sharedInstance runUnitTestWithName:[NSString stringWithUTF8String:name]];
 }
 
-APPLE_ACCESSIBILITY_EXTERN bool _UnityAX_RuniOSSideUnitTestWithKeyPathExpectingStringResult(int32_t identifier, const char *keyPath, const char *expected)
+APPLE_ACCESSIBILITY_EXTERN bool _UnityAX_RuniOSSideUnitTestWithKeyPathExpectingStringResult(uint64_t identifier, const char *keyPath, const char *expected)
 {
     return [AppleAccessibilityRuntime.sharedInstance runUnitTestForIdentifier:@(identifier) keyPath:[NSString stringWithUTF8String:keyPath] expected:[NSString stringWithUTF8String:expected]];
 }

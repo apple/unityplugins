@@ -129,9 +129,13 @@ namespace UnityPickers
 		[SerializeField]
 		private string nameFilter;
 
+#if UNITY_6000_4_OR_NEWER
+        private HierarchyIterator hierarchyIterator;
+#else
 		private HierarchyProperty hierarchyProperty;
+#endif
 
-		private List<HierarchyEntry> loadedAssets;
+        private List<HierarchyEntry> loadedAssets;
 
 		private readonly List<HierarchyEntry> loadedAssetsFlat = new List<HierarchyEntry>();
 
@@ -249,8 +253,12 @@ namespace UnityPickers
 				buttonPos.xMin = buttonPos.xMax - EditorGUIUtility.singleLineHeight;
 				var requesterWindow = focusedWindow;
 
+#if UNITY_6000_4_OR_NEWER
+                string controlName = property.serializedObject.targetObject.GetEntityId() + "_" + property.propertyPath;
+#else
 				string controlName = property.serializedObject.targetObject.GetInstanceID() + "_" + property.propertyPath;
-				var e = Event.current;
+#endif
+                var e = Event.current;
 				bool showHotKey =
 					GUI.GetNameOfFocusedControl() == controlName &&
 					e.type == EventType.KeyDown &&
@@ -919,6 +927,15 @@ namespace UnityPickers
 			loadedAssets = new List<HierarchyEntry>();
 			loadedAssetsFlat.Clear();
 
+#if UNITY_6000_4_OR_NEWER
+            hierarchyIterator = new HierarchyIterator(HierarchyType.Assets);
+            hierarchyIterator.SetSearchFilter(GetFilter(), (int)SearchableEditorWindow.SearchMode.All);
+
+            while (hierarchyIterator.Next(null))
+            {
+                AddAssetInfo(hierarchyIterator);
+            }
+#else
 			hierarchyProperty = new HierarchyProperty(HierarchyType.Assets);
 			hierarchyProperty.SetSearchFilter(GetFilter(), (int)SearchableEditorWindow.SearchMode.All);
 
@@ -926,8 +943,9 @@ namespace UnityPickers
 			{
 				AddAssetInfo(hierarchyProperty);
 			}
+#endif
 
-			FilterAssets(ref loadedAssets);
+            FilterAssets(ref loadedAssets);
 			loadedAssets.ForEach(SortChildren);
 
 			loadedAssetsFlat.Clear();
@@ -957,10 +975,18 @@ namespace UnityPickers
 	        return stringBuilder.ToString();
 	    }
 
-		private void AddAssetInfo(HierarchyProperty hp)
+#if UNITY_6000_4_OR_NEWER
+        private void AddAssetInfo(HierarchyIterator hi)
+#else
+        private void AddAssetInfo(HierarchyProperty hp)
+#endif
 		{
+#if UNITY_6000_4_OR_NEWER
+            var path = AssetDatabase.GUIDToAssetPath(hi.guid);
+#else
 			var path = AssetDatabase.GUIDToAssetPath(hp.guid);
-			var folders = path.Split('/');
+#endif
+            var folders = path.Split('/');
 			var list = loadedAssets;
 			HierarchyEntry parent = null;
 			for (int ii = 1; ii < folders.Length - 1; ii++) // 1 to skip Assets folder, -1 to skip asset name
@@ -984,10 +1010,18 @@ namespace UnityPickers
 			var hierarchyEntry = new HierarchyEntry
 			{
 				Parent = parent,
-				Name = hp.name,
-				Path = path,
-				AssetGuid = hp.guid,
-			};
+#if UNITY_6000_4_OR_NEWER
+                Name = hi.name,
+#else
+                Name = hp.name,
+#endif
+                Path = path,
+#if UNITY_6000_4_OR_NEWER
+                AssetGuid = hi.guid,
+#else
+                AssetGuid = hp.guid,
+#endif
+            };
 			list.Add(hierarchyEntry);
 		}
 

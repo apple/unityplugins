@@ -265,7 +265,11 @@ namespace XNodeEditor {
 
         public static void CreateFromTemplate(string initialName, string templatePath) {
             ProjectWindowUtil.StartNameEditingIfProjectWindowExists(
+#if UNITY_6000_4_OR_NEWER
+                EntityId.None,
+#else
                 0,
+#endif
                 ScriptableObject.CreateInstance<DoCreateCodeFile>(),
                 initialName,
                 scriptIcon,
@@ -273,9 +277,15 @@ namespace XNodeEditor {
             );
         }
 
+#if UNITY_6000_4_OR_NEWER
+        /// Inherits from AssetCreationEndAction, must override AssetCreationEndAction.Action
+        public class DoCreateCodeFile : UnityEditor.ProjectWindowCallback.AssetCreationEndAction {
+            public override void Action(EntityId entityId, string pathName, string resourceFile) {
+#else
         /// Inherits from EndNameAction, must override EndNameAction.Action
         public class DoCreateCodeFile : UnityEditor.ProjectWindowCallback.EndNameEditAction {
             public override void Action(int instanceId, string pathName, string resourceFile) {
+#endif
                 Object o = CreateScript(pathName, resourceFile);
                 ProjectWindowUtil.ShowCreatedAsset(o);
             }

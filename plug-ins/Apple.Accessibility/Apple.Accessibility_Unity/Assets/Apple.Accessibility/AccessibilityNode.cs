@@ -388,32 +388,60 @@ namespace Apple.Accessibility
             UnregisterAXElement(this);
         }
 
-        private static Dictionary<int, AccessibilityNode> axElements = new Dictionary<int, AccessibilityNode>();
+        private static Dictionary<ulong, AccessibilityNode> axElements = new Dictionary<ulong, AccessibilityNode>();
 
         static internal void RegisterAXElement(AccessibilityNode obj)
         {
-            if (axElements.ContainsKey(obj.gameObject.GetInstanceID()))
+#if UNITY_6000_4_OR_NEWER
+            if (axElements.ContainsKey(EntityId.ToULong(obj.gameObject.GetEntityId())))
+#else
+            if (axElements.ContainsKey((ulong)obj.gameObject.GetInstanceID()))
+#endif
             {
                 return;
             }
-            axElements.Add(obj.gameObject.GetInstanceID(), obj);
+
+#if UNITY_6000_4_OR_NEWER
+            axElements.Add(EntityId.ToULong(obj.gameObject.GetEntityId()), obj);
             AccessibilityNode parent = obj._accessibilityParent();
-            int parentId = -1;
+            ulong parentId = EntityId.ToULong(EntityId.None);
+#else
+            axElements.Add((ulong)obj.gameObject.GetInstanceID(), obj);
+            AccessibilityNode parent = obj._accessibilityParent();
+            ulong parentId = 0;
+#endif
 
             if (parent)
             {
-                parentId = parent.gameObject.GetInstanceID();
+#if UNITY_6000_4_OR_NEWER
+                parentId = EntityId.ToULong(parent.gameObject.GetEntityId());
+#else
+                parentId = (ulong)parent.gameObject.GetInstanceID();
+#endif
             }
+
 #if (UNITY_IOS || UNITY_TVOS) && !UNITY_EDITOR
-            _UnityAX_RegisterElementWithIdentifier(obj.gameObject.GetInstanceID(), parentId, parent != null);
+#if UNITY_6000_4_OR_NEWER
+            _UnityAX_RegisterElementWithIdentifier(EntityId.ToULong(obj.gameObject.GetEntityId()), parentId, parent != null);
+#else
+            _UnityAX_RegisterElementWithIdentifier((ulong)obj.gameObject.GetInstanceID(), parentId, parent != null);
+#endif
 #endif
         }
 
         static internal void UnregisterAXElement(AccessibilityNode obj)
         {
-            axElements.Remove(obj.gameObject.GetInstanceID());
+#if UNITY_6000_4_OR_NEWER
+            axElements.Remove(EntityId.ToULong(obj.gameObject.GetEntityId()));
+#else
+            axElements.Remove((ulong)obj.gameObject.GetInstanceID());
+#endif
 #if (UNITY_IOS || UNITY_TVOS) && !UNITY_EDITOR
-            _UnityAX_UnregisterElementWithIdentifier(obj.gameObject.GetInstanceID());
+#if UNITY_6000_4_OR_NEWER
+            _UnityAX_UnregisterElementWithIdentifier(EntityId.ToULong(obj.gameObject.GetEntityId()));
+#else
+            _UnityAX_UnregisterElementWithIdentifier((ulong)obj.gameObject.GetInstanceID());
+#endif
 #endif
         }
 
@@ -869,13 +897,13 @@ namespace Apple.Accessibility
 
 #if (UNITY_IOS || UNITY_TVOS) && !UNITY_EDITOR
         [DllImport("__Internal")] private static extern void _UnityAX_InitializeAXRuntime();
-        [DllImport("__Internal")] private static extern void _UnityAX_RegisterElementWithIdentifier(int identifier, int parentIdentifier, [MarshalAs(UnmanagedType.I1)] bool hasParent);
-        [DllImport("__Internal")] private static extern void _UnityAX_UnregisterElementWithIdentifier(int identifier);
+        [DllImport("__Internal")] private static extern void _UnityAX_RegisterElementWithIdentifier(ulong identifier, ulong parentIdentifier, [MarshalAs(UnmanagedType.I1)] bool hasParent);
+        [DllImport("__Internal")] private static extern void _UnityAX_UnregisterElementWithIdentifier(ulong identifier);
 
-        private delegate string AccessibilityFrameDelegate(int identifier);
+        private delegate string AccessibilityFrameDelegate(ulong identifier);
         [DllImport("__Internal")] private static extern void _UnityAX_registerAccessibilityFrame(AccessibilityFrameDelegate actionDelegate);
         [AOT.MonoPInvokeCallback(typeof(AccessibilityFrameDelegate))]
-        private static string _UnityAX_accessibilityFrame(int identifier)
+        private static string _UnityAX_accessibilityFrame(ulong identifier)
         {
             Rect rect = Rect.zero;
             if (axElements.TryGetValue(identifier, out AccessibilityNode obj))
@@ -885,10 +913,10 @@ namespace Apple.Accessibility
             return _stringForRect(rect);
         }
 
-        private delegate string AccessibilityLabelDelegate(int identifier);
+        private delegate string AccessibilityLabelDelegate(ulong identifier);
         [DllImport("__Internal")] private static extern void _UnityAX_registerAccessibilityLabel(AccessibilityLabelDelegate actionDelegate);
         [AOT.MonoPInvokeCallback(typeof(AccessibilityLabelDelegate))]
-        private static string _UnityAX_accessibilityLabel(int identifier)
+        private static string _UnityAX_accessibilityLabel(ulong identifier)
         {
             if (axElements.TryGetValue(identifier, out AccessibilityNode obj))
             {
@@ -897,10 +925,10 @@ namespace Apple.Accessibility
             return null;
         }
 
-        private delegate ulong AccessibilityTraitsDelegate(int identifier);
+        private delegate ulong AccessibilityTraitsDelegate(ulong identifier);
         [DllImport("__Internal")] private static extern void _UnityAX_registerAccessibilityTraits(AccessibilityTraitsDelegate actionDelegate);
         [AOT.MonoPInvokeCallback(typeof(AccessibilityTraitsDelegate))]
-        private static ulong _UnityAX_accessibilityTraits(int identifier)
+        private static ulong _UnityAX_accessibilityTraits(ulong identifier)
         {
             if (axElements.TryGetValue(identifier, out AccessibilityNode obj))
             {
@@ -909,10 +937,10 @@ namespace Apple.Accessibility
             return 0;
         }
 
-        private delegate bool IsAccessibilityElementDelegate(int identifier);
+        private delegate bool IsAccessibilityElementDelegate(ulong identifier);
         [DllImport("__Internal")] private static extern void _UnityAX_registerAccessibilityIsElement(IsAccessibilityElementDelegate actionDelegate);
         [AOT.MonoPInvokeCallback(typeof(IsAccessibilityElementDelegate))]
-        private static bool _UnityAX_IsAccessibilityElement(int identifier)
+        private static bool _UnityAX_IsAccessibilityElement(ulong identifier)
         {
             if (axElements.TryGetValue(identifier, out AccessibilityNode obj))
             {
@@ -921,10 +949,10 @@ namespace Apple.Accessibility
             return true;
         }
 
-        private delegate string AccessibilityHintDelegate(int identifier);
+        private delegate string AccessibilityHintDelegate(ulong identifier);
         [DllImport("__Internal")] private static extern void _UnityAX_registerAccessibilityHint(AccessibilityHintDelegate actionDelegate);
         [AOT.MonoPInvokeCallback(typeof(AccessibilityHintDelegate))]
-        private static string _UnityAX_AccessibilityHint(int identifier)
+        private static string _UnityAX_AccessibilityHint(ulong identifier)
         {
             if (axElements.TryGetValue(identifier, out AccessibilityNode obj))
             {
@@ -933,10 +961,10 @@ namespace Apple.Accessibility
             return null;
         }
 
-        private delegate string AccessibilityValueDelegate(int identifier);
+        private delegate string AccessibilityValueDelegate(ulong identifier);
         [DllImport("__Internal")] private static extern void _UnityAX_registerAccessibilityValue(AccessibilityValueDelegate actionDelegate);
         [AOT.MonoPInvokeCallback(typeof(AccessibilityValueDelegate))]
-        private static string _UnityAX_AccessibilityValue(int identifier)
+        private static string _UnityAX_AccessibilityValue(ulong identifier)
         {
             if (axElements.TryGetValue(identifier, out AccessibilityNode obj))
             {
@@ -945,10 +973,10 @@ namespace Apple.Accessibility
             return null;
         }
 
-        private delegate string AccessibilityIdentifierDelegate(int identifier);
+        private delegate string AccessibilityIdentifierDelegate(ulong identifier);
         [DllImport("__Internal")] private static extern void _UnityAX_registerAccessibilityIdentifier(AccessibilityIdentifierDelegate identifierDelegate);
         [AOT.MonoPInvokeCallback(typeof(AccessibilityIdentifierDelegate))]
-        private static string _UnityAX_AccessibilityIdentifier(int identifier)
+        private static string _UnityAX_AccessibilityIdentifier(ulong identifier)
         {
             if (axElements.TryGetValue(identifier, out AccessibilityNode obj))
             {
@@ -957,10 +985,10 @@ namespace Apple.Accessibility
             return null;
         }
 
-        private delegate bool AccessibilityViewIsModalDelegate(int identifier);
+        private delegate bool AccessibilityViewIsModalDelegate(ulong identifier);
         [DllImport("__Internal")] private static extern void _UnityAX_registerAccessibilityViewIsModal(AccessibilityViewIsModalDelegate viewIsModalDelegate);
         [AOT.MonoPInvokeCallback(typeof(AccessibilityViewIsModalDelegate))]
-        private static bool _UnityAX_AccessibilityViewIsModal(int identifier)
+        private static bool _UnityAX_AccessibilityViewIsModal(ulong identifier)
         {
             if (axElements.TryGetValue(identifier, out AccessibilityNode obj))
             {
@@ -969,10 +997,10 @@ namespace Apple.Accessibility
             return false;
         }
 
-        private delegate string AccessibilityActivationPointDelegate(int identifier);
+        private delegate string AccessibilityActivationPointDelegate(ulong identifier);
         [DllImport("__Internal")] private static extern void _UnityAX_registerAccessibilityActivationPoint(AccessibilityActivationPointDelegate actionDelegate);
         [AOT.MonoPInvokeCallback(typeof(AccessibilityActivationPointDelegate))]
-        private static string _UnityAX_AccessibilityActivationPoint(int identifier)
+        private static string _UnityAX_AccessibilityActivationPoint(ulong identifier)
         {
             Vector2 value = Vector2.positiveInfinity;
             if (axElements.TryGetValue(identifier, out AccessibilityNode obj))
@@ -982,10 +1010,10 @@ namespace Apple.Accessibility
             return value == Vector2.positiveInfinity ? null : _stringForPoint(value);
         }
 
-        private delegate bool AccessibilityScrollDelegate(int identifier, int direction);
+        private delegate bool AccessibilityScrollDelegate(ulong identifier, int direction);
         [DllImport("__Internal")] private static extern void _UnityAX_registerAccessibilityScroll(AccessibilityScrollDelegate actionDelegate);
         [AOT.MonoPInvokeCallback(typeof(AccessibilityScrollDelegate))]
-        private static bool _UnityAX_AccessibilityScroll(int identifier, int direction)
+        private static bool _UnityAX_AccessibilityScroll(ulong identifier, int direction)
         {
             if (axElements.TryGetValue(identifier, out AccessibilityNode obj))
             {
@@ -994,10 +1022,10 @@ namespace Apple.Accessibility
             return false;
         }
 
-        private delegate void AccessibilityIncrementDelegate(int identifier);
+        private delegate void AccessibilityIncrementDelegate(ulong identifier);
         [DllImport("__Internal")] private static extern void _UnityAX_registerAccessibilityIncrement(AccessibilityIncrementDelegate actionDelegate);
         [AOT.MonoPInvokeCallback(typeof(AccessibilityIncrementDelegate))]
-        private static void _UnityAX_AccessibilityIncrement(int identifier)
+        private static void _UnityAX_AccessibilityIncrement(ulong identifier)
         {
             if (axElements.TryGetValue(identifier, out AccessibilityNode obj))
             {
@@ -1005,10 +1033,10 @@ namespace Apple.Accessibility
             }
         }
 
-        private delegate void AccessibilityDecrementDelegate(int identifier);
+        private delegate void AccessibilityDecrementDelegate(ulong identifier);
         [DllImport("__Internal")] private static extern void _UnityAX_registerAccessibilityDecrement(AccessibilityDecrementDelegate actionDelegate);
         [AOT.MonoPInvokeCallback(typeof(AccessibilityDecrementDelegate))]
-        private static void _UnityAX_AccessibilityDecrement(int identifier)
+        private static void _UnityAX_AccessibilityDecrement(ulong identifier)
         {
             if (axElements.TryGetValue(identifier, out AccessibilityNode obj))
             {
@@ -1016,10 +1044,10 @@ namespace Apple.Accessibility
             }
         }
 
-        private delegate ulong AccessibilityCustomActionsCountDelegate(int identifier);
+        private delegate ulong AccessibilityCustomActionsCountDelegate(ulong identifier);
         [DllImport("__Internal")] private static extern void _UnityAX_registerAccessibilityCustomActionsCount(AccessibilityCustomActionsCountDelegate actionDelegate);
         [AOT.MonoPInvokeCallback(typeof(AccessibilityCustomActionsCountDelegate))]
-        private static ulong _UnityAX_AccessibilityCustomActionCount(int identifier)
+        private static ulong _UnityAX_AccessibilityCustomActionCount(ulong identifier)
         {
             if (axElements.TryGetValue(identifier, out AccessibilityNode obj))
             {
@@ -1032,10 +1060,10 @@ namespace Apple.Accessibility
             return 0;
         }
 
-        private delegate string AccessibilityCustomActionNameDelegate(int identifier, int idx);
+        private delegate string AccessibilityCustomActionNameDelegate(ulong identifier, int idx);
         [DllImport("__Internal")] private static extern void _UnityAX_registerAccessibilityCustomActionName(AccessibilityCustomActionNameDelegate actionDelegate);
-        [AOT.MonoPInvokeCallback(typeof(AccessibilityPerformCustomActionDelegate))]
-        private static string _UnityAX_CustomActionName(int identifier, int idx)
+        [AOT.MonoPInvokeCallback(typeof(AccessibilityCustomActionNameDelegate))]
+        private static string _UnityAX_CustomActionName(ulong identifier, int idx)
         {
             if (axElements.TryGetValue(identifier, out AccessibilityNode obj))
             {
@@ -1055,10 +1083,10 @@ namespace Apple.Accessibility
             return null;
         }
 
-        private delegate bool AccessibilityPerformCustomActionDelegate(int identifier, int idx);
+        private delegate bool AccessibilityPerformCustomActionDelegate(ulong identifier, int idx);
         [DllImport("__Internal")] private static extern void _UnityAX_registerAccessibilityPerformCustomAction(AccessibilityPerformCustomActionDelegate actionDelegate);
         [AOT.MonoPInvokeCallback(typeof(AccessibilityPerformCustomActionDelegate))]
-        private static bool _UnityAX_PerformCustomAction(int identifier, int idx)
+        private static bool _UnityAX_PerformCustomAction(ulong identifier, int idx)
         {
             if (axElements.TryGetValue(identifier, out AccessibilityNode obj))
             {
@@ -1078,10 +1106,10 @@ namespace Apple.Accessibility
             return false;
         }
 
-        private delegate bool AccessibilityPerformMagicTapDelegate(int identifier);
+        private delegate bool AccessibilityPerformMagicTapDelegate(ulong identifier);
         [DllImport("__Internal")] private static extern void _UnityAX_registerAccessibilityPerformMagicTap(AccessibilityPerformMagicTapDelegate actionDelegate);
         [AOT.MonoPInvokeCallback(typeof(AccessibilityPerformMagicTapDelegate))]
-        internal static bool _UnityAX_AccessibilityPerformMagicTap(int identifier)
+        internal static bool _UnityAX_AccessibilityPerformMagicTap(ulong identifier)
         {
             if (axElements.TryGetValue(identifier, out AccessibilityNode obj))
             {
@@ -1090,10 +1118,10 @@ namespace Apple.Accessibility
             return false;
         }
 
-        private delegate bool AccessibilityPerformEscapeDelegate(int identifier);
+        private delegate bool AccessibilityPerformEscapeDelegate(ulong identifier);
         [DllImport("__Internal")] private static extern void _UnityAX_registerAccessibilityPerformEscape(AccessibilityPerformEscapeDelegate actionDelegate);
         [AOT.MonoPInvokeCallback(typeof(AccessibilityPerformEscapeDelegate))]
-        internal static bool _UnityAX_AccessibilityPerformEscape(int identifier)
+        internal static bool _UnityAX_AccessibilityPerformEscape(ulong identifier)
         {
             if (axElements.TryGetValue(identifier, out AccessibilityNode obj))
             {
@@ -1102,10 +1130,10 @@ namespace Apple.Accessibility
             return false;
         }
 
-        private delegate bool AccessibilityActivateDelegate(int identifier);
+        private delegate bool AccessibilityActivateDelegate(ulong identifier);
         [DllImport("__Internal")] private static extern void _UnityAX_registerAccessibilityActivate(AccessibilityActivateDelegate actionDelegate);
         [AOT.MonoPInvokeCallback(typeof(AccessibilityActivateDelegate))]
-        private static bool _UnityAX_AccessibilityActivate(int identifier)
+        private static bool _UnityAX_AccessibilityActivate(ulong identifier)
         {
             if (axElements.TryGetValue(identifier, out AccessibilityNode obj))
             {

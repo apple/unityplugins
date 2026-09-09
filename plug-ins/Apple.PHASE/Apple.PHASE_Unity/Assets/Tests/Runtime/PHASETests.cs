@@ -35,7 +35,11 @@ namespace Apple.PHASE.UnitTests
 
             PHASESource source = sourceObject.GetComponent<PHASESource>();
             yield return new WaitForFixedUpdate();
+#if UNITY_6000_4_OR_NEWER
+            Assert.IsTrue(source.GetEntityId() != EntityId.None, $"Failed to create {testSourceName}");
+#else
             Assert.IsTrue(source.GetInstanceID() != InvalidId, $"Failed to create {testSourceName}");
+#endif
 
             source.Play();
             yield return new WaitForFixedUpdate();
@@ -59,7 +63,11 @@ namespace Apple.PHASE.UnitTests
 
             PHASESource source = sourceObject.GetComponent<PHASESource>();
             yield return new WaitForFixedUpdate();
+#if UNITY_6000_4_OR_NEWER
+            Assert.IsTrue(source.GetEntityId() != EntityId.None, "Failed to create looping source");
+#else
             Assert.IsTrue(source.GetInstanceID() != InvalidId, "Failed to create looping source");
+#endif
 
             source.Play();
             yield return new WaitForSeconds(0.75f);
@@ -86,7 +94,11 @@ namespace Apple.PHASE.UnitTests
 
             PHASESource source = sourceObject.GetComponent<PHASESource>();
             yield return new WaitForFixedUpdate();
+#if UNITY_6000_4_OR_NEWER
+            Assert.IsTrue(source.GetEntityId() != EntityId.None, "Failed to create Footsteps");
+#else
             Assert.IsTrue(source.GetInstanceID() != InvalidId, "Failed to create Footsteps");
+#endif
 
             source.Play();
             yield return new WaitForSeconds(0.5f);
@@ -116,7 +128,11 @@ namespace Apple.PHASE.UnitTests
 
             PHASESource source = sourceObject.GetComponent<PHASESource>();
             yield return new WaitForFixedUpdate();
+#if UNITY_6000_4_OR_NEWER
+            Assert.IsTrue(source.GetEntityId() != EntityId.None, "Failed to create looping source");
+#else
             Assert.IsTrue(source.GetInstanceID() != InvalidId, "Failed to create looping source");
+#endif
 
             source.Play();
             yield return new WaitForSeconds(0.75f);
@@ -143,7 +159,11 @@ namespace Apple.PHASE.UnitTests
 
             PHASESource source = sourceObject.GetComponent<PHASESource>();
             yield return new WaitForFixedUpdate();
+#if UNITY_6000_4_OR_NEWER
+            Assert.IsTrue(source.GetEntityId() != EntityId.None, "Failed to create looping source");
+#else
             Assert.IsTrue(source.GetInstanceID() != InvalidId, "Failed to create looping source");
+#endif
 
             source.Play();
             yield return new WaitForSeconds(0.75f);
@@ -182,7 +202,11 @@ namespace Apple.PHASE.UnitTests
 
             PHASESource source = sourceObject.GetComponent<PHASESource>();
             yield return new WaitForFixedUpdate();
+#if UNITY_6000_4_OR_NEWER
+            Assert.IsTrue(source.GetEntityId() != EntityId.None, "Failed to create looping source");
+#else
             Assert.IsTrue(source.GetInstanceID() != InvalidId, "Failed to create looping source");
+#endif
 
             source.Play();
             yield return new WaitForSeconds(0.75f);
@@ -213,7 +237,11 @@ namespace Apple.PHASE.UnitTests
 
             PHASESource source = sourceObject.GetComponent<PHASESource>();
             yield return new WaitForFixedUpdate();
+#if UNITY_6000_4_OR_NEWER
+            Assert.IsTrue(source.GetEntityId() != EntityId.None, "Failed to create looping source");
+#else
             Assert.IsTrue(source.GetInstanceID() != InvalidId, "Failed to create looping source");
+#endif
 
             source.Play();
             yield return new WaitForSeconds(0.75f);
@@ -244,7 +272,11 @@ namespace Apple.PHASE.UnitTests
 
             PHASESource source = sourceObject.GetComponent<PHASESource>();
             yield return new WaitForFixedUpdate();
+#if UNITY_6000_4_OR_NEWER
+            Assert.IsTrue(source.GetEntityId() != EntityId.None, "Failed to create looping source");
+#else
             Assert.IsTrue(source.GetInstanceID() != InvalidId, "Failed to create looping source");
+#endif
 
             source.Play();
             yield return new WaitForSeconds(0.05f);
@@ -270,7 +302,11 @@ namespace Apple.PHASE.UnitTests
 
             PHASESource source = sourceObject.GetComponent<PHASESource>();
             yield return new WaitForFixedUpdate();
+#if UNITY_6000_4_OR_NEWER
+            Assert.IsTrue(source.GetEntityId() != EntityId.None, "Failed to create looping source");
+#else
             Assert.IsTrue(source.GetInstanceID() != InvalidId, "Failed to create looping source");
+#endif
 
             source.Play();
             yield return new WaitForSeconds(0.75f);
@@ -310,7 +346,11 @@ namespace Apple.PHASE.UnitTests
 
             PHASESource source = sourceObject.GetComponent<PHASESource>();
             yield return new WaitForFixedUpdate();
+#if UNITY_6000_4_OR_NEWER
+            Assert.IsTrue(source.GetEntityId() != EntityId.None, "Failed to create looping source");
+#else
             Assert.IsTrue(source.GetInstanceID() != InvalidId, "Failed to create looping source");
+#endif
 
             source.Play();
             yield return new WaitForSeconds(0.75f);
@@ -341,7 +381,11 @@ namespace Apple.PHASE.UnitTests
 
             PHASESource source = sourceObject.GetComponent<PHASESource>();
             yield return new WaitForFixedUpdate();
+#if UNITY_6000_4_OR_NEWER
+            Assert.IsTrue(source.GetEntityId() != EntityId.None, "Failed to create looping source");
+#else
             Assert.IsTrue(source.GetInstanceID() != InvalidId, "Failed to create looping source");
+#endif
 
             source.Play();
             yield return new WaitForSeconds(0.5f);
@@ -370,7 +414,11 @@ namespace Apple.PHASE.UnitTests
 
             PHASESource source = sourceObject.GetComponent<PHASESource>();
             yield return new WaitForFixedUpdate();
+#if UNITY_6000_4_OR_NEWER
+            Assert.IsTrue(source.GetEntityId() != EntityId.None, "Failed to create looping source");
+#else
             Assert.IsTrue(source.GetInstanceID() != InvalidId, "Failed to create looping source");
+#endif
 
             source.Play();
             yield return new WaitForSeconds(0.75f);
