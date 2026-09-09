@@ -322,12 +322,24 @@ namespace Apple.Core
                         AppleNativeLibrary currLibrary = GetLibrary(applePackage.DisplayName, _trackedAppleConfig.Principal, _trackedApplePlatform);
                         if (!currLibrary.IsValid)
                         {
-                            string warningMessage = $"[Apple Unity Plug-Ins] Missing {_trackedAppleConfig.Principal} {applePackage.DisplayName} native library for {_trackedApplePlatform}\n"
-                            + $"  {_trackedAppleConfig.Fallback} {applePackage.DisplayName} native library for {_trackedApplePlatform} will be used as a fallback.\n"
-                            + $"  To generate the {_trackedAppleConfig.Principal} native library for {applePackage.DisplayName}, try re-building the {applePackage.DisplayName} plug-in with the following command line (assuming the working directory is the Apple Unity Plug-In project root folder):\n\n"
-                            + $"  <b><color=orange>$> python3 ./build.py -p {applePackage.ShortName}</color></b>\n";
+                            AppleNativeLibrary fallbackLibrary = GetLibrary(applePackage.DisplayName, _trackedAppleConfig.Fallback, _trackedApplePlatform);
+                            if (fallbackLibrary.IsValid)
+                            {
+                                string warningMessage = $"[Apple Unity Plug-Ins] Missing {_trackedAppleConfig.Principal} {applePackage.DisplayName} native library for {_trackedApplePlatform}\n"
+                                + $"  {_trackedAppleConfig.Fallback} {applePackage.DisplayName} native library for {_trackedApplePlatform} will be used as a fallback.\n"
+                                + $"  To generate the {_trackedAppleConfig.Principal} native library for {applePackage.DisplayName}, try re-building the {applePackage.DisplayName} plug-in with the following command line (assuming the working directory is the Apple Unity Plug-In project root folder):\n\n"
+                                + $"  <b><color=orange>$> python3 ./build.py -p {applePackage.ShortName}</color></b>\n";
 
-                            Debug.LogWarning(warningMessage);
+                                Debug.LogWarning(warningMessage);
+                            }
+                            else
+                            {
+                                string errorMessage = $"[Apple Unity Plug-Ins] No usable {applePackage.DisplayName} native library found for {_trackedApplePlatform}. Both the {_trackedAppleConfig.Principal} and {_trackedAppleConfig.Fallback} native libraries are missing.\n"
+                                + $"  To generate the native library for {applePackage.DisplayName}, try re-building the {applePackage.DisplayName} plug-in with the following command line (assuming the working directory is the Apple Unity Plug-In project root folder):\n\n"
+                                + $"  <b><color=orange>$> python3 ./build.py -p {applePackage.ShortName}</color></b>\n";
+
+                                Debug.LogError(errorMessage);
+                            }
                         }
                     }
                     else if (buildStep.IsEnabled)
