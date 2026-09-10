@@ -1,8 +1,5 @@
 # Apple Unity Plug-Ins
 
-## 27 Beta
-
-27 beta is now live! Watch the [WWDC26 video](https://developer.apple.com/videos/play/wwdc2026/378/) for information and check out the `27-beta` branch to test it out. 
 
 ## Overview
 The Apple Unity Plug-Ins expose a selection of Apple platform frameworks to Unity developers.
@@ -16,13 +13,13 @@ To get started with integration of these plug-ins into your Unity projects, run 
 | :------ | :---------- |
 | Apple.Core | Provides integrated build post process management and Editor UI.<br/>**Note:** Apple.Core is a dependency of all Apple Unity plug-ins.|
 | Apple.Accessibility | Provides Apple's accessibility to Unity developers allowing adding supports to Apple's built-in assistive technologies such as VoiceOver.|
+| Apple.BackgroundAssets | Exposes Apple’s Background Assets framework to Unity developers, enabling out-of-band delivery of asset packs from Apple or third-party servers. The plug-in also automatically configures generated Xcode projects with a downloader extension and everything else that’s necessary to use Background Assets. |
 | Apple.CoreHaptics | Brings Apple's Core Haptics framework to Unity developers, enabling for customizable haptic patterns and in-depth playback control on supported devices. This Plug-In also includes UIKit's UIFeedbackGenerator API.|
 | Apple.GameController | Exposes Apple's GameController framework to Unity developers allowing for rich controller features in macOS, iOS, and tvOS apps. |
 | Apple.GameKit | Allows Unity developers to easily integrate GameKit features such as leaderboards, achievements, and match making. |
 | Apple.PHASE | The PHASE plug-in allows Unity developers to take full advantage of Apple's new geometry and material aware spatial audio system. |
 | Apple.SpatialController | Exposes Apple's AccessoryTracking and GameController frameworks to Unity developers on visionOS allowing for spatial controller features in visionOS apps. Requires visionOS 26.0 |
 | Apple.StoreKit | Exposes Apple's StoreKit 2 framework to Unity developers, enabling in-app purchases, subscriptions, and transaction management with modern async/await patterns. |
-| Apple.BackgroundAssets | Exposes Apple’s Background Assets framework to Unity developers, enabling out-of-band delivery of asset packs from Apple or third-party servers. The plug-in also automatically configures generated Xcode projects with a downloader extension and everything else that’s necessary to use Background Assets. |
 
 ## Minimum Supported OS Versions
 | OS | Version |
