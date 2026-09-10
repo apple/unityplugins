@@ -129,7 +129,11 @@ namespace UnityPickers
 		[SerializeField]
 		private string nameFilter;
 
+#if UNITY_6000_4_OR_NEWER
+		private HierarchyIterator hierarchyIterator;
+#else
 		private HierarchyProperty hierarchyProperty;
+#endif
 
 		private List<HierarchyEntry> loadedAssets;
 
@@ -251,7 +255,11 @@ namespace UnityPickers
 				buttonPos.xMin = buttonPos.xMax - EditorGUIUtility.singleLineHeight;
 				var requesterWindow = focusedWindow;
 
+#if UNITY_6000_4_OR_NEWER
+				string controlName = property.serializedObject.targetObject.GetEntityId() + "_" + property.propertyPath;
+#else
 				string controlName = property.serializedObject.targetObject.GetInstanceID() + "_" + property.propertyPath;
+#endif
 				var e = Event.current;
 				bool showHotKey =
 					GUI.GetNameOfFocusedControl() == controlName &&
@@ -929,6 +937,15 @@ namespace UnityPickers
 			loadedAssets = new List<HierarchyEntry>();
 			loadedAssetsFlat.Clear();
 
+#if UNITY_6000_4_OR_NEWER
+			hierarchyIterator = new HierarchyIterator(HierarchyType.Assets);
+			hierarchyIterator.SetSearchFilter(GetFilter(), (int)SearchableEditorWindow.SearchMode.All);
+
+			while (hierarchyIterator.Next(null))
+			{
+				AddAssetInfo(hierarchyIterator);
+			}
+#else
 			hierarchyProperty = new HierarchyProperty(HierarchyType.Assets);
 			hierarchyProperty.SetSearchFilter(GetFilter(), (int)SearchableEditorWindow.SearchMode.All);
 
@@ -936,6 +953,7 @@ namespace UnityPickers
 			{
 				AddAssetInfo(hierarchyProperty);
 			}
+#endif
 
 			FilterAssets(ref loadedAssets);
 			loadedAssets.ForEach(SortChildren);
@@ -967,9 +985,15 @@ namespace UnityPickers
 	        return stringBuilder.ToString();
 	    }
 
+#if UNITY_6000_4_OR_NEWER
+		private void AddAssetInfo(HierarchyIterator hi)
+		{ 
+			var path = AssetDatabase.GUIDToAssetPath(hi.guid);
+#else
 		private void AddAssetInfo(HierarchyProperty hp)
 		{
 			var path = AssetDatabase.GUIDToAssetPath(hp.guid);
+#endif
 			var folders = path.Split('/');
 			var list = loadedAssets;
 			HierarchyEntry parent = null;
@@ -993,10 +1017,17 @@ namespace UnityPickers
 			}
 			var hierarchyEntry = new HierarchyEntry
 			{
+#if UNITY_6000_4_OR_NEWER
+				Parent = parent,
+				Name = hi.name,
+				Path = path,
+				AssetGuid = hi.guid,
+#else
 				Parent = parent,
 				Name = hp.name,
 				Path = path,
 				AssetGuid = hp.guid,
+#endif
 			};
 			list.Add(hierarchyEntry);
 		}

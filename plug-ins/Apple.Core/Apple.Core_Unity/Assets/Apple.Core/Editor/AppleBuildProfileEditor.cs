@@ -180,7 +180,11 @@ namespace Apple.Core
                 {
                     if (_serializedDefaultInfoPlist.objectReferenceValue != null)
                     {
+#if UNITY_6000_4_OR_NEWER
+                        string filePath = AssetDatabase.GetAssetPath(_serializedDefaultInfoPlist.objectReferenceValue.GetEntityId());
+#else
                         string filePath = AssetDatabase.GetAssetPath(_serializedDefaultInfoPlist.objectReferenceValue.GetInstanceID());
+#endif
                         if (!filePath.EndsWith(".plist"))
                         {
                             _serializedDefaultInfoPlist.objectReferenceValue = null;
@@ -232,7 +236,11 @@ namespace Apple.Core
                 EditorGUILayout.ObjectField(_serializedDefaultEntitlements, typeof(UnityEngine.Object), defaultEntitlementsLabel, GUILayout.MinWidth(_minLabelWidth));
                 if (EditorGUI.EndChangeCheck() && !(_serializedDefaultEntitlements.objectReferenceValue is null))
                 {
+#if UNITY_6000_4_OR_NEWER
+                    string filePath = AssetDatabase.GetAssetPath(_serializedDefaultEntitlements.objectReferenceValue.GetEntityId());
+#else
                     string filePath = AssetDatabase.GetAssetPath(_serializedDefaultEntitlements.objectReferenceValue.GetInstanceID());
+#endif
                     if (!filePath.EndsWith(".entitlements"))
                     {
                         _serializedDefaultEntitlements.objectReferenceValue = null;
