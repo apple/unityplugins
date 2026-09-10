@@ -176,8 +176,10 @@ namespace Apple.GameKit
             [DllImport(InteropUtility.DLLName)]
             public static extern long GKAchievementDescription_GetMaximumPoints(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
+            [return: MarshalAs(UnmanagedType.I1)]
             public static extern bool GKAchievementDescription_GetIsHidden(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
+            [return: MarshalAs(UnmanagedType.I1)]
             public static extern bool GKAchievementDescription_GetIsReplayable(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
             public static extern double GKAchievementDescription_GetRarityPercent(IntPtr pointer);

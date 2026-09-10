@@ -300,10 +300,10 @@ namespace Apple.GameKit.Multiplayer
         public event NearbyPlayerReachableHandler NearbyPlayerReachable;
 
         public delegate void NearbyPlayerReachableHandler(GKPlayer player, bool isReachable);
-        internal delegate void InternalNearbyPlayerReachableHandler(IntPtr gkMatchmakerPtr, IntPtr gkPlayerPtr, bool isReachable);
+        internal delegate void InternalNearbyPlayerReachableHandler(IntPtr gkMatchmakerPtr, IntPtr gkPlayerPtr, [MarshalAs(UnmanagedType.I1)] bool isReachable);
 
         [MonoPInvokeCallback(typeof(InternalNearbyPlayerReachableHandler))]
-        private static void OnNearbyPlayerReachable(IntPtr gkMatchmakerPtr, IntPtr gkPlayerPtr, bool isReachable)
+        private static void OnNearbyPlayerReachable(IntPtr gkMatchmakerPtr, IntPtr gkPlayerPtr, [MarshalAs(UnmanagedType.I1)] bool isReachable)
         {
             InteropPInvokeExceptionHandler.CatchAndLog(() =>
             {

@@ -897,7 +897,7 @@ namespace Apple.Accessibility
 
 #if (UNITY_IOS || UNITY_TVOS) && !UNITY_EDITOR
         [DllImport("__Internal")] private static extern void _UnityAX_InitializeAXRuntime();
-        [DllImport("__Internal")] private static extern void _UnityAX_RegisterElementWithIdentifier(ulong identifier, ulong parentIdentifier, bool hasParent);
+        [DllImport("__Internal")] private static extern void _UnityAX_RegisterElementWithIdentifier(ulong identifier, ulong parentIdentifier, [MarshalAs(UnmanagedType.I1)] bool hasParent);
         [DllImport("__Internal")] private static extern void _UnityAX_UnregisterElementWithIdentifier(ulong identifier);
 
         private delegate string AccessibilityFrameDelegate(ulong identifier);

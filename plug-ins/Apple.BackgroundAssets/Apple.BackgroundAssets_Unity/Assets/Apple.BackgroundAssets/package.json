@@ -1,0 +1,19 @@
+{
+	"name": "com.apple.unityplugin.backgroundassets",
+	"displayName": "Apple.BackgroundAssets",
+	"description": "Distribute asset packs of additional downloadable content on the App Store or from your own server.",
+	"version": "1.0.0",
+	"unity": "2022.3",
+	"dependencies": {
+		"com.apple.unityplugin.core": "3.2.0"
+	},
+	"keywords": [
+		"apple",
+		"backgroundassets"
+	],
+	"author": {
+		"name": "Apple, Inc",
+		"email": "developer@apple.com",
+		"url": "https://developer.apple.com"
+	}
+}

@@ -1,3 +1,8 @@
+# AI
+.claude
+.etabli
+
+# Build Output
 Build/
 TestBuilds/
 scripts/python/__pycache__/
@@ -5,10 +10,14 @@ scripts/python/__pycache__/
 **/.idea/*
 **/Temp/*
 plug-ins/**/TestPlayers
+**/Apple Plug-In Support/
+**/Apple Plug-In Support.meta
+**/NativeLibraries~/
+
+# VS Code/Xcode
 **/.vsconfig
 **/xcuserdata
 *.vsconfig
 **/.vscode/*
-**/Apple Plug-In Support/
-**/Apple Plug-In Support.meta
-**/NativeLibraries~/
+
+

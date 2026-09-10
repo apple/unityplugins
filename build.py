@@ -26,7 +26,7 @@ CTX = BuildContext(Path().resolve(__file__))
 # Handle command line args
 
 argument_parser = argparse.ArgumentParser(description="Builds all native libraries, packages plug-ins, and moves packages to build folder.")
-argument_parser.add_argument("-p", "--plugin-list", dest="plugin_list", nargs='*', default=[PluginID.ALL], help=f"Selects the plug-ins to process. Possible values are: {PluginID.ACCESSIBILITY}, {PluginID.CORE}, {PluginID.CORE_HAPTICS}, {PluginID.GAME_CONTROLLER}, {PluginID.SPATIAL_CONTROLLER}, {PluginID.GAME_KIT}, {PluginID.PHASE}, or {PluginID.ALL}. Default is: {PluginID.ALL}")
+argument_parser.add_argument("-p", "--plugin-list", dest="plugin_list", nargs='*', default=[PluginID.ALL], help=f"Selects the plug-ins to process. Possible values are: {PluginID.ACCESSIBILITY}, {PluginID.CORE}, {PluginID.CORE_HAPTICS}, {PluginID.GAME_CONTROLLER}, {PluginID.SPATIAL_CONTROLLER}, {PluginID.GAME_KIT}, {PluginID.PHASE}, {PluginID.STORE_KIT}, {PluginID.BACKGROUND_ASSETS}, or {PluginID.ALL}. Default is: {PluginID.ALL}")
 argument_parser.add_argument("-m", "--platforms", dest="platform_list", nargs='*', default=[PlatformID.ALL], help=f"Selects the desired platforms to target when building native libraries. Possible values are: {PlatformID.IOS}, {PlatformID.IOS_SIMULATOR}, {PlatformID.MACOS}, {PlatformID.TVOS}, {PlatformID.TVOS_SIMULATOR}, {PlatformID.VISIONOS}, {PlatformID.VISIONOS_SIMULATOR}, {PlatformID.SIMULATORS}, {PlatformID.DEVICES} or {PlatformID.ALL}. Default is: {PlatformID.ALL}")
 argument_parser.add_argument("-b", "--build-action", dest="build_actions", nargs='*', default=[BuildActionID.BUILD, BuildActionID.PACK], help=f"Sets the build actions for the selected plug-ins. Possible values are: {BuildActionID.BUILD}, {BuildActionID.PACK}, {BuildActionID.NONE} or {BuildActionID.ALL}. Defaults are: {BuildActionID.BUILD}, {BuildActionID.PACK}")
 argument_parser.add_argument("-bc","--build-config", dest="build_config", default=ConfigID.ALL, help=f"Sets the build configuration to compile. Possible values are: {ConfigID.RELEASE}, {ConfigID.DEBUG}, or {ConfigID.ALL} which builds all other configs. Default is: {ConfigID.ALL}")
@@ -186,7 +186,7 @@ def Main():
             break
         elif platform_id in CTX.platforms:
             if platform_id in supported_platforms:
-                valid_platform_found = True  
+                valid_platform_found = True
                 CTX.platforms[platform_id] = True
             else:
                 CTX.printer.WarningMessage(f"Valid platform '{platform_id}' selected, but no {platform_id} SDK is installed.\nPlease add the SDK:\n  {Printer.Bold('1.')} Open {Printer.Bold('Xcode')}\n  {Printer.Bold('2.')} Open {Printer.Bold('Settings')} (Xcode > Settings...) or (⌘ + ,) \n  {Printer.Bold('3.')} Go to the {Printer.Bold('Platforms')} tab\n  {Printer.Bold('4.')} Install the {platform_id} SDK.")
@@ -235,7 +235,9 @@ def Main():
         PluginID.GAME_CONTROLLER: False,
         PluginID.SPATIAL_CONTROLLER: False,
         PluginID.GAME_KIT: False,
-        PluginID.PHASE: False
+        PluginID.PHASE: False,
+        PluginID.STORE_KIT: False,
+        PluginID.BACKGROUND_ASSETS: False
     }
 
     valid_plugin_found = False
@@ -249,7 +251,7 @@ def Main():
             valid_plugin_found = True
             break
         else:
-            utility.WarningMessage(f"Ignoring unknown plug-in '{plugin_id}'. Valid options are {PluginID.ACCESSIBILITY}, {PluginID.CORE}, {PluginID.CORE_HAPTICS}, {PluginID.GAME_CONTROLLER}, {PluginID.SPATIAL_CONTROLLER}, {PluginID.GAME_KIT}, {PluginID.PHASE}, or {PluginID.ALL} (Default)")
+            CTX.printer.WarningMessage(f"Ignoring unknown plug-in '{plugin_id}'. Valid options are {PluginID.ACCESSIBILITY}, {PluginID.CORE}, {PluginID.CORE_HAPTICS}, {PluginID.GAME_CONTROLLER}, {PluginID.SPATIAL_CONTROLLER}, {PluginID.GAME_KIT}, {PluginID.PHASE}, {PluginID.STORE_KIT}, {PluginID.BACKGROUND_ASSETS}, or {PluginID.ALL} (Default)")
 
     # -------------------------------------------------------------------------
 
@@ -312,18 +314,18 @@ def Main():
     CTX.printer.SectionHeading("Configure Build Paths")
 
     # Configure build paths for packages
-    CTX.build_path = pathlib.Path(build_args.output_path)
+    CTX.build_output_path = pathlib.Path(build_args.output_path)
 
-    if CTX.clean_actions[CleanActionID.PACKAGES] and CTX.build_path.exists():
+    if CTX.clean_actions[CleanActionID.PACKAGES] and CTX.build_output_path.exists():
         CTX.printer.StatusMessage("Cleaning packages.", "\n")
-        CTX.printer.StatusMessageWithContext("Removing folder at path:",  f"{CTX.build_path}")
-        utility.RemoveFolder(CTX.build_path, prompt= not build_args.force_clean, printer= CTX.printer)
+        CTX.printer.StatusMessageWithContext("Removing folder at path:",  f"{CTX.build_output_path}")
+        utility.RemoveFolder(CTX.build_output_path, prompt= not build_args.force_clean, printer= CTX.printer)
 
     if CTX.build_actions[BuildActionID.BUILD] or CTX.build_actions[BuildActionID.PACK]:
-        if not CTX.build_path.exists():
+        if not CTX.build_output_path.exists():
             CTX.printer.Message(f"Build output path not found.", "\n")
-            CTX.printer.StatusMessageWithContext("Creating: ", f"{CTX.build_path}")
-            CTX.build_path.mkdir()
+            CTX.printer.StatusMessageWithContext("Creating: ", f"{CTX.build_output_path}")
+            CTX.build_output_path.mkdir()
 
     # Configure and optionally clean paths for test builds
     test_build_root_path = pathlib.Path(build_args.test_output_path)

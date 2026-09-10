@@ -12,9 +12,10 @@ namespace Apple.CoreHaptics
 
         #region Muted
         [DllImport(CHInteropUtility.DllName, EntryPoint = "CoreHaptics_CHHapticPatternPlayer_GetIsMuted")]
+        [return: MarshalAs(UnmanagedType.I1)]
         internal static extern bool GetIsMuted(IntPtr playerId);
         [DllImport(CHInteropUtility.DllName, EntryPoint = "CoreHaptics_CHHapticPatternPlayer_SetIsMuted")]
-        internal static extern void SetIsMuted(IntPtr playerId, bool isMuted);
+        internal static extern void SetIsMuted(IntPtr playerId, [MarshalAs(UnmanagedType.I1)] bool isMuted);
         #endregion
 
         #region Play

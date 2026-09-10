@@ -10,7 +10,7 @@
             ActionType = "Xcode.IDEStandardExecutionActionsCore.ExecutionActionType.ShellScriptAction">
             <ActionContent
                title = "Run Script"
-               scriptText = "$AUP_SHELL_SCRIPT_PATH/copy_native_libraries.sh&#10;&#10;">
+               scriptText = "&quot;$AUP_SHELL_SCRIPT_PATH&quot;/copy_native_libraries.sh&#10;&#10;">
                <EnvironmentBuildable>
                   <BuildableReference
                      BuildableIdentifier = "primary"
