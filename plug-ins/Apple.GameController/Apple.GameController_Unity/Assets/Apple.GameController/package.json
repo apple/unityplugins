@@ -22,7 +22,7 @@
         {
             "displayName": "Apple.GameController Basics",
             "description": "Demo project highlighting functionality for the Apple.GameController plug-in.",
-            "path": "Demos~/Basics"
+            "path": "Demos/Basics"
         }
     ]
 }

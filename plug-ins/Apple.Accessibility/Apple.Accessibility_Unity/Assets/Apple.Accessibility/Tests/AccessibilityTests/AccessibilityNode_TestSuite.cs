@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using System.Collections;
+using Apple.Core;
 using UnityEngine;
 using UnityEngine.TestTools;
 using UnityEngine.SceneManagement;
@@ -58,11 +59,7 @@ namespace Apple.Accessibility.UnitTests
             AccessibilityNode axObject = ButtonAXObject();
             UnityEngine.Assertions.Assert.AreEqual(axObject.AccessibilityLabel, "Button");
 
-#if UNITY_6000_4_OR_NEWER
-            bool succeeded = AccessibilityTests.RuniOSSideUnitTestWithKeyPathExpectingStringResult(EntityId.ToULong(axObject.gameObject.GetEntityId()), "accessibilityLabel", "Button");
-#else
-            bool succeeded = AccessibilityTests.RuniOSSideUnitTestWithKeyPathExpectingStringResult((ulong)axObject.gameObject.GetInstanceID(), "accessibilityLabel", "Button");
-#endif
+            bool succeeded = AccessibilityTests.RuniOSSideUnitTestWithKeyPathExpectingStringResult(axObject.gameObject.GetLongId(), "accessibilityLabel", "Button");
             UnityEngine.Assertions.Assert.IsTrue(succeeded);
 
             yield return null;
@@ -79,11 +76,7 @@ namespace Apple.Accessibility.UnitTests
             AccessibilityNode axObject = ButtonAXObject();
             UnityEngine.Assertions.Assert.AreEqual(axObject.AccessibilityValue, "ButtonValue");
 
-#if UNITY_6000_4_OR_NEWER
-            bool succeeded = AccessibilityTests.RuniOSSideUnitTestWithKeyPathExpectingStringResult(EntityId.ToULong(axObject.gameObject.GetEntityId()), "accessibilityValue", "ButtonValue");
-#else
-            bool succeeded = AccessibilityTests.RuniOSSideUnitTestWithKeyPathExpectingStringResult((ulong)axObject.gameObject.GetInstanceID(), "accessibilityValue", "ButtonValue");
-#endif
+            bool succeeded = AccessibilityTests.RuniOSSideUnitTestWithKeyPathExpectingStringResult(axObject.gameObject.GetLongId(), "accessibilityValue", "ButtonValue");
             UnityEngine.Assertions.Assert.IsTrue(succeeded);
 
             yield return null;
@@ -100,11 +93,7 @@ namespace Apple.Accessibility.UnitTests
             AccessibilityNode axObject = ButtonAXObject();
             UnityEngine.Assertions.Assert.AreEqual(axObject.AccessibilityHint, "ButtonHint");
 
-#if UNITY_6000_4_OR_NEWER
-            bool succeeded = AccessibilityTests.RuniOSSideUnitTestWithKeyPathExpectingStringResult(EntityId.ToULong(axObject.gameObject.GetEntityId()), "accessibilityHint", "ButtonHint");
-#else
-            bool succeeded = AccessibilityTests.RuniOSSideUnitTestWithKeyPathExpectingStringResult((ulong)axObject.gameObject.GetInstanceID(), "accessibilityHint", "ButtonHint");
-#endif
+            bool succeeded = AccessibilityTests.RuniOSSideUnitTestWithKeyPathExpectingStringResult(axObject.gameObject.GetLongId(), "accessibilityHint", "ButtonHint");
             UnityEngine.Assertions.Assert.IsTrue(succeeded);
 
             yield return null;
@@ -147,11 +136,7 @@ namespace Apple.Accessibility.UnitTests
                 return true;
             };
 
-#if UNITY_6000_4_OR_NEWER
-            bool tapSucceeded = AccessibilityRuntime._UnityAX_AccessibilityPerformMagicTap(EntityId.ToULong(axObject.gameObject.GetEntityId()));
-#else
-            bool tapSucceeded = AccessibilityRuntime._UnityAX_AccessibilityPerformMagicTap((ulong)axObject.gameObject.GetInstanceID());
-#endif
+            bool tapSucceeded = AccessibilityRuntime._UnityAX_AccessibilityPerformMagicTap(axObject.gameObject.GetLongId());
             expectedMagicTapCount += 1;
             UnityEngine.Assertions.Assert.AreEqual(magicTapCount, expectedMagicTapCount);
             UnityEngine.Assertions.Assert.IsTrue(tapSucceeded);
@@ -172,11 +157,7 @@ namespace Apple.Accessibility.UnitTests
                 return false;
             };
 
-#if UNITY_6000_4_OR_NEWER
-            tapSucceeded = AccessibilityRuntime._UnityAX_AccessibilityPerformMagicTap(EntityId.ToULong(axObject.gameObject.GetEntityId()));
-#else
-            tapSucceeded = AccessibilityRuntime._UnityAX_AccessibilityPerformMagicTap((ulong)axObject.gameObject.GetInstanceID());
-#endif
+            tapSucceeded = AccessibilityRuntime._UnityAX_AccessibilityPerformMagicTap(axObject.gameObject.GetLongId());
             expectedMagicTapCount += 1;
             UnityEngine.Assertions.Assert.AreEqual(magicTapCount, expectedMagicTapCount);
             UnityEngine.Assertions.Assert.IsFalse(tapSucceeded);
@@ -191,11 +172,7 @@ namespace Apple.Accessibility.UnitTests
             //Unimplemented tap
             axObject.onAccessibilityPerformMagicTap = null;
 
-#if UNITY_6000_4_OR_NEWER
-            tapSucceeded = AccessibilityRuntime._UnityAX_AccessibilityPerformMagicTap(EntityId.ToULong(axObject.gameObject.GetEntityId()));
-#else
-            tapSucceeded = AccessibilityRuntime._UnityAX_AccessibilityPerformMagicTap((ulong)axObject.gameObject.GetInstanceID());
-#endif
+            tapSucceeded = AccessibilityRuntime._UnityAX_AccessibilityPerformMagicTap(axObject.gameObject.GetLongId());
             UnityEngine.Assertions.Assert.AreEqual(magicTapCount, expectedMagicTapCount);
             UnityEngine.Assertions.Assert.IsFalse(tapSucceeded);
 #if UNITY_IOS && !UNITY_EDITOR
@@ -229,11 +206,7 @@ namespace Apple.Accessibility.UnitTests
                 return true;
             };
 
-#if UNITY_6000_4_OR_NEWER
-            bool tapSucceeded = AccessibilityRuntime._UnityAX_AccessibilityPerformEscape(EntityId.ToULong(axObject.gameObject.GetEntityId()));
-#else
-            bool tapSucceeded = AccessibilityRuntime._UnityAX_AccessibilityPerformEscape((ulong)axObject.gameObject.GetInstanceID());
-#endif
+            bool tapSucceeded = AccessibilityRuntime._UnityAX_AccessibilityPerformEscape(axObject.gameObject.GetLongId());
             expectedEscapeCount += 1;
             UnityEngine.Assertions.Assert.AreEqual(EscapeCount, expectedEscapeCount);
             UnityEngine.Assertions.Assert.IsTrue(tapSucceeded);
@@ -254,11 +227,7 @@ namespace Apple.Accessibility.UnitTests
                 return false;
             };
 
-#if UNITY_6000_4_OR_NEWER
-            tapSucceeded = AccessibilityRuntime._UnityAX_AccessibilityPerformEscape(EntityId.ToULong(axObject.gameObject.GetEntityId()));
-#else
-            tapSucceeded = AccessibilityRuntime._UnityAX_AccessibilityPerformEscape((ulong)axObject.gameObject.GetInstanceID());
-#endif
+            tapSucceeded = AccessibilityRuntime._UnityAX_AccessibilityPerformEscape(axObject.gameObject.GetLongId());
             expectedEscapeCount += 1;
             UnityEngine.Assertions.Assert.AreEqual(EscapeCount, expectedEscapeCount);
             UnityEngine.Assertions.Assert.IsFalse(tapSucceeded);
@@ -273,11 +242,7 @@ namespace Apple.Accessibility.UnitTests
             //Unimplemented tap
             axObject.onAccessibilityPerformEscape = null;
 
-#if UNITY_6000_4_OR_NEWER
-            tapSucceeded = AccessibilityRuntime._UnityAX_AccessibilityPerformEscape(EntityId.ToULong(axObject.gameObject.GetEntityId()));
-#else
-            tapSucceeded = AccessibilityRuntime._UnityAX_AccessibilityPerformEscape((ulong)axObject.gameObject.GetInstanceID());
-#endif
+            tapSucceeded = AccessibilityRuntime._UnityAX_AccessibilityPerformEscape(axObject.gameObject.GetLongId());
             UnityEngine.Assertions.Assert.AreEqual(EscapeCount, expectedEscapeCount);
             UnityEngine.Assertions.Assert.IsFalse(tapSucceeded);
 #if UNITY_IOS && !UNITY_EDITOR

@@ -23,7 +23,7 @@
         {
             "displayName": "StoreKit Demo",
             "description": "Demo for StoreKit integration",
-            "path": "Demos~/Apple.StoreKit.Sample"
+            "path": "Demos/Apple.StoreKit.Sample"
         }
     ]
 }

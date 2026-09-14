@@ -3,11 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Apple.Core;
 using JetBrains.Annotations;
 using UnityEditor;
 using UnityEngine;
 using UnityPickers.Utility;
 using Object = UnityEngine.Object;
+// Unity 6000.3 deprecated HierarchyProperty in favour of HierarchyIterator, which doesn't exist
+// on the 2022.3 floor. The two expose the same surface we use here — a HierarchyType ctor,
+// SetSearchFilter, Next and the name/guid pair — so aliasing the type keeps one code path.
+#if UNITY_6000_3_OR_NEWER
+using AssetHierarchy = UnityEditor.HierarchyIterator;
+#else
+using AssetHierarchy = UnityEditor.HierarchyProperty;
+#endif
 
 namespace UnityPickers
 {
@@ -129,11 +138,7 @@ namespace UnityPickers
 		[SerializeField]
 		private string nameFilter;
 
-#if UNITY_6000_4_OR_NEWER
-        private HierarchyIterator hierarchyIterator;
-#else
-		private HierarchyProperty hierarchyProperty;
-#endif
+		private AssetHierarchy assetHierarchy;
 
         private List<HierarchyEntry> loadedAssets;
 
@@ -231,8 +236,6 @@ namespace UnityPickers
             w.Focus();
         }
 
-		// todo: c# docs
-
 		/// <summary>
 		/// Shows built-in ObjectField with custom value source and pick target
 		/// </summary>
@@ -253,12 +256,9 @@ namespace UnityPickers
 				buttonPos.xMin = buttonPos.xMax - EditorGUIUtility.singleLineHeight;
 				var requesterWindow = focusedWindow;
 
-#if UNITY_6000_4_OR_NEWER
-                string controlName = property.serializedObject.targetObject.GetEntityId() + "_" + property.propertyPath;
-#else
-				string controlName = property.serializedObject.targetObject.GetInstanceID() + "_" + property.propertyPath;
-#endif
-                var e = Event.current;
+				string controlName = property.serializedObject.targetObject.GetLongId() + "_" + property.propertyPath;
+
+				var e = Event.current;
 				bool showHotKey =
 					GUI.GetNameOfFocusedControl() == controlName &&
 					e.type == EventType.KeyDown &&
@@ -927,25 +927,15 @@ namespace UnityPickers
 			loadedAssets = new List<HierarchyEntry>();
 			loadedAssetsFlat.Clear();
 
-#if UNITY_6000_4_OR_NEWER
-            hierarchyIterator = new HierarchyIterator(HierarchyType.Assets);
-            hierarchyIterator.SetSearchFilter(GetFilter(), (int)SearchableEditorWindow.SearchMode.All);
+			assetHierarchy = new AssetHierarchy(HierarchyType.Assets);
+			assetHierarchy.SetSearchFilter(GetFilter(), (int)SearchableEditorWindow.SearchMode.All);
 
-            while (hierarchyIterator.Next(null))
-            {
-                AddAssetInfo(hierarchyIterator);
-            }
-#else
-			hierarchyProperty = new HierarchyProperty(HierarchyType.Assets);
-			hierarchyProperty.SetSearchFilter(GetFilter(), (int)SearchableEditorWindow.SearchMode.All);
-
-			while (hierarchyProperty.Next(null))
+			while (assetHierarchy.Next(null))
 			{
-				AddAssetInfo(hierarchyProperty);
+				AddAssetInfo(assetHierarchy);
 			}
-#endif
 
-            FilterAssets(ref loadedAssets);
+			FilterAssets(ref loadedAssets);
 			loadedAssets.ForEach(SortChildren);
 
 			loadedAssetsFlat.Clear();
@@ -975,18 +965,10 @@ namespace UnityPickers
 	        return stringBuilder.ToString();
 	    }
 
-#if UNITY_6000_4_OR_NEWER
-        private void AddAssetInfo(HierarchyIterator hi)
-#else
-        private void AddAssetInfo(HierarchyProperty hp)
-#endif
+		private void AddAssetInfo(AssetHierarchy hierarchy)
 		{
-#if UNITY_6000_4_OR_NEWER
-            var path = AssetDatabase.GUIDToAssetPath(hi.guid);
-#else
-			var path = AssetDatabase.GUIDToAssetPath(hp.guid);
-#endif
-            var folders = path.Split('/');
+			var path = AssetDatabase.GUIDToAssetPath(hierarchy.guid);
+			var folders = path.Split('/');
 			var list = loadedAssets;
 			HierarchyEntry parent = null;
 			for (int ii = 1; ii < folders.Length - 1; ii++) // 1 to skip Assets folder, -1 to skip asset name
@@ -1010,18 +992,10 @@ namespace UnityPickers
 			var hierarchyEntry = new HierarchyEntry
 			{
 				Parent = parent,
-#if UNITY_6000_4_OR_NEWER
-                Name = hi.name,
-#else
-                Name = hp.name,
-#endif
-                Path = path,
-#if UNITY_6000_4_OR_NEWER
-                AssetGuid = hi.guid,
-#else
-                AssetGuid = hp.guid,
-#endif
-            };
+				Name = hierarchy.name,
+				Path = path,
+				AssetGuid = hierarchy.guid,
+			};
 			list.Add(hierarchyEntry);
 		}
 

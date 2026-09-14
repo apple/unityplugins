@@ -56,7 +56,7 @@ public class GameManager : MonoBehaviour
 
 	public void Start()
 	{
-		Application.targetFrameRate = Screen.currentResolution.refreshRate;
+		Application.targetFrameRate = (int)Screen.currentResolution.refreshRateRatio.value;
 
 		_mainCam = Camera.main;
 

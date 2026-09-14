@@ -1,3 +1,11 @@
+1.0.6
+
+- Fixed the sample path in `package.json` so it points at the demo's actual location
+- Replaced the unresolvable `com.unity.textmeshpro` dependency with `com.unity.ugui`, which is
+  what provides TextMeshPro on this plug-in's Unity 6 floor
+- Raised the minimum Editor to 6000.5.2f1 and `com.unity.xr.visionos` to 3.1.5, matching the
+  versions the plug-in is now built and tested against
+
 1.0.5
 
 - Spatial Stylus controllers now supported

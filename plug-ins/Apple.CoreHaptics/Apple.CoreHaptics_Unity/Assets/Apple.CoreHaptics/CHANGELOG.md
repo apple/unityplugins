@@ -1,6 +1,13 @@
 # CHANGELOG
 All notable changes to this project will be documented in this file.
 
+## [1.3.2] - 2026-09-10
+### Changed
+- Updated the asset picker and Ricochet sample for APIs deprecated in Unity 6 (`HierarchyProperty`,
+  `Object.GetInstanceID()`, `Rigidbody2D.velocity`, `Resolution.refreshRate`), while still building
+  against the Unity 2022.3 floor.
+- Now requires Apple.Core 3.3.0.
+
 ## [1.3.1] - 2025-01-29
 - Remove references to some unused packages.
 

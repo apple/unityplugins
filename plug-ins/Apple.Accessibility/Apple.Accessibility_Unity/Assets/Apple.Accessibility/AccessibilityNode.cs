@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using Apple.Core;
 using UnityEngine;
 
 namespace Apple.Accessibility
@@ -388,60 +389,36 @@ namespace Apple.Accessibility
             UnregisterAXElement(this);
         }
 
-        private static Dictionary<ulong, AccessibilityNode> axElements = new Dictionary<ulong, AccessibilityNode>();
+        private static Dictionary<ulong, AccessibilityNode> axElements = new();
 
         static internal void RegisterAXElement(AccessibilityNode obj)
         {
-#if UNITY_6000_4_OR_NEWER
-            if (axElements.ContainsKey(EntityId.ToULong(obj.gameObject.GetEntityId())))
-#else
-            if (axElements.ContainsKey((ulong)obj.gameObject.GetInstanceID()))
-#endif
+            if (axElements.ContainsKey(obj.gameObject.GetLongId()))
             {
                 return;
             }
+            axElements.Add(obj.gameObject.GetLongId(), obj);
+            AccessibilityNode parent = obj._accessibilityParent();
 
-#if UNITY_6000_4_OR_NEWER
-            axElements.Add(EntityId.ToULong(obj.gameObject.GetEntityId()), obj);
-            AccessibilityNode parent = obj._accessibilityParent();
-            ulong parentId = EntityId.ToULong(EntityId.None);
-#else
-            axElements.Add((ulong)obj.gameObject.GetInstanceID(), obj);
-            AccessibilityNode parent = obj._accessibilityParent();
+            // Use Unity's lifetime-aware null check, not C#'s: a destroyed-but-not-collected
+            // parent is non-null to `?.` but null to `parent != null` below, which would leave
+            // us reporting a live parentId alongside hasParent: false.
             ulong parentId = 0;
-#endif
-
             if (parent)
             {
-#if UNITY_6000_4_OR_NEWER
-                parentId = EntityId.ToULong(parent.gameObject.GetEntityId());
-#else
-                parentId = (ulong)parent.gameObject.GetInstanceID();
-#endif
+                parentId = parent.gameObject.GetLongId();
             }
 
 #if (UNITY_IOS || UNITY_TVOS) && !UNITY_EDITOR
-#if UNITY_6000_4_OR_NEWER
-            _UnityAX_RegisterElementWithIdentifier(EntityId.ToULong(obj.gameObject.GetEntityId()), parentId, parent != null);
-#else
-            _UnityAX_RegisterElementWithIdentifier((ulong)obj.gameObject.GetInstanceID(), parentId, parent != null);
-#endif
+            _UnityAX_RegisterElementWithIdentifier(obj.gameObject.GetLongId(), parentId, parent != null);
 #endif
         }
 
         static internal void UnregisterAXElement(AccessibilityNode obj)
         {
-#if UNITY_6000_4_OR_NEWER
-            axElements.Remove(EntityId.ToULong(obj.gameObject.GetEntityId()));
-#else
-            axElements.Remove((ulong)obj.gameObject.GetInstanceID());
-#endif
+            axElements.Remove(obj.gameObject.GetLongId());
 #if (UNITY_IOS || UNITY_TVOS) && !UNITY_EDITOR
-#if UNITY_6000_4_OR_NEWER
-            _UnityAX_UnregisterElementWithIdentifier(EntityId.ToULong(obj.gameObject.GetEntityId()));
-#else
-            _UnityAX_UnregisterElementWithIdentifier((ulong)obj.gameObject.GetInstanceID());
-#endif
+            _UnityAX_UnregisterElementWithIdentifier(obj.gameObject.GetLongId());
 #endif
         }
 

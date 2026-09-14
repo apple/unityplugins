@@ -1,6 +1,11 @@
 # CHANGELOG
 All notable changes to this project will be documented in this file.
 
+## [3.3.0] - 2026-09-10
+### Added
+- `ObjectExtensions.GetLongId()`, giving callers version-agnostic access to a Unity object's
+  identity across the `GetInstanceID()` to `GetEntityId()` change in Unity 6000.4.
+
 ## [3.2.0] - 2025-10-13
 - Added wrappers around NSCalendarUnit and NSDateComponents
 

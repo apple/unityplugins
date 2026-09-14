@@ -1,6 +1,12 @@
 # CHANGELOG
 All notable changes to this project will be documented in this file.
 
+## [1.1.5] - 2026-09-10
+### Changed
+- Replaced deprecated `Object.GetInstanceID()` calls with Apple.Core's `GetLongId()`, so the plug-in
+  compiles warning-free on Unity 6 while still building against the Unity 2022.3 floor.
+- Now requires Apple.Core 3.3.0.
+
 ## [1.1.4] - 2025-01-29
 - Remove references to some unused packages.
 

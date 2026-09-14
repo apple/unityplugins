@@ -1,6 +1,14 @@
 # CHANGELOG
 All notable changes to this project will be documented in this file.
 
+## [1.2.8] - 2026-09-10
+
+### Changed
+
+- Updated for APIs deprecated in Unity 6 (`HierarchyProperty`, `Object.GetInstanceID()`,
+  `FindObjectsOfType`, `EndNameEditAction`), while still building against the Unity 2022.3 floor.
+- Now requires Apple.Core 3.3.0.
+
 ## [1.2.7] - 2025-06-30
 
 ### Changed

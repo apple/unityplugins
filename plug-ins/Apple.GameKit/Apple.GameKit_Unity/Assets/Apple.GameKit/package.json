@@ -23,7 +23,7 @@
         {
             "displayName": "GameKit Demo",
             "description": "Demo for GameKit integration",
-            "path": "Demos~/Apple.GameKit.Sample"
+            "path": "Demos/Apple.GameKit.Sample"
         }
     ]
 }

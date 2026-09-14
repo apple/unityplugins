@@ -278,9 +278,11 @@ namespace XNodeEditor {
         }
 
 #if UNITY_6000_4_OR_NEWER
+        // Unity 6000+ deprecates EndNameEditAction (int instance IDs) in favor of
+        // AssetCreationEndAction, which uses EntityId.
         /// Inherits from AssetCreationEndAction, must override AssetCreationEndAction.Action
         public class DoCreateCodeFile : UnityEditor.ProjectWindowCallback.AssetCreationEndAction {
-            public override void Action(EntityId entityId, string pathName, string resourceFile) {
+            public override void Action(UnityEngine.EntityId entityId, string pathName, string resourceFile) {
 #else
         /// Inherits from EndNameAction, must override EndNameAction.Action
         public class DoCreateCodeFile : UnityEditor.ProjectWindowCallback.EndNameEditAction {
