@@ -2,7 +2,7 @@
 //  PHASEWrapper.mm
 //  AudioPluginPHASE
 //
-//  Copyright © 2021 Apple Inc. All rights reserved.
+//  Copyright © 2021, 2026 Apple Inc.
 //
 
 #import <PHASE/PHASE.h>
@@ -27,15 +27,19 @@ NS_HEADER_AUDIT_BEGIN(nullability)
     NSMutableDictionary<NSNumber*, PHASESoundEvent*>* mSuspendedSoundEvents;
     NSMutableDictionary<NSString*, PHASEMaterial*>* mMaterials;
     
-    // Keep track of the number of sound events playing an sound event asset
+    // Keep track of the number of sound events playing a sound event asset
     // For destruction purposes
     NSMutableDictionary<NSString*, NSNumber*>* mActiveSoundEventAssets;
 
-    // For sound event programatic creation
+    // For sound event programmatic creation
     NSMutableDictionary* mSoundEventNodeDefinitions;
     NSMutableDictionary* mSoundEventMixerDefinitions;
     NSMutableDictionary* mSoundEventMetaParameterDefinitions;
     NSMutableDictionary* mSoundEventMappedMetaParameterDefinitions;
+
+#if TARGET_OS_VISION
+    PHASEObject* mWorldRoot;
+#endif
 }
 
 @end
@@ -48,6 +52,24 @@ NS_HEADER_AUDIT_BEGIN(nullability)
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [&self]() { wrapper = [[self alloc] init]; });
     return wrapper;
+}
+
+#if TARGET_OS_VISION
+static BOOL sUseClientRenderingMode = NO;
+
++ (void)setUseClientRenderingMode:(BOOL)enabled
+{
+    sUseClientRenderingMode = enabled;
+}
+#endif
+
+- (PHASEObject*)root
+{
+#if TARGET_OS_VISION
+    return mWorldRoot;
+#else
+    return mEngine.rootObject;
+#endif
 }
 
 - (BOOL)isInitialized
@@ -114,22 +136,21 @@ NS_HEADER_AUDIT_BEGIN(nullability)
     // add handler when application goes to the background
     [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationWillResignActiveNotification object:nil queue:nil usingBlock:^(NSNotification *notification)
      {
-        [[AVAudioSession sharedInstance] setActive:FALSE error:nil];
         [self pauseSoundEvents];
     }];
          
     // add handler when application returns from the background
     [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidBecomeActiveNotification object:nil queue:nil usingBlock:^(NSNotification *notification)
      {
-        [[AVAudioSession sharedInstance] setActive:TRUE error:nil];
         [self resumeSoundEvents];
     }];
     
-    // On visionOS the system automatically virtualizes the output from the window anchor so disable that behavior here.
-    // Note: This plugin currently only supports fully immersive visionOS scenes.
-    
+    // For fully immersive scenes on visionOS the system automatically virtualizes the output from the window anchor so disable that behavior here.
 #if TARGET_OS_VISION
-    [sessionInstance setIntendedSpatialExperience:AVAudioSessionSpatialExperienceBypassed options:nil error:nil];
+    if (!sUseClientRenderingMode)
+    {
+        [sessionInstance setIntendedSpatialExperience:AVAudioSessionSpatialExperienceBypassed options:nil error:nil];
+    }
 #endif
     
     // activate the audio session
@@ -150,16 +171,7 @@ NS_HEADER_AUDIT_BEGIN(nullability)
     
     if (interruptionType == AVAudioSessionInterruptionTypeEnded)
     {
-        NSError *error;
-        bool success = [[AVAudioSession sharedInstance] setActive:YES error:&error];
-        if (!success)
-        {
-            NSLog(@"Phase Wrapper: AVAudioSession set active failed with error: %@", [error localizedDescription]);
-        }
-        else
-        {
-            [self resumeSoundEvents];
-        }
+        [self resumeSoundEvents];
     }
 }
 #endif // !TARGET_OS_OSX
@@ -168,22 +180,31 @@ NS_HEADER_AUDIT_BEGIN(nullability)
 {
     if (self = [super init])
     {
-#if !TARGET_OS_MAC
+#if !TARGET_OS_OSX
         // Setup the audio session
         [self setupAudioSession];
-#endif // !TARGET_OS_MAC
+#endif //!TARGET_OS_OSX
         
         // Create engine
 #if TARGET_OS_VISION
-        if (@available(visionOS 26, *))
+        if (sUseClientRenderingMode)
         {
-            mEngine = [[PHASEEngine alloc] initWithUpdateMode:PHASEUpdateModeManual renderingMode:PHASERenderingModeClient];
+            if (@available(visionOS 26.0, *))
+            {
+                mEngine = [[PHASEEngine alloc] initWithUpdateMode:PHASEUpdateModeManual renderingMode:PHASERenderingModeClient];
+            }
         }
         else
 #endif
         {
             mEngine = [[PHASEEngine alloc] initWithUpdateMode:PHASEUpdateModeManual];
         }
+
+#if TARGET_OS_VISION
+        // Single parent transform for all PHASE objects.
+        mWorldRoot = [[PHASEObject alloc] initWithEngine:mEngine];
+        [mEngine.rootObject addChild:mWorldRoot error:nil];
+#endif
 
         // Create sources dictionary
         mSources = [[NSMutableDictionary<NSNumber*, PHASESource*> alloc] init];
@@ -200,7 +221,7 @@ NS_HEADER_AUDIT_BEGIN(nullability)
         // Create materials dictionary
         mMaterials = [[NSMutableDictionary<NSString*, PHASEMaterial*> alloc] init];
 
-        // Creeate active sound event assets tracker dictionary
+        // Create active sound event assets tracker dictionary
         mActiveSoundEventAssets = [[NSMutableDictionary<NSString*, NSNumber*> alloc] init];
 
         // Create sound event nodes dictionary
@@ -212,7 +233,7 @@ NS_HEADER_AUDIT_BEGIN(nullability)
         // Create mapped meta parameters dictionary
         mSoundEventMappedMetaParameterDefinitions = [[NSMutableDictionary alloc] init];
 
-        // Create mixeres dictionary
+        // Create mixers dictionary
         mSoundEventMixerDefinitions = [[NSMutableDictionary alloc] init];
 
         // Set default preset
@@ -223,7 +244,10 @@ NS_HEADER_AUDIT_BEGIN(nullability)
         // On visionOS the default spatialization mode is channels since the system will auto virtualize the output.
         // We've configured the audio session to bypass system spatialization so we can set the mode to binaural.
 #if TARGET_OS_VISION
-        [mEngine setOutputSpatializationMode:PHASESpatializationModeAlwaysUseBinaural];
+        if (!sUseClientRenderingMode)
+        {
+            [mEngine setOutputSpatializationMode:PHASESpatializationModeAlwaysUseBinaural];
+        }
 #endif
         
         NSLog(@"Phase Wrapper: Engine created successfully.");
@@ -232,6 +256,14 @@ NS_HEADER_AUDIT_BEGIN(nullability)
 
     return nil;
 }
+
+#if TARGET_OS_VISION
+- (BOOL)setWorldTransform:(simd_float4x4)worldTransform
+{
+    mWorldRoot.transform = worldTransform;
+    return YES;
+}
+#endif
 
 - (BOOL)createListener
 {
@@ -249,8 +281,8 @@ NS_HEADER_AUDIT_BEGIN(nullability)
         return NO;
     }
 
-    NSError* errorRef = [NSError alloc];
-    const BOOL result = [mEngine.rootObject addChild:mListener error:&errorRef];
+    NSError* errorRef = nil;
+    const BOOL result = [[self root] addChild:mListener error:&errorRef];
     if (!result)
     {
         NSLog(@"Phase Wrapper: Failed to add listener to the scene %@.", errorRef);
@@ -263,31 +295,41 @@ NS_HEADER_AUDIT_BEGIN(nullability)
 
 - (BOOL)setListenerTransform:(simd_float4x4)listenerTransform
 {
-#if !TARGET_OS_VISION
-    if (mListener == nil)
+#if TARGET_OS_VISION
+    if (!sUseClientRenderingMode)
     {
-        NSLog(@"Phase Wrapper: Listener does not exist.");
-        return NO;
-    }
+#endif // TARGET_OS_VISION
+        if (mListener == nil)
+        {
+            NSLog(@"Phase Wrapper: Listener does not exist.");
+            return NO;
+        }
 
-    mListener.transform = listenerTransform;
-#endif //!TARGET_OS_VISION
-    
+        mListener.transform = listenerTransform;
+#if TARGET_OS_VISION
+    }
+#endif // TARGET_OS_VISION
+
     return YES;
 }
 
 - (BOOL)setListenerGain:(double)listenerGain
 {
-#if !TARGET_OS_VISION
-    if (mListener == nil)
+#if TARGET_OS_VISION
+    if (!sUseClientRenderingMode)
     {
-        NSLog(@"Phase Wrapper: Listener does not exist.");
-        return NO;
-    }
+#endif // TARGET_OS_VISION
+        if (mListener == nil)
+        {
+            NSLog(@"Phase Wrapper: Listener does not exist.");
+            return NO;
+        }
 
-    mListener.gain = listenerGain;
-#endif //!TARGET_OS_VISION
-    
+        mListener.gain = listenerGain;
+#if TARGET_OS_VISION
+    }
+#endif // TARGET_OS_VISION
+
     return YES;
 }
 
@@ -338,7 +380,7 @@ NS_HEADER_AUDIT_BEGIN(nullability)
     }
 
     // Remove from the hierarchy
-    [mEngine.rootObject removeChild:mListener];
+    [[self root] removeChild:mListener];
 
     mListener = nil;
 
@@ -352,21 +394,21 @@ NS_HEADER_AUDIT_BEGIN(nullability)
     PHASEShape* shape = [[PHASEShape alloc] initWithEngine:mEngine mesh:mesh];
     if (!shape)
     {
-        [NSException raise:@"Node invalid" format:@"Failed to create shape."];
+        [NSException raise:@"Phase Wrapper: Node invalid" format:@"Failed to create shape."];
     }
 
     // Create the source object
     PHASESource* source = [[PHASESource alloc] initWithEngine:mEngine shapes:@[ shape ]];
     if (source == nil)
     {
-        [NSException raise:@"Source invalid" format:@"Failed to create source."];
+        [NSException raise:@"Phase Wrapper: Source invalid" format:@"Failed to create source."];
     }
 
-    NSError* errorRef = [NSError alloc];
-    const BOOL result = [mEngine.rootObject addChild:source error:&errorRef];
+    NSError* errorRef = nil;
+    const BOOL result = [[self root] addChild:source error:&errorRef];
     if (!result)
     {
-        [NSException raise:@"Adding child error" format:@"Failed to add object to scene."];
+        [NSException raise:@"Phase Wrapper: Adding child error" format:@"Failed to add object to scene."];
     }
 
     const int64_t sourceId = reinterpret_cast<int64_t>(source);
@@ -380,14 +422,14 @@ NS_HEADER_AUDIT_BEGIN(nullability)
     PHASESource* source = [[PHASESource alloc] initWithEngine:mEngine];
     if (source == nil)
     {
-        [NSException raise:@"Source invalid" format:@"Failed to create source."];
+        [NSException raise:@"Phase Wrapper: Source invalid" format:@"Failed to create source."];
     }
 
-    NSError* errorRef = [NSError alloc];
-    const BOOL result = [mEngine.rootObject addChild:source error:&errorRef];
+    NSError* errorRef = nil;
+    const BOOL result = [[self root] addChild:source error:&errorRef];
     if (!result)
     {
-        [NSException raise:@"Adding child error" format:@"Failed to add object to scene."];
+        [NSException raise:@"Phase Wrapper: Adding child error" format:@"Failed to add object to scene."];
     }
 
     const int64_t sourceId = reinterpret_cast<int64_t>(source);
@@ -440,7 +482,7 @@ NS_HEADER_AUDIT_BEGIN(nullability)
     if (source != nil)
     {
         // Remove from the hierarchy
-        [mEngine.rootObject removeChild:source];
+        [[self root] removeChild:source];
 
         [mSources removeObjectForKey:[NSNumber numberWithLongLong:sourceId]];
 
@@ -450,25 +492,26 @@ NS_HEADER_AUDIT_BEGIN(nullability)
 
 - (int64_t)createOccluderWithMesh:(MDLMesh*)mesh
 {
-    // Create the source node
     PHASEShape* shape = [[PHASEShape alloc] initWithEngine:mEngine mesh:mesh];
     if (!shape)
     {
-        [NSException raise:@"Node invalid" format:@"Failed to create shape."];
+        NSLog(@"Phase Wrapper: Failed to create shape for occluder.");
+        return PHASEInvalidInstanceHandle;
     }
 
-    // Create the source object
     PHASEOccluder* occluder = [[PHASEOccluder alloc] initWithEngine:mEngine shapes:@[ shape ]];
     if (occluder == nil)
     {
-        [NSException raise:@"Occluder invalid" format:@"Failed to create occluder."];
+        NSLog(@"Phase Wrapper: Failed to create occluder.");
+        return PHASEInvalidInstanceHandle;
     }
 
-    NSError* errorRef = [NSError alloc];
-    const BOOL result = [mEngine.rootObject addChild:occluder error:&errorRef];
+    NSError* errorRef = nil;
+    const BOOL result = [[self root] addChild:occluder error:&errorRef];
     if (!result)
     {
-        [NSException raise:@"Adding child error" format:@"Failed to add object to scene."];
+        NSLog(@"Phase Wrapper: Failed to add occluder to scene: %@", errorRef);
+        return PHASEInvalidInstanceHandle;
     }
 
     const int64_t occluderId = reinterpret_cast<int64_t>(occluder);
@@ -497,11 +540,16 @@ NS_HEADER_AUDIT_BEGIN(nullability)
         return NO;
     }
 
-    // Set the material on the occluder
+    PHASEMaterial* material = [mMaterials objectForKey:materialName];
+    if (material == nil)
+    {
+        return NO;
+    }
+
     auto shapeElements = occluder.shapes[0].elements;
     for (PHASEShapeElement* element : shapeElements)
     {
-        element.material = [mMaterials objectForKey:materialName];
+        element.material = material;
     }
 
     return YES;
@@ -513,7 +561,7 @@ NS_HEADER_AUDIT_BEGIN(nullability)
     if (occluder != nil)
     {
         // Remove from the hierarchy
-        [mEngine.rootObject removeChild:occluder];
+        [[self root] removeChild:occluder];
 
         [mOccluders removeObjectForKey:[NSNumber numberWithLongLong:occluderId]];
 
@@ -565,6 +613,30 @@ NS_HEADER_AUDIT_BEGIN(nullability)
 
 - (void)setSceneReverbWithPreset:(PHASEReverbPreset)preset
 {
+    [mEngine setDefaultReverbPreset:preset];
+}
+
+- (void)setSceneReverbWithPresetIndex:(int)presetIndex
+{
+    PHASEReverbPreset preset;
+    switch (presetIndex) {
+        case 0:  preset = PHASEReverbPresetNone; break;
+        case 1:  preset = PHASEReverbPresetSmallRoom; break;
+        case 2:  preset = PHASEReverbPresetMediumRoom; break;
+        case 3:  preset = PHASEReverbPresetLargeRoom; break;
+        case 4:  preset = PHASEReverbPresetLargeRoom2; break;
+        case 5:  preset = PHASEReverbPresetMediumChamber; break;
+        case 6:  preset = PHASEReverbPresetLargeChamber; break;
+        case 7:  preset = PHASEReverbPresetMediumHall; break;
+        case 8:  preset = PHASEReverbPresetMediumHall2; break;
+        case 9:  preset = PHASEReverbPresetMediumHall3; break;
+        case 10: preset = PHASEReverbPresetLargeHall; break;
+        case 11: preset = PHASEReverbPresetCathedral; break;
+        default:
+            NSLog(@"Phase Wrapper: Warning: Invalid reverb preset index %d, defaulting to None", presetIndex);
+            preset = PHASEReverbPresetNone;
+            break;
+    }
     [mEngine setDefaultReverbPreset:preset];
 }
 
@@ -1129,7 +1201,7 @@ NS_HEADER_AUDIT_BEGIN(nullability)
     return mappedMetaParamId;
 }
 
-- (void)destoryMappedMetaParameterWithId:(int64_t)parameterId
+- (void)destroyMappedMetaParameterWithId:(int64_t)parameterId
 {
     [mSoundEventMetaParameterDefinitions removeObjectForKey:[NSNumber numberWithLongLong:parameterId]];
 }
@@ -1230,7 +1302,7 @@ NS_HEADER_AUDIT_BEGIN(nullability)
     }
     else
     {
-        [NSException raise:@"Pull stream unavailable" format:@"Pull stream is only available macOS 15.0, iOS 18.0, tvOS 18.0 and visionOS 2.0 and higher."];
+        [NSException raise:@"Pull stream unavailable" format:@"Pull stream is only available macOS 15.0 and higher."];
     }
     return PHASEInvalidInstanceHandle;
 }
@@ -1474,7 +1546,7 @@ NS_HEADER_AUDIT_BEGIN(nullability)
     if (error != nil)
     {
         NSLog(@"Phase Wrapper: Error creating sound event: %@", name);
-        NSLog(@"%@", error);
+        NSLog(@"Phase Wrapper: %@", error);
     }
     if (soundEvent == nil)
     {
@@ -1487,7 +1559,7 @@ NS_HEADER_AUDIT_BEGIN(nullability)
         if (@available(macOS 15.0, iOS 18.0, tvOS 18.0, visionOS 2.0, *)) {
             soundEvent.pullStreamNodes[streamName].renderBlock = renderBlock;
         } else {
-            NSLog(@"Phase Wrapper: Pull Stream is only available on macOS 15.0, iOS 18.0, tvOS 18.0 and visionOS 2.0 and higher.");
+            NSLog(@"Phase Wrapper: Pull Stream available only on macOS 15.0 and higher.");
             return PHASEInvalidInstanceHandle;
         }
     }
@@ -1531,7 +1603,7 @@ NS_HEADER_AUDIT_BEGIN(nullability)
 - (BOOL)start
 {
     // Start the engine
-    NSError* startErrorRef = [NSError alloc];
+    NSError* startErrorRef = nil;
     BOOL startErrorRet = [mEngine startAndReturnError:&startErrorRef];
     if (!startErrorRet)
     {

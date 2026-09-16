@@ -456,7 +456,14 @@ namespace Apple.PHASE
             // So we need to send it the info it needs to draw the visualization.
             if (_listener == null)
             {
-                PHASEListener[] listeners = FindObjectsOfType<PHASEListener>();
+                // 6000.5 deprecated the FindObjectsSortMode overload in favour of a parameterless
+                // one, which is unsorted, so the two are equivalent here. Older editors, 6000.3
+                // included, only have the overload that takes a sort mode.
+#if UNITY_6000_5_OR_NEWER
+                PHASEListener[] listeners = FindObjectsByType<PHASEListener>();
+#else
+                PHASEListener[] listeners = FindObjectsByType<PHASEListener>(FindObjectsSortMode.None);
+#endif
                 if (listeners.Length > 0)
                 {
                     // Only one listener per scene allowed.
@@ -473,12 +480,7 @@ namespace Apple.PHASE
                 if (entry is PHASESpatialMixer)
                 {
                     PHASESpatialMixer mixer = entry as PHASESpatialMixer;
-
-#if UNITY_6000_4_OR_NEWER
-                    if (Selection.Contains(mixer.GetEntityId()))
-#else
-                    if (Selection.Contains(mixer.GetInstanceID()))
-#endif
+                    if (Selection.Contains(mixer))
                     {
                         Helpers.DirectivityModelSubbandParameters subbandParameters = mixer.GetSourceDirectivityModelSubbandParameters();
                         switch (mixer.GetSourceDirectivityType())

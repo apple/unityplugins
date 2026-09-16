@@ -110,12 +110,14 @@ namespace Apple.GameKit
             [DllImport(InteropUtility.DLLName)]
             public static extern string GKPlayer_GetTeamPlayerId(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
+            [return: MarshalAs(UnmanagedType.I1)]
             public static extern bool GKPlayer_GetScopedIdsArePersistent(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
             public static extern string GKPlayer_GetAlias(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
             public static extern string GKPlayer_GetDisplayName(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
+            [return: MarshalAs(UnmanagedType.I1)]
             public static extern bool GKPlayer_GetIsInvitable(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
             public static extern string GKPlayer_GetGuestIdentifier(IntPtr pointer);

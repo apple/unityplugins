@@ -1,0 +1,17 @@
+{
+	"name": "Apple.StoreKit.Sample",
+	"rootNamespace": "",
+	"references": [
+		"Apple.StoreKit",
+		"Apple.Core"
+	],
+	"includePlatforms": [],
+	"excludePlatforms": [],
+	"allowUnsafeCode": false,
+	"overrideReferences": false,
+	"precompiledReferences": [],
+	"autoReferenced": true,
+	"defineConstraints": [],
+	"versionDefines": [],
+	"noEngineReferences": false
+}

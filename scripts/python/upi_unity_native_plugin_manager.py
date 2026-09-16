@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 # Requirements: python3
 
-import os, shutil, json
+import os, shutil, json, tempfile
 
 import scripts.python.upi_utility as utility
 import scripts.python.upi_toolchain as toolchain
@@ -188,7 +188,7 @@ class NativeUnityPluginManager:
 
         # Build
         # TODO: (Jared) Interrogate build machine for SDKs
-        build_commands = CTX.GenerateXcodeBuildCommands()
+        build_commands = CTX.GenerateXcodeBuildCommands(plugin_id)
 
         for platform, command_set in build_commands.items():
             for config, command in command_set.items():
@@ -414,15 +414,7 @@ class NativeUnityPluginManager:
                     target_package_json_path = curr_package_json_path
                     break
 
-            # If /Demos exists in same folder, rename to Demos~ folder as needed
-            curr_demo_path = target_package_json_path.parent.joinpath("Demos")
-            curr_demo_meta_path = target_package_json_path.parent.joinpath("Demos.meta")
-            dest_demo_path = target_package_json_path.parent.joinpath("Demos~")
-            dest_demo_meta_path = target_package_json_path.parent.joinpath("../Demos.meta")
-
-            if curr_demo_path.exists():
-                utility.RunCommand(["mv", curr_demo_path, dest_demo_path])
-                utility.RunCommand(["mv", curr_demo_meta_path, dest_demo_meta_path])
+            package_source_dir = target_package_json_path.parent
 
             # get the package name and version
             package_json_file = open(target_package_json_path)
@@ -430,21 +422,66 @@ class NativeUnityPluginManager:
             tgz_filename = f"{package_json_data['name']}" "-" f"{package_json_data['version']}" ".tgz"
             package_json_file.close()
 
-            # using tar:
-            pack_command = ["tar", "--auto-compress", "--create", "--file", f"{CTX.build_output_path.joinpath(tgz_filename)}", "--directory", f"{target_package_json_path.parent}", "-s", "/./package/", "." ]
+            # Pack from a disposable staged copy so the checked-in source tree is never touched.
+            # Within the staged copy, any "Demos" folder referenced by package.json's samples is
+            # renamed to "Demos~" (and its sample paths patched to match) so that Unity's Package
+            # Manager treats it as an opt-in sample, without requiring plug-in authors to work with
+            # a hidden (and therefore un-browsable in the Editor) folder during normal development.
+            with tempfile.TemporaryDirectory(prefix=f"{plugin_id}_pack_") as staging_root:
+                staged_package_dir = Path(staging_root).joinpath(package_source_dir.name)
+                # symlinks=True is load-bearing: NativeLibraries~ holds codesigned macOS
+                # .framework bundles, which are built out of symlinks (Versions/Current and
+                # friends). Dereferencing those duplicates every binary and leaves a bundle
+                # layout that no longer matches its signature.
+                shutil.copytree(package_source_dir, staged_package_dir, symlinks=True)
 
-            CTX.printer.MessageWithContext("Project package.json path: ", f"{target_package_json_path}", CTX.printer.Indent(1))
-            CTX.printer.MessageWithContext("Pack command: ", f"{(' '.join(pack_command))}", CTX.printer.Indent(1))
-            
-            pack_command_output = utility.RunCommand(pack_command)
-            
-            if pack_command_output.returncode != 0:
-                CTX.printer.WarningMessage(f"Pack command completed with non-zero return code.\n\nSTDOUT:\n{pack_command_output.stdout}")
-            else:
-                CTX.printer.StatusMessage(f"Pack completed.")
+                staged_package_json_path = staged_package_dir.joinpath(target_package_json_path.name)
+                staged_package_json_text = staged_package_json_path.read_text()
+                staged_package_json_data = json.loads(staged_package_json_text)
 
-            if dest_demo_path.exists():
-                utility.RunCommand(["mv", dest_demo_path, curr_demo_path])
-                utility.RunCommand(["mv", dest_demo_meta_path, curr_demo_meta_path])
+                # Work off the declared samples rather than searching the tree for "Demos", so
+                # only folders the manifest actually points at are hidden.
+                demos_dirs_to_hide = set()
+                for sample in staged_package_json_data.get("samples", []):
+                    sample_path_parts = Path(sample.get("path", "")).parts
+                    if "Demos" not in sample_path_parts:
+                        continue
+                    demos_index = sample_path_parts.index("Demos")
+                    demos_dirs_to_hide.add(sample_path_parts[:demos_index + 1])
+                    sample["path"] = "/".join(
+                        sample_path_parts[:demos_index] + ("Demos~",) + sample_path_parts[demos_index + 1:])
+
+                for demos_dir_parts in demos_dirs_to_hide:
+                    demos_dir = staged_package_dir.joinpath(*demos_dir_parts)
+                    if not demos_dir.is_dir():
+                        CTX.printer.WarningMessage(f"package.json declares a sample under {'/'.join(demos_dir_parts)}, but no such folder exists in {package_source_dir}.")
+                        continue
+                    demos_meta_path = demos_dir.with_name("Demos.meta")
+                    if demos_meta_path.exists():
+                        demos_meta_path.unlink()
+                    demos_dir.rename(demos_dir.with_name("Demos~"))
+
+                # Only rewrite the manifest if a sample path actually moved, and reuse the source
+                # file's own indentation, so the packaged package.json stays diffable against it.
+                if demos_dirs_to_hide:
+                    source_indent = next(
+                        (len(line) - len(line.lstrip(" ")) for line in staged_package_json_text.splitlines()
+                         if line.startswith(" ") and line.strip()),
+                        4)
+                    staged_package_json_path.write_text(
+                        json.dumps(staged_package_json_data, indent=source_indent) + "\n")
+
+                # using tar:
+                pack_command = ["tar", "--auto-compress", "--create", "--file", f"{CTX.build_output_path.joinpath(tgz_filename)}", "--directory", f"{staged_package_dir}", "-s", "/./package/", "." ]
+
+                CTX.printer.MessageWithContext("Project package.json path: ", f"{target_package_json_path}", CTX.printer.Indent(1))
+                CTX.printer.MessageWithContext("Pack command: ", f"{(' '.join(pack_command))}", CTX.printer.Indent(1))
+
+                pack_command_output = utility.RunCommand(pack_command)
+
+                if pack_command_output.returncode != 0:
+                    CTX.printer.WarningMessage(f"Pack command completed with non-zero return code.\n\nSTDOUT:\n{pack_command_output.stdout}")
+                else:
+                    CTX.printer.StatusMessage(f"Pack completed.")
 
         os.chdir(working_dir)

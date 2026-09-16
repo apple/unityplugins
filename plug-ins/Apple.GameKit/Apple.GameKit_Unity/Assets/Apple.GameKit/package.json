@@ -2,10 +2,10 @@
     "name": "com.apple.unityplugin.gamekit",
     "displayName": "Apple.GameKit",
     "description": "Exposes Apple's GameKit.framework to Unity developers via C# script API",
-    "version": "4.0.1",
+    "version": "4.1.0",
     "unity": "2022.3",
     "dependencies": {
-        "com.apple.unityplugin.core": "3.1.8"
+        "com.apple.unityplugin.core": "3.3.0"
     },
     "keywords": [
         "gamekit",
@@ -23,7 +23,7 @@
         {
             "displayName": "GameKit Demo",
             "description": "Demo for GameKit integration",
-            "path": "Demos~/Apple.GameKit.Sample"
+            "path": "Demos/Apple.GameKit.Sample"
         }
     ]
 }

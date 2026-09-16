@@ -1,8 +1,27 @@
+1.0.6
+
+- Fixed the sample path in `package.json` so it points at the demo's actual location
+- Replaced the unresolvable `com.unity.textmeshpro` dependency with `com.unity.ugui`, which is
+  what provides TextMeshPro on this plug-in's Unity 6 floor
+- Raised the minimum Editor to 6000.5.2f1 and `com.unity.xr.visionos` to 3.1.5, matching the
+  versions the plug-in is now built and tested against
+- Now requires Apple.Core 3.3.0
+
+1.0.5
+
+- Spatial Stylus controllers now supported
+- Fixed a native memory leak: accessory locations and the per-accessory buffers allocated on every
+  `PollController` call were never deallocated
+- Removed the PolySpatial and Visual Scripting dependencies; the plug-in no longer requires
+  `com.unity.polyspatial` to be installed
+- Added `[MarshalAs(UnmanagedType.I1)]` to `bool` P/Invoke declarations so `bool` results marshal
+  correctly
+- Fixed plug-in builds when the source root path contains a space character
+
 1.0.4
 
 - Controllers with Motion Sensors now supported
 - Cleaned up C# and Native code to make it easier to read
-
 
 1.0.3
 

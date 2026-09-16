@@ -223,13 +223,15 @@ namespace Apple.GameKit
             [DllImport(InteropUtility.DLLName)]
             public static extern void GKAchievement_SetPercentComplete(IntPtr pointer, double value);
             [DllImport(InteropUtility.DLLName)]
+            [return: MarshalAs(UnmanagedType.I1)]
             public static extern bool GKAchievement_GetIsCompleted(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
             public static extern double GKAchievement_GetLastReportedDate(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
+            [return: MarshalAs(UnmanagedType.I1)]
             public static extern bool GKAchievement_GetShowCompletionBanner(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
-            public static extern void GKAchievement_SetShowCompletionBanner(IntPtr pointer, bool value);
+            public static extern void GKAchievement_SetShowCompletionBanner(IntPtr pointer, [MarshalAs(UnmanagedType.I1)] bool value);
             [DllImport(InteropUtility.DLLName)]
             public static extern void GKAchievement_Report(long taskId, IntPtr array, SuccessTaskCallback onSuccess, NSErrorTaskCallback onError);
             [DllImport(InteropUtility.DLLName)]

@@ -278,19 +278,21 @@ namespace Apple.GameKit.Multiplayer
             [DllImport(InteropUtility.DLLName)]
             public static extern IntPtr GKMatchmakerViewController_GetMatchRequest(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
+            [return: MarshalAs(UnmanagedType.I1)]
             public static extern bool GKMatchmakerViewController_GetCanStartWithMinimumPlayers(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
-            public static extern void GKMatchmakerViewController_SetCanStartWithMinimumPlayers(IntPtr pointer, bool value);
+            public static extern void GKMatchmakerViewController_SetCanStartWithMinimumPlayers(IntPtr pointer, [MarshalAs(UnmanagedType.I1)] bool value);
             [DllImport(InteropUtility.DLLName)]
             public static extern GKMatchmakingMode GKMatchmakerViewController_GetMatchmakingMode(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
             public static extern void GKMatchmakerViewController_SetMatchmakingMode(IntPtr pointer, GKMatchmakingMode value);
             [DllImport(InteropUtility.DLLName)]
+            [return: MarshalAs(UnmanagedType.I1)]
             public static extern bool GKMatchmakerViewController_GetIsHosted(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
-            public static extern void GKMatchmakerViewController_SetIsHosted(IntPtr pointer, bool isHosted);
+            public static extern void GKMatchmakerViewController_SetIsHosted(IntPtr pointer, [MarshalAs(UnmanagedType.I1)] bool isHosted);
             [DllImport(InteropUtility.DLLName)]
-            public static extern void GKMatchmakerViewController_SetHostedPlayerDidConnect(IntPtr gkMatchmakerViewControllerPtr, IntPtr gkPlayerPtr, bool didConnect);
+            public static extern void GKMatchmakerViewController_SetHostedPlayerDidConnect(IntPtr gkMatchmakerViewControllerPtr, IntPtr gkPlayerPtr, [MarshalAs(UnmanagedType.I1)] bool didConnect);
             [DllImport(InteropUtility.DLLName)]
             public static extern void GKMatchmakerViewController_Present(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]

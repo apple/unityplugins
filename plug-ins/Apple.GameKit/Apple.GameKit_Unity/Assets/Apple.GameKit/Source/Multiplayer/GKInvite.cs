@@ -76,6 +76,7 @@ namespace Apple.GameKit.Multiplayer
             [DllImport(InteropUtility.DLLName)]
             public static extern long GKInvite_GetPlayerGroup(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
+            [return: MarshalAs(UnmanagedType.I1)]
             public static extern bool GKInvite_GetIsHosted(IntPtr pointer);
         }
     }

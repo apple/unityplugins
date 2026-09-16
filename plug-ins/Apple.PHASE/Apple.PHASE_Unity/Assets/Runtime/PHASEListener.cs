@@ -242,11 +242,7 @@ namespace Apple.PHASE
                 if (entry is PHASESpatialMixer)
                 {
                     PHASESpatialMixer mixer = entry as PHASESpatialMixer;
-#if UNITY_6000_4_OR_NEWER
-                    if (Selection.Contains(mixer.GetEntityId()))
-#else
-                    if (Selection.Contains(mixer.GetInstanceID()))
-#endif
+                    if (Selection.Contains(mixer))
                     {
                         Helpers.DirectivityModelSubbandParameters subbandParameters = mixer.GetListenerDirectivityModelSubbandParameters();
                         switch (mixer.GetListenerDirectivityType())

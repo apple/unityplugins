@@ -15,6 +15,7 @@ namespace Apple.GameKit.Sample
         [SerializeField] Button _triggerForChallengesButton = default;
         [SerializeField] Button _triggerForPlayTogetherButton = default;
         [SerializeField] Button _triggerForFriendingButton = default;
+        [SerializeField] Button _triggerForArcadeButton = default;
 
         private readonly bool IsAccessPointAvailable = Availability.IsTypeAvailable<GKAccessPoint>();
 
@@ -37,6 +38,13 @@ namespace Apple.GameKit.Sample
             = false;
 #endif
 
+        private readonly bool IsTriggerForArcadeAvailable
+#if UNITY_IOS || UNITY_STANDALONE_OSX
+            = Availability.IsMethodAvailable<GKAccessPoint>(nameof(GKAccessPoint.TriggerForArcade));
+#else
+            = false;
+#endif
+
 
         void Start()
         {
@@ -47,6 +55,7 @@ namespace Apple.GameKit.Sample
             _triggerForChallengesButton.interactable = IsTriggerForChallengesAvailable;
             _triggerForPlayTogetherButton.interactable = IsTriggerForPlayTogetherAvailable;
             _triggerForFriendingButton.interactable = IsTriggerForFriendingAvailable;
+            _triggerForArcadeButton.interactable = IsTriggerForArcadeAvailable;
         }
 
         public void OnToggleAccessPoint()
@@ -102,6 +111,16 @@ namespace Apple.GameKit.Sample
             if (IsTriggerForFriendingAvailable)
             {
                 await GKAccessPoint.Shared.TriggerForFriending();
+            }
+#endif
+        }
+
+        public async void OnTriggerForArcade()
+        {
+#if UNITY_IOS || UNITY_STANDALONE_OSX
+            if (IsTriggerForArcadeAvailable)
+            {
+                await GKAccessPoint.Shared.TriggerForArcade();
             }
 #endif
         }

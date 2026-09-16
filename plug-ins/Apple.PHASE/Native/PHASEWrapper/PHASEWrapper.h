@@ -2,7 +2,7 @@
 //  PHASEWrapper.h
 //  AudioPluginPHASE
 //
-//  Copyright © 2021 Apple Inc. All rights reserved.
+//  Copyright © 2021, 2026 Apple Inc.
 //
 
 #import <PHASE/PHASE.h>
@@ -94,7 +94,7 @@ enum ChannelLayoutType
 
 struct Quaternion
 {
-    const float w;  // cooresponds to 'r' in simd_quaternion
+    const float w;  // corresponds to 'r' in simd_quaternion
     const float x;  // ix
     const float y;  // iy
     const float z;  // iz
@@ -117,8 +117,6 @@ enum CalibrationMode
     CalibrationModeAbsoluteSpl = 2
 };
 
-
-
 /****************************************************************************************************/
 /*! @class PHASEEngineWrapper
     @abstract A PHASEEngineWrapper allows creating and managing PHASE objects
@@ -131,11 +129,30 @@ enum CalibrationMode
 */
 + (id)sharedInstance;
 
+#if TARGET_OS_VISION
+/*! @method setUseClientRenderingMode
+    @abstract Configure whether to initialize the PHASEEngine with PHASERenderingModeClient on visionOS.
+              Must be called before sharedInstance is first accessed.
+    @param enabled YES to use PHASERenderingModeClient (default NO uses PHASERenderingModeLocal)
+*/
++ (void)setUseClientRenderingMode:(BOOL)enabled;
+#endif
+
 /*! @method isInitialized
     @abstract Returns whether the engine is created and started
     @return true on success, false otherwise
 */
 - (BOOL)isInitialized;
+
+#if TARGET_OS_VISION
+/*! @method setWorldTransform
+    @abstract Transform the whole world, which can be used
+    to move the player in the virtual world, on visionOS.
+    @param worldTransform transform of the world
+    @return true on success, false otherwise
+*/
+- (BOOL)setWorldTransform:(simd_float4x4)worldTransform;
+#endif
 
 /*! @method createListener
     @abstract Creates the listener object
@@ -242,8 +259,8 @@ enum CalibrationMode
 - (BOOL)setOccluderMaterialWithId:(int64_t)occluderId materialName:(NSString*)materialName;
 
 /*! @method destroyOccluderWithId
-    @param occluderId id of occluder to destroy
     @abstract Destroys the occluder with a given ID
+    @param occluderId id of occluder to destroy
 */
 - (void)destroyOccluderWithId:(int64_t)occluderId;
 
@@ -251,13 +268,13 @@ enum CalibrationMode
     @abstract Creates a material from the given preset
     @param name name of the material to create
     @param preset material preset of type MaterialPreset
-    @return true on success false otherwise
+    @return true on success, false otherwise
  */
 - (BOOL)createMaterialWithName:(NSString*)name preset:(MaterialPreset)preset;
 
 /*! @method destroyMaterialWithName
-    @param name name of the material to destroy
     @abstract Destroys an existing material
+    @param name name of the material to destroy
 */
 - (void)destroyMaterialWithName:(NSString*)name;
 
@@ -266,6 +283,14 @@ enum CalibrationMode
     @param preset Reverb preset to set on scene
 */
 - (void)setSceneReverbWithPreset:(PHASEReverbPreset)preset;
+
+/*! @method setSceneReverbWithPresetIndex
+    @abstract Sets a reverb preset in the scene using a sequential index (0-11)
+    @param presetIndex Sequential index: 0=None, 1=SmallRoom, 2=MediumRoom, 3=LargeRoom, 4=LargeRoom2,
+                       5=MediumChamber, 6=LargeChamber, 7=MediumHall, 8=MediumHall2, 9=MediumHall3,
+                       10=LargeHall, 11=Cathedral
+*/
+- (void)setSceneReverbWithPresetIndex:(int)presetIndex;
 
 /*! @method registerAudioBufferWithData
     @abstract Registers an audio buffer in the system (data gets copied internally)
@@ -324,7 +349,7 @@ enum CalibrationMode
     @abstract Creates an ambient mixer with a given name and parameters
     @param mixerName name of the mixer to create
     @param channelLayout channel layout tag
-    @param orientation quaterion comprised of 4 float values x, y, z, w
+    @param orientation quaternion comprised of 4 float values x, y, z, w
     @return mixer id
 */
 - (int64_t)createAmbientMixerWithName:(NSString*)mixerName
@@ -332,20 +357,20 @@ enum CalibrationMode
                           orientation:(Quaternion)orientation;
 
 /*! @method destroyMixerWithId
-    @param mixerId mixer Id to destroy
     @abstract Destroys a mixer with the given id
+    @param mixerId mixer Id to destroy
 */
 - (void)destroyMixerWithId:(int64_t)mixerId;
 
-/*!  @method getChannelLayoutTag
-     @param channelLayout The internal ChannelLayoutType id.
-     @return The ChannelLayoutTag corresponding to channelLayout
-     @abstract Converts an internal ChannelLayoutType to an AudioChannelLayoutTag.
+/*! @method getChannelLayoutTag
+    @abstract Converts an internal ChannelLayoutType to an AudioChannelLayoutTag.
+    @param channelLayout The internal ChannelLayoutType id.
+    @return The ChannelLayoutTag corresponding to channelLayout
  */
 + (AudioChannelLayoutTag)getChannelLayoutTag:(ChannelLayoutType)channelLayout;
 
 /*! @method createMetaParameterWithName
-    @abstract Creates a integer meta parameter with a name and default value
+    @abstract Creates an integer meta parameter with a name and default value
     @param name parameter name to create
     @param defaultIntValue default integer value of parameter
     @param minimumValue minimum value of the parameter
@@ -363,11 +388,11 @@ enum CalibrationMode
 - (int)getMetaParameterIntValueWithId:(int64_t)instanceId parameterName:(NSString*)parameterName;
 
 /*! @method setMetaParameterWithId
-    @abstract Sets the value of a given parameter of type integer on an sound event instance
+    @abstract Sets the value of a given parameter of type integer on a sound event instance
     @param instanceId sound event instance to set parameter on
     @param parameterName name of the parameter to set
     @param intValue integer value of the parameter to set
-    @return true on success false otherwise
+    @return true on success, false otherwise
 */
 - (BOOL)setMetaParameterWithId:(int64_t)instanceId parameterName:(NSString*)parameterName intValue:(int)intValue;
 
@@ -394,14 +419,14 @@ enum CalibrationMode
     @param instanceId instance to set parameter on
     @param parameterName name of the parameter to set
     @param doubleValue double value of the parameter to set
-    @return true on success false otherwise
+    @return true on success, false otherwise
 */
 - (BOOL)setMetaParameterWithId:(int64_t)instanceId parameterName:(NSString*)parameterName doubleValue:(double)doubleValue;
 
 /*! @method createMetaParameterWithName
     @abstract Creates a string sound event meta parameter with a name and default value
     @param name parameter name to create
-    @param defaultStrValue default stringvalue of parameter
+    @param defaultStrValue default string value of parameter
     @return parameter id
 */
 - (int64_t)createMetaParameterWithName:(NSString*)name defaultStrValue:(NSString*)defaultStrValue;
@@ -419,38 +444,40 @@ enum CalibrationMode
     @param instanceId instance to set parameter on
     @param parameterName name of the parameter to set
     @param stringValue string value of the parameter to set
-    @return true on success false otherwise
+    @return true on success, false otherwise
 */
 - (BOOL)setMetaParameterWithId:(int64_t)instanceId parameterName:(NSString*)parameterName stringValue:(NSString*)stringValue;
 
 /*! @method destroyMetaParameterWithId
-    @abstract Destroys an sound event meta parameter
+    @abstract Destroys a sound event meta parameter
     @param parameterId parameter id to destroy
 */
 - (void)destroyMetaParameterWithId:(int64_t)parameterId;
 
 /*! @method createMappedMetaParameterWithParameterId
+    @abstract Creates a mapped meta parameter that drives the given input parameter through an envelope
     @param parameterId of the input parameter
     @param envelopeParameters parameters of the envelope to be created
-    @return return the instance ID of the mapped meta parameter
+    @return id of the mapped meta parameter
 */
 - (int64_t)createMappedMetaParameterWithParameterId:(int64_t)parameterId envelopeParameters:(EnvelopeParameters)envelopeParameters;
 
-/*! @method destoryMappedMetaParameterWithId
+/*! @method destroyMappedMetaParameterWithId
+    @abstract Destroys a mapped meta parameter with a given id
     @param parameterId id of the mapped meta parameter
 */
-- (void)destoryMappedMetaParameterWithId:(int64_t)parameterId;
+- (void)destroyMappedMetaParameterWithId:(int64_t)parameterId;
 
 /*! @method setMixerGainParameterOnMixerWithId
     @abstract Sets the gainMetaParameterDefinition to the given parameter on the given mixer
     @param parameterId parameter used to define the gainMetaParameter of the given mixer
     @param mixerId mixerId mixer to set gainMetaParameterDefinition on
-    @return true on success false otherwise
+    @return true on success, false otherwise
 */
 - (BOOL)setMixerGainParameterOnMixerWithId:(int64_t)parameterId mixerId:(int64_t)mixerId;
 
 /*! @method createSoundEventSamplerNodeWithAsset
-    @abstract Creates an sound event sampler node with a given asset name and parameters
+    @abstract Creates a sound event sampler node with a given asset name and parameters
     @param assetName name of the asset to create sampler node for
     @param mixerId mixer Id to attach this sampler to
     @param rateParameterId  rate meta parameter Id to associated with this sampler
@@ -491,7 +518,6 @@ enum CalibrationMode
 /*! @method createSoundEventRandomNodeWithEntries
     @abstract creates a sound event random node with given random entries to select from
     @param randomEntries entries to randomize
-    @param uniqueSelectionQueueLength Subtrees will not be repeated until after this random node is activated uniqueSelectionQueueLength number of times.
 */
 - (int64_t)createSoundEventRandomNodeWithEntries:(NSDictionary*)randomEntries uniqueSelectionQueueLength:(int64_t)uniqueSelectionQueueLength;
 
@@ -508,6 +534,7 @@ enum CalibrationMode
                              useAutoDistanceBlend:(bool)useAutoDistanceBlend;
 
 /*! @method createSoundEventContainerNodeWithChild
+    @abstract Creates a sound event container node from the given child nodes
     @param childIds array of child node ids
     @param numChildren number of child nodes in the childIds array
     @return container node instance id
@@ -515,13 +542,13 @@ enum CalibrationMode
 - (int64_t)createSoundEventContainerNodeWithChild:(int64_t*)childIds numChildren:(uint32_t)numChildren;
 
 /*! @method destroySoundEventNodeWithId
+    @abstract Destroys a sound event node
     @param nodeId node id to destroy
-    @abstract destroys an sound event node
 */
 - (void)destroySoundEventNodeWithId:(int64_t)nodeId;
 
 /*! @method registerSoundEventWithName
-    @abstract Creates and registers an sound event asset with a given name and root node Id
+    @abstract Creates and registers a sound event asset with a given name and root node Id
     @param name unique name to register the sound event with
     @param rootNodeId  id of the root node of the sound event
     @return true on success, false otherwise
@@ -529,7 +556,7 @@ enum CalibrationMode
 - (BOOL)registerSoundEventWithName:(NSString*)name rootNodeId:(int64_t)rootNodeId;
 
 /*! @method unregisterSoundEventWithName
-    @abstract Unregisters an sound event with a given name
+    @abstract Unregisters a sound event with a given name
     @param name name of sound event to unregister
 */
 - (void)unregisterSoundEventWithName:(NSString*)name;
@@ -554,9 +581,9 @@ enum CalibrationMode
         completionHandlerBlock:(void (^_Nullable)(PHASESoundEventStartHandlerReason reason, int64_t sourceId, int64_t soundEventId))completionHandlerBlock;
 
 /*! @method stopSoundEventWithId
-    @abstract Stops an sound event instance
+    @abstract Stops a sound event instance
     @param instanceId instance Id to stop
-    @return true on success false otherwise
+    @return true on success, false otherwise
 */
 - (BOOL)stopSoundEventWithId:(int64_t)instanceId;
 

@@ -1,0 +1,22 @@
+{
+	"name": "Apple.BackgroundAssets",
+	"rootNamespace": "",
+	"references": [
+		"Apple.Core"
+	],
+	"includePlatforms": [
+		"Editor",
+		"iOS",
+		"macOSStandalone",
+		"tvOS",
+		"VisionOS"
+	],
+	"excludePlatforms": [],
+	"allowUnsafeCode": true,
+	"overrideReferences": false,
+	"precompiledReferences": [],
+	"autoReferenced": true,
+	"defineConstraints": [],
+	"versionDefines": [],
+	"noEngineReferences": false
+}

@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 019d9e67133646548a506370e966316a, type: 3}
   m_Name: PolySpatialSettings
   m_EditorClassIdentifier: 
-  m_PackageVersion: 2.3.1
+  m_FullUnityVersion: 
+  m_DisablePolySpatial: 0
+  m_PackageVersion: 3.1.5
   m_EnableStatistics: 0
   m_ColliderSyncLayerMask:
     serializedVersion: 2
@@ -36,6 +38,11 @@ MonoBehaviour:
   m_EnableRuntimeValidation: 0
   m_RuntimeValidationFrameCount: 10
   m_BackingObjectsDestroyImmediate: 1
+  m_ShowSceneViewPreviewObjects: 0
+  m_ShowGameViewPreviewObjects: 1
+  m_ForceRunInBackground: 1
+  m_ServerPort: 9876
+  m_IncrementalServerPortBindAttempts: 10
   m_UtpUdpServerPort: 8777
   m_UtpTcpServerPort: 8778
   m_ConnectionDiscoveryPort: 9877
@@ -61,18 +68,18 @@ MonoBehaviour:
       bottom: -1.19175
   m_MaterialSwapSets: []
   m_EnablePolySpatialRaycaster: 1
-  m_SelectedValidationType: 1
+  m_MaximumNumOfAudioPacketsPerSend: 4
+  m_EnableProgressiveTextureStreaming: 1
+  m_ProgressiveTextureTransferLimitBytes: 128000
+  m_ProgressiveTextureGenerateThumbnails: 0
+  m_ValidationOption: 0
   m_ShowWarningsForShaderGraphsInPackages: 1
   m_MinifyShaderGraphNodeNames: 1
   m_PreviewUseBackgroundColor: 1
   m_PreviewBackgroundColor: {r: 0.192, g: 0.301, b: 0.474, a: 1}
   m_RuntimeMode: 0
   m_EnableTransformVerification: 0
-  m_EnableProgressiveMipStreaming: 0
-  m_MaxMipByteSizePerCycle: 128000
   m_RuntimeFlags: 0
-  m_EnableInEditorPreview: 1
-  m_HidePolySpatialPreviewObjectsInScene: 1
   m_AlwaysLinkPolySpatialRuntime: 0
   m_PolySpatialNetworkingMode: 0
   m_EnableHostCameraControl: 0
@@ -82,7 +89,17 @@ MonoBehaviour:
   - 127.0.0.1
   m_SerializedIgnoredScenePaths: []
   m_MockBackend: 0
-  m_EnableGenericComponentTracker: 0
+  m_SendShadersForAllMaterials: 1
+  m_ShaderGlobalTextureFilterMode: 0
+  m_ShaderGlobalTextureFilterProperties: []
+  m_LoadBytecodeForBuiltInShaders: 1
+  m_PixelStreamingTransferMode: 1
+  m_PixelStreamingJPGCompressionQuality: 75
+  m_PixelStreamingWebRtcCodec: 2
+  m_PixelStreamingWebRtcTextureScale: 1
+  m_PixelStreamingWebRtcMinBitrate: 4500000
+  m_PixelStreamingWebRtcMaxBitrate: 4500000
+  m_PixelStreamingWebRtcMaxFramerate: 45
   m_EnableTransformDeltas: 0
   m_DisableTransformDeltaEpsilonComparison: 0
   m_TransformDeltaPositionEpsilon: 0.0001

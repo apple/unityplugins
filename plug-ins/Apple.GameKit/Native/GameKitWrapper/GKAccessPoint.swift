@@ -354,6 +354,31 @@ public func GKAccessPoint_TriggerForFriending
 }
 #endif
 
+#if os(iOS) || os(macOS)
+@_cdecl("GKAccessPoint_TriggerForArcade")
+public func GKAccessPoint_TriggerForArcade
+(
+    pointer: UnsafeMutableRawPointer, // GKAccessPoint
+    taskId: Int64,
+    onSuccess: @escaping SuccessTaskCallback,
+    onError: @escaping NSErrorTaskCallback
+)
+{
+    if #available(iOS 26.2, macOS 26.2, *) {
+        let target: GKAccessPoint = pointer.takeUnretainedValue();
+        if (!target.isPresentingGameCenter) {
+            target.triggerForArcade(handler: {
+                onSuccess(taskId);
+            });
+        } else {
+            onError(taskId, NSError(code: GKErrorCodeExtension.gameCenterDashboardAlreadyShown).passRetainedUnsafeMutablePointer());
+        }
+    } else {
+        onError(taskId, NSError(code: GKErrorCodeExtension.unsupportedOperationForOSVersion).passRetainedUnsafeMutablePointer());
+    }
+}
+#endif
+
 @_cdecl("GKAccessPoint_GetLocation")
 public func GKAccessPoint_GetLocation
 (

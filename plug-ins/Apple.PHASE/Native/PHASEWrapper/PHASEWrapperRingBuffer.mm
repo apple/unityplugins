@@ -2,11 +2,12 @@
 //  PHASEWrapperRingBuffer.mm
 //  AudioPluginPHASE
 //
-//  Copyright © 2024 Apple Inc. All rights reserved.
+//  Copyright © 2024, 2026 Apple Inc.
 //
 
 #import "PHASEWrapperRingBuffer.h"
 #import <Accelerate/Accelerate.h>
+#include <atomic>
 
 @implementation PHASEWrapperRingBuffer
 {
@@ -17,6 +18,7 @@
     AVAudioFrameCount mCurReadPosition;
     AVAudioFrameCount mCurWritePosition;
     int mBufferSize;
+    std::atomic<uint64_t> mUnderrunCount;
 }
 
 - (nullable instancetype)initWithFrameSize:(int)frameSize
@@ -51,26 +53,26 @@
     {
         if ([self isEmpty])
         {
-            NSLog(@"PHASE Wrapper Ring Buffer: No data available to read from ring buffer!");
+            mUnderrunCount.fetch_add(1, std::memory_order_relaxed);
             return NO;
         }
         
         AVAudioPCMBuffer* currentReadBuffer = mBuffers[mReadIdx];
         AVAudioFrameCount framesAvailable = mBufferSize - mCurReadPosition;
         AVAudioFrameCount framesToRead = std::min(framesAvailable, frameCount - totalFramesRead);
-
+        
         for (int chan = 0; chan < currentReadBuffer.format.channelCount; ++chan)
         {
             float* inputChannel = currentReadBuffer.floatChannelData[chan];
             float* outputChannel = static_cast<float*>(output->mBuffers[chan].mData);
-
+            
             memcpy(outputChannel + totalFramesRead,
                    inputChannel + mCurReadPosition,
                    sizeof(float) * framesToRead);
         }
         
         totalFramesRead += framesToRead;
-
+        
         mCurReadPosition += framesToRead;
         if (mCurReadPosition >= mBufferSize)
         {
@@ -91,8 +93,25 @@
         AVAudioFrameCount framesAvailable = mBufferSize - mCurWritePosition;
         AVAudioFrameCount framesToWrite = std::min(framesAvailable, frameCount - totalFramesWritten);
 
-        DSPSplitComplex out = { currentWriteBuffer.floatChannelData[0] + mCurWritePosition, currentWriteBuffer.floatChannelData[1] + mCurWritePosition};
-        vDSP_ctoz((DSPComplex const*) input + totalFramesWritten, 2, &out, 1, frameCount);
+        int channelCount = currentWriteBuffer.format.channelCount;
+
+        if (channelCount == 1)
+        {
+            float* outputChannel = currentWriteBuffer.floatChannelData[0] + mCurWritePosition;
+            memcpy(outputChannel, input + totalFramesWritten, sizeof(float) * framesToWrite);
+        }
+        else if (channelCount == 2)
+        {
+            DSPSplitComplex out = {
+                currentWriteBuffer.floatChannelData[0] + mCurWritePosition,
+                currentWriteBuffer.floatChannelData[1] + mCurWritePosition
+            };
+            vDSP_ctoz((DSPComplex const*)(input + totalFramesWritten * 2), 2, &out, 1, framesToWrite);
+        }
+        else
+        {
+            return NO;
+        }
 
         totalFramesWritten += framesToWrite;
 
@@ -110,6 +129,11 @@
 - (BOOL)isEmpty
 {
     return (mReadIdx == mWriteIdx) && (mCurReadPosition == mCurWritePosition);
+}
+
+- (uint64_t)consumeAndResetUnderrunCount
+{
+    return mUnderrunCount.exchange(0, std::memory_order_relaxed);
 }
 
 @end

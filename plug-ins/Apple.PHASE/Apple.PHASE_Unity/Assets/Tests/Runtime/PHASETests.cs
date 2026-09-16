@@ -9,8 +9,6 @@ namespace Apple.PHASE.UnitTests
 {
     public class PHASETests
     {
-        static long InvalidId = -1;
-
         static double InvalidGain = -1.0f;
 
         private string m_testResourcesDir = "TestAssets/";
@@ -35,11 +33,7 @@ namespace Apple.PHASE.UnitTests
 
             PHASESource source = sourceObject.GetComponent<PHASESource>();
             yield return new WaitForFixedUpdate();
-#if UNITY_6000_4_OR_NEWER
-            Assert.IsTrue(source.GetEntityId() != EntityId.None, $"Failed to create {testSourceName}");
-#else
-            Assert.IsTrue(source.GetInstanceID() != InvalidId, $"Failed to create {testSourceName}");
-#endif
+            Assert.IsTrue(source.GetSourceId() != Helpers.InvalidId, $"Failed to create {testSourceName}");
 
             source.Play();
             yield return new WaitForFixedUpdate();
@@ -63,11 +57,7 @@ namespace Apple.PHASE.UnitTests
 
             PHASESource source = sourceObject.GetComponent<PHASESource>();
             yield return new WaitForFixedUpdate();
-#if UNITY_6000_4_OR_NEWER
-            Assert.IsTrue(source.GetEntityId() != EntityId.None, "Failed to create looping source");
-#else
-            Assert.IsTrue(source.GetInstanceID() != InvalidId, "Failed to create looping source");
-#endif
+            Assert.IsTrue(source.GetSourceId() != Helpers.InvalidId, "Failed to create looping source");
 
             source.Play();
             yield return new WaitForSeconds(0.75f);
@@ -94,11 +84,7 @@ namespace Apple.PHASE.UnitTests
 
             PHASESource source = sourceObject.GetComponent<PHASESource>();
             yield return new WaitForFixedUpdate();
-#if UNITY_6000_4_OR_NEWER
-            Assert.IsTrue(source.GetEntityId() != EntityId.None, "Failed to create Footsteps");
-#else
-            Assert.IsTrue(source.GetInstanceID() != InvalidId, "Failed to create Footsteps");
-#endif
+            Assert.IsTrue(source.GetSourceId() != Helpers.InvalidId, "Failed to create Footsteps");
 
             source.Play();
             yield return new WaitForSeconds(0.5f);
@@ -128,11 +114,7 @@ namespace Apple.PHASE.UnitTests
 
             PHASESource source = sourceObject.GetComponent<PHASESource>();
             yield return new WaitForFixedUpdate();
-#if UNITY_6000_4_OR_NEWER
-            Assert.IsTrue(source.GetEntityId() != EntityId.None, "Failed to create looping source");
-#else
-            Assert.IsTrue(source.GetInstanceID() != InvalidId, "Failed to create looping source");
-#endif
+            Assert.IsTrue(source.GetSourceId() != Helpers.InvalidId, "Failed to create looping source");
 
             source.Play();
             yield return new WaitForSeconds(0.75f);
@@ -159,11 +141,7 @@ namespace Apple.PHASE.UnitTests
 
             PHASESource source = sourceObject.GetComponent<PHASESource>();
             yield return new WaitForFixedUpdate();
-#if UNITY_6000_4_OR_NEWER
-            Assert.IsTrue(source.GetEntityId() != EntityId.None, "Failed to create looping source");
-#else
-            Assert.IsTrue(source.GetInstanceID() != InvalidId, "Failed to create looping source");
-#endif
+            Assert.IsTrue(source.GetSourceId() != Helpers.InvalidId, "Failed to create looping source");
 
             source.Play();
             yield return new WaitForSeconds(0.75f);
@@ -202,11 +180,7 @@ namespace Apple.PHASE.UnitTests
 
             PHASESource source = sourceObject.GetComponent<PHASESource>();
             yield return new WaitForFixedUpdate();
-#if UNITY_6000_4_OR_NEWER
-            Assert.IsTrue(source.GetEntityId() != EntityId.None, "Failed to create looping source");
-#else
-            Assert.IsTrue(source.GetInstanceID() != InvalidId, "Failed to create looping source");
-#endif
+            Assert.IsTrue(source.GetSourceId() != Helpers.InvalidId, "Failed to create looping source");
 
             source.Play();
             yield return new WaitForSeconds(0.75f);
@@ -215,7 +189,7 @@ namespace Apple.PHASE.UnitTests
             GameObject occluderObject = Object.Instantiate(Resources.Load<GameObject>(m_testResourcesDir + "PHASEOccluder"));
             PHASEOccluder occluder = occluderObject.GetComponent<PHASEOccluder>();
             yield return new WaitForSeconds(0.75f);
-            Assert.That(occluder.GetOccluderId() != InvalidId, "Failed to instantiate PHASE Occluder");
+            Assert.That(occluder.GetOccluderId() != Helpers.InvalidId, "Failed to instantiate PHASE Occluder");
 
             Object.Destroy(occluderObject);
             yield return new WaitForFixedUpdate();
@@ -237,11 +211,7 @@ namespace Apple.PHASE.UnitTests
 
             PHASESource source = sourceObject.GetComponent<PHASESource>();
             yield return new WaitForFixedUpdate();
-#if UNITY_6000_4_OR_NEWER
-            Assert.IsTrue(source.GetEntityId() != EntityId.None, "Failed to create looping source");
-#else
-            Assert.IsTrue(source.GetInstanceID() != InvalidId, "Failed to create looping source");
-#endif
+            Assert.IsTrue(source.GetSourceId() != Helpers.InvalidId, "Failed to create looping source");
 
             source.Play();
             yield return new WaitForSeconds(0.75f);
@@ -250,7 +220,7 @@ namespace Apple.PHASE.UnitTests
             GameObject occluderObject = Object.Instantiate(Resources.Load<GameObject>(m_testResourcesDir + "PHASEOccluderMultipleSubmeshesScaledParent"));
             PHASEOccluder occluder = occluderObject.GetComponent<PHASEOccluder>();
             yield return new WaitForSeconds(0.75f);
-            Assert.That(occluder.GetOccluderId() != InvalidId, "Failed to instantiate PHASE Occluder with submesh and scaled parent");
+            Assert.That(occluder.GetOccluderId() != Helpers.InvalidId, "Failed to instantiate PHASE Occluder with submesh and scaled parent");
 
             Object.Destroy(occluderObject);
             yield return new WaitForFixedUpdate();
@@ -272,11 +242,7 @@ namespace Apple.PHASE.UnitTests
 
             PHASESource source = sourceObject.GetComponent<PHASESource>();
             yield return new WaitForFixedUpdate();
-#if UNITY_6000_4_OR_NEWER
-            Assert.IsTrue(source.GetEntityId() != EntityId.None, "Failed to create looping source");
-#else
-            Assert.IsTrue(source.GetInstanceID() != InvalidId, "Failed to create looping source");
-#endif
+            Assert.IsTrue(source.GetSourceId() != Helpers.InvalidId, "Failed to create looping source");
 
             source.Play();
             yield return new WaitForSeconds(0.05f);
@@ -302,11 +268,7 @@ namespace Apple.PHASE.UnitTests
 
             PHASESource source = sourceObject.GetComponent<PHASESource>();
             yield return new WaitForFixedUpdate();
-#if UNITY_6000_4_OR_NEWER
-            Assert.IsTrue(source.GetEntityId() != EntityId.None, "Failed to create looping source");
-#else
-            Assert.IsTrue(source.GetInstanceID() != InvalidId, "Failed to create looping source");
-#endif
+            Assert.IsTrue(source.GetSourceId() != Helpers.InvalidId, "Failed to create looping source");
 
             source.Play();
             yield return new WaitForSeconds(0.75f);
@@ -315,7 +277,7 @@ namespace Apple.PHASE.UnitTests
             GameObject occluderObject = Object.Instantiate(Resources.Load<GameObject>(m_testResourcesDir + "PHASEOccluder"));
             PHASEOccluder occluder = occluderObject.GetComponent<PHASEOccluder>();
             yield return new WaitForSeconds(0.75f);
-            Assert.That(occluder.GetOccluderId() != InvalidId, "Failed to instantiate PHASE Occluder");
+            Assert.That(occluder.GetOccluderId() != Helpers.InvalidId, "Failed to instantiate PHASE Occluder");
 
             occluderObject.SetActive(false);
             yield return new WaitForSeconds(0.1f);
@@ -346,11 +308,7 @@ namespace Apple.PHASE.UnitTests
 
             PHASESource source = sourceObject.GetComponent<PHASESource>();
             yield return new WaitForFixedUpdate();
-#if UNITY_6000_4_OR_NEWER
-            Assert.IsTrue(source.GetEntityId() != EntityId.None, "Failed to create looping source");
-#else
-            Assert.IsTrue(source.GetInstanceID() != InvalidId, "Failed to create looping source");
-#endif
+            Assert.IsTrue(source.GetSourceId() != Helpers.InvalidId, "Failed to create looping source");
 
             source.Play();
             yield return new WaitForSeconds(0.75f);
@@ -381,11 +339,7 @@ namespace Apple.PHASE.UnitTests
 
             PHASESource source = sourceObject.GetComponent<PHASESource>();
             yield return new WaitForFixedUpdate();
-#if UNITY_6000_4_OR_NEWER
-            Assert.IsTrue(source.GetEntityId() != EntityId.None, "Failed to create looping source");
-#else
-            Assert.IsTrue(source.GetInstanceID() != InvalidId, "Failed to create looping source");
-#endif
+            Assert.IsTrue(source.GetSourceId() != Helpers.InvalidId, "Failed to create looping source");
 
             source.Play();
             yield return new WaitForSeconds(0.5f);
@@ -414,11 +368,7 @@ namespace Apple.PHASE.UnitTests
 
             PHASESource source = sourceObject.GetComponent<PHASESource>();
             yield return new WaitForFixedUpdate();
-#if UNITY_6000_4_OR_NEWER
-            Assert.IsTrue(source.GetEntityId() != EntityId.None, "Failed to create looping source");
-#else
-            Assert.IsTrue(source.GetInstanceID() != InvalidId, "Failed to create looping source");
-#endif
+            Assert.IsTrue(source.GetSourceId() != Helpers.InvalidId, "Failed to create looping source");
 
             source.Play();
             yield return new WaitForSeconds(0.75f);

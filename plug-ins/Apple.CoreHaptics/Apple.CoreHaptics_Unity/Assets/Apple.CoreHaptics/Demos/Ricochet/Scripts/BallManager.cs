@@ -132,7 +132,7 @@ public class BallManager : MonoBehaviour
 			var shieldPos = _shield.transform.position;
 			var newPos = new Vector3(shieldPos.x, shieldPos.y, shieldPos.z - 0.1f);
 			transform.position = newPos;
-			_rigidbody.velocity = _shield.gameObject.GetComponent<Rigidbody2D>().velocity;
+			_rigidbody.SetVelocity(_shield.gameObject.GetComponent<Rigidbody2D>().GetVelocity());
 		}
 
 		if (HasTexture && !(_textureHapticPlayer is null))
@@ -184,17 +184,17 @@ public class BallManager : MonoBehaviour
 
 	public void OnCollisionEnter2D(Collision2D collision)
 	{
-		if (Math.Abs(_rigidbody.velocity.y) < (0.1 * _maximumReasonableVelocity)
+		if (Math.Abs(_rigidbody.GetVelocity().y) < (0.1 * _maximumReasonableVelocity)
 			&& (collision.gameObject.name.Equals("Top") || collision.gameObject.name.Equals("Bottom")))
 		{
-			_rigidbody.velocity = new Vector3(_rigidbody.velocity.x, 0f, 0f);
+			_rigidbody.SetVelocity(new Vector2(_rigidbody.GetVelocity().x, 0f));
 			return;
 		}
 
-		if (Math.Abs(_rigidbody.velocity.x) < (0.1 * _maximumReasonableVelocity)
+		if (Math.Abs(_rigidbody.GetVelocity().x) < (0.1 * _maximumReasonableVelocity)
 			&& (collision.gameObject.name.Equals("Left") || collision.gameObject.name.Equals("Right")))
 		{
-			_rigidbody.velocity = new Vector3(0f, _rigidbody.velocity.y, 0f);
+			_rigidbody.SetVelocity(new Vector2(0f, _rigidbody.GetVelocity().y));
 			return;
 		}
 
@@ -278,7 +278,7 @@ public class BallManager : MonoBehaviour
 		Debug.Log("Playing implosion haptics.");
 
 		_rigidbody.gravityScale = 0f;
-		_rigidbody.velocity = Vector2.zero;
+		_rigidbody.SetVelocity(Vector2.zero);
 
 		Destroy(_shield);
 		_shield = null;
@@ -288,7 +288,7 @@ public class BallManager : MonoBehaviour
 
 	private void UpdateTextureIntensity()
 	{
-		var currentSpeed = _rigidbody.velocity.magnitude;
+		var currentSpeed = _rigidbody.GetVelocity().magnitude;
 		var intensity = Math.Min(currentSpeed / _maximumReasonableVelocity, 1f);
 		var hapticParameters = new List<CHHapticParameter>
 			{

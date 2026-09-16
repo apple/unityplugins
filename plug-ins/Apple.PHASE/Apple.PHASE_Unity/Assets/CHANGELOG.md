@@ -1,6 +1,30 @@
 # CHANGELOG
 All notable changes to this project will be documented in this file.
 
+## [1.2.8] - 2026-09-16
+
+### Added
+
+- Native `PHASEWrapper` support for running the engine in `PHASERenderingModeClient` on visionOS
+  (`setUseClientRenderingMode`), for setting a world transform so RealityKit scenes can place the
+  PHASE world (`setWorldTransform`), and for mono channel layouts.
+
+### Changed
+
+- Updated for APIs deprecated in Unity 6 (`HierarchyProperty`, `Object.GetInstanceID()`,
+  `FindObjectsOfType`, `EndNameEditAction`), while still building against the Unity 2022.3 floor.
+- Updated the native project for Xcode 27 and raised its macOS deployment target to 12.0, matching
+  the minimum OS versions the plug-ins already document as supported.
+- The wrapper's ring buffer now counts read underruns instead of logging from the audio thread.
+- Now requires Apple.Core 3.3.0.
+
+### Fixed
+
+- Fixed ring buffer writes for mono sources, which previously assumed a stereo interleaved layout.
+- Corrected the misspelled `destoryMappedMetaParameterWithId` wrapper method to
+  `destroyMappedMetaParameterWithId`.
+- Fixed plug-in builds when the source root path contains a space character.
+
 ## [1.2.7] - 2025-06-30
 
 ### Changed
