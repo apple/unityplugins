@@ -1,12 +1,22 @@
 # CHANGELOG
 All notable changes to this project will be documented in this file.
 
-## [1.3.2] - 2026-09-10
+## [1.3.2] - 2026-09-16
 ### Changed
 - Updated the asset picker and Ricochet sample for APIs deprecated in Unity 6 (`HierarchyProperty`,
   `Object.GetInstanceID()`, `Rigidbody2D.velocity`, `Resolution.refreshRate`), while still building
   against the Unity 2022.3 floor.
+- Updated the native project for Xcode 27 and raised its deployment targets to iOS 15.0, tvOS 15.0,
+  and macOS 12.0, matching the minimum OS versions the plug-ins already document as supported.
 - Now requires Apple.Core 3.3.0.
+
+### Fixed
+- Added `[MarshalAs(UnmanagedType.I1)]` to `bool` P/Invoke declarations so `bool` results marshal
+  correctly.
+- Fixed `UnityPickers.AssetPickerDrawer` exceptions when `assetType` or `fieldInfo` is null. Thanks
+  to [@ilterbilguven](https://github.com/ilterbilguven)
+  ([#47](https://github.com/apple/unityplugins/pull/47)).
+- Fixed plug-in builds when the source root path contains a space character.
 
 ## [1.3.1] - 2025-01-29
 - Remove references to some unused packages.
