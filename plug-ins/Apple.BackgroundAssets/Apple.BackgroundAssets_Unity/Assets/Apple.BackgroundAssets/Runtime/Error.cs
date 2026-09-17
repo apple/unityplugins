@@ -11,7 +11,7 @@ namespace Apple.BackgroundAssets {
 			
 			internal IntPtr description;
 			
-			bool _static;
+			byte _static;
 			
 		}
 		
