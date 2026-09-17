@@ -8,12 +8,15 @@ namespace Apple.Core
 {
     public static class Availability
     {
+#if UNITY_EDITOR_OSX || (!UNITY_EDITOR && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX || UNITY_VISIONOS))
         [DllImport(InteropUtility.DLLName, EntryPoint = "AppleCore_GetRuntimeEnvironment")]
         private static extern RuntimeEnvironment AppleCore_GetRuntimeEnvironment();
-
-        private static RuntimeEnvironment _runtimeEnvironment;
         public static RuntimeEnvironment RuntimeEnvironment => _runtimeEnvironment.IsUnknown ? (_runtimeEnvironment = AppleCore_GetRuntimeEnvironment()) : _runtimeEnvironment;
-
+#else
+        public static RuntimeEnvironment RuntimeEnvironment => _runtimeEnvironment;
+#endif // UNITY_EDITOR_OSX || (!UNITY_EDITOR && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX || UNITY_VISIONOS))
+        private static RuntimeEnvironment _runtimeEnvironment;
+        
         /// <summary>
         /// Use to ensure API methods are only called on platforms which support those calls.
         /// </summary>
