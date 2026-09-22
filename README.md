@@ -31,5 +31,19 @@ To get started with integration of these plug-ins into your Unity projects, run 
 | watchOS | not supported |
 
 
+## Debug Symbols
+
+Each plug-in ships a `.dSYM` beside its native library, and the build step copies it into the archive when you build
+for distribution. That is what makes plug-in frames appear as function names in crash reports rather than as raw
+addresses, and it is why uploading to App Store Connect does not warn that a dSYM is missing for the framework.
+
+Debug symbols never enter the app bundle. The `.ipa` you upload is the same size with or without them; they live in
+the `.xcarchive` only, so the cost is local disk and upload time, not download size for players.
+
+They are the larger part of each package for the same reason — the libraries themselves are stripped, so most of the
+symbol information is in the dSYM rather than in the binary. If you do not want them, deleting the `.dSYM` folders
+from `NativeLibraries~` after installing the package is enough; the build step copies whatever is there. Expect App
+Store Connect to warn about the missing symbols if you do.
+
 ## Leaving Feedback
 Leave an issue for the community or see the [Feedback](Documentation/Feedback.md) documentation for more information.
