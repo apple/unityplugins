@@ -100,6 +100,9 @@ namespace Apple.GameController.Controller
 
         private static TaskCompletionSource<bool> _startWirelessDiscoveryTCS;
 
+        // Held for the same reason as the connection handlers, for as long as native has not called back.
+        private static readonly SuccessCallback _onWirelessDiscoveryComplete = OnWirelessDiscoveryComplete;
+
         public static Task StartWirelessDiscovery()
         {
             if (_startWirelessDiscoveryTCS != null)
@@ -107,7 +110,7 @@ namespace Apple.GameController.Controller
 
             _startWirelessDiscoveryTCS = new TaskCompletionSource<bool>();
 
-            GameControllerWrapper_StartWirelessDiscovery(OnWirelessDiscoveryComplete);
+            GameControllerWrapper_StartWirelessDiscovery(_onWirelessDiscoveryComplete);
 
             return _startWirelessDiscoveryTCS.Task;
         }
@@ -134,9 +137,18 @@ namespace Apple.GameController.Controller
         [DllImport(InteropUtility.DLLName)]
         private static extern void GameControllerWrapper_SetConnectionHandlers(ControllerConnectionStateChangedCallback onConnected, ControllerConnectionStateChangedCallback onDisconnected);
 
+        // Native code keeps these for the lifetime of the process. Nothing else references them once this method
+        // returns, so without a rooted reference the garbage collector is free to reclaim them and native is left
+        // calling through to freed memory.
+        private static ControllerConnectionStateChangedCallback _onControllerConnected;
+        private static ControllerConnectionStateChangedCallback _onControllerDisconnected;
+
         private static void SetConnectionHandlers(ControllerConnectionStateChangedCallback onConnected, ControllerConnectionStateChangedCallback onDisconnected)
         {
-            GameControllerWrapper_SetConnectionHandlers(onConnected, onDisconnected);
+            _onControllerConnected = onConnected;
+            _onControllerDisconnected = onDisconnected;
+
+            GameControllerWrapper_SetConnectionHandlers(_onControllerConnected, _onControllerDisconnected);
         }
         #endregion
 
