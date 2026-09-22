@@ -6,7 +6,7 @@ import os, shutil, json, tempfile
 import scripts.python.upi_utility as utility
 import scripts.python.upi_toolchain as toolchain
 
-from scripts.python.upi_cli_argument_options import ConfigID
+from scripts.python.upi_cli_argument_options import BuildActionID, ConfigID
 
 from pathlib import Path
 from collections.abc import Callable
@@ -115,6 +115,27 @@ class NativeUnityPluginManager:
         return self.native_unity_plugin_table[plugin_id] if plugin_id in self.native_unity_plugin_table else None
 
     # Scans the provided plug-in path, optionally builds native libraries for each plug-in, and tracks relevant information for the plug-in's Unity and Xcode projects.
+    # Invokes xcodebuild for every platform and configuration selected for this invocation.
+    # Returns False when a build failed and the user chose not to continue, so the caller can stop.
+    def BuildNativeLibraries(self, plugin_id : str) -> bool:
+        # TODO: (Jared) Interrogate build machine for SDKs
+        build_commands = CTX.GenerateXcodeBuildCommands(plugin_id)
+
+        for platform, command_set in build_commands.items():
+            for config, command in command_set.items():
+                CTX.printer.StatusMessageWithContext(f"Building {config} {plugin_id} native libraries for platform: ", platform, f"\n{CTX.printer.Indent(1)}")
+                CTX.printer.MessageWithContext("Build command: ", f"{' '.join(command)}", CTX.printer.Indent(2))
+
+                build_command_output = utility.RunCommand(command)
+                if build_command_output.returncode != 0:
+                    CTX.printer.WarningMessage("Native library build command completed with non-zero return code")
+                    CTX.printer.MessageWithContext("Command output:", f"\n{build_command_output.stdout}")
+                    
+                    if not utility.BooleanPrompt(CTX.printer, "Would you like to continue the build process?"):
+                        return False
+
+        return True
+
     def ProcessNativeUnityPlugin(self, plugin_path : Path) -> None:
         CTX.printer.StatusMessageWithContext("Scanning native plug-in subfolder: ", plugin_path.name, "\n")
         CTX.printer.MessageWithContext("Plug-in path: ", plugin_path, f"{CTX.printer.Indent(1)}")
@@ -186,23 +207,10 @@ class NativeUnityPluginManager:
         working_dir = os.getcwd()
         os.chdir(native_project_path)
 
-        # Build
-        # TODO: (Jared) Interrogate build machine for SDKs
-        build_commands = CTX.GenerateXcodeBuildCommands(plugin_id)
-
-        for platform, command_set in build_commands.items():
-            for config, command in command_set.items():
-                CTX.printer.StatusMessageWithContext(f"Building {config} {plugin_id} native libraries for platform: ", platform, f"\n{CTX.printer.Indent(1)}")
-                CTX.printer.MessageWithContext("Build command: ", f"{' '.join(command)}", CTX.printer.Indent(2))
-
-                build_command_output = utility.RunCommand(command)
-                if build_command_output.returncode != 0:
-                    CTX.printer.WarningMessage("Native library build command completed with non-zero return code")
-                    CTX.printer.MessageWithContext("Command output:", f"\n{build_command_output.stdout}")
-                    
-                    if not utility.BooleanPrompt(CTX.printer, "Would you like to continue the build process?"):
-                        os.chdir(working_dir)
-                        return
+        # Everything above this point is discovery, which packing needs; only the native build itself is optional.
+        if CTX.build_actions[BuildActionID.BUILD] and not self.BuildNativeLibraries(plugin_id):
+            os.chdir(working_dir)
+            return
 
         # Determine path to /NativeLibraries~, Each project should write all built libraries to this folder.
         unity_plugins_paths = list(native_plugin.unity_project.path.joinpath("Assets").glob('**/NativeLibraries~'))
