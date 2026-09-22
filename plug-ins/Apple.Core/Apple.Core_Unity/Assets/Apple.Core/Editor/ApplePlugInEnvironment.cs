@@ -80,12 +80,18 @@ namespace Apple.Core
         /// <summary>
         /// Used to validate packages as Apple Plug-In packages, all Apple plug-in names (see package.json for any Apple plug-in) begin with this string.
         /// </summary>
-        public static string AppleUnityPackageNamePrefix => "com.apple.unityplugin";
+        /// <remarks>
+        /// Defined in <c>AppleUnityPackageIdentity</c>, alongside the author name it is checked with.
+        /// </remarks>
+        public static string AppleUnityPackageNamePrefix => AppleUnityPackageIdentity.PackageNamePrefix;
 
         /// <summary>
         /// Use to validate packages as Apple Plug-In packages, all Apple plug-in author names (see package.json for any Apple plug-in) are exactly this string.
         /// </summary>
-        public static string AppleUnityPackageAuthorName => "Apple, Inc";
+        /// <remarks>
+        /// Defined in <c>AppleUnityPackageIdentity</c>, alongside the package-name prefix it is checked with.
+        /// </remarks>
+        public static string AppleUnityPackageAuthorName => AppleUnityPackageIdentity.PackageAuthorName;
 
         /// <summary>
         /// For saving/restoring non-volatile configuration settings for a given project
@@ -473,7 +479,10 @@ namespace Apple.Core
                 AppleBuildStep buildStep = _defaultProfile.FindBuildStep(unityPackage.displayName);
 
                 // Apple packages with native libraries will always have a build step defined for handling those libraries, so validate here.
-                if (buildStep != null && buildStep.IsNativePlugIn && buildStep.DisplayName == unityPackage.displayName && unityPackage.author.name == AppleUnityPackageAuthorName && !_appleUnityPackages.ContainsKey(unityPackage.displayName))
+                // A matching build step is definitive on its own: build steps are compiled into the plug-in package itself, so a
+                // displayName match cannot be produced by an unrelated package. The author name is deliberately not also required,
+                // since an edit to that one package.json field would otherwise silently detach a package from its libraries.
+                if (buildStep != null && buildStep.IsNativePlugIn && buildStep.DisplayName == unityPackage.displayName && !_appleUnityPackages.ContainsKey(unityPackage.displayName))
                 {
                     AppleUnityPackage applePackage = new AppleUnityPackage(unityPackage.name, unityPackage.displayName, unityPackage.resolvedPath);
                     if (!applePackage.PlayModeSupportLibrary.IsValid)
@@ -487,7 +496,9 @@ namespace Apple.Core
                     packagesAdded = true;
                 }
                 // If there's no build step or the build step isn't associated with a native plug-in track the library-free (C# only) package.
-                else if (unityPackage.name.StartsWith(AppleUnityPackageNamePrefix) && unityPackage.author.name == AppleUnityPackageAuthorName && !_appleUnityPackages.ContainsKey(unityPackage.displayName))
+                // No build step, so there are no native libraries to associate. Fall back to package metadata to decide whether this
+                // is one of ours; either the package-name prefix or the author name is enough (see AppleUnityPackageIdentity).
+                else if (AppleUnityPackageIdentity.Matches(unityPackage) && !_appleUnityPackages.ContainsKey(unityPackage.displayName))
                 {
                     AppleUnityPackage applePackage = new AppleUnityPackage(unityPackage.name, unityPackage.displayName);
                     _appleUnityPackages[applePackage.DisplayName] = applePackage;
