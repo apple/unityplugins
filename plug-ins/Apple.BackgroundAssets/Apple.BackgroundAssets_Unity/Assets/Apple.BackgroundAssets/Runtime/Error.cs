@@ -10,7 +10,7 @@ namespace Apple.BackgroundAssets {
 		internal struct baw_err {
 			
 			internal IntPtr description;
-
+      
 			// C '_Bool', held as a byte rather than a bool so that baw_err stays blittable. A bool
 			// would make every struct embedding this one non-blittable, and IL2CPP would then marshal
 			// those field by field — which silently corrupts the unions that overlay baw_err with a
