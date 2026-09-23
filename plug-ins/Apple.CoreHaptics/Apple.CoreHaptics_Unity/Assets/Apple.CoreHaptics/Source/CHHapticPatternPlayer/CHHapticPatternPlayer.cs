@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,6 +41,13 @@ namespace Apple.CoreHaptics
 
         internal void Setup()
         {
+            // Native callbacks find their player by pointer, so a player without one has nothing to register. Registering
+            // it anyway would key every such player on Zero, so they would overwrite each other and leak.
+            if (PlayerId == IntPtr.Zero)
+            {
+                return;
+            }
+
             PointerToPlayers[PlayerId] = this;
         }
 
