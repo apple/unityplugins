@@ -31,3 +31,21 @@ VERSIONING_SYSTEM = apple-generic
 INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2021 - 2024 Apple, Inc. All rights reserved."
 INFOPLIST_OUTPUT_FORMAT[config=Debug] = XML
 INFOPLIST_OUTPUT_FORMAT[config=Release] = binary
+
+// Deployment targets
+// ------------------
+//
+// Defined here rather than once per target and configuration, so that a plug-in's minimum OS versions are a single
+// decision in a single place.
+//
+// A platform left undefined does not mean "no minimum". It falls back to the SDK's own default, which is the newest
+// OS the installed Xcode knows about, so the library silently ends up loading only on the current OS -- and the
+// number changes with every Xcode release rather than when anyone decides it should.
+//
+// A target that genuinely needs a higher minimum overrides these in its own build settings, where it reads as the
+// exception it is.
+
+IPHONEOS_DEPLOYMENT_TARGET = 15.0
+TVOS_DEPLOYMENT_TARGET = 15.0
+MACOSX_DEPLOYMENT_TARGET = 12.0
+XROS_DEPLOYMENT_TARGET = 1.0
