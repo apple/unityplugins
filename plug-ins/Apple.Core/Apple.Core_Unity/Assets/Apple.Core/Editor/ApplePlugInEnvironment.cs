@@ -215,6 +215,14 @@ namespace Apple.Core
                 AssetDatabase.CreateFolder(ApplePlugInSupportRootPath, "Editor");
             }
 
+            // Created for both batch and interactive runs, because the library sync below writes into it and batch mode
+            // reaches that sync when running Play Mode tests.
+            if (!Directory.Exists(ApplePlugInSupportPlayModeSupportPath))
+            {
+                Debug.Log($"[Apple Unity Plug-ins] Creating support folder: {ApplePlugInSupportPlayModeSupportPath}");
+                AssetDatabase.CreateFolder(ApplePlugInSupportEditorPath, "PlayModeSupport");
+            }
+
             _defaultProfile = AppleBuildProfile.DefaultProfile();
             _defaultProfile.ResolveBuildSteps();
 
@@ -243,21 +251,16 @@ namespace Apple.Core
 
                 if (_packageManagerListRequest.Status == StatusCode.Success)
                 {
-                    // No need to sync play mode support libraries in batch mode. These are used just for Play Mode within the Editor.
-                    OnPackageManagerListSuccess(syncPlayModeLibraries: false);
+                    // Play mode support libraries are needed in batch mode too. Batch mode is not only building:
+                    // 'Unity -batchmode -runTests -testPlatform PlayMode' enters Play Mode in the Editor, which is
+                    // exactly what these libraries exist for. Skipping the sync leaves PlayModeSupport empty, so every
+                    // test that calls into native code fails with DllNotFoundException.
+                    OnPackageManagerListSuccess(syncPlayModeLibraries: true);
                 }
                 else
                 {
                     Debug.LogError($"[Apple Unity Plug-Ins] Failed query to the package manager for list of packages with status: {_packageManagerListRequest.Status}");
                 }
-            }
-            else
-            {
-                if (!Directory.Exists(ApplePlugInSupportPlayModeSupportPath))
-                {
-                    Debug.Log($"[Apple Unity Plug-ins] Running in Editor, creating support folder: {ApplePlugInSupportPlayModeSupportPath}");
-                    AssetDatabase.CreateFolder(ApplePlugInSupportEditorPath, "PlayModeSupport");
-                }   
             }
         }
 
