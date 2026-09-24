@@ -321,9 +321,8 @@ namespace Apple.Core
             {
                 case BuildTarget.iOS:
                 case BuildTarget.tvOS:
-                    return $"{pathToBuiltProject}/Unity-iPhone.xcodeproj/project.pbxproj";
                 case BuildTarget.VisionOS:
-                    return $"{pathToBuiltProject}/Unity-VisionOS.xcodeproj/project.pbxproj";
+                    return PBXProject.GetPBXProjectPath(pathToBuiltProject);
                 case BuildTarget.StandaloneOSX:
 #if UNITY_2020_1_OR_NEWER
                     return $"{pathToBuiltProject}/{new DirectoryInfo(pathToBuiltProject).Name}.xcodeproj/project.pbxproj";
@@ -333,6 +332,15 @@ namespace Apple.Core
                 default:
                     return null;
             }
+        }
+
+        /// <summary>
+        /// Utility method for getting the path of the .xcodeproj bundle Unity generated in provided build project path
+        /// </summary>
+        public static string GetGeneratedXcodeProjectPath(BuildTarget buildTarget, string pathToBuiltProject)
+        {
+            var pbxProjectPath = GetPbxProjectPath(buildTarget, pathToBuiltProject);
+            return pbxProjectPath == null ? null : Path.GetDirectoryName(pbxProjectPath);
         }
 
         /// <summary>
