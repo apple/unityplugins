@@ -9,12 +9,10 @@ namespace Apple.Core
     /// </summary>
     /// <remarks>
     /// These values must agree with the <c>name</c> and <c>author.name</c> fields of each plug-in's <c>package.json</c>.
-    /// If they disagree, the package manager still installs the package, but this plug-in system does not associate any
-    /// native libraries with it, and the build then produces an Xcode project with no Apple plug-in libraries linked and
-    /// no error explaining why.
-    ///
-    /// Keeping the strings here rather than inline at the comparison sites means that agreement is one thing to check
-    /// instead of several, and that a project which needs different values has one file to edit.
+    /// If they disagree, the package manager still installs the package, but this plug-in system will not associate any
+    /// native libraries with it, and the build produces an Xcode project with no Apple plug-in libraries linked. That
+    /// used to happen with no diagnostic; <see cref="IsPartialMatch"/> and <see cref="DescribeMismatch"/> exist so the
+    /// condition is reported where it can still be acted on.
     /// </remarks>
     public static class AppleUnityPackageIdentity
     {
@@ -29,27 +27,67 @@ namespace Apple.Core
         public const string PackageAuthorName = "Apple, Inc";
 
         /// <summary>
-        /// Determines whether a package reported by the Unity Package Manager is one of this plug-in collection's packages.
+        /// Whether a package's name carries the expected prefix.
+        /// </summary>
+        public static bool NameMatches(PackageInfo packageInfo)
+        {
+            return packageInfo != null
+                && !string.IsNullOrEmpty(packageInfo.name)
+                && packageInfo.name.StartsWith(PackageNamePrefix);
+        }
+
+        /// <summary>
+        /// Whether a package's author name matches exactly.
         /// </summary>
         /// <remarks>
-        /// A package qualifies if it carries either the expected package-name prefix or the expected author name. Either
-        /// alone is a strong enough signal, and requiring both turns a single edited field into a silent failure.
-        /// Callers that can match a package against a compiled-in <c>AppleBuildStep</c> have a stronger signal available
-        /// and should prefer it; see <c>ApplePlugInEnvironment.AddPackagesFromCollection</c>.
+        /// <c>author</c> is absent from some packages, so it is checked for null here rather than at each call site.
         /// </remarks>
-        /// <param name="packageInfo">Package metadata as reported by the Unity Package Manager.</param>
-        /// <returns>True when the package appears to be part of this plug-in collection.</returns>
+        public static bool AuthorMatches(PackageInfo packageInfo)
+        {
+            return packageInfo != null
+                && packageInfo.author != null
+                && packageInfo.author.name == PackageAuthorName;
+        }
+
+        /// <summary>
+        /// Whether a package reported by the Unity Package Manager is one of this plug-in collection's packages.
+        /// Both the package-name prefix and the author name must agree.
+        /// </summary>
         public static bool Matches(PackageInfo packageInfo)
+        {
+            return NameMatches(packageInfo) && AuthorMatches(packageInfo);
+        }
+
+        /// <summary>
+        /// Whether a package carries one of the two identity signals but not the other.
+        /// </summary>
+        /// <remarks>
+        /// This is the shape of a package that was meant to be one of these plug-ins but will not be recognized as one:
+        /// a renamed package that kept the author, or an unchanged package name whose author was edited. Worth a warning,
+        /// because the consequence -- no native libraries -- appears much later and a long way from the cause.
+        /// </remarks>
+        public static bool IsPartialMatch(PackageInfo packageInfo)
+        {
+            return packageInfo != null && NameMatches(packageInfo) != AuthorMatches(packageInfo);
+        }
+
+        /// <summary>
+        /// Describes which identity signal disagreed, for use in a diagnostic message.
+        /// </summary>
+        public static string DescribeMismatch(PackageInfo packageInfo)
         {
             if (packageInfo == null)
             {
-                return false;
+                return "No package information available.";
             }
 
-            bool nameMatches = !string.IsNullOrEmpty(packageInfo.name) && packageInfo.name.StartsWith(PackageNamePrefix);
-            bool authorMatches = packageInfo.author != null && packageInfo.author.name == PackageAuthorName;
+            if (!NameMatches(packageInfo))
+            {
+                return $"Package name '{packageInfo.name}' does not begin with the expected prefix '{PackageNamePrefix}'.";
+            }
 
-            return nameMatches || authorMatches;
+            string author = packageInfo.author == null ? "<none>" : packageInfo.author.name;
+            return $"Package author name is '{author}', but '{PackageAuthorName}' is expected.";
         }
     }
 }

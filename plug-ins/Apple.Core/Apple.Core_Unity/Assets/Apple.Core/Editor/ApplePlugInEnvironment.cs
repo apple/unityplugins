@@ -474,12 +474,11 @@ namespace Apple.Core
             foreach (var unityPackage in packageCollection)
             {
                 AppleBuildStep buildStep = _defaultProfile.FindBuildStep(unityPackage.displayName);
+                bool hasNativeBuildStep = buildStep != null && buildStep.IsNativePlugIn && buildStep.DisplayName == unityPackage.displayName;
+                bool alreadyTracked = _appleUnityPackages.ContainsKey(unityPackage.displayName);
 
                 // Apple packages with native libraries will always have a build step defined for handling those libraries, so validate here.
-                // A matching build step is definitive on its own: build steps are compiled into the plug-in package itself, so a
-                // displayName match cannot be produced by an unrelated package. The author name is deliberately not also required,
-                // since an edit to that one package.json field would otherwise silently detach a package from its libraries.
-                if (buildStep != null && buildStep.IsNativePlugIn && buildStep.DisplayName == unityPackage.displayName && !_appleUnityPackages.ContainsKey(unityPackage.displayName))
+                if (hasNativeBuildStep && AppleUnityPackageIdentity.AuthorMatches(unityPackage) && !alreadyTracked)
                 {
                     AppleUnityPackage applePackage = new AppleUnityPackage(unityPackage.name, unityPackage.displayName, unityPackage.resolvedPath);
                     if (!applePackage.PlayModeSupportLibrary.IsValid)
@@ -493,15 +492,18 @@ namespace Apple.Core
                     packagesAdded = true;
                 }
                 // If there's no build step or the build step isn't associated with a native plug-in track the library-free (C# only) package.
-                // No build step, so there are no native libraries to associate. Fall back to package metadata to decide whether this
-                // is one of ours; either the package-name prefix or the author name is enough (see AppleUnityPackageIdentity).
-                else if (AppleUnityPackageIdentity.Matches(unityPackage) && !_appleUnityPackages.ContainsKey(unityPackage.displayName))
+                else if (AppleUnityPackageIdentity.Matches(unityPackage) && !alreadyTracked)
                 {
                     AppleUnityPackage applePackage = new AppleUnityPackage(unityPackage.name, unityPackage.displayName);
                     _appleUnityPackages[applePackage.DisplayName] = applePackage;
                     packagesAdded = true;
                 }
-
+                // Neither branch claimed it. If it looks like one of these plug-ins anyway, say so; the consequence of a package
+                // going unrecognized is an Xcode project with no libraries for it, which surfaces a long way from this point.
+                else if (!alreadyTracked && (hasNativeBuildStep || AppleUnityPackageIdentity.IsPartialMatch(unityPackage)))
+                {
+                    RecordUnrecognizedPackage(unityPackage, hasNativeBuildStep);
+                }
             }
 
             if (packagesAdded && logPackagesAfterUpdate)
@@ -574,6 +576,54 @@ namespace Apple.Core
         /// <summary>
         /// Outputs a nicely formatted summary of the currently tracked libraries to Unity's Debug logging.
         /// </summary>
+        /// <summary>
+        /// Packages that look like Apple plug-in packages but were not recognized as such, keyed by display name.
+        /// </summary>
+        private static Dictionary<string, string> _unrecognizedPackages = new Dictionary<string, string>();
+
+        /// <summary>
+        /// Diagnostics for packages that look like Apple plug-in packages but were not recognized as such.
+        /// Empty in the normal case.
+        /// </summary>
+        /// <remarks>
+        /// Exposed so that a build can repeat the warning. The Editor logs it when the package manager reports a change,
+        /// which may be many recompiles before anyone runs a build; <c>AppleBuild.OnPostProcessBuild</c> reports it again
+        /// at the point the missing libraries actually matter.
+        /// </remarks>
+        public static IEnumerable<string> UnrecognizedPackageDiagnostics => _unrecognizedPackages.Values;
+
+        /// <summary>
+        /// Records and logs a package that carries some, but not all, of the marks of an Apple plug-in package.
+        /// </summary>
+        /// <param name="packageInfo">The package as reported by the Unity Package Manager.</param>
+        /// <param name="hasNativeBuildStep">Whether an AppleBuildStep for native libraries matched this package's display name.</param>
+        private static void RecordUnrecognizedPackage(UnityEditor.PackageManager.PackageInfo packageInfo, bool hasNativeBuildStep)
+        {
+            string diagnostic = $"[Apple Unity Plug-ins] '{packageInfo.displayName}' [{packageInfo.name}] was not recognized as an Apple plug-in package.\n"
+                + $"  {AppleUnityPackageIdentity.DescribeMismatch(packageInfo)}\n"
+                + $"  A package is recognized when its package.json 'name' begins with '{AppleUnityPackageIdentity.PackageNamePrefix}'"
+                + $" and its 'author.name' is exactly '{AppleUnityPackageIdentity.PackageAuthorName}' (see AppleUnityPackageIdentity).\n";
+
+            if (hasNativeBuildStep)
+            {
+                diagnostic += $"  This package does provide an AppleBuildStep for native libraries, so it almost certainly is one:"
+                    + " none of its native libraries will be added to the generated Xcode project, and calls into them will fail"
+                    + " at runtime with DllNotFoundException.\n";
+            }
+            else
+            {
+                diagnostic += "  No native libraries will be associated with it.\n";
+            }
+
+            if (_unrecognizedPackages.ContainsKey(packageInfo.displayName))
+            {
+                return;
+            }
+
+            _unrecognizedPackages[packageInfo.displayName] = diagnostic;
+            Debug.LogWarning(diagnostic);
+        }
+
         private static void LogLibrarySummary()
         {
             string summary = "[Apple Unity Plug-ins] Apple native plug-ins updated.\nTracking the following plug-in packages and native libraries:\n";

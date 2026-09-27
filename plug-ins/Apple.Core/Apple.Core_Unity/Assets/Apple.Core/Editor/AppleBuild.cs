@@ -27,6 +27,13 @@ namespace Apple.Core
         [PostProcessBuild(10)]
         public static void OnPostProcessBuild(BuildTarget buildTarget, string generatedProjectPath)
         {
+            // Repeat any package identity warnings here. ApplePlugInEnvironment logs them when the package manager reports a
+            // change, which can be many recompiles before a build; this is the point at which the absent libraries matter.
+            foreach (string diagnostic in ApplePlugInEnvironment.UnrecognizedPackageDiagnostics)
+            {
+                Debug.LogWarning(diagnostic);
+            }
+
             // TODO: Add management for multiple build profiles.
             var appleBuildProfile = AppleBuildProfile.DefaultProfile();
 
