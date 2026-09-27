@@ -114,11 +114,9 @@ class NativeUnityPluginManager:
     def GetNativeUnityPlugin(self, plugin_id : str) -> NativeUnityPlugin:
         return self.native_unity_plugin_table[plugin_id] if plugin_id in self.native_unity_plugin_table else None
 
-    # Scans the provided plug-in path, optionally builds native libraries for each plug-in, and tracks relevant information for the plug-in's Unity and Xcode projects.
     # Invokes xcodebuild for every platform and configuration selected for this invocation.
     # Returns False when a build failed and the user chose not to continue, so the caller can stop.
     def BuildNativeLibraries(self, plugin_id : str) -> bool:
-        # TODO: (Jared) Interrogate build machine for SDKs
         build_commands = CTX.GenerateXcodeBuildCommands(plugin_id)
 
         for platform, command_set in build_commands.items():
@@ -136,6 +134,7 @@ class NativeUnityPluginManager:
 
         return True
 
+    # Scans the provided plug-in path, optionally builds native libraries for each plug-in, and tracks relevant information for the plug-in's Unity and Xcode projects.
     def ProcessNativeUnityPlugin(self, plugin_path : Path) -> None:
         CTX.printer.StatusMessageWithContext("Scanning native plug-in subfolder: ", plugin_path.name, "\n")
         CTX.printer.MessageWithContext("Plug-in path: ", plugin_path, f"{CTX.printer.Indent(1)}")
