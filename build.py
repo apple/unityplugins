@@ -177,12 +177,11 @@ def Main():
     for platform_id in filtered_user_platforms:
         if platform_id == PlatformID.ALL:
             CTX.printer.Message(f"Platform '{PlatformID.ALL}' selected to build for all supported platforms and overrides all other platform ({Printer.Bold('-m')}) arguments.")
-            CTX.printer.InfoMessage(f"Unity lacks full support for {PlatformID.IOS_SIMULATOR} and {PlatformID.TVOS_SIMULATOR}; these platforms are skipped unless explicitly set as platform ({Printer.Bold('-m')}) arguments.")
+            CTX.printer.InfoMessage(f"This builds every platform with an installed SDK, simulators included. Use '{Printer.Bold('-m ' + PlatformID.DEVICES)}' for device platforms only, which is faster.")
             valid_platform_found = True
             for selected_platform_key in CTX.platforms:
                 if selected_platform_key in supported_platforms:
-                    if selected_platform_key != PlatformID.IOS_SIMULATOR and selected_platform_key != PlatformID.TVOS_SIMULATOR:
-                        CTX.platforms[selected_platform_key] = True
+                    CTX.platforms[selected_platform_key] = True
             break
         elif platform_id in CTX.platforms:
             if platform_id in supported_platforms:
@@ -368,27 +367,29 @@ def Main():
             else:
                 CTX.codesign_hash = build_args.codesign_identity
 
-        CTX.printer.SectionHeading("Gather Unity Installation Info")
+    # Outside the build action: packing and test builds both need the plug-in table this populates, and
+    # ProcessNativeUnityPlugin only invokes xcodebuild when the build action is set.
+    CTX.printer.SectionHeading("Gather Unity Installation Info")
 
-        unity_plugin_manager = plugin_manager.NativeUnityPluginManager(CTX)
-        if (CTX.build_tests):
-            unity_plugin_manager.ScanForUnityInstallations()
+    unity_plugin_manager = plugin_manager.NativeUnityPluginManager(CTX)
+    if (CTX.build_tests):
+        unity_plugin_manager.ScanForUnityInstallations()
 
-        CTX.printer.SectionHeading("Process Plug-Ins")
+    CTX.printer.SectionHeading("Process Plug-Ins")
 
-        # Sort plug-in build order so that Apple.Core always comes first
-        plugin_path_list = list()
-        for curr_plugin_path in CTX.plugin_root.iterdir():
-            if not curr_plugin_path.is_dir():
-                continue
+    # Sort plug-in build order so that Apple.Core always comes first
+    plugin_path_list = list()
+    for curr_plugin_path in CTX.plugin_root.iterdir():
+        if not curr_plugin_path.is_dir():
+            continue
 
-            if curr_plugin_path.name == "Apple.Core":
-                plugin_path_list.insert(0, curr_plugin_path)
-            else:
-                plugin_path_list.append(curr_plugin_path)
+        if curr_plugin_path.name == "Apple.Core":
+            plugin_path_list.insert(0, curr_plugin_path)
+        else:
+            plugin_path_list.append(curr_plugin_path)
 
-        for plugin_path in plugin_path_list:
-            unity_plugin_manager.ProcessNativeUnityPlugin(plugin_path)
+    for plugin_path in plugin_path_list:
+        unity_plugin_manager.ProcessNativeUnityPlugin(plugin_path)
 
     if CTX.build_tests:
         CTX.printer.SectionHeading("Build Unity Tests")
