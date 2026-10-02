@@ -67,6 +67,10 @@ namespace Apple.PHASE
             {
                 Debug.LogError("Failed to create PHASE Listener");
             }
+            else
+            {
+                PHASESource.ReanchorSources();
+            }
         }
 
         // Update is called once per frame.
