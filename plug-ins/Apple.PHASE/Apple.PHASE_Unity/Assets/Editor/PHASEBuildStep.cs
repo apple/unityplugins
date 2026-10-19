@@ -32,7 +32,8 @@ namespace Apple.PHASE.Editor
                     project.WriteToFile(projectPath);
                 }
 
-                var xcSettingsPath = $"{pathToBuiltProject}/Unity-iPhone.xcodeproj/project.xcworkspace/xcshareddata/WorkspaceSettings.xcsettings";
+                var xcodeProjectPath = AppleBuild.GetGeneratedXcodeProjectPath(buildTarget, pathToBuiltProject);
+                var xcSettingsPath = $"{xcodeProjectPath}/project.xcworkspace/xcshareddata/WorkspaceSettings.xcsettings";
                 // Change the xcode project to use the new build system.
                 var xcSettingsDoc = new PlistDocument();
                 if (File.Exists(xcSettingsPath))
