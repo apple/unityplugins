@@ -137,19 +137,21 @@ namespace Apple.GameKit.Multiplayer
         private static class Interop
         {
             [DllImport(InteropUtility.DLLName)]
+            [return: MarshalAs(UnmanagedType.I1)]
             public static extern bool GKVoiceChat_GetIsVoIPAllowed();
             [DllImport(InteropUtility.DLLName)]
             public static extern void GKVoiceChat_Start(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
             public static extern void GKVoiceChat_Stop(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
+            [return: MarshalAs(UnmanagedType.I1)]
             public static extern bool GKVoiceChat_GetIsActive(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
-            public static extern void GKVoiceChat_SetIsActive(IntPtr pointer, bool value);
+            public static extern void GKVoiceChat_SetIsActive(IntPtr pointer, [MarshalAs(UnmanagedType.I1)] bool value);
             [DllImport(InteropUtility.DLLName)]
             public static extern void GKVoiceChat_PlayerVoiceChatStateDidChangeHandler(IntPtr pointer, InternalPlayerVoiceChatStateDidChangeHandler onStateChanged);
             [DllImport(InteropUtility.DLLName)]
-            public static extern void GKVoiceChat_SetPlayer(IntPtr pointer, IntPtr playerPtr, bool isMuted);
+            public static extern void GKVoiceChat_SetPlayer(IntPtr pointer, IntPtr playerPtr, [MarshalAs(UnmanagedType.I1)] bool isMuted);
             [DllImport(InteropUtility.DLLName)]
             public static extern float GKVoiceChat_GetVolume(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]

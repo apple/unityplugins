@@ -2,6 +2,7 @@
     "name": "Apple.GameController.Editor",
     "rootNamespace": "",
     "references": [
+        "GUID:e29ad0d4fee70498282d3ef10d5630ce",
         "GUID:1e90ac084be3f8d469f923da4b9f7c81",
         "GUID:dd3feff86eff74ba4b6dccaa643eff23"
     ],

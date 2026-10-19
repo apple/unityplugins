@@ -12,9 +12,10 @@ namespace Apple.CoreHaptics
 
 		#region Muted
 		[DllImport(CHInteropUtility.DllName, EntryPoint = "CoreHaptics_CHHapticAdvancedPatternPlayer_GetIsMuted")]
+		[return: MarshalAs(UnmanagedType.I1)]
 		internal static extern bool GetIsMuted(IntPtr playerId);
 		[DllImport(CHInteropUtility.DllName, EntryPoint = "CoreHaptics_CHHapticAdvancedPatternPlayer_SetIsMuted")]
-		internal static extern void SetIsMuted(IntPtr playerId, bool isMuted);
+		internal static extern void SetIsMuted(IntPtr playerId, [MarshalAs(UnmanagedType.I1)] bool isMuted);
 		#endregion
 
 		#region Play
@@ -44,9 +45,10 @@ namespace Apple.CoreHaptics
 
 		#region LoopEnabled
 		[DllImport(CHInteropUtility.DllName, EntryPoint = "CoreHaptics_CHHapticAdvancedPatternPlayer_GetLoopEnabled")]
+		[return: MarshalAs(UnmanagedType.I1)]
 		internal static extern bool GetLoopEnabled(IntPtr playerId);
 		[DllImport(CHInteropUtility.DllName, EntryPoint = "CoreHaptics_CHHapticAdvancedPatternPlayer_SetLoopEnabled")]
-		internal static extern void SetLoopEnabled(IntPtr playerId, bool loopEnabled);
+		internal static extern void SetLoopEnabled(IntPtr playerId, [MarshalAs(UnmanagedType.I1)] bool loopEnabled);
 		#endregion
 
 		#region LoopEnd

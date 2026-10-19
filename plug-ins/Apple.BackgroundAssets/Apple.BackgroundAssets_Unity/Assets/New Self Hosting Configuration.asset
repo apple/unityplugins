@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b2a9759bc3cb4c8ab4819d23b005d66, type: 3}
+  m_Name: New Self Hosting Configuration
+  m_EditorClassIdentifier: Assembly-CSharp-Editor::Apple.BackgroundAssets.SelfHostingConfiguration
+  ManifestURL: https://assets.example.com/manifest
+  DownloadDomainAllowList:
+  - '*.example.com'
+  DownloadAllowance: 10000000000
+  EssentialDownloadAllowance: 500000000
+  MaxInstallSize: 23000000000
+  EssentialMaxInstallSize: 560000000

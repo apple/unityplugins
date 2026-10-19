@@ -133,13 +133,17 @@ public extension UnsafeMutablePointer {
 // MARK: - Dictionary Extensions
 
 /// Support bidirectional dictionary look-ups.
-extension Dictionary where Value: Equatable {
+extension Dictionary where Value: GCDevice {
     /// Finds a key for a given value in the dictionary.
     ///
     /// - Parameter val: The value to search for.
     /// - Returns: The first key that maps to the given value, or nil if not found.
-    func someKey(forValue val: Value) -> Key? {
-        return first(where: { $1 == val })?.key
+    func someKey(forValue val: GCController) -> Key? {
+        return first(where: { ($1 as? GCController) == val })?.key
+    }
+
+    func someKey(forValue val: GCStylus) -> Key? {
+        return first(where: { ($1 as? GCStylus) == val })?.key
     }
 }
 
@@ -154,9 +158,59 @@ extension Bool {
     }
 }
 
-// MARK: - GCController Extensions
+// MARK: - GCDevice Extensions
 
-extension GCController {
+extension GCDevice {
+    var isSpatial : Bool {
+        guard #available(visionOS 26.0, *) else {
+            return false
+        }
+        return productCategory == GCProductCategorySpatialController || productCategory == GCProductCategorySpatialStylus
+    }
+
+    var battery : GCDeviceBattery? {
+        guard #available(macOS 10.16, tvOS 14, iOS 14, *) else {
+            return nil
+        }
+        if let controller = self as? GCController {
+            return controller.battery
+        }
+        return nil
+    }
+
+    var motion : GCMotion? {
+        guard #available(macOS 10.16, tvOS 14, iOS 14, *) else {
+            return nil
+        }
+        if let controller = self as? GCController {
+            return controller.motion
+        }
+        return nil
+    }
+
+    var light : GCDeviceLight? {
+        guard #available(macOS 10.16, tvOS 14, iOS 14, *) else {
+            return nil
+        }
+        if let controller = self as? GCController {
+            return controller.light
+        }
+        return nil
+    }
+
+    var haptics : GCDeviceHaptics? {
+        guard #available(macOS 10.16, tvOS 14, iOS 14, *) else {
+            return nil
+        }
+        if let controller = self as? GCController {
+            return controller.haptics
+        }
+        if let stylus = self as? GCStylus {
+            return stylus.haptics
+        }
+        return nil
+    }
+
     /// Converts a GCController to an SCController structure.
     ///
     /// - Parameter uid: The unique identifier for the controller.
@@ -166,18 +220,28 @@ extension GCController {
         var hasMotion = false
         var hasLight = false
         var hasHaptics = false
+        var isAttachedToDevice = false
         var scMotion = SCControllerMotionCapabilities(hasAttitude: SCFalse, hasRotationRate: SCFalse, hasGravityAndUserAcceleration: SCFalse, sensorsRequireManualActivation: SCFalse)
         var scHaptics = SCDeviceHaptics(supportedLocalities: 0)
-        if #available(visionOS 1.0, macOS 10.16, iOS 14.0, tvOS 14.0, *) {
-            hasBattery = self.battery != nil
-            hasMotion = self.motion != nil
-            hasLight = self.light != nil
-            hasHaptics = self.haptics != nil
-            if let motion {
-                scMotion = motion.toSCControllerMotionCapabilities()
+        if #available(visionOS 1.0, macOS 10.16, tvOS 14.0, iOS 14.0, *) {
+            if let controller = self as? GCController {
+                isAttachedToDevice = controller.isAttachedToDevice
+                hasBattery = controller.battery != nil
+                hasMotion = controller.motion != nil
+                hasLight = controller.light != nil
+                hasHaptics = controller.haptics != nil
+                if let motion = controller.motion {
+                    scMotion = motion.toSCControllerMotionCapabilities()
+                }
+                if let haptics = controller.haptics {
+                    scHaptics = haptics.toSCDeviceHaptics()
+                }
             }
-            if let haptics {
-                scHaptics = haptics.toSCDeviceHaptics()
+            else if let stylus = self as? GCStylus {
+                hasHaptics = stylus.haptics != nil
+                if let haptics = stylus.haptics {
+                    scHaptics = haptics.toSCDeviceHaptics()
+                }
             }
         }
         let vendorName: String = self.vendorName ?? ""
@@ -185,7 +249,7 @@ extension GCController {
             uniqueId: uid.toCharPCopy(),
             productCategory: self.productCategory.toCharPCopy(),
             vendorName: vendorName.toCharPCopy(),
-            isAttachedToDevice: self.isAttachedToDevice ? SCTrue : SCFalse,
+            isAttachedToDevice: isAttachedToDevice ? SCTrue : SCFalse,
             hasBattery: hasBattery ? SCTrue : SCFalse,
             hasMotion: hasMotion ? SCTrue : SCFalse,
             hasLight: hasLight ? SCTrue : SCFalse,
@@ -193,13 +257,6 @@ extension GCController {
             motion: scMotion,
             haptics: scHaptics
         )
-    }
-
-    var isSpatialController : Bool {
-        guard #available(visionOS 26.0, *) else {
-            return false
-        }
-        return productCategory == GCProductCategorySpatialController || productCategory == GCProductCategorySpatialStylus
     }
 }
 
@@ -443,10 +500,10 @@ extension Accessory {
     /// The GCController associated with this accessory, if available.
     ///
     /// - Returns: The GCController if the source is a device that conforms to GCController, nil otherwise.
-    var controller: GCController? {
+    var device: GCDevice? {
         switch (source) {
         case let .device(device):
-            return device as? GCController
+            return device
         default:
             return nil
         }
@@ -465,7 +522,7 @@ extension Accessory {
             description: self.description.toCharPCopy(),
             inherentChirality: self.inherentChirality.toSCAccessoryChirality(),
             locations: self.locations.toSCAccessoryLocations(),
-            source: self.controller!.toSCController(uid: uid)
+            source: self.device!.toSCController(uid: uid)
         )
     }
 }

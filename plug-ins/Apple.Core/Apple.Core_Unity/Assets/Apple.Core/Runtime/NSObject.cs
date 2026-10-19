@@ -68,7 +68,7 @@ namespace Apple.Core.Runtime
             // This isn't necessarily fatal but might indicate a problematic type naming inconsistency between C# and Objective-C.
             if (ptr == IntPtr.Zero)
             {
-                Debug.LogWarning($"Unable to convert object to type {targetClassName}");
+                Debug.LogWarning($"Unable to convert {nsObjectPtr} to type {targetClassName}");
             }
 
             return ptr;

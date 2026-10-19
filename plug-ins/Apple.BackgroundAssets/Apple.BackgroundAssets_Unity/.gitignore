@@ -1,0 +1,11 @@
+.DS_Store
+Library
+Logs
+obj
+Temp
+TutorialInfo
+TutorialInfo.meta
+UserSettings
+*.sln
+*.slnx
+*.csproj

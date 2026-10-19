@@ -1577,6 +1577,7 @@ namespace Apple.visionOS.SpatialController.Internal
         /// <param name="onDisconnected">Callback for controller disconnected events.</param>
         /// <returns>True if handlers were set successfully.</returns>
         [DllImport("__Internal")]
+        [return: MarshalAs(UnmanagedType.I1)]
         static extern bool SpatialController_SetControllerConnectionHandlers(SCControllerConnectionCallback onConnected, SCControllerConnectionCallback onDisconnected);
 
         /// <summary>
@@ -1586,6 +1587,7 @@ namespace Apple.visionOS.SpatialController.Internal
         /// <param name="onDisconnected">Callback for accessory disconnected events.</param>
         /// <returns>True if handlers were set successfully.</returns>
         [DllImport("__Internal")]
+        [return: MarshalAs(UnmanagedType.I1)]
         static extern bool SpatialController_SetAccessoryConnectionHandlers(SCAccessoryConnectionCallback onConnected, SCAccessoryConnectionCallback onDisconnected);
 
         /// <summary>
@@ -1595,6 +1597,7 @@ namespace Apple.visionOS.SpatialController.Internal
         /// <param name="context">User-defined context pointer.</param>
         /// <returns>True if the operation was initiated successfully.</returns>
         [DllImport("__Internal")]
+        [return: MarshalAs(UnmanagedType.I1)]
         static extern bool SpatialController_GetConnectedControllers(SCControllersCallback callback, IntPtr context);
 
         /// <summary>
@@ -1605,6 +1608,7 @@ namespace Apple.visionOS.SpatialController.Internal
         /// <param name="context">User-defined context pointer.</param>
         /// <returns>True if the operation was initiated successfully.</returns>
         [DllImport("__Internal")]
+        [return: MarshalAs(UnmanagedType.I1)]
         static extern bool SpatialController_GetConnectedController(string uniqueId, SCControllerCallback callback, IntPtr context);
 
         /// <summary>
@@ -1614,6 +1618,7 @@ namespace Apple.visionOS.SpatialController.Internal
         /// <param name="context">User-defined context pointer.</param>
         /// <returns>True if the operation was initiated successfully.</returns>
         [DllImport("__Internal")]
+        [return: MarshalAs(UnmanagedType.I1)]
         static extern bool SpatialController_GetConnectedAccessories(SCAccessoriesCallback callback, IntPtr context);
 
         /// <summary>
@@ -1624,6 +1629,7 @@ namespace Apple.visionOS.SpatialController.Internal
         /// <param name="context">User-defined context pointer.</param>
         /// <returns>True if the operation was initiated successfully.</returns>
         [DllImport("__Internal")]
+        [return: MarshalAs(UnmanagedType.I1)]
         static extern bool SpatialController_GetConnectedAccessory(string uniqueId, SCAccessoryCallback callback, IntPtr context);
 
         /// <summary>
@@ -1633,6 +1639,7 @@ namespace Apple.visionOS.SpatialController.Internal
         /// <param name="value">The value to configure, interpretation dependend on setting.</param>
         /// <returns>True if the setting was configured successfully.</returns>
         [DllImport("__Internal")]
+        [return: MarshalAs(UnmanagedType.I1)]
         static extern bool SpatialController_ConfigureDefaultControllerSetting(SCControllerSetting setting, int value);
 
         /// <summary>
@@ -1645,6 +1652,7 @@ namespace Apple.visionOS.SpatialController.Internal
         /// <param name="value">The value to configure, interpretation dependend on setting.</param>
         /// <returns>True if the controller is a valid target and the setting was configured successfully.</returns>
         [DllImport("__Internal")]
+        [return: MarshalAs(UnmanagedType.I1)]
         static extern bool SpatialController_ConfigureControllerSetting(string uniqueId, SCControllerSetting setting, int value);
 
         /// <summary>
@@ -1656,6 +1664,7 @@ namespace Apple.visionOS.SpatialController.Internal
         /// <param name="context">User-defined context pointer.</param>
         /// <returns>True if the operation was initiated successfully.</returns>
         [DllImport("__Internal")]
+        [return: MarshalAs(UnmanagedType.I1)]
         static extern bool SpatialController_GetControllerInputInfoForInputName(string uniqueId, SCControllerInputName inputName, SCGetControllerInputInfoForInputNameCallback callback, IntPtr context);
 
         /// <summary>
@@ -1669,6 +1678,7 @@ namespace Apple.visionOS.SpatialController.Internal
         /// <param name="context">User-defined context pointer.</param>
         /// <returns>True if the operation was initiated successfully.</returns>
         [DllImport("__Internal")]
+        [return: MarshalAs(UnmanagedType.I1)]
         static extern bool SpatialController_GetSymbolForInputName(string uniqueId, SCControllerInputName inputName, SCUIImageSymbolScale symbolScale, SCUIImageRenderingMode renderingMode, SCGetSymbolForInputNameCallback callback, IntPtr context);
 
         /// <summary>
@@ -1680,6 +1690,7 @@ namespace Apple.visionOS.SpatialController.Internal
         /// <param name="b">Blue component (0.0 to 1.0).</param>
         /// <returns>True if the color was set successfully.</returns>
         [DllImport("__Internal")]
+        [return: MarshalAs(UnmanagedType.I1)]
         static extern bool SpatialController_SetControllerLightColor(string uniqueId, float r, float g, float b);
 
         /// <summary>
@@ -1690,6 +1701,7 @@ namespace Apple.visionOS.SpatialController.Internal
         /// <param name="context">User-defined context pointer.</param>
         /// <returns>True if the polling was initiated successfully.</returns>
         [DllImport("__Internal")]
+        [return: MarshalAs(UnmanagedType.I1)]
         static extern bool SpatialController_PollController(string uniqueId, SCControllerStateCallback callback, IntPtr context);
 
         /// <summary>
@@ -1715,6 +1727,7 @@ namespace Apple.visionOS.SpatialController.Internal
         /// <param name="context">User-defined context pointer.</param>
         /// <returns>True if the prediction was initiated successfully.</returns>
         [DllImport("__Internal")]
+        [return: MarshalAs(UnmanagedType.I1)]
         static extern bool SpatialController_PredictAnchor(string uniqueId, SCTimeValue time, SCAccessoryAnchorCallback callback, IntPtr context);
 
         /// <summary>
@@ -1726,6 +1739,7 @@ namespace Apple.visionOS.SpatialController.Internal
         /// <param name="locality">Locality of haptics. Must be supported by controller.</param>
         /// <returns>True if the haptics engine was started for controller uniqueId.</returns>
         [DllImport("__Internal")]
+        [return: MarshalAs(UnmanagedType.I1)]
         static extern bool SpatialController_CreateHapticsEngine(string uniqueId, SCHapticsLocality locality);
 
         /// <summary>
@@ -1744,6 +1758,7 @@ namespace Apple.visionOS.SpatialController.Internal
         /// <param name="context">User supplied opaque context pointer passed back to onCompleted callback.</param>
         /// <returns>True if a haptics engine was shutdown for controller uniqueId, or false if no engine needed to be shutdown.</returns>
         [DllImport("__Internal")]
+        [return: MarshalAs(UnmanagedType.I1)]
         static extern bool SpatialController_StopHapticsEngine(string uniqueId, SCHapticsLocality locality, SCStopHapticEngineCompletedCallback onCompleted, IntPtr context);
 
         /// <summary>
@@ -1762,6 +1777,7 @@ namespace Apple.visionOS.SpatialController.Internal
         /// <param name="context">User supplied opaque context pointer passed back to onFinished callback.</param>
         /// <returns>True if haptics playback was started for controller uniqueId.</returns>
         [DllImport("__Internal")]
+        [return: MarshalAs(UnmanagedType.I1)]
         static extern bool SpatialController_PlayHapticsData(string uniqueId, IntPtr data, int dataLength, SCHapticsLocality locality, SCHapticEngineFinishedCallback onFinished, IntPtr context);
 
         /// <summary>

@@ -23,7 +23,7 @@ public class EdgeColliderSetup : MonoBehaviour
 
 		Screen.orientation = ScreenOrientation.Portrait;
 
-		Application.targetFrameRate = Screen.currentResolution.refreshRate;
+		Application.targetFrameRate = (int)Screen.currentResolution.refreshRateRatio.value;
 	}
 
 	public void Update()

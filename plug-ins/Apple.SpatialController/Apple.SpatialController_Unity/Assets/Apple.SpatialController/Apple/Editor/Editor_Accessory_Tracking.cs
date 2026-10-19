@@ -231,36 +231,6 @@ public class Editor_Accessory_Tracking : EditorWindow
 
     }
 
-    private void CreatePluginsFolder()
-    {
-        string pluginsFolderPath = "Assets/Plugins";
-        
-        // Check if the folder already exists
-        if (AssetDatabase.IsValidFolder(pluginsFolderPath))
-        {
-            Debug.Log("Plugins folder already exists!");
-            EditorUtility.DisplayDialog("Folder Exists", "The Plugins folder already exists in the Assets directory.", "OK");
-            return;
-        }
-        
-        // Create the folder
-        string guid = AssetDatabase.CreateFolder("Assets", "Plugins");
-        
-        if (!string.IsNullOrEmpty(guid))
-        {
-            Debug.Log("Plugins folder created successfully!");
-            EditorUtility.DisplayDialog("Success", "Plugins folder has been created in the Assets directory.", "OK");
-            
-            // Refresh the Asset Database to show the new folder immediately
-            AssetDatabase.Refresh();
-        }
-        else
-        {
-            Debug.LogError("Failed to create Plugins folder!");
-            EditorUtility.DisplayDialog("Error", "Failed to create the Plugins folder.", "OK");
-        }
-    }
-
     private UnityEngine.Vector2 APIReferenceScrollPosition = UnityEngine.Vector2.zero;
 
     public void APIReferenceView()

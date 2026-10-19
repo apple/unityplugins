@@ -483,6 +483,28 @@ namespace Apple.Accessibility
             }
         }
 
+
+        public delegate void IsAudioDescriptionEnabledChangedHandler();
+        /// <summary>
+        /// A notification that gets posted when the system's Audio Descriptions setting changes.
+        /// </summary>
+        public static IsAudioDescriptionEnabledChangedHandler onIsAudioDescriptionEnabledChanged;
+
+        /// <summary>
+        /// A Boolean value that indicates whether the Audio Descriptions setting is in an enabled state.
+        /// </summary>
+        public static bool IsAudioDescriptionEnabled
+        {
+            get
+            {
+#if (UNITY_IOS || UNITY_TVOS) && !UNITY_EDITOR
+                return _UnityAX_UIAccessibilityIsAudioDescriptionEnabled();
+#else
+                return false;
+#endif
+            }
+        }
+
 #region Native Bridge
 
         private static bool __registered = false;
@@ -512,6 +534,7 @@ namespace Apple.Accessibility
                 _UnityAX_registerAccessibilityIsShakeToUndoEnabledDidChangeNotification(_UnityAX_UIAccessibilityIsShakeToUndoEnabledDidChangeNotification);
                 _UnityAX_registerAccessibilityShouldDifferentiateWithoutColorDidChangeNotification(_UnityAX_UIAccessibilityShouldDifferentiateWithoutColorDidChangeNotification);
                 _UnityAX_registerAccessibilityIsOnOffSwitchLabelsEnabledDidChangeNotification(_UnityAX_UIAccessibilityIsOnOffSwitchLabelsEnabledDidChangeNotification);
+                _UnityAX_registerAccessibilityIsAudioDescriptionEnabledDidChangeNotification(_UnityAX_UIAccessibilityIsAudioDescriptionEnabledDidChangeNotification);
 #endif
                 __registered = true;
             }
@@ -535,6 +558,7 @@ namespace Apple.Accessibility
 #if (UNITY_IOS || UNITY_TVOS) && !UNITY_EDITOR
         private delegate void UIAccessibilityIsVoiceOverRunningDidChangeNotificationDelegate();
 
+        [return: MarshalAs(UnmanagedType.I1)]
         [DllImport("__Internal")] private static extern bool _UnityAX_UIAccessibilityIsVoiceOverRunning();
         [DllImport("__Internal")] private static extern void _UnityAX_registerAccessibilityIsVoiceOverRunningDidChangeNotification(UIAccessibilityIsVoiceOverRunningDidChangeNotificationDelegate actionDelegate);
 
@@ -548,6 +572,7 @@ namespace Apple.Accessibility
 #if (UNITY_IOS || UNITY_TVOS) && !UNITY_EDITOR
         private delegate void UIAccessibilityIsSwitchControlRunningDidChangeNotificationDelegate();
 
+        [return: MarshalAs(UnmanagedType.I1)]
         [DllImport("__Internal")] private static extern bool _UnityAX_UIAccessibilityIsSwitchControlRunning();
         [DllImport("__Internal")] private static extern void _UnityAX_registerAccessibilityIsSwitchControlRunningDidChangeNotification(UIAccessibilityIsSwitchControlRunningDidChangeNotificationDelegate actionDelegate);
 
@@ -561,6 +586,7 @@ namespace Apple.Accessibility
 #if (UNITY_IOS || UNITY_TVOS) && !UNITY_EDITOR
         private delegate void UIAccessibilityIsSpeakSelectionEnabledDidChangeNotificationDelegate();
 
+        [return: MarshalAs(UnmanagedType.I1)]
         [DllImport("__Internal")] private static extern bool _UnityAX_UIAccessibilityIsSpeakSelectionEnabled();
         [DllImport("__Internal")] private static extern void _UnityAX_registerAccessibilityIsSpeakSelectionEnabledDidChangeNotification(UIAccessibilityIsSpeakSelectionEnabledDidChangeNotificationDelegate actionDelegate);
 
@@ -574,6 +600,7 @@ namespace Apple.Accessibility
 #if (UNITY_IOS || UNITY_TVOS) && !UNITY_EDITOR
         private delegate void UIAccessibilityIsGuidedAccessEnabledDidChangeNotificationDelegate();
 
+        [return: MarshalAs(UnmanagedType.I1)]
         [DllImport("__Internal")] private static extern bool _UnityAX_UIAccessibilityIsGuidedAccessEnabled();
         [DllImport("__Internal")] private static extern void _UnityAX_registerAccessibilityIsGuidedAccessEnabledDidChangeNotification(UIAccessibilityIsGuidedAccessEnabledDidChangeNotificationDelegate actionDelegate);
 
@@ -587,6 +614,7 @@ namespace Apple.Accessibility
 #if (UNITY_IOS || UNITY_TVOS) && !UNITY_EDITOR
         private delegate void UIAccessibilityIsMonoAudioEnabledDidChangeNotificationDelegate();
 
+        [return: MarshalAs(UnmanagedType.I1)]
         [DllImport("__Internal")] private static extern bool _UnityAX_UIAccessibilityIsMonoAudioEnabled();
         [DllImport("__Internal")] private static extern void _UnityAX_registerAccessibilityIsMonoAudioEnabledDidChangeNotification(UIAccessibilityIsMonoAudioEnabledDidChangeNotificationDelegate actionDelegate);
 
@@ -600,6 +628,7 @@ namespace Apple.Accessibility
 #if (UNITY_IOS || UNITY_TVOS) && !UNITY_EDITOR
         private delegate void UIAccessibilityIsClosedCaptioningEnabledDidChangeNotificationDelegate();
 
+        [return: MarshalAs(UnmanagedType.I1)]
         [DllImport("__Internal")] private static extern bool _UnityAX_UIAccessibilityIsClosedCaptioningEnabled();
         [DllImport("__Internal")] private static extern void _UnityAX_registerAccessibilityIsClosedCaptioningEnabledDidChangeNotification(UIAccessibilityIsClosedCaptioningEnabledDidChangeNotificationDelegate actionDelegate);
 
@@ -614,6 +643,7 @@ namespace Apple.Accessibility
 #if (UNITY_IOS || UNITY_TVOS) && !UNITY_EDITOR
         private delegate void UIAccessibilityIsInvertColorsEnabledDidChangeNotificationDelegate();
 
+        [return: MarshalAs(UnmanagedType.I1)]
         [DllImport("__Internal")] private static extern bool _UnityAX_UIAccessibilityIsInvertColorsEnabled();
         [DllImport("__Internal")] private static extern void _UnityAX_registerAccessibilityIsInvertColorsEnabledDidChangeNotification(UIAccessibilityIsInvertColorsEnabledDidChangeNotificationDelegate actionDelegate);
 
@@ -627,6 +657,7 @@ namespace Apple.Accessibility
 #if (UNITY_IOS || UNITY_TVOS) && !UNITY_EDITOR
         private delegate void UIAccessibilityIsBoldTextEnabledDidChangeNotificationDelegate();
 
+        [return: MarshalAs(UnmanagedType.I1)]
         [DllImport("__Internal")] private static extern bool _UnityAX_UIAccessibilityIsBoldTextEnabled();
         [DllImport("__Internal")] private static extern void _UnityAX_registerAccessibilityIsBoldTextEnabledDidChangeNotification(UIAccessibilityIsBoldTextEnabledDidChangeNotificationDelegate actionDelegate);
 
@@ -640,6 +671,7 @@ namespace Apple.Accessibility
 #if (UNITY_IOS || UNITY_TVOS) && !UNITY_EDITOR
         private delegate void UIAccessibilityButtonShapesEnabledDidChangeNotificationDelegate();
 
+        [return: MarshalAs(UnmanagedType.I1)]
         [DllImport("__Internal")] private static extern bool _UnityAX_UIAccessibilityButtonShapesEnabled();
         [DllImport("__Internal")] private static extern void _UnityAX_registerAccessibilityButtonShapesEnabledDidChangeNotification(UIAccessibilityButtonShapesEnabledDidChangeNotificationDelegate actionDelegate);
 
@@ -653,6 +685,7 @@ namespace Apple.Accessibility
 #if (UNITY_IOS || UNITY_TVOS) && !UNITY_EDITOR
         private delegate void UIAccessibilityIsGrayscaleEnabledDidChangeNotificationDelegate();
 
+        [return: MarshalAs(UnmanagedType.I1)]
         [DllImport("__Internal")] private static extern bool _UnityAX_UIAccessibilityIsGrayscaleEnabled();
         [DllImport("__Internal")] private static extern void _UnityAX_registerAccessibilityIsGrayscaleEnabledDidChangeNotification(UIAccessibilityIsGrayscaleEnabledDidChangeNotificationDelegate actionDelegate);
 
@@ -666,6 +699,7 @@ namespace Apple.Accessibility
 #if (UNITY_IOS || UNITY_TVOS) && !UNITY_EDITOR
         private delegate void UIAccessibilityIsReduceTransparencyEnabledDidChangeNotificationDelegate();
 
+        [return: MarshalAs(UnmanagedType.I1)]
         [DllImport("__Internal")] private static extern bool _UnityAX_UIAccessibilityIsReduceTransparencyEnabled();
         [DllImport("__Internal")] private static extern void _UnityAX_registerAccessibilityIsReduceTransparencyEnabledDidChangeNotification(UIAccessibilityIsReduceTransparencyEnabledDidChangeNotificationDelegate actionDelegate);
 
@@ -679,6 +713,7 @@ namespace Apple.Accessibility
 #if (UNITY_IOS || UNITY_TVOS) && !UNITY_EDITOR
         private delegate void UIAccessibilityIsReduceMotionEnabledDidChangeNotificationDelegate();
 
+        [return: MarshalAs(UnmanagedType.I1)]
         [DllImport("__Internal")] private static extern bool _UnityAX_UIAccessibilityIsReduceMotionEnabled();
         [DllImport("__Internal")] private static extern void _UnityAX_registerAccessibilityIsReduceMotionEnabledDidChangeNotification(UIAccessibilityIsReduceMotionEnabledDidChangeNotificationDelegate actionDelegate);
 
@@ -692,6 +727,7 @@ namespace Apple.Accessibility
 #if (UNITY_IOS || UNITY_TVOS) && !UNITY_EDITOR
         private delegate void UIAccessibilityPrefersCrossFadeTransitionsDidChangeNotificationDelegate();
 
+        [return: MarshalAs(UnmanagedType.I1)]
         [DllImport("__Internal")] private static extern bool _UnityAX_UIAccessibilityPrefersCrossFadeTransitions();
         [DllImport("__Internal")] private static extern void _UnityAX_registerAccessibilityPrefersCrossFadeTransitionsDidChangeNotification(UIAccessibilityPrefersCrossFadeTransitionsDidChangeNotificationDelegate actionDelegate);
 
@@ -705,6 +741,7 @@ namespace Apple.Accessibility
 #if (UNITY_IOS || UNITY_TVOS) && !UNITY_EDITOR
         private delegate void UIAccessibilityIsVideoAutoplayEnabledDidChangeNotificationDelegate();
 
+        [return: MarshalAs(UnmanagedType.I1)]
         [DllImport("__Internal")] private static extern bool _UnityAX_UIAccessibilityIsVideoAutoplayEnabled();
         [DllImport("__Internal")] private static extern void _UnityAX_registerAccessibilityIsVideoAutoplayEnabledDidChangeNotification(UIAccessibilityIsVideoAutoplayEnabledDidChangeNotificationDelegate actionDelegate);
 
@@ -718,6 +755,7 @@ namespace Apple.Accessibility
 #if (UNITY_IOS || UNITY_TVOS) && !UNITY_EDITOR
         private delegate void UIAccessibilityDarkerSystemColorsEnabledDidChangeNotificationDelegate();
 
+        [return: MarshalAs(UnmanagedType.I1)]
         [DllImport("__Internal")] private static extern bool _UnityAX_UIAccessibilityDarkerSystemColorsEnabled();
         [DllImport("__Internal")] private static extern void _UnityAX_registerAccessibilityDarkerSystemColorsEnabledDidChangeNotification(UIAccessibilityDarkerSystemColorsEnabledDidChangeNotificationDelegate actionDelegate);
 
@@ -731,6 +769,7 @@ namespace Apple.Accessibility
 #if (UNITY_IOS || UNITY_TVOS) && !UNITY_EDITOR
         private delegate void UIAccessibilityIsSpeakScreenEnabledDidChangeNotificationDelegate();
 
+        [return: MarshalAs(UnmanagedType.I1)]
         [DllImport("__Internal")] private static extern bool _UnityAX_UIAccessibilityIsSpeakScreenEnabled();
         [DllImport("__Internal")] private static extern void _UnityAX_registerAccessibilityIsSpeakScreenEnabledDidChangeNotification(UIAccessibilityIsSpeakScreenEnabledDidChangeNotificationDelegate actionDelegate);
 
@@ -744,6 +783,7 @@ namespace Apple.Accessibility
 #if (UNITY_IOS || UNITY_TVOS) && !UNITY_EDITOR
         private delegate void UIAccessibilityIsShakeToUndoEnabledDidChangeNotificationDelegate();
 
+        [return: MarshalAs(UnmanagedType.I1)]
         [DllImport("__Internal")] private static extern bool _UnityAX_UIAccessibilityIsShakeToUndoEnabled();
         [DllImport("__Internal")] private static extern void _UnityAX_registerAccessibilityIsShakeToUndoEnabledDidChangeNotification(UIAccessibilityIsShakeToUndoEnabledDidChangeNotificationDelegate actionDelegate);
 
@@ -757,6 +797,7 @@ namespace Apple.Accessibility
 #if (UNITY_IOS || UNITY_TVOS) && !UNITY_EDITOR
         private delegate void UIAccessibilityShouldDifferentiateWithoutColorDidChangeNotificationDelegate();
 
+        [return: MarshalAs(UnmanagedType.I1)]
         [DllImport("__Internal")] private static extern bool _UnityAX_UIAccessibilityShouldDifferentiateWithoutColor();
         [DllImport("__Internal")] private static extern void _UnityAX_registerAccessibilityShouldDifferentiateWithoutColorDidChangeNotification(UIAccessibilityShouldDifferentiateWithoutColorDidChangeNotificationDelegate actionDelegate);
 
@@ -770,6 +811,7 @@ namespace Apple.Accessibility
 #if (UNITY_IOS || UNITY_TVOS) && !UNITY_EDITOR
         private delegate void UIAccessibilityIsOnOffSwitchLabelsEnabledDidChangeNotificationDelegate();
 
+        [return: MarshalAs(UnmanagedType.I1)]
         [DllImport("__Internal")] private static extern bool _UnityAX_UIAccessibilityIsOnOffSwitchLabelsEnabled();
         [DllImport("__Internal")] private static extern void _UnityAX_registerAccessibilityIsOnOffSwitchLabelsEnabledDidChangeNotification(UIAccessibilityIsOnOffSwitchLabelsEnabledDidChangeNotificationDelegate actionDelegate);
 
@@ -777,6 +819,20 @@ namespace Apple.Accessibility
         private static void _UnityAX_UIAccessibilityIsOnOffSwitchLabelsEnabledDidChangeNotification()
         {
             onIsOnOffSwitchLabelsEnabledChanged?.Invoke();
+        }
+#endif
+
+#if (UNITY_IOS || UNITY_TVOS) && !UNITY_EDITOR
+        private delegate void UIAccessibilityIsAudioDescriptionEnabledDidChangeNotificationDelegate();
+
+        [return: MarshalAs(UnmanagedType.I1)]
+        [DllImport("__Internal")] private static extern bool _UnityAX_UIAccessibilityIsAudioDescriptionEnabled();
+        [DllImport("__Internal")] private static extern void _UnityAX_registerAccessibilityIsAudioDescriptionEnabledDidChangeNotification(UIAccessibilityIsAudioDescriptionEnabledDidChangeNotificationDelegate actionDelegate);
+
+        [AOT.MonoPInvokeCallback(typeof(UIAccessibilityIsAudioDescriptionEnabledDidChangeNotificationDelegate))]
+        private static void _UnityAX_UIAccessibilityIsAudioDescriptionEnabledDidChangeNotification()
+        {
+            onIsAudioDescriptionEnabledChanged?.Invoke();
         }
 #endif
 

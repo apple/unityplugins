@@ -1,6 +1,27 @@
 # CHANGELOG
 All notable changes to this project will be documented in this file.
 
+## [3.3.0] - 2026-09-16
+### Added
+- `ObjectExtensions.GetLongId()`, giving callers version-agnostic access to a Unity object's
+  identity across the `GetInstanceID()` to `GetEntityId()` change in Unity 6000.4.
+- Expanded the Swift/Objective-C interop runtime (`NSObject`, `SwiftArray`, `AsyncStream`,
+  `Currency`, interop delegates and tasks) to support the new StoreKit plug-in and the latest-OS
+  (iOS 26, macOS 26, tvOS 26, visionOS 26) APIs.
+
+### Changed
+- Updated the native projects for Xcode 27 and raised their deployment targets to iOS 15.0,
+  tvOS 15.0, and macOS 12.0, matching the minimum OS versions the plug-ins already document as
+  supported.
+- `ApplePlugInEnvironment` now reports an error instead of a warning when a plug-in has neither a
+  Debug nor a Release native library available, rather than failing later in the Xcode build.
+- Removed the unused editor shell-command infrastructure (`ShellCommandRunner`,
+  `XcodeBuildCommand`, `XcrunCommand`, `CodsignCommand`, `KeychainCommand`, `ProductBuildCommand`,
+  and `ProductSignCommand`).
+
+### Fixed
+- Fixed plug-in builds when the source root path contains a space character.
+
 ## [3.2.0] - 2025-10-13
 - Added wrappers around NSCalendarUnit and NSDateComponents
 

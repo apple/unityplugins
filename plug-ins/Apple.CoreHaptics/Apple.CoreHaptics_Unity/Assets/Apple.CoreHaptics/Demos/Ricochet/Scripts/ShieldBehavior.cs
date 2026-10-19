@@ -59,17 +59,17 @@ public class ShieldBehavior : MonoBehaviour
 
 	public void OnCollisionEnter2D(Collision2D collision)
 	{
-		if (Math.Abs(_rigidbody.velocity.y) < (0.1 * _maximumReasonableVelocity)
+		if (Math.Abs(_rigidbody.GetVelocity().y) < (0.1 * _maximumReasonableVelocity)
 			&& (collision.gameObject.name.Equals("Top") || collision.gameObject.name.Equals("Bottom")))
 		{
-			_rigidbody.velocity = new Vector3(_rigidbody.velocity.x, 0f, 0f);
+			_rigidbody.SetVelocity(new Vector2(_rigidbody.GetVelocity().x, 0f));
 			return;
 		}
 
-		if (Math.Abs(_rigidbody.velocity.x) < (0.1 * _maximumReasonableVelocity)
+		if (Math.Abs(_rigidbody.GetVelocity().x) < (0.1 * _maximumReasonableVelocity)
 			&& (collision.gameObject.name.Equals("Left") || collision.gameObject.name.Equals("Right")))
 		{
-			_rigidbody.velocity = new Vector3(0f, _rigidbody.velocity.y, 0f);
+			_rigidbody.SetVelocity(new Vector2(0f, _rigidbody.GetVelocity().y));
 			return;
 		}
 
@@ -80,7 +80,7 @@ public class ShieldBehavior : MonoBehaviour
 			Debug.Log("Shield health zero'ed.");
 
 			_rigidbody.gravityScale = 0f;
-			_rigidbody.velocity = Vector2.zero;
+			_rigidbody.SetVelocity(Vector2.zero);
 
 			_ballManager.ShieldZero();
 		}

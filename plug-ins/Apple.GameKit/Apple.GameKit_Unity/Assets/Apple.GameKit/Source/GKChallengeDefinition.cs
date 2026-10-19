@@ -52,7 +52,7 @@ namespace Apple.GameKit
         }
 
         [MonoPInvokeCallback(typeof(SuccessTaskCallback<bool>))]
-        private static void OnHasActiveChallenges(long taskId, bool hasActiveChallenges)
+        private static void OnHasActiveChallenges(long taskId, [MarshalAs(UnmanagedType.I1)] bool hasActiveChallenges)
         {
             InteropTasks.TrySetResultAndRemove(taskId, hasActiveChallenges);
         }
@@ -160,6 +160,7 @@ namespace Apple.GameKit
             [DllImport(InteropUtility.DLLName)]
             public static extern string GKChallengeDefinition_GetIdentifier(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
+            [return: MarshalAs(UnmanagedType.I1)]
             public static extern bool GKChallengeDefinition_GetIsRepeatable(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
             public static extern IntPtr GKChallengeDefinition_GetLeaderboard(IntPtr pointer);

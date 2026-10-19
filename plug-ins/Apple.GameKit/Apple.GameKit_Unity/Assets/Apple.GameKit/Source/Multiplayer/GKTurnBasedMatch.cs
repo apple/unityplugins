@@ -26,7 +26,7 @@ namespace Apple.GameKit.Multiplayer
         public delegate void MatchEndedHandler(GKPlayer player, GKTurnBasedMatch match);
         private delegate void InteropMatchEndedHandler(IntPtr player, IntPtr match);
         public delegate void TurnEventReceivedHandler(GKPlayer player, GKTurnBasedMatch match, bool didBecomeActive);
-        private delegate void InteropTurnEventReceivedHandler(IntPtr player, IntPtr match, bool didBecomeActive);
+        private delegate void InteropTurnEventReceivedHandler(IntPtr player, IntPtr match, [MarshalAs(UnmanagedType.I1)] bool didBecomeActive);
         public delegate void PlayerWantsToQuitMatchHandler(GKPlayer player, GKTurnBasedMatch match);
         private delegate void InteropPlayerWantsToQuitMatchHandler(IntPtr player, IntPtr match);
         #endregion
@@ -129,7 +129,7 @@ namespace Apple.GameKit.Multiplayer
         }
 
         [MonoPInvokeCallback(typeof(InteropTurnEventReceivedHandler))]
-        private static void OnTurnEventReceived(IntPtr player, IntPtr match, bool didBecomeActive)
+        private static void OnTurnEventReceived(IntPtr player, IntPtr match, [MarshalAs(UnmanagedType.I1)] bool didBecomeActive)
         {
             InteropPInvokeExceptionHandler.CatchAndLog(() => TurnEventReceived?.Invoke(PointerCast<GKPlayer>(player), PointerCast<GKTurnBasedMatch>(match), didBecomeActive));
         }

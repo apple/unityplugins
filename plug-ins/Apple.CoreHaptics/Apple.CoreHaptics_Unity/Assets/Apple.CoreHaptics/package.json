@@ -1,11 +1,11 @@
 {
     "name": "com.apple.unityplugin.corehaptics",
-    "version": "1.3.1",
+    "version": "1.3.2",
     "displayName": "Apple.CoreHaptics",
     "description": "Apple's CoreHaptics.framework ported to Unity",
     "unity": "2022.3",
     "dependencies": {
-        "com.apple.unityplugin.core": "3.1.8"
+        "com.apple.unityplugin.core": "3.3.0"
     },
     "keywords": [
         "haptics",
@@ -23,12 +23,12 @@
         {
             "displayName": "Apple.CoreHaptics HapticRicochet",
             "description": "Sample game for the Apple.CoreHaptics Unity Plug-in",
-            "path": "Demos~/Ricochet"
+            "path": "Demos/Ricochet"
         },
         {
             "displayName": "Apple.CoreHaptics Sample AHAPs",
             "description": "A collection of AHAPs to be used in games and inspire great haptic experiences",
-            "path": "Demos~/SampleAHAPs"
+            "path": "Demos/SampleAHAPs"
         }
     ]
 }

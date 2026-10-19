@@ -1,6 +1,27 @@
 # CHANGELOG
 All notable changes to this project will be documented in this file.
 
+## [4.1.0] - 2026-09-16
+### Added
+- `GKGameCenterViewController`.
+- A Unity API for `triggerForArcade(handler:)`.
+- `[Preserve]` on several GameKit constructors so managed code stripping leaves them intact.
+
+### Changed
+- Updated the native project for Xcode 27 and raised its deployment targets to iOS 15.0, tvOS 15.0,
+  and macOS 12.0, matching the minimum OS versions the plug-ins already document as supported.
+- Removed `DEVELOPMENT_TEAM` and user-specific paths from the native project signing configuration.
+- Now requires Apple.Core 3.3.0.
+
+### Fixed
+- Removed the unused `GKLocalPlayer_RegisterLocalPlayerListener` P/Invoke declaration, which caused
+  an `Undefined symbol: _GKLocalPlayer_RegisterLocalPlayerListener` link failure in IL2CPP builds
+  against the iOS 27 SDK.
+- Fixed placement of the `@available` attribute on `GKGameActivityDelegate`.
+- Added `[MarshalAs(UnmanagedType.I1)]` to `bool` P/Invoke declarations so `bool` results marshal
+  correctly.
+- Fixed plug-in builds when the source root path contains a space character.
+
 ## [4.0.1] - 2025-09-15
 - Bump SDK version numbers to iOS26, macOS26, tvOS26 and visionOS26 for all new APIs from this year.
 - Added more description for the APIs of how to authenticate a local player and how to set up the listener callbacks of the listener.

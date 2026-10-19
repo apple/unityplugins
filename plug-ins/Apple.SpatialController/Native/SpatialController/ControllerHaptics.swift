@@ -45,7 +45,7 @@ public func SpatialController_CreateHapticsEngine
         Logger.controller.error("SpatialController: CreateHapticsEngine(\(uuid)): No such controller!")
         return false
     }
-    guard controller.haptics != nil else {
+    guard let haptics = controller.haptics else {
         Logger.controller.error("SpatialController: CreateHapticsEngine(\(uuid)): Controller does not have haptic support!")
         return false
     }
@@ -55,7 +55,7 @@ public func SpatialController_CreateHapticsEngine
     }
 
     shutdownExistingHapticsEngineForController(uuid: uuid, locality: gcLocality)
-    guard createHapticsEngine(for: controller, withLocality: gcLocality, uuid: uuid) != nil else {
+    guard createHapticsEngine(for: uuid, haptics: haptics, withLocality: gcLocality) != nil else {
         Logger.controller.error("SpatialController: CreateHapticsEngine(\(uuid), locality:\(locality.rawValue)): Create haptic engine failed!")
         return false
     }
@@ -164,7 +164,7 @@ public func SpatialController_PlayHapticsData
         Logger.controller.error("SpatialController: PlayHapticsData(\(uuid)): No such controller!")
         return false
     }
-    guard controller.haptics != nil else {
+    guard let haptics = controller.haptics else {
         Logger.controller.error("SpatialController: PlayHapticsData(\(uuid)): Controller does not have haptic support!")
         return false
     }
@@ -180,7 +180,7 @@ public func SpatialController_PlayHapticsData
     var engine: CHHapticEngine!
     if let existingEngine = spatialController.controllerHapticEngines[uuid]?[gcLocality] {
         engine = existingEngine
-    } else if let newEngine = createHapticsEngine(for: controller, withLocality: gcLocality, uuid: uuid) {
+    } else if let newEngine = createHapticsEngine(for: uuid, haptics: haptics, withLocality: gcLocality) {
         engine = newEngine
     }
     guard engine != nil else {
@@ -217,16 +217,13 @@ public func SpatialController_PlayHapticsData
 /// controller with the specified locality.
 /// The engine is stopped asynchronously and removed from the controller haptic engines dictionary.
 ///
-/// - Parameter controller: The target `GCController` to create the haptics engine for.
-/// - Parameter locality: The `GCHapticsLocality` of the engine to be created.
 /// - Parameter uuid: The UUID (as String) of the target controller.
+/// - Parameter haptics: The target controller `GCDeviceHaptics` to create the haptics engine for.
+/// - Parameter locality: The `GCHapticsLocality` of the engine to be created.
 @available(iOS 14.0, tvOS 14.0, macOS 10.16, *)
-public func createHapticsEngine(for controller: GCController, withLocality locality: GCHapticsLocality, uuid: String) -> CHHapticEngine?
+public func createHapticsEngine(for uuid: String, haptics: GCDeviceHaptics, withLocality locality: GCHapticsLocality) -> CHHapticEngine?
 {
     guard let spatialController = _spatialController else {
-        return nil
-    }
-    guard let haptics = controller.haptics else {
         return nil
     }
     guard let engine = haptics.createEngine(withLocality: locality) else {

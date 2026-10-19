@@ -92,9 +92,10 @@ namespace Apple.GameKit.Multiplayer
             [DllImport(InteropUtility.DLLName)]
             public static extern IntPtr GKTurnBasedMatchmakerViewController_InitWithMatchRequest(IntPtr matchRequest);
             [DllImport(InteropUtility.DLLName)]
+            [return: MarshalAs(UnmanagedType.I1)]
             public static extern bool GKTurnBasedMatchmakerViewController_GetShowExistingMatches(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
-            public static extern void GKTurnBasedMatchmakerViewController_SetShowExistingMatches(IntPtr pointer, bool value);
+            public static extern void GKTurnBasedMatchmakerViewController_SetShowExistingMatches(IntPtr pointer, [MarshalAs(UnmanagedType.I1)] bool value);
             [DllImport(InteropUtility.DLLName)]
             public static extern GKMatchmakingMode GKTurnBasedMatchmakerViewController_GetMatchmakingMode(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]

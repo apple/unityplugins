@@ -1,6 +1,18 @@
 # CHANGELOG
 All notable changes to this project will be documented in this file.
 
+## [1.2.5] - 2026-09-16
+### Changed
+- Updated the native project for Xcode 27 and raised its deployment targets to iOS 15.0, tvOS 15.0,
+  and macOS 12.0, matching the minimum OS versions the plug-ins already document as supported.
+- Now requires Apple.Core 3.3.0.
+
+### Fixed
+- Removed a per-frame allocation in `GCController` that triggered unnecessary garbage collection.
+  Thanks to [@HypGamesOrlando](https://github.com/HypGamesOrlando)
+  ([#35](https://github.com/apple/unityplugins/pull/35)).
+- Fixed plug-in builds when the source root path contains a space character.
+
 ## [1.2.4] - 2025-01-29
 - Remove references to some unused packages.
 

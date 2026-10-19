@@ -1,11 +1,11 @@
 {
     "name": "com.apple.unityplugin.accessibility",
-    "version": "1.1.4",
+    "version": "1.2.0",
     "displayName": "Apple.Accessibility",
     "description": "A Unity-port of Apple's UIAccessibility protocol from UIKit.framework",
     "unity": "2022.3",
     "dependencies": {
-        "com.apple.unityplugin.core": "3.1.8"
+        "com.apple.unityplugin.core": "3.3.0"
     },
     "keywords": [
         "accessibility",
@@ -22,7 +22,7 @@
         {
             "displayName": "UIAccessibility Demo",
             "description": "Demos for UIAccessibility",
-            "path": "Demos~"
+            "path": "Demos"
         }
     ]
 }

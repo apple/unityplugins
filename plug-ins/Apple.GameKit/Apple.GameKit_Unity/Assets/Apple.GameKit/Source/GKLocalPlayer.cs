@@ -442,12 +442,16 @@ namespace Apple.GameKit
         private static class Interop
         {
             [DllImport(InteropUtility.DLLName)]
+            [return: MarshalAs(UnmanagedType.I1)]
             public static extern bool GKLocalPlayer_GetIsAuthenticated(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
+            [return: MarshalAs(UnmanagedType.I1)]
             public static extern bool GKLocalPlayer_GetIsUnderage(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
+            [return: MarshalAs(UnmanagedType.I1)]
             public static extern bool GKLocalPlayer_GetIsMultiplayerGamingRestricted(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
+            [return: MarshalAs(UnmanagedType.I1)]
             public static extern bool GKLocalPlayer_GetIsPersonalizedCommunicationRestricted(IntPtr pointer);
             [DllImport(InteropUtility.DLLName)]
             public static extern IntPtr GKLocalPlayer_GetLocal();

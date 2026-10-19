@@ -44,7 +44,7 @@ enum AccessoryState {
 }
 
 class AccessoryTracker {
-    let controller: GCController
+    let device: GCDevice
     let uuid: String
 
     var accessory: Accessory?
@@ -52,9 +52,12 @@ class AccessoryTracker {
     var acquireTask: Task<(AccessoryState), Never>?
     var onCompletion: ((AccessoryState, Accessory?) -> Void)?
 
-    init(controller: GCController, uuid: String)
+    //var controller: GCController? { device as? GCController }
+    //var stylus: GCStylus? { device as? GCStylus }
+
+    init(device: GCDevice, uuid: String)
     {
-        self.controller = controller
+        self.device = device
         self.uuid = uuid
         state = .acquiring
     }
@@ -69,7 +72,7 @@ class AccessoryTracker {
                 let uuid = uuid
                 do {
                     Logger.controller.log("SpatialController \(uuid): acquiring accessory...")
-                    accessory = try await Accessory(device: controller)
+                    accessory = try await Accessory(device: device)
                     if let accessory {
                         Logger.controller.log("SpatialController \(uuid): acquired accessory \(accessory.description)")
                         state = .acquired
@@ -250,14 +253,14 @@ class SpatialController {
         }
     }
 
-    func startAccessoryTracking(uuid: String, controller: GCController, onCompletion: @escaping (AccessoryState, Accessory?) -> Void)
+    func startAccessoryTracking(uuid: String, device: GCDevice, onCompletion: @escaping (AccessoryState, Accessory?) -> Void)
     {
         guard arTrackingAuthorizationState != .notSupported else {
             Logger.controller.error("SpatialController \(uuid): Accessory tracking is not supported!")
             onCompletion(.acquireAccessoryFailed, nil)
             return
         }
-        let accessoryTracker = AccessoryTracker(controller: controller, uuid: uuid)
+        let accessoryTracker = AccessoryTracker(device: device, uuid: uuid)
         accessoryTracker.onCompletion = onCompletion
         accessoryTrackers.updateValue(accessoryTracker, forKey: uuid)
 
@@ -407,7 +410,7 @@ public func SpatialController_SetControllerConnectionHandlers
     if !spatialController.controllerMapping.elements.isEmpty {
         Logger.controller.log("SpatialController: Notifying connection to already connected controllers...")
         for (uuid, controller) in spatialController.controllerMapping.elements {
-            guard controller.isSpatialController else {
+            guard controller.isSpatial else {
                 Logger.controller.log("SpatialController: Non-spatial controller connected (category: \(controller.productCategory))")
                 continue
             }
@@ -440,8 +443,8 @@ public func SpatialController_SetAccessoryConnectionHandlers
                 continue;
             }
             let accessory = accessoryTracker.accessory!
-            let controller = accessory.controller!
-            Logger.controller.log("SpatialController: Accessory for spatial controller \(uuid) connected (category: \(controller.productCategory))")
+            let device = accessory.device!
+            Logger.controller.log("SpatialController: Accessory for spatial controller \(uuid) connected (category: \(device.productCategory))")
             spatialController.onAccessoryConnectedCallback?(accessory.toSCAccessory(uid: uuid))
         }
     }
@@ -693,14 +696,11 @@ public func SpatialController_GetControllerInputInfoForInputName
         Logger.controller.error("SpatialController: GetControllerInputInfoForInputName(uid:\(uniqueId.toString())): Not initialized!")
         return false
     }
-    guard let controller = spatialController.controllerMapping.elements[uniqueId.toString()] else {
+    guard let device = spatialController.controllerMapping.elements[uniqueId.toString()] else {
         Logger.controller.error("SpatialController: GetControllerInputInfoForInputName(uid:\(uniqueId.toString())): No such controller!")
         return false
     }
-    // GCPhysicalDeviceInputState...
-    let input = controller.input
-    let symbolName = _getSymbolNameForInput(inputName: inputName, profile: input, extendedGamepad: controller.extendedGamepad)
-    let localizedName = _getLocalizedNameForInput(inputName: inputName, profile: input, extendedGamepad: controller.extendedGamepad)
+    let (symbolName, localizedName) = _getSymbolNameAndLocalizedNameForInput(inputName: inputName, profile: device)
     guard symbolName != nil || localizedName != nil else {
         Logger.controller.error("SpatialController: GetControllerInputInfoForInputName(uid:\(uniqueId.toString()), inputName:\(inputName.rawValue)): Controller does not have name or symbol for inputName!")
         return false
@@ -733,13 +733,12 @@ public func SpatialController_GetSymbolForInputName
         Logger.controller.error("SpatialController: GetSymbolForInputName(uid:\(uniqueId.toString())): Not initialized!")
         return false
     }
-    guard let controller = spatialController.controllerMapping.elements[uniqueId.toString()] else {
+    guard let device = spatialController.controllerMapping.elements[uniqueId.toString()] else {
         Logger.controller.error("SpatialController: GetSymbolForInputName(uid:\(uniqueId.toString())): No such controller!")
         return false
     }
     // GCPhysicalDeviceInputState...
-    let input = controller.input
-    guard let symbolName = _getSymbolNameForInput(inputName: inputName, profile: input, extendedGamepad: controller.extendedGamepad) else {
+    guard let symbolName = _getSymbolNameForInput(inputName: inputName, profile: device) else {
         Logger.controller.error("SpatialController: GetSymbolForInputName(uid:\(uniqueId.toString()), inputName:\(inputName.rawValue)): Controller does not have symbol for inputName!")
         return false
     }
@@ -887,6 +886,37 @@ fileprivate func _getLocalizedNameForInput(inputName : SCControllerInputName, pr
     return _getLocalizedNameForInput(inputName: inputName, profile: profile) ?? _getLocalizedNameForInput(inputName: inputName, extendedGamepad: extendedGamepad)
 }
 
+@available(macOS 13.0, iOS 16.0, tvOS 16.0, visionOS 1.0, *)
+fileprivate func _getSymbolNameForInput(inputName : SCControllerInputName, profile : GCDevice) -> String? {
+    if let controller = profile as? GCController {
+        return _getSymbolNameForInput(inputName: inputName, profile: controller.input, extendedGamepad: controller.extendedGamepad)
+    }
+    else if let stylus = profile as? GCStylus {
+        guard let input = stylus.input else {
+            return nil
+        }
+        return _getSymbolNameForInput(inputName: inputName, profile: input)
+    }
+    return nil
+}
+
+@available(macOS 13.0, iOS 16.0, tvOS 16.0, visionOS 1.0, *)
+fileprivate func _getSymbolNameAndLocalizedNameForInput(inputName : SCControllerInputName, profile : GCDevice) -> (symbolName: String?, localizedName: String?) {
+    if let controller = profile as? GCController {
+        return (_getSymbolNameForInput(inputName: inputName, profile: controller.input, extendedGamepad: controller.extendedGamepad),
+                _getLocalizedNameForInput(inputName: inputName, profile: controller.input, extendedGamepad: controller.extendedGamepad))
+    }
+    else if let stylus = profile as? GCStylus {
+        guard let input = stylus.input else {
+            return (nil, nil)
+        }
+        return (_getSymbolNameForInput(inputName: inputName, profile: input),
+                _getLocalizedNameForInput(inputName: inputName, profile: input))
+    }
+    return (nil, nil)
+}
+
+
 @_cdecl("SpatialController_PollController")
 public func SpatialController_PollController
 (
@@ -902,17 +932,24 @@ public func SpatialController_PollController
         Logger.controller.error("SpatialController: PollController(uid:\(uuid)): Not initialized!")
         return false
     }
-    guard let controller = spatialController.controllerMapping.elements[uuid] else {
+    guard let device = spatialController.controllerMapping.elements[uuid] else {
         // REPORT ERROR: no such controller?
         Logger.controller.error("SpatialController: PollController(uid:\(uuid)): No such controller!")
         return false
     }
 
-    let touchpadState = controller.extendedGamepad is GCDualShockGamepad || controller.extendedGamepad is GCDualSenseGamepad ? spatialController.touchpadStates[uuid] : nil
-    _pollDeviceInputState(controller: controller, profile: controller.input, touchpadState: touchpadState, input: &state.input)
-    _pollControllerBattery(controller: controller, profile: controller.battery, battery: &state.battery)
-    _pollControllerMotion(controller: controller, profile: controller.motion, motion: &state.motion)
-    _pollControllerLight(controller: controller, profile: controller.light, light: &state.light)
+    if let controller = device as? GCController {
+        let touchpadState = controller.extendedGamepad is GCDualShockGamepad || controller.extendedGamepad is GCDualSenseGamepad ? spatialController.touchpadStates[uuid] : nil
+        _pollDeviceInputState(profile: controller.input, controller: controller, touchpadState: touchpadState, input: &state.input)
+        _pollControllerBattery(controller: controller, profile: controller.battery, battery: &state.battery)
+        _pollControllerMotion(controller: controller, profile: controller.motion, motion: &state.motion)
+        _pollControllerLight(controller: controller, profile: controller.light, light: &state.light)
+    }
+    else if let stylus = device as? GCStylus {
+        if let input = stylus.input {
+            _pollDeviceInputState(profile: input, input: &state.input)
+        }
+    }
 
     let accessory = spatialController.accessoryTrackers[uuid]?.accessory
     _pollSpatialController(accessory: accessory, accessoryAnchors: &state.anchors)
@@ -931,9 +968,9 @@ public func SpatialController_PollController
 }
 
 fileprivate func _pollDeviceInputState(
-    controller : GCController,
     profile : GCDevicePhysicalInputState,
-    touchpadState : TouchpadControllerState?,
+    controller : GCController? = nil,
+    touchpadState : TouchpadControllerState? = nil,
     input : inout SCControllerInputState)
 {
     // Buttons...
@@ -987,11 +1024,11 @@ fileprivate func _pollDeviceInputState(
             }
         }
     }
-    if let gamepad = controller.extendedGamepad as? GCDualShockGamepad {
+    if let gamepad = controller?.extendedGamepad as? GCDualShockGamepad {
         buttonStates.append(SCInputButtonState(name: SCControllerInputNameButtonTouchpad, state: gamepad.touchpadButton.toSCButtonState(touchpadState?.touchpadButton)))
         dpadStates.append(SCInputDPadState(name: SCControllerInputNameDPadTouchpadPrimary, state: gamepad.touchpadPrimary.toSCDPadState()))
         dpadStates.append(SCInputDPadState(name: SCControllerInputNameDPadTouchpadSecondary, state: gamepad.touchpadSecondary.toSCDPadState()))
-    } else if let gamepad = controller.extendedGamepad as? GCDualSenseGamepad {
+    } else if let gamepad = controller?.extendedGamepad as? GCDualSenseGamepad {
         buttonStates.append(SCInputButtonState(name: SCControllerInputNameButtonTouchpad, state: gamepad.touchpadButton.toSCButtonState(touchpadState?.touchpadButton)))
         dpadStates.append(SCInputDPadState(name: SCControllerInputNameDPadTouchpadPrimary, state: gamepad.touchpadPrimary.toSCDPadState()))
         dpadStates.append(SCInputDPadState(name: SCControllerInputNameDPadTouchpadSecondary, state: gamepad.touchpadSecondary.toSCDPadState()))
@@ -1194,12 +1231,26 @@ class SCNotificationHandler : NSObject  {
             name: NSNotification.Name.GCControllerDidConnect,
             object: .none
         )
+        // Add GCStylusDidConnect....
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(onStylusConnected(notification:)),
+            name: NSNotification.Name.GCStylusDidConnect,
+            object: .none
+        )
 
         // Add GCControllerDidDisconnect...
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(onControllerDisconnected(notification:)),
             name: NSNotification.Name.GCControllerDidDisconnect,
+            object: .none
+        )
+        // Add GCStylusDidDisconnect...
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(onStylusDisconnected(notification:)),
+            name: NSNotification.Name.GCStylusDidDisconnect,
             object: .none
         )
     }
@@ -1219,7 +1270,7 @@ class SCNotificationHandler : NSObject  {
         }
         let uuid = spatialController.controllerMapping.elements.someKey(forValue: controller) ?? UUID().uuidString
         spatialController.controllerMapping.updateValue(controller, forKey: uuid)
-        if controller.isSpatialController {
+        if controller.isSpatial {
             Logger.controller.log("SpatialController: Spatial controller \(uuid) connected (category: \(controller.productCategory))")
         } else if let dualshockGamepad = controller.extendedGamepad as? GCDualShockGamepad {
             spatialController.touchpadStates.updateValue(.init(dualshockGamepad), forKey: uuid)
@@ -1237,12 +1288,41 @@ class SCNotificationHandler : NSObject  {
             controller.motion?.sensorsActive = true
         }
 
-        guard controller.isSpatialController else {
+        guard controller.isSpatial else {
             return
         }
-        spatialController.startAccessoryTracking(uuid: uuid, controller: controller) { state, accessory in
+        spatialController.startAccessoryTracking(uuid: uuid, device: controller) { state, accessory in
             if state == .acquired {
                 Logger.controller.log("SpatialController: Accessory for spatial controller \(uuid) connected (category: \(controller.productCategory))")
+                spatialController.onAccessoryConnectedCallback?(accessory!.toSCAccessory(uid: uuid))
+            }
+        }
+    }
+
+    @objc
+    public func onStylusConnected(notification : NSNotification) {
+        let stylus = notification.object as! GCStylus
+        Logger.controller.log("SpatialController: GCStylusDidConnect category: \(stylus.productCategory)")
+
+        guard let spatialController = _spatialController else {
+            Logger.controller.error("SpatialController: INTERNAL ERROR: onStylusConnected while uninitialized!")
+            return
+        }
+        let uuid = spatialController.controllerMapping.elements.someKey(forValue: stylus) ?? UUID().uuidString
+        spatialController.controllerMapping.updateValue(stylus, forKey: uuid)
+        if stylus.isSpatial {
+            Logger.controller.log("SpatialController: Spatial stylus \(uuid) connected (category: \(stylus.productCategory))")
+        } else {
+            Logger.controller.log("SpatialController: Non-spatial stylus \(uuid) connected (category: \(stylus.productCategory))")
+        }
+        spatialController.onControllerConnectedCallback?(stylus.toSCController(uid: uuid))
+
+        guard stylus.isSpatial else {
+            return
+        }
+        spatialController.startAccessoryTracking(uuid: uuid, device: stylus) { state, accessory in
+            if state == .acquired {
+                Logger.controller.log("SpatialController: Accessory for spatial stylus \(uuid) connected (category: \(stylus.productCategory))")
                 spatialController.onAccessoryConnectedCallback?(accessory!.toSCAccessory(uid: uuid))
             }
         }
@@ -1265,7 +1345,7 @@ class SCNotificationHandler : NSObject  {
             Logger.controller.log("SpatialController: Accessory for spatial controller \(uuid) disconnected (category: \(controller.productCategory))")
             spatialController.onAccessoryDisconnectedCallback?(accessory.toSCAccessory(uid: uuid))
         }
-        if controller.isSpatialController {
+        if controller.isSpatial {
             Logger.controller.log("SpatialController: Spatial controller \(uuid) disconnected (category: \(controller.productCategory))")
         } else if controller.extendedGamepad is GCDualShockGamepad {
             Logger.controller.log("SpatialController: Non-spatial DualShock controller \(uuid) disconnected (category: \(controller.productCategory))")
@@ -1281,6 +1361,38 @@ class SCNotificationHandler : NSObject  {
 
         // Remove any haptic engines for controller...
         if #available(visionOS 1.0, macOS 10.16, iOS 14.0, tvOS 14.0, *) {
+            shutdownExistingHapticsEnginesForController(uuid: uuid)
+        }
+        spatialController.stopAccessoryTracking(uuid: uuid)
+    }
+
+    @objc
+    public func onStylusDisconnected(notification : NSNotification) {
+        let stylus = notification.object as! GCStylus
+        Logger.controller.log("SpatialController: GCStylusDidDisconnect category: \(stylus.productCategory)")
+
+        guard let spatialController = _spatialController else {
+            Logger.controller.error("SpatialController: INTERNAL ERROR: onStylusDisconnected while uninitialized!")
+            return
+        }
+        guard let uuid = spatialController.controllerMapping.elements.someKey(forValue: stylus) else {
+            Logger.controller.log("SpatialController: Unknown stylus disconnected (category: \(stylus.productCategory))")
+            return
+        }
+        if let accessory = spatialController.accessoryTrackers[uuid]?.accessory {
+            Logger.controller.log("SpatialController: Accessory for spatial controller \(uuid) disconnected (category: \(stylus.productCategory))")
+            spatialController.onAccessoryDisconnectedCallback?(accessory.toSCAccessory(uid: uuid))
+        }
+        if stylus.isSpatial {
+            Logger.controller.log("SpatialController: Spatial stylus \(uuid) disconnected (category: \(stylus.productCategory))")
+        } else {
+            Logger.controller.log("SpatialController: Non-spatial stylus \(uuid) disconnected (category: \(stylus.productCategory))")
+        }
+        spatialController.controllerMapping.removeValue(forKey: uuid)
+        spatialController.onControllerDisconnectedCallback?(stylus.toSCController(uid: uuid))
+
+        // Remove any haptic engines for controller...
+        if #available(iOS 14, tvOS 14.0, macOS 10.16, *) {
             shutdownExistingHapticsEnginesForController(uuid: uuid)
         }
         spatialController.stopAccessoryTracking(uuid: uuid)

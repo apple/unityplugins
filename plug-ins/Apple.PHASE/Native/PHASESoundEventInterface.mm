@@ -247,7 +247,7 @@ int64_t PHASECreateMappedMetaParameter(int64_t inParameterId, EnvelopeParameters
 void PHASEDestroyMappedMetaParameter(int64_t inParameterId)
 {
     PHASEEngineWrapper* engineWrapper = [PHASEEngineWrapper sharedInstance];
-    [engineWrapper destoryMappedMetaParameterWithId:inParameterId];
+    [engineWrapper destroyMappedMetaParameterWithId:inParameterId];
 }
 
 int64_t PHASECreateSoundEventSamplerNode(const char* inAssetName,
