@@ -95,6 +95,12 @@ int64_t PHASECreatePointSource();
 bool PHASESetSourceTransform(int64_t inSourceId, Matrix4x4 inTransform);
 
 /*
+    Parents a source under the listener or back under the scene root.
+    Returns true on success, false otherwise.
+*/
+bool PHASESetSourceListenerAnchored(int64_t inSourceId, bool inAnchored);
+
+/*
     Sets the gain linear scale value of a given source, range of [0,1].
     Given gain values outside of this range will be clamped.
     Returns true on success, false otherwise.
