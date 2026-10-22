@@ -247,6 +247,7 @@ public func baw_assetpackmanager_assetpack_local_ensure(
 			} else {
 				try await AssetPackManager.shared.ensureLocalAvailability(of: assetPack)
 			}
+			completionHandler?(.none, baw_res_kind_success, contextPointer)
 		} catch {
 			completionHandler?(baw_err(error), baw_res_kind_failure, contextPointer)
 		}
@@ -272,6 +273,7 @@ public func baw_assetpackmanager_assetpack_local_ensure_update(
 	Task {
 		do {
 			try await AssetPackManager.shared.ensureLocalAvailability(of: assetPack, requireLatestVersion: shouldUpdate)
+			completionHandler?(.none, baw_res_kind_success, contextPointer)
 		} catch {
 			completionHandler?(baw_err(error), baw_res_kind_failure, contextPointer)
 		}
@@ -299,6 +301,7 @@ public func baw_assetpackmanager_assetpack_local_ensure_updatev(
 	Task {
 		do {
 			try await AssetPackManager.shared.ensureLocalAvailability(of: assetPacks, requireLatestVersions: shouldUpdate)
+			completionHandler?(.none, baw_res_kind_success, contextPointer)
 		} catch {
 			completionHandler?(baw_err(error), baw_res_kind_failure, contextPointer)
 		}
