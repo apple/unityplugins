@@ -543,37 +543,76 @@ namespace Apple.Core
         /// <summary>
         /// Helper ensures that the current set of PlayModeSupport libraries are aligned with tracked Apple Packages
         /// </summary>
+        /// <remarks>
+        /// This method imports each library it writes, by path, instead of calling AssetDatabase.Refresh(). A refresh
+        /// would rescan every asset in the project to find the libraries that this method has just written and whose paths
+        /// it already holds, which costs several seconds of each domain load on a large project.
+        /// </remarks>
         private static void SyncronizePlayModeSupportLibraries()
         {
-            // Remove existing libraries
-            string[] pmsPath = { ApplePlugInSupportPlayModeSupportPath };
-            foreach (var libraryAsset in AssetDatabase.FindAssets("", pmsPath))
-            {
-                string path = AssetDatabase.GUIDToAssetPath(libraryAsset);
-                AssetDatabase.DeleteAsset(path);
-            }
-            
             string summary = $"[Apple Unity Plug-ins] Synchronizing plug-in libraries for Editor Play Mode support to <b>{ApplePlugInSupportPlayModeSupportPath}</b>\nLibraries copied:";
             bool librariesCopied = false;
 
-            // Copy current
+            // The asset paths that the copy loop below writes to.
+            var currentLibraryAssetPaths = new List<string>();
             foreach (AppleUnityPackage applePackage in _appleUnityPackages.Values)
             {
                 if (applePackage.PlayModeSupportLibrary.IsValid)
                 {
-                    librariesCopied = true;
-                    AppleNativeLibrary pmsLibrary = applePackage.PlayModeSupportLibrary;
-                    summary += $"\n  <b>{pmsLibrary.FileName}</b>";
-                    FileUtil.CopyFileOrDirectory(pmsLibrary.FullPath, $"{UnityProjectPath}/{ApplePlugInSupportPlayModeSupportPath}/{pmsLibrary.FileName}");
+                    currentLibraryAssetPaths.Add($"{ApplePlugInSupportPlayModeSupportPath}/{applePackage.PlayModeSupportLibrary.FileName}");
                 }
+            }
+
+            // The deletes and the imports run as one batch, so that the Editor makes a single import pass rather than
+            // one pass for each library.
+            AssetDatabase.StartAssetEditing();
+
+            try
+            {
+                // Remove libraries that no longer belong to a tracked package. Libraries that are still current are
+                // left in place for the copy loop to overwrite, so that no path is both deleted and imported in one
+                // batch.
+                string[] pmsPath = { ApplePlugInSupportPlayModeSupportPath };
+                foreach (var libraryAsset in AssetDatabase.FindAssets("", pmsPath))
+                {
+                    string path = AssetDatabase.GUIDToAssetPath(libraryAsset);
+                    if (!currentLibraryAssetPaths.Contains(path))
+                    {
+                        AssetDatabase.DeleteAsset(path);
+                    }
+                }
+
+                // Copy current
+                foreach (AppleUnityPackage applePackage in _appleUnityPackages.Values)
+                {
+                    if (applePackage.PlayModeSupportLibrary.IsValid)
+                    {
+                        librariesCopied = true;
+                        AppleNativeLibrary pmsLibrary = applePackage.PlayModeSupportLibrary;
+                        summary += $"\n  <b>{pmsLibrary.FileName}</b>";
+
+                        string libraryAssetPath = $"{ApplePlugInSupportPlayModeSupportPath}/{pmsLibrary.FileName}";
+                        string libraryFullPath = $"{UnityProjectPath}/{libraryAssetPath}";
+
+                        // CopyFileOrDirectory fails when the destination is present, so clear the previous library
+                        // first. This is a file operation and not a DeleteAsset, which keeps the asset entry, and its
+                        // GUID, for the ImportAsset call below to update.
+                        FileUtil.DeleteFileOrDirectory(libraryFullPath);
+                        FileUtil.CopyFileOrDirectory(pmsLibrary.FullPath, libraryFullPath);
+
+                        AssetDatabase.ImportAsset(libraryAssetPath, ImportAssetOptions.ForceSynchronousImport);
+                    }
+                }
+            }
+            finally
+            {
+                AssetDatabase.StopAssetEditing();
             }
 
             if (librariesCopied)
             {
                 Debug.Log(summary);
             }
-
-            AssetDatabase.Refresh();
         }
 
         /// <summary>
