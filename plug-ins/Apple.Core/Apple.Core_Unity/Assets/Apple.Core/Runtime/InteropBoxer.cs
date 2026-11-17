@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 
@@ -278,7 +279,12 @@ namespace Apple.Core.Runtime
         /// Boxer for subclasses of NSObject.
         /// </summary>
         /// <typeparam name="T">The subclass of NSObject handled by this boxer.</typeparam>
-        public class BoxerNSObjectSubclass<T> : BoxerNSObjectSubclass where T : NSObject
+        /// <remarks>
+        /// Unlike the other boxers, unboxing creates a wrapper: <c>TryUnbox</c> converts the box with
+        /// <see cref="NSObject.As(Type)"/>, which finds the (IntPtr) constructor of <typeparamref name="T"/> through reflection. The
+        /// annotation keeps that constructor for every instantiation, such as the NSNumber boxer below.
+        /// </remarks>
+        public class BoxerNSObjectSubclass<[DynamicallyAccessedMembers(WrapperMembers.Constructors)] T> : BoxerNSObjectSubclass where T : NSObject
         {
             public BoxerNSObjectSubclass() : base(typeof(T))
             {

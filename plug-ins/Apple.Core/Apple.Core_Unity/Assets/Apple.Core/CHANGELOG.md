@@ -1,6 +1,20 @@
 # CHANGELOG
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+### Fixed
+- Fixed `MissingMethodException` (for example on `Apple.Core.Runtime.NSData`) in IL2CPP builds with managed stripping enabled.
+  Wrapper constructors are only called through reflection, so stripping removed them, and the `link.xml` files inside the packages
+  weren't reaching UnityLinker. `InteropReference.PointerCast`, `NSObject.As`, `NSArray<T>`, `NSDictionary<TKey, TValue>`,
+  `SwiftArray<T>`, `InteropBoxer.BoxerNSObjectSubclass<T>` and the related `ReflectionUtility` methods now carry
+  `[DynamicallyAccessedMembers]`, so the linker keeps the constructors of exactly the types used with them. This also keeps
+  `NSNumber(IntPtr)`, which `NSArray<long>` and other numeric collections need to read their values. Wrapper classes no longer need
+  `[Preserve]` on their `(IntPtr)` constructor.
+
+### Added
+- `TestManagedStrippingAnnotations`, an Editor test that fails when a generic parameter that reaches `PointerCast` is missing
+  the annotation, or when a type's `InteropTypeName` property isn't preserved.
+
 ## [3.3.0] - 2026-09-16
 ### Added
 - `ObjectExtensions.GetLongId()`, giving callers version-agnostic access to a Unity object's

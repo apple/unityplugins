@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine.Scripting;
@@ -11,7 +12,7 @@ namespace Apple.Core.Runtime
     {
         private static readonly Dictionary<Type, ConstructorInfo> _constructors = new Dictionary<Type, ConstructorInfo>();
 
-        public static ConstructorInfo GetConstructor(Type type)
+        public static ConstructorInfo GetConstructor([DynamicallyAccessedMembers(WrapperMembers.Constructors)] Type type)
         {
             if (_constructors.TryGetValue(type, out var constructor))
             {
@@ -34,12 +35,12 @@ namespace Apple.Core.Runtime
             return _constructors[type];
         }
 
-        public static ConstructorInfo GetConstructor<T>()
+        public static ConstructorInfo GetConstructor<[DynamicallyAccessedMembers(WrapperMembers.Constructors)] T>()
         {
             return GetConstructor(typeof(T));
         }
 
-        public static InteropReference CreateInstanceOrDefault(Type type, IntPtr pointer)
+        public static InteropReference CreateInstanceOrDefault([DynamicallyAccessedMembers(WrapperMembers.Constructors)] Type type, IntPtr pointer)
         {
             if (!type.IsSubclassOf(typeof(InteropReference)) && !type.Equals(typeof(InteropReference)))
             {
@@ -65,7 +66,7 @@ namespace Apple.Core.Runtime
 
         }
 
-        public static T CreateInstanceOrDefault<T>(IntPtr pointer) where T : InteropReference
+        public static T CreateInstanceOrDefault<[DynamicallyAccessedMembers(WrapperMembers.Constructors)] T>(IntPtr pointer) where T : InteropReference
         {
             return CreateInstanceOrDefault(typeof(T), pointer) as T;
         }

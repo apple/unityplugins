@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace Apple.Core.Runtime
     /// <typeparam name="T"></typeparam>
     [System.Diagnostics.DebuggerDisplay("Count = {Count}")]
     [Preserve]
-    public class SwiftArray<T> : InteropReference, IReadOnlyList<T>
+    public class SwiftArray<[DynamicallyAccessedMembers(WrapperMembers.Constructors)] T> : InteropReference, IReadOnlyList<T>
         where T : InteropReference
     {
         public SwiftArray(IntPtr pointer, int count) : base(pointer)

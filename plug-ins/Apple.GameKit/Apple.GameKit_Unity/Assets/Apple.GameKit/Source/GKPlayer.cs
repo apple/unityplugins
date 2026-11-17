@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using AOT;
 using Apple.Core.Runtime;
 using UnityEngine;
-using UnityEngine.Scripting;
 
 namespace Apple.GameKit
 {
@@ -21,7 +20,6 @@ namespace Apple.GameKit
             Normal = 1
         }
 
-        [Preserve]
         internal GKPlayer(IntPtr pointer) : base(pointer) {}
 
         /// <summary>

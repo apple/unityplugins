@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using AOT;
 using Apple.Core;
 using Apple.Core.Runtime;
-using UnityEngine.Scripting;
 
 namespace Apple.GameKit.Multiplayer
 {
@@ -15,7 +14,6 @@ namespace Apple.GameKit.Multiplayer
     {
         private static readonly InteropWeakMap<GKMatchmaker> _instanceMap = new InteropWeakMap<GKMatchmaker>();
 
-        [Preserve]
         internal GKMatchmaker(IntPtr pointer) : base(pointer)
         {
             _instanceMap.Add(this);

@@ -1,6 +1,20 @@
 # CHANGELOG
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+### Fixed
+- `GKLeaderboard.Entry.InteropTypeName` is now preserved when managed code stripping is enabled. `NSObject` reads it through
+  reflection, and without it the lookup falls back to the Objective-C type name `Entry` instead of `GKLeaderboardEntry`.
+- Wrapper constructors such as `GKMatch` and `GKTurnBasedMatch` are now preserved by the `[DynamicallyAccessedMembers]`
+  annotations added to Apple.Core.
+
+### Changed
+- Removed `[Preserve]` from the `(IntPtr)` constructors of `GKAccessPoint`, `GKAchievement`, `GKAchievementChallenge`,
+  `GKAchievementDescription`, `GKChallenge`, `GKChallengeDefinition`, `GKGameActivity`, `GKGameActivityDefinition`,
+  `GKGameCenterViewController`, `GKLocalPlayer`, `GKMatchRequest`, `GKMatchmaker`, `GKPlayer`, and `GKSavedGame`. The Apple.Core
+  annotations keep them, so this release requires the Apple.Core release that adds those annotations. Update the Apple.Core
+  dependency in `package.json` when the versions are bumped.
+
 ## [4.1.0] - 2026-09-16
 ### Added
 - `GKGameCenterViewController`.

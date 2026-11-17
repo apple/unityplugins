@@ -6,7 +6,6 @@ using Apple.Core;
 using Apple.Core.Runtime;
 using Apple.GameKit.Leaderboards;
 using UnityEngine;
-using UnityEngine.Scripting;
 
 namespace Apple.GameKit
 {
@@ -16,7 +15,6 @@ namespace Apple.GameKit
     [Introduced(iOS: "14.0", macOS: "11.0", tvOS: "14.0", visionOS: "1.0")]
     public class GKAccessPoint : NSObject
     {
-        [Preserve]
         public GKAccessPoint(IntPtr pointer) : base(pointer)
         {
         }
