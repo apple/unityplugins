@@ -99,6 +99,25 @@ public func GKLocalPlayer_SetAuthenticateHandler
     }
 }
 
+// Releases the managed callbacks that GKLocalPlayer_SetAuthenticateHandler stored.
+// The Unity Editor reloads the scripting domain on every script recompile, but this native plug-in isn't
+// reloaded, so the stored function pointers dangle once the domain is unloaded. The authenticateHandler can
+// fire again at any time (for example when the local player changes), and calling a dangling pointer crashes
+// the Editor, so the managed side calls this before the domain is unloaded.
+// The cached most recent result is intentionally kept, so the next call to
+// GKLocalPlayer_SetAuthenticateHandler is still answered from it.
+@_cdecl("GKLocalPlayer_ClearAuthenticateCallbacks")
+public func GKLocalPlayer_ClearAuthenticateCallbacks
+(
+)
+{
+    _onAuthenticate = nil;
+    _onAuthenticateError = nil;
+
+    // Pending task ids belong to the unloaded domain and can never be completed.
+    _pendingAuthTasks.removeAll();
+}
+
 @_cdecl("GKLocalPlayer_GetLocal")
 public func GKLocalPlayer_GetLocal
 (

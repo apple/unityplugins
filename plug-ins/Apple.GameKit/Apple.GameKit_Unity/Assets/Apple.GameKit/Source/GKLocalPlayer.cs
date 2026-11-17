@@ -119,8 +119,36 @@ namespace Apple.GameKit
         {
             var tcs = InteropTasks.Create<GKLocalPlayer>(out var taskId);
             Interop.GKLocalPlayer_SetAuthenticateHandler(taskId, OnAuthenticate, OnAuthenticateError);
+#if UNITY_EDITOR_OSX
+            // Only after the handler is set, so nothing is registered if the native library failed to load.
+            RegisterAssemblyReloadCleanup();
+#endif
             return tcs.Task;
         }
+
+#if UNITY_EDITOR_OSX
+        private static bool _isAssemblyReloadCleanupRegistered;
+
+        // The native library stays loaded when the Unity Editor reloads the scripting domain (on every script
+        // recompile, and on entering Play mode when Reload Domain is enabled), but the function pointers it
+        // holds for OnAuthenticate and OnAuthenticateError dangle once the domain is unloaded. GameKit can call
+        // the authenticate handler again at any time, so the native side must let go of them first.
+        private static void RegisterAssemblyReloadCleanup()
+        {
+            if (_isAssemblyReloadCleanupRegistered)
+            {
+                return;
+            }
+
+            _isAssemblyReloadCleanupRegistered = true;
+            UnityEditor.AssemblyReloadEvents.beforeAssemblyReload += ClearNativeAuthenticateCallbacks;
+        }
+
+        private static void ClearNativeAuthenticateCallbacks()
+        {
+            Interop.GKLocalPlayer_ClearAuthenticateCallbacks();
+        }
+#endif
 
         [MonoPInvokeCallback(typeof(SuccessTaskCallback<IntPtr>))]
         private static void OnAuthenticate(long taskId, IntPtr pointer)
@@ -459,6 +487,8 @@ namespace Apple.GameKit
             public static extern void GKLocalPlayer_FetchItemsForIdentityVerificationSignature(IntPtr pointer, long taskId, InternalOnFetchItemsHandler onSuccess, NSErrorTaskCallback onError);
             [DllImport(InteropUtility.DLLName)]
             public static extern void GKLocalPlayer_SetAuthenticateHandler(long taskId, SuccessTaskCallback<IntPtr> onAuthenticate, NSErrorTaskCallback onAuthenticateError);
+            [DllImport(InteropUtility.DLLName)]
+            public static extern void GKLocalPlayer_ClearAuthenticateCallbacks();
             [DllImport(InteropUtility.DLLName)]
             public static extern void GKLocalPlayer_LoadFriends(IntPtr pointer, long taskId, SuccessTaskCallback<IntPtr> onSuccess, NSErrorTaskCallback onError);
             [DllImport(InteropUtility.DLLName)]
