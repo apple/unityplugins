@@ -17,7 +17,11 @@ extension baw_err {
 	static var operationUnavailable: Self {
 		return Self(staticDescription: "The operation is unavailable.")
 	}
-	
+
+	static var none: Self {
+		return Self(staticDescription: "")
+	}
+
 	private init(staticDescription: StaticString) {
 		self.init(
 			description: baw_err_description(str_static: staticDescription.utf8Start),

@@ -784,7 +784,7 @@ namespace Apple.BackgroundAssets {
 		/// <param name="assetPacks">The asset packs the local availability of which to ensure.</param>
 		/// <param name="shouldUpdate"Whether to require that the respective latest versions be available locally. When true is passed to this parameter, the method will wait for the updates (if there indeed are any available) to be downloaded before returning. When false is passed, the method won’t check for updates and won’t attempt to download any.</param>
 		/// <returns>A task that yields when the asset packs are available locally.</returns>
-		public static async void EnsureLocalAvailabilityOfAssetPacksAsync(AssetPack[] assetPacks, bool shouldUpdate) {
+		public static async Task EnsureLocalAvailabilityOfAssetPacksAsync(AssetPack[] assetPacks, bool shouldUpdate) {
 			EnsureLocalAvailabilityContext context = EnsureLocalAvailabilityContext.Create();
 			int contextSize = Marshal.SizeOf(context);
 			IntPtr contextPointer = Marshal.AllocHGlobal(contextSize);
