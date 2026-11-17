@@ -5,7 +5,6 @@ using AOT;
 using Apple.Core;
 using Apple.Core.Runtime;
 using UnityEngine;
-using UnityEngine.Scripting;
 
 namespace Apple.GameKit
 {
@@ -14,7 +13,6 @@ namespace Apple.GameKit
     /// </summary>
     public class GKAchievementDescription : NSObject
     {
-        [Preserve]
         internal GKAchievementDescription(IntPtr pointer) : base(pointer)
         {
         }

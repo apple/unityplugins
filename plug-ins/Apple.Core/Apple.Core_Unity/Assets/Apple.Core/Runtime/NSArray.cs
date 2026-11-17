@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace Apple.Core.Runtime
     /// <typeparam name="T">Type of values stored in the array. Must be a primitive number, string, NSObject or NSObject subclass.</typeparam>
     [System.Diagnostics.DebuggerDisplay("Count = {Count}")]
     [Preserve]
-    public class NSArray<T> : NSObject, IReadOnlyList<T>, IList<T>
+    public class NSArray<[DynamicallyAccessedMembers(WrapperMembers.Constructors)] T> : NSObject, IReadOnlyList<T>, IList<T>
     {
         protected InteropBoxer.Boxer _boxer;
 

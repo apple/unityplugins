@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -15,7 +16,7 @@ namespace Apple.Core.Runtime
     /// <typeparam name="TValue">Type of values stored in the dictionary. Must be a primitive number, string, NSObject or NSObject subclass.</typeparam>
     [DebuggerDisplay("Count = {Count}")]
     [Preserve]
-    public class NSDictionary<TKey, TValue> : NSObject, IReadOnlyDictionary<TKey, TValue>
+    public class NSDictionary<[DynamicallyAccessedMembers(WrapperMembers.Constructors)] TKey, [DynamicallyAccessedMembers(WrapperMembers.Constructors)] TValue> : NSObject, IReadOnlyDictionary<TKey, TValue>
     {
         protected InteropBoxer.Boxer _keyBoxer;
         protected InteropBoxer.Boxer _valueBoxer;

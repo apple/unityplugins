@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Apple.Core.Runtime
 {
@@ -87,7 +88,7 @@ namespace Apple.Core.Runtime
         /// <param name="pointer"></param>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public static T PointerCast<T>(IntPtr pointer) where T : InteropReference
+        public static T PointerCast<[DynamicallyAccessedMembers(WrapperMembers.Constructors)] T>(IntPtr pointer) where T : InteropReference
         {
             return ReflectionUtility.CreateInstanceOrDefault<T>(pointer);
         }
@@ -100,7 +101,7 @@ namespace Apple.Core.Runtime
         /// <param name="pointer"></param>
         /// <returns>InteropReference to the created subclass type.
         /// The caller is responsible for downcasting to the desired subclass.</returns>
-        public static InteropReference PointerCast(Type type, IntPtr pointer)
+        public static InteropReference PointerCast([DynamicallyAccessedMembers(WrapperMembers.Constructors)] Type type, IntPtr pointer)
         {
             return ReflectionUtility.CreateInstanceOrDefault(type, pointer);
         }

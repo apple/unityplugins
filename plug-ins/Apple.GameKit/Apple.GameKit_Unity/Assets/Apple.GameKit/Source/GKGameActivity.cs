@@ -8,7 +8,6 @@ using Apple.Core;
 using Apple.Core.Runtime;
 using Apple.GameKit.Leaderboards;
 using Apple.GameKit.Multiplayer;
-using UnityEngine.Scripting;
 
 namespace Apple.GameKit
 {
@@ -80,7 +79,6 @@ namespace Apple.GameKit
 
         }
 
-        [Preserve]
         internal GKGameActivity(IntPtr pointer) : base(pointer)
         {
         }

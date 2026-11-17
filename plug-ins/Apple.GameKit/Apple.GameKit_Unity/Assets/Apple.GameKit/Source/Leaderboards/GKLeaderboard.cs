@@ -6,6 +6,7 @@ using AOT;
 using Apple.Core;
 using Apple.Core.Runtime;
 using UnityEngine;
+using UnityEngine.Scripting;
 
 namespace Apple.GameKit.Leaderboards
 {
@@ -64,6 +65,8 @@ namespace Apple.GameKit.Leaderboards
             internal Entry(IntPtr pointer) : base(pointer) {}
 
             // This allows interop to work with the Objective-C type which has a different name: GKLeaderboardEntry.
+            // NSObject.GetInteropTypeName reads it through reflection, so it must be preserved explicitly.
+            [Preserve]
             internal static string InteropTypeName => "GKLeaderboardEntry";
 
             /// <summary>

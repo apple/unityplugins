@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using UnityEngine;
@@ -78,7 +79,7 @@ namespace Apple.Core.Runtime
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns>A reference to the object of type <typeparamref name="T"/> or null if the cast could not be performed.</returns>
-        public T As<T>() where T : NSObject
+        public T As<[DynamicallyAccessedMembers(WrapperMembers.Constructors)] T>() where T : NSObject
         {
             return Pointer != IntPtr.Zero ? PointerCast<T>(NSObject_As(Pointer, GetInteropTypeName(typeof(T)))) : null;
         }
@@ -89,7 +90,7 @@ namespace Apple.Core.Runtime
         /// <param name="type"></param>
         /// <returns>A reference to the object of type <paramref name="type"/> or null if the cast could not be performed.
         /// Because this method isn't generic, the caller is responsible for casting the returned object to the desired type if the call was successful.</returns>
-        public NSObject As(Type type)
+        public NSObject As([DynamicallyAccessedMembers(WrapperMembers.Constructors)] Type type)
         {
             return (Pointer != IntPtr.Zero) ? PointerCast(type, NSObject_As(Pointer, GetInteropTypeName(type))) as NSObject : null;
         }
