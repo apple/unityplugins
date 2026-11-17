@@ -197,6 +197,7 @@ namespace Apple.Core
         public static bool IsPropertyAvailable(Type declaringType, string propertyName, RuntimeEnvironment env = default) => IsMemberAvailable(declaringType.GetProperty(propertyName), env);
         public static bool IsPropertyAvailable<DeclaringType>(string propertyName, RuntimeEnvironment env = default) => IsPropertyAvailable(typeof(DeclaringType), propertyName, env);
 
+#if !UNITY_EDITOR_WIN
         #region Init & Shutdown
         [RuntimeInitializeOnLoadMethod]
         private static void OnApplicationStart()
@@ -208,5 +209,6 @@ namespace Apple.Core
             Debug.Log($"[Apple.Core Plug-In Runtime] Availability Runtime Environment: {env.RuntimeOperatingSystem.ToString()} {env.VersionNumber.Major}.{env.VersionNumber.Minor}");
         }
         #endregion
+#endif
     }
 }
