@@ -379,6 +379,18 @@ static BOOL sUseClientRenderingMode = NO;
         return NO;
     }
 
+    // Return any anchored sources to the root before the listener goes away.
+    NSArray<PHASEObject*>* children = mListener.children;
+    [mListener removeChildren];
+    for (PHASEObject* child in children)
+    {
+        NSError* errorRef = nil;
+        if (![[self root] addChild:child error:&errorRef])
+        {
+            NSLog(@"Phase Wrapper: Failed to return PHASE Source to the root %@.", errorRef);
+        }
+    }
+
     // Remove from the hierarchy
     [[self root] removeChild:mListener];
 
@@ -451,6 +463,47 @@ static BOOL sUseClientRenderingMode = NO;
     return YES;
 }
 
+- (BOOL)setSourceListenerAnchoredWithId:(int64_t)sourceId anchored:(BOOL)anchored
+{
+    PHASESource* source = [mSources objectForKey:[NSNumber numberWithLongLong:sourceId]];
+    if (source == nil)
+    {
+        NSLog(@"Phase Wrapper: Failed to find PHASE Source to anchor.");
+        return NO;
+    }
+
+    if (anchored && mListener == nil)
+    {
+        NSLog(@"Phase Wrapper: Listener does not exist.");
+        return NO;
+    }
+
+    PHASEObject* newParent = anchored ? mListener : [self root];
+    if (source.parent == newParent)
+    {
+        // Already there. Re-parenting an anchored source again has silenced it on device.
+        return YES;
+    }
+
+    // addChild fails if the source already has a parent.
+    [source.parent removeChild:source];
+
+    NSError* errorRef = nil;
+    const BOOL result = [newParent addChild:source error:&errorRef];
+    if (!result)
+    {
+        NSLog(@"Phase Wrapper: Failed to add PHASE Source to the %@ %@.", anchored ? @"Listener" : @"root", errorRef);
+        // Put it back under the root rather than leave it orphaned.
+        NSError* rollbackError = nil;
+        if (![[self root] addChild:source error:&rollbackError])
+        {
+            NSLog(@"Phase Wrapper: Failed to return PHASE Source to the root %@.", rollbackError);
+        }
+        return NO;
+    }
+    return YES;
+}
+
 - (BOOL)setSourceGainWithId:(int64_t)sourceId sourceGain:(double)sourceGain
 {
     PHASESource* source = [mSources objectForKey:[NSNumber numberWithLongLong:sourceId]];
@@ -482,7 +535,7 @@ static BOOL sUseClientRenderingMode = NO;
     if (source != nil)
     {
         // Remove from the hierarchy
-        [[self root] removeChild:source];
+        [source.parent removeChild:source];
 
         [mSources removeObjectForKey:[NSNumber numberWithLongLong:sourceId]];
 

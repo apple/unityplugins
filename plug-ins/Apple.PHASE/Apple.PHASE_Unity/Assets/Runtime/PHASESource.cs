@@ -63,6 +63,9 @@ namespace Apple.PHASE
         // Active sound event instance on this source.
         private List<long> _soundEventInstance = new List<long>();
 
+        // When anchored, the local transform is sent to PHASE as the offset from the listener.
+        private bool _listenerAnchored = false;
+
         // Source id to store.
         private long _sourceId = Helpers.InvalidId;
 
@@ -243,7 +246,10 @@ namespace Apple.PHASE
         {
             if (_transform != null && _sourceId != Helpers.InvalidId)
             {
-                Matrix4x4 phaseTransform = Helpers.GetPhaseTransform(_transform);
+                // An anchored source sends its local transform, read relative to the listener.
+                Matrix4x4 phaseTransform = _listenerAnchored
+                    ? Helpers.GetPhaseTransform(Matrix4x4.TRS(_transform.localPosition, _transform.localRotation, Vector3.one))
+                    : Helpers.GetPhaseTransform(_transform);
                 bool result = Helpers.PHASESetSourceTransform(_sourceId, phaseTransform);
                 if (result == false)
                 {
@@ -266,6 +272,19 @@ namespace Apple.PHASE
                 entry.Value.ManualUpdate();
             }
         }
+
+        // Re-parents anchored sources under a newly created listener.
+        protected internal static void ReanchorSources()
+        {
+            foreach (PHASESource source in _registeredSources.Values)
+            {
+                if (source._listenerAnchored)
+                {
+                    source.SetListenerAnchored(true);
+                }
+            }
+        }
+
         private void UpdateGain()
         { 
             var result = Helpers.PHASESetSourceGain(_sourceId, _gain);
@@ -350,6 +369,35 @@ namespace Apple.PHASE
         }
 
         /// <summary>
+        /// Parents this source under the listener, or back under the scene root.
+        /// While anchored, the source's local transform is its offset from the listener,
+        /// so parent the GameObject under the listener's GameObject.
+        /// </summary>
+        /// <param name="anchored"> True to parent under the listener, false to parent under root. </param>
+        /// <returns> True on success, false otherwise. </returns>
+        public bool SetListenerAnchored(bool anchored)
+        {
+            if (_sourceId == Helpers.InvalidId)
+            {
+                _listenerAnchored = false;
+                return false;
+            }
+
+            bool result = Helpers.PHASESetSourceListenerAnchored(_sourceId, anchored);
+            _listenerAnchored = anchored && result;
+            return result;
+        }
+
+        /// <summary>
+        /// Whether this source is currently anchored to the listener.
+        /// </summary>
+        /// <returns> True if anchored to the listener, false otherwise. </returns>
+        public bool IsListenerAnchored()
+        {
+            return _listenerAnchored;
+        }
+
+        /// <summary>
         /// Set a meta parameter of type integer associated with this source's sound event.
         /// </summary>
         /// <param name="inParamName"> Name of the parameter to set. </param>
@@ -409,6 +457,7 @@ namespace Apple.PHASE
             Helpers.PHASEDestroySource(_sourceId);
             _toBeDestroyed = true;
             _sourceId = Helpers.InvalidId;
+            _listenerAnchored = false;
         }
 
         // Stop is called when the object stops.
