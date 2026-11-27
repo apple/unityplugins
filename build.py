@@ -313,7 +313,9 @@ def Main():
     CTX.printer.SectionHeading("Configure Build Paths")
 
     # Configure build paths for packages
-    CTX.build_output_path = pathlib.Path(build_args.output_path)
+    # Resolved to an absolute path, because GeneratePlugInPackages chdirs into each plug-in's Unity project
+    # before invoking tar. A relative --output-path would otherwise be interpreted relative to that project.
+    CTX.build_output_path = pathlib.Path(build_args.output_path).resolve()
 
     if CTX.clean_actions[CleanActionID.PACKAGES] and CTX.build_output_path.exists():
         CTX.printer.StatusMessage("Cleaning packages.", "\n")
@@ -324,7 +326,8 @@ def Main():
         if not CTX.build_output_path.exists():
             CTX.printer.Message(f"Build output path not found.", "\n")
             CTX.printer.StatusMessageWithContext("Creating: ", f"{CTX.build_output_path}")
-            CTX.build_output_path.mkdir()
+            # parents=True so --output-path can name a folder more than one level deep.
+            CTX.build_output_path.mkdir(parents=True)
 
     # Configure and optionally clean paths for test builds
     test_build_root_path = pathlib.Path(build_args.test_output_path)
