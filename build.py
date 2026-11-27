@@ -189,7 +189,9 @@ def Main():
                 CTX.platforms[platform_id] = True
             else:
                 CTX.printer.WarningMessage(f"Valid platform '{platform_id}' selected, but no {platform_id} SDK is installed.\nPlease add the SDK:\n  {Printer.Bold('1.')} Open {Printer.Bold('Xcode')}\n  {Printer.Bold('2.')} Open {Printer.Bold('Settings')} (Xcode > Settings...) or (⌘ + ,) \n  {Printer.Bold('3.')} Go to the {Printer.Bold('Platforms')} tab\n  {Printer.Bold('4.')} Install the {platform_id} SDK.")
-                if not utility.BooleanPrompt(CTX.printer, f"Would you like to continue building without {platform_id} support?"):
+                # False: the platform was named explicitly and its SDK is missing. Quietly producing packages with
+                # fewer platforms than were asked for is worse than failing the run.
+                if not utility.BooleanPrompt(CTX.printer, f"Would you like to continue building without {platform_id} support?", noninteractive_default=False):
                     exit()
         else:
             CTX.printer.WarningMessage(f"Ignoring unknown platform '{platform_id}'. Valid options are {PlatformID.IOS}, {PlatformID.IOS_SIMULATOR}, {PlatformID.MACOS}, {PlatformID.TVOS}, {PlatformID.TVOS_SIMULATOR}, {PlatformID.VISIONOS}, {PlatformID.VISIONOS_SIMULATOR}, {PlatformID.SIMULATORS}, {PlatformID.DEVICES}, or {PlatformID.ALL} (default).")
@@ -203,7 +205,9 @@ def Main():
 
     if not CTX.platforms[PlatformID.MACOS]:
         CTX.printer.WarningMessage(f"User selected to skip building for {PlatformID.MACOS}. Play mode (the play button) in the Unity Editor will not be supported by the plug-ins.")
-        CTX.platforms[PlatformID.MACOS] = utility.BooleanPrompt(CTX.printer, f"Would you like to enable build for {PlatformID.MACOS}?")
+        # False: -m names the platforms wanted, so an unattended run must not add one that was not selected. The
+        # warning above already states that Play Mode will not be supported without it.
+        CTX.platforms[PlatformID.MACOS] = utility.BooleanPrompt(CTX.printer, f"Would you like to enable build for {PlatformID.MACOS}?", noninteractive_default=False)
 
     # -------------------------------------------------------------------------
     
