@@ -2,6 +2,7 @@
 # Requirements: python3
 
 import subprocess
+import sys
 
 from pathlib import Path
 
@@ -164,19 +165,50 @@ class Printer:
 #---------------
 # Prompt Helpers
 
-# Display a prompt defined by sPrompt returning true if the user input is 'Y', false if 'n', and repeatedly asks otherwise.
-def BooleanPrompt(printer : Printer, prompt : str) -> bool:
+# Display a prompt defined by prompt returning true if the user input is 'Y', false if 'n', and repeatedly asks otherwise.
+#
+# 'noninteractive_default' is the answer to use when there is nobody to ask, which is to say whenever stdin is not a
+# terminal. Without it, input() raises EOFError and the script dies with a traceback, which makes build.py unusable
+# from CI: any platform selection that excludes macOS reaches the "enable macOS?" prompt and fails there before a
+# single library is built.
+#
+# Each call site passes its own default rather than sharing one, because the safe answer differs. Declining to
+# continue past a failed xcodebuild is right; declining to delete a folder nobody confirmed is right; silently
+# enabling a platform the caller did not select is not.
+def BooleanPrompt(printer : Printer, prompt : str, noninteractive_default : bool = None) -> bool:
     print(f"\n{Printer.MultiDecorate(prompt, printer.theme.user_input_bg_color, printer.theme.user_input_color)} {Printer.Decorate('[Y/n]', printer.theme.standard_output_color)}")
-    
+
+    def answer_without_asking(reason : str) -> bool:
+        if noninteractive_default is None:
+            printer.ErrorMessage(f"Cannot ask '{prompt}': {reason}, and this prompt has no non-interactive default. "
+                                 "This is a bug in the caller.")
+            sys.exit(1)
+        printer.WarningMessage(f"{reason}; answering {Printer.Bold('Y' if noninteractive_default else 'n')} "
+                               "automatically.")
+        return noninteractive_default
+
+    # Piped input is still read, so `echo Y | python3 build.py` keeps working. What a non-terminal does not get is
+    # unlimited retries: re-asking something that cannot answer differently would hang a CI job rather than fail it.
+    attempts_remaining = None if sys.stdin.isatty() else 1
+
     while True:
-        user_response = input()
+        try:
+            user_response = input()
+        except EOFError:
+            return answer_without_asking("stdin reached end of input")
+
         if user_response == 'Y':
             return True
-        elif user_response == 'n':    
+        elif user_response == 'n':
             return False
-        else:
-            printer.Message(f"Please answer {Printer.Bold('Y')} for yes or {Printer.Bold('n')} for no.")
-            continue
+
+        if attempts_remaining is not None:
+            attempts_remaining -= 1
+            if attempts_remaining <= 0:
+                return answer_without_asking(f"stdin is not a terminal and gave {user_response!r}")
+
+        printer.Message(f"Please answer {Printer.Bold('Y')} for yes or {Printer.Bold('n')} for no.")
+        continue
 
 # Displays a prompt which offers user selection from list of string options
 #  Validates input is numerical and is on the correct range.
@@ -234,7 +266,9 @@ def RemoveFolder(folder_path : Path, printer : Printer, contents_only : bool = F
             else:
                 printer.InfoMessage(f"You are about to delete the folder at {folder_path}")
 
-            if not BooleanPrompt(printer, "Proceed?"):
+            # False: build.py already offers --force-clean to delete without being asked, so an unattended run has
+            # a way to say yes, and silence here must not be read as consent.
+            if not BooleanPrompt(printer, "Proceed?", noninteractive_default=False):
                 return
 
         if contents_only:

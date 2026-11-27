@@ -129,7 +129,9 @@ class NativeUnityPluginManager:
                     CTX.printer.WarningMessage("Native library build command completed with non-zero return code")
                     CTX.printer.MessageWithContext("Command output:", f"\n{build_command_output.stdout}")
                     
-                    if not utility.BooleanPrompt(CTX.printer, "Would you like to continue the build process?"):
+                    # False: xcodebuild already failed. Carrying on would pack a plug-in whose native library is
+                    # missing or stale, which is the failure this check exists to catch.
+                    if not utility.BooleanPrompt(CTX.printer, "Would you like to continue the build process?", noninteractive_default=False):
                         return False
 
         return True
@@ -377,7 +379,9 @@ class NativeUnityPluginManager:
                                     f"\n{CTX.printer.Indent(2)}* If you do not upgrade with this script, build may succeed but .meta files will not be generated and the plug-ins {Printer.Bold('*WILL NOT WORK*')}"
                                     f"\n{CTX.printer.Indent(2)}* Skipping this step means that you will either need to install a matching version of Unity or manually upgrade desired plug-in projects.", "\n")
             
-            if utility.BooleanPrompt(CTX.printer, "Would you like the script to attempt project upgrade?"):
+            # False: upgrading rewrites the Unity project in place, and the message above notes it may need
+            # reverting by hand. Not something to begin with nobody watching.
+            if utility.BooleanPrompt(CTX.printer, "Would you like the script to attempt project upgrade?", noninteractive_default=False):
                 installed_unity_versions = self.GetUnityInstallationList()
                 target_unity_version = None
                 

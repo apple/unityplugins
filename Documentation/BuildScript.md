@@ -27,6 +27,14 @@ python3 build.py
 
 This command will build each plug-in's native libraries and `npm pack` the entire plug-in into a `.tgz` file for easily incorporating into a Unity project via the Unity Package Manager.
 
+### Running without a terminal
+
+The script asks the user to confirm several things: whether to continue when a selected platform's SDK is missing, whether to enable macOS when it was not selected, whether to continue after a native library build fails, whether to delete a folder, and whether to attempt a Unity project upgrade.
+
+When `stdin` is not a terminal -- a CI job, a cron task, or any invocation whose input is redirected -- each of those prompts answers itself rather than failing. The automatic answer is the conservative one in every case: the script will not enable a platform you did not select, will not continue past a failed native library build, and will not delete or rewrite anything unasked. Every automatic answer is printed as a warning, so a surprising result can be traced back to the prompt that produced it.
+
+Piped input is still read, so `echo Y | python3 build.py` behaves as before. Prompts that normally re-ask on invalid input do not loop when input is not a terminal.
+
 ## Advanced Usage
 
 Running `python3 build.py --help` will show the list of flags available for customizing the build process. What follows is a description of what each flag does and some example use cases.

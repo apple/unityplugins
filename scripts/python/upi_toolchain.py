@@ -121,7 +121,8 @@ def Codesign(printer : Printer, signable_object_path : str, hash : str, logWithC
     
 # Method prompts the user before identifying a codesign identity to use for signing newly compiled native plug-in libraries
 def PromptForCodesignIdentity(printer : Printer) -> str:
-    if not utility.BooleanPrompt(printer, "Would you like the script to code sign the compiled native plug-in libraries?"):
+    # False: this is only reached when no identity was passed, so the invocation did not ask for signing.
+    if not utility.BooleanPrompt(printer, "Would you like the script to code sign the compiled native plug-in libraries?", noninteractive_default=False):
         printer.Message("User opted out of code signing.")
         printer.Message(f"For more information about code signing, please see: {Printer.Bold('https://developer.apple.com/library/archive/documentation/Security/Conceptual/CodeSigningGuide/Introduction/Introduction.html')}", printer.Indent(1))
         return ""
